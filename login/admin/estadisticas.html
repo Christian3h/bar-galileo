@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proveedores - Bar Galileo</title>
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="estadisticas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gestión de Proveedores</h1>
+            <nav>
+                <button onclick="window.location.href='estadisticas.html'" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver al Panel
+                </button>
+            </nav>
+        </header>
+
+        <div class="proveedores-container">
+            <div class="agregar-proveedor">
+                <h2>Agregar Nuevo Proveedor</h2>
+                <form id="formProveedor">
+                    <div class="form-group">
+                        <label for="nombreProveedor">Nombre:</label>
+                        <input type="text" id="nombreProveedor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactoProveedor">Contacto:</label>
+                        <input type="text" id="contactoProveedor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefonoProveedor">Teléfono:</label>
+                        <input type="tel" id="telefonoProveedor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailProveedor">Email:</label>
+                        <input type="email" id="emailProveedor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productoProveedor">Productos/Servicios:</label>
+                        <textarea id="productoProveedor" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-guardar">
+                        <i class="fas fa-save"></i> Guardar Proveedor
+                    </button>
+                </form>
+            </div>
+
+            <div class="lista-proveedores">
+                <h2>Lista de Proveedores</h2>
+                <div class="buscador">
+                    <input type="text" id="buscarProveedor" placeholder="Buscar proveedor...">
+                    <button class="btn-buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div id="tablaProveedores" class="tabla-proveedores">
+                    <!-- Aquí se mostrarán los proveedores dinámicamente -->
+                </div>
+            </div>
+                                        <input type="text" id="contactoProveedor" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="telefonoProveedor">Teléfono:</label>
+                                        <input type="tel" id="telefonoProveedor" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="emailProveedor">Email:</label>
+                                        <input type="email" id="emailProveedor" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productoProveedor">Productos/Servicios:</label>
+                                        <textarea id="productoProveedor" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn-guardar">
+                                        <i class="fas fa-save"></i> Guardar Proveedor
+                                    </button>
+                                </form>
+                            </div>
+                
+                            <div class="lista-proveedores">
+                                <h2>Lista de Proveedores</h2>
+                                <div class="buscador">
+                                    <input type="text" id="buscarProveedor" placeholder="Buscar proveedor...">
+                                    <button class="btn-buscar">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                                <div id="tablaProveedores" class="tabla-proveedores">
+                                    <!-- Aquí se mostrarán los proveedores dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script src="proveedores.js"></script>
+                </body>
+                </html>
+                <h3>Ventas Totales</h3>
+                <p class="stat-value">$<span id="totalVentas">0</span></p>
+                <button class="btn-editar" onclick="mostrarFormulario('ventas')">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <div class="formulario-edicion" id="formVentas">
+                    <input type="number" id="inputVentas" placeholder="Ventas del mes">
+                    <div class="botones-form">
+                        <button onclick="actualizarVentas()" class="btn-guardar">Guardar</button>
+                        <button onclick="cerrarFormulario('Ventas')" class="btn-cancelar">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card" id="stockCard">
+                <i class="fas fa-box"></i>
+                <h3>Inventario Total</h3>
+                <p class="stat-value"><span id="totalStock">0</span> unidades</p>
+                <button class="btn-editar" onclick="mostrarFormulario('stock')">
+                    <i class="fas fa-edit"></i> Editar Inventario
+                </button>
+                <div class="formulario-edicion" id="formStock">
+                    <div class="search-bar">
+                        <input type="text" id="buscarProducto" placeholder="Buscar producto por nombre o código">
+                        <button onclick="buscarProducto()" class="btn-buscar" title="Buscar producto">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" id="inputProducto" placeholder="Nombre del producto">
+                    <input type="text" id="inputCodigo" placeholder="Código del producto">
+                    <input type="number" id="inputCantidad" placeholder="Cantidad">
+                    <input type="number" id="inputPrecioCompra" placeholder="Precio de compra">
+                    <input type="number" id="inputPrecioVenta" placeholder="Precio de venta">
+                    <div class="botones-form">
+                        <button onclick="guardarProducto()" class="btn-guardar">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                        <button onclick="cerrarFormulario('Stock')" class="btn-cancelar">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </div>
+                <div id="listaProductos" class="lista-productos">
+                    <!-- Aquí se mostrarán los productos dinámicamente -->
+                </div>
+            </div>
+
+            <div class="stat-card" id="gananciasCard">
+                <i class="fas fa-dollar-sign"></i>
+                <h3>Ganancias</h3>
+                <p class="stat-value">$<span id="totalGanancias">0</span></p>
+                <div class="detalles-ganancias">
+                    <p>Ganancias calculadas automáticamente</p>
+                </div>
+            </div>
+
+            <div class="stat-card" id="gastosCard">
+                <i class="fas fa-receipt"></i>
+                <h3>Gastos</h3>
+                <p class="stat-value">$<span id="totalGastos">0</span></p>
+                <button class="btn-editar" onclick="mostrarFormulario('gastos')">
+                    <i class="fas fa-edit"></i> Agregar Gasto
+                </button>
+                <div class="formulario-edicion" id="formGastos">
+                    <input type="text" id="inputDescripcionGasto" placeholder="Descripción del gasto">
+                    <input type="number" id="inputMontoGasto" placeholder="Monto del gasto">
+                    <div class="botones-form">
+                        <button onclick="agregarGasto()" class="btn-guardar">Agregar Gasto</button>
+                        <button onclick="cerrarFormulario('Gastos')" class="btn-cancelar">Cancelar</button>
+                    </div>
+                </div>
+                <div id="listaGastos" class="lista-gastos">
+                    <!-- Aquí se mostrarán los gastos dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario para crear usuario empleado -->
+        <div id="formEmpleados" class="formulario-edicion">
+            <h3>Crear Usuario Empleado</h3>
+            <div class="form-group">
+                <label for="inputNombreEmpleado">Nombre Completo:</label>
+                <input type="text" id="inputNombreEmpleado" required>
+            </div>
+            <div class="form-group">
+                <label for="inputUsuarioEmpleado">Usuario:</label>
+                <input type="text" id="inputUsuarioEmpleado" required>
+            </div>
+            <div class="form-group">
+                <label for="inputPasswordEmpleado">Contraseña:</label>
+                <input type="password" id="inputPasswordEmpleado" required>
+            </div>
+            <div class="form-group">
+                <label for="inputConfirmPasswordEmpleado">Confirmar Contraseña:</label>
+                <input type="password" id="inputConfirmPasswordEmpleado" required>
+            </div>
+            <div class="botones-form">
+                <button onclick="crearUsuarioEmpleado()" class="btn-guardar">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+                <button onclick="cerrarFormulario('Empleados')" class="btn-cancelar">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="ventasChart"></canvas>
+        </div>
+    </div>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <script src="estadisticas.js"></script>
+</body>
+</html>

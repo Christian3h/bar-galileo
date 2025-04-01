@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../../css/variables.css">
+    <link rel="stylesheet" href="empleados.css">
+    <title>Bar galileo</title>
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>Panel de Estadísticas - Bar Galileo</h1>
+            <nav>
+                <button id="cerrarSesion" class="btn-cerrar">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </nav>
+        </header>
+        
+        <div class="stats-container">
+            <div class="stat-card" id="ventasCard">
+                <i class="fas fa-chart-line"></i>
+                <h3>Ventas Totales</h3>
+                <p class="stat-value">$<span id="totalVentas">0</span></p>
+                <button class="btn-editar" onclick="mostrarFormulario('ventas')">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <div class="formulario-edicion" id="formVentas">
+                    <input type="number" id="inputVentas" placeholder="Ventas del mes">
+                    <div class="botones-form">
+                        <button onclick="actualizarVentas()" class="btn-guardar">Guardar</button>
+                        <button onclick="cerrarFormulario('Ventas')" class="btn-cancelar">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card" id="ventasIndividualesCard" class="formulario-edicion">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Venta Individual</h3>
+                <select id="selectProducto">
+                    <option value="">Seleccione un producto</option>
+                </select>
+                <input type="number" id="inputCantidadVenta" placeholder="Cantidad" min="1">
+                <button onclick="venderProducto()" class="btn-guardar">Vender</button>
+            </div>
+            
+
+            <div class="stat-card" id="stockCard">
+                <i class="fas fa-box"></i>
+                <h3>Stock Total</h3>
+                <p class="stat-value"><span id="totalStock">0</span> unidades</p>
+                <button class="btn-editar" onclick="mostrarFormulario('stock')">
+                    <i class="fas fa-edit"></i> Editar Stock
+                </button>
+                <div class="formulario-edicion" id="formStock">
+                    <div class="search-bar">
+                        <input type="text" id="buscarProducto" placeholder="Buscar producto por nombre o código">
+                        <button onclick="buscarProducto()" class="btn-buscar" title="Buscar producto">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" id="inputProducto" placeholder="Nombre del producto">
+                    <input type="text" id="inputCodigo" placeholder="Código del producto">
+                    <input type="number" id="inputCantidad" placeholder="Cantidad">
+                    <input type="number" id="inputPrecioCompra" placeholder="Precio de compra">
+                    <input type="number" id="inputPrecioVenta" placeholder="Precio de venta">
+                    <div class="botones-form">
+                        <button onclick="guardarProducto()" class="btn-guardar">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                        <button onclick="cerrarFormulario('Stock')" class="btn-cancelar">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                    </div>
+                </div>
+                <div id="listaProductos" class="lista-productos">
+                    <!-- Aquí se mostrarán los productos dinámicamente -->
+                </div>
+            </div>
+
+            <div class="stat-card" id="gastosCard">
+                <i class="fas fa-receipt"></i>
+                <h3>Gastos</h3>
+                <p class="stat-value">$<span id="totalGastos">0</span></p>
+                <button class="btn-editar" onclick="mostrarFormulario('gastos')">
+                    <i class="fas fa-edit"></i> Agregar Gasto
+                </button>
+                <div class="formulario-edicion" id="formGastos">
+                    <input type="text" id="inputDescripcionGasto" placeholder="Descripción del gasto">
+                    <input type="number" id="inputMontoGasto" placeholder="Monto del gasto">
+                    <div class="botones-form">
+                        <button onclick="agregarGasto()" class="btn-guardar">Agregar Gasto</button>
+                        <button onclick="cerrarFormulario('Gastos')" class="btn-cancelar">Cancelar</button>
+                    </div>
+                </div>
+                <div id="listaGastos" class="lista-gastos">
+                    <!-- Aquí se mostrarán los gastos dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script> 
+    <script src="empleados.js"></script>
+</body>
+</html>
