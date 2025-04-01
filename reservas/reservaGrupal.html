@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar galileo</title>
+
+    <!-- css // variables siempre van primeras-->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/reserva.css">
+    <link rel="stylesheet" href="../css/menuEstilos.css">
+    <link rel="stylesheet" href="../css/PIndex.css">
+
+</head>
+<body>
+    <!-- Menu -->
+    <header class="encabezado">
+        <div class="titulo">
+            <h1>Bar galileo</h1>
+        </div>
+        <button class="menu-hamburguesa" id="menu-movil">☰</button>
+        <button id="cerrar-menu">X</button>
+        <nav class="barra-navegacion">
+            <ul>
+                <li><a class="texto-mediano" href="../index.html">Inicio</a></li>
+                <li><a class="texto-mediano" href="../index.html#nosotros">Nosotros</a></li>
+                <li><a class="texto-mediano" href="../index.html#servicios">Servicios</a></li>
+                <li><a class="texto-mediano" href="../menu/menu.html">Menú</a></li>
+                <li><a class="texto-mediano" href="../index.html#contacto" class="boton-contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div id="titulos">
+            <p>Reserva Grupal</p>
+            <h1>Esperamos reunirnos con usted</h1>
+        </div>
+
+        <form action="">
+            <label for="fecha">Seleccione la fecha y hora </label>
+            <div class="calendar-container">
+                <div class="header">Tuesday, March 25, 2025</div>
+                <div class="month-header">
+                    <button id="prevMonth">&#10094;</button>
+                    <h3>March 2025</h3>
+                    <button id="nextMonth">&#10095;</button>
+                </div>
+                <div class="days-container">
+                    <div class="day disabled">24</div>
+                    <div class="day selected">25</div>
+                    <div class="day">26</div>
+                    <div class="day">27</div>
+                    <div class="day">28</div>
+                    <div class="day">29</div>
+                    <div class="day">30</div>
+                </div>
+                <div class="time-slot">
+                    <h3>Evening</h3>
+                    <button class="time-button">4:00–8:00 pm</button>
+                    <button class="time-button">8:00–12:00 pm</button>
+                </div>
+                <p class="timezone">(GMT-05:00) America - Bogota</p>
+            </div>
+
+
+            <label for="nombre">Ingrese su nombre</label>
+            <input type="text">
+
+            <label for="correo">Ingrese su correo </label>
+            <input type="email">
+            
+            <label for="Telefono">Ingrese su telefono</label>
+            <input type="tel">
+
+            <label>¿En qué servicio o servicios estás interesado?</label>
+
+                <div class="checkbox">
+                    <input type="checkbox" id="servicio1" name="servicios[]" value="Disfrutar el rato">
+                    <label for="servicio1">Disfrutar el rato</label>
+                </div>
+
+                <div class="checkbox">
+                    <input type="checkbox" id="servicio2" name="servicios[]" value="Ver un partido">
+                    <label for="servicio2">Ver un partido</label>
+                </div>
+
+            <label for="informacion">Ingrese su informacion adicional</label>
+            <textarea name="informacion" id="informacion"></textarea>
+
+            <button>Enviar</button>
+
+        </form>
+    </main>
+
+    <footer class="pie-de-pagina">
+        <div class="contenedor-pie">
+            <!-- Parte izquierda -->
+            <div class="pie-izquierda">
+                <h2>Galileo CAFE-BAR</h2>
+            </div>
+    
+            <!-- Parte derecha -->
+            <div class="pie-derecha">
+                <a class="boton-pie" href="reservaGrupal.html" >Reserva Grupal</a>
+                <a class="boton-pie" href="reservaEventos.html">Reserva Eventos</a>
+            </div>
+        </div>
+    </footer>
+    <script src="../js/menu.js"></script>
+</body>
+</html>

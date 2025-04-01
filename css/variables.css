@@ -1,0 +1,36 @@
+:root{
+    --primary-color: #8B0000;
+    --background-color: #1F3B2D;
+    --text-2-color: #2B2B2B;
+    --text-color: #EAE0C8;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.texto-titulo{
+    font-size: 4rem;
+}
+
+.texto-grande{
+    font-size: 2rem;
+}
+
+.texto-mediano{
+    font-size: 1.5rem;
+}
+
+.texto-mini{
+    font-size: 1rem;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar galileo</title>
+
+    <!-- css // variables siempre van primeras-->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/menuEstilos.css">
+    <link rel="stylesheet" href="css/PIndex.css">
+
+</head> 
+<body> 
+    <!-- Menu -->
+    <header class="encabezado">
+        <div class="titulo">
+            <h1 class="texto-grande">Bar galileo</h1>
+        </div>
+        <button class="menu-hamburguesa" id="menu-movil">☰</button>
+        <button id="cerrar-menu">X</button>
+        <nav class="barra-navegacion">
+            <ul>
+                <li><a class="texto-mediano" href="#inicio">Inicio</a></li>
+                <li><a class="texto-mediano" href="#nosotros">Nosotros</a></li>
+                <li><a class="texto-mediano" href="#servicios">Servicios</a></li>
+                <li><a class="texto-mediano" href="menu/menu.html">Menú</a></li>
+                <li><a class="texto-mediano boton-contacto" href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="inicio" class="segunda-seccion">
+        <div class="box-principal">
+            <div class="box-texto">
+                <h2 class="texto-titulo" >Bar Galileo</h2>
+                <p class="texto-mediano" >Disfruta del mejor ambiente con amigos y familia</p>
+                <a href="#servicios" class="boton-seccion">Nuestros Servicios</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="servicios" class="cuarta-seccion">
+        <h4 class="texto-mediano texto-color-principal">Experience galileo vibes</h4>
+        <h1 class="texto-grande">Donde los amigos y la diversión se unen</h1>
+    
+        <div class="galeria">
+            <div class="galeria-item">
+                <img src="img/Chill vibes.jpg" alt="Imagen 1">
+                <h3 class="texto-mediano" >Chill vibes</h3>
+                <p>Disfrute de un ambiente relajante con amigos y familiares</p>
+            </div>
+    
+            <div class="galeria-item">
+                <img src="img/vaso.jpg" alt="Imagen 2">
+                <h3 class="texto-mediano" >Una misma pasión</h3>
+                <p>Disfrute de un buen día de fútbol con nosotros</p>
+            </div>
+    
+            <div class="galeria-item">
+                <img src="img/boli.jpg" alt="Imagen 3">
+                <h3 class="texto-mediano" >El mejor ambiente</h3>
+                <p>Disfruta de melodías ininterrumpidas que elevan tu experiencia.</p>
+            </div>
+        </div>
+    </section>
+    
+
+  
+    <section id="contacto" class="quinta-seccion">
+
+        <h4 class="texto-grande">Experience galileo vibes</h4>
+
+
+        <div class="horario-grid">
+            <h2>Horario</h2>
+            <div class="horario-header">
+                <span>Día</span>
+                <span>Horario</span>
+            </div>
+            <div class="horario-item"><span>Martes </span> <span> 4:00 PM - 12:00 AM</span></div>
+            <div class="horario-item"><span>Miércoles </span> <span> 4:00 PM - 12:00 AM</span></div>
+            <div class="horario-item"><span>Jueves </span> <span> 4:00 PM - 12:00 AM</span></div>
+            <div class="horario-item"><span>Viernes </span> <span> 4:00 PM - 12:00 AM</span></div>
+            <div class="horario-item"><span>Sábado </span> <span> 4:00 PM - 12:00 AM</span></div>
+            <div class="horario-item"><span>Domingo </span> <span> 4:00 PM - 12:00 AM</span></div>
+        </div>
+
+        <div class="box-contacto">
+            <!-- Parte izquierda -->
+            <div class="contacto-izquierda">
+
+                <div class="contacto-grid">
+                    <h2>Únete a nosotros para una experiencia memorable</h2>
+                    <div><strong>Teléfono:</strong> +57 123 325 242</div>
+                    <div><strong>Correo:</strong> asfafs@gmail.com</div>
+                    <div><strong>Facebook:</strong> Galileo Cafe-Bar</div>
+                    <div><strong>Ubicación:</strong> Carrera 26 7-B, Sogamoso - Boyacá</div>
+                </div>
+
+            </div>
+    
+            <div class="contacto-derecha">
+                <form action="#" method="POST">
+                    <label class="texto-mediano" for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+    
+                    <label class="texto-mediano" for="correo">Correo Electrónico:</label>
+                    <input type="email" id="correo" name="correo" placeholder="Tu correo electrónico" required>
+    
+                    <label class="texto-mediano" for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" placeholder="Tu teléfono" required>
+    
+                    <label class="texto-mediano" for="mensaje">Mensaje:</label>
+                    <textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí..." rows="5" required></textarea>
+    
+                    <div class="permiso-datos">
+                        <label for="permiso">Acepto el uso de mis datos personales</label>
+                    </div>
+                    <div class="check">
+                        <input type="checkbox" id="permiso" name="permiso" required>
+                    </div>
+    
+                    <button type="submit" class="boton-enviar">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </section>
+        
+    <section class="sexta-seccion">
+        <div class="mapa-contenedor">
+            <img src="img/mapa.png" alt="Ubicación">
+        </div>
+    </section>
+
+    <footer class="pie-de-pagina">
+        <div class="contenedor-pie">
+            <!-- Parte izquierda -->
+            <div class="pie-izquierda">
+                <h2>Galileo CAFE-BAR</h2>
+            </div>
+    
+            <!-- Parte derecha -->
+            <div class="pie-derecha">
+                <a class="boton-pie" href="reservas/reservaGrupal.html" >Reserva Grupal</a>
+                <a class="boton-pie" href="reservas/reservaEventos.html">Reserva Eventos</a>
+                <a href="login/index.html">.</a>
+            </div>
+        </div>
+    </footer>
+        
+
+    <script src="js/menu.js"></script>
+
+ 
+</body>
+</html>
