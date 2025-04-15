@@ -8,7 +8,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--text-color);
-    color: var(--text-2-color);
+    color: var(--primary-color);
     min-height: 100vh;
     padding: 1rem;
 }
@@ -23,7 +23,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 30px;
     padding-bottom: 1rem;
     border-bottom: 2px solid #e0e0e0;
     flex-wrap: wrap;
@@ -36,8 +36,7 @@ header h1 {
 }
 
 .btn-nav, .btn-cerrar {
-    margin-top: 10px;
-    padding: 0.8rem 1.5rem;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -47,12 +46,13 @@ header h1 {
     gap: 0.5rem;
     transition: all 0.3s ease;
     white-space: nowrap;
+    text-decoration: none;
+    margin-left: 10px;
 }
 
 .btn-nav {
     background-color: var(--primary-color);
     color: white;
-    text-decoration: none;
 }
 
 .btn-cerrar {
@@ -69,9 +69,10 @@ header h1 {
 
 .form-section, .employees-section {
     background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
 }
 
 .form-section h2, .employees-section h2 {
@@ -84,7 +85,7 @@ header h1 {
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 15px;
 }
 
 label {
@@ -96,9 +97,9 @@ label {
 
 input, select {
     width: 100%;
-    padding: 0.75rem;
+    padding: 8px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 4px;
     font-size: clamp(0.875rem, 2vw, 1rem);
     transition: all 0.3s;
 }
@@ -110,12 +111,12 @@ input:focus, select:focus {
 }
 
 .btn-submit {
-    width: 100%;
-    padding: 0.75rem;
+    grid-column: 1 / -1;
+    padding: 10px;
     background: var(--success-color);
-    color: var(--text-color);
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     font-size: clamp(0.875rem, 2vw, 1rem);
     cursor: pointer;
     display: flex;
@@ -133,12 +134,14 @@ input:focus, select:focus {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 0.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 20px;
+    position: relative;
 }
 
 .search-bar input {
     border: none;
-    padding: 0.5rem;
+    padding: 10px;
+    padding-left: 35px;
     font-size: clamp(0.875rem, 2vw, 1rem);
     width: 100%;
 }
@@ -146,6 +149,14 @@ input:focus, select:focus {
 .search-bar input:focus {
     outline: none;
     box-shadow: none;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
 }
 
 .employees-table {
@@ -161,22 +172,22 @@ table {
 }
 
 th, td {
-    padding: 1rem;
+    padding: 12px;
     text-align: left;
     font-size: clamp(0.875rem, 2vw, 1rem);
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #f8f9fa;
+    background-color: #f5f5f5;
     color: var(--primary-color);
     font-weight: 600;
 }
 
 .btn-action {
-    padding: 0.5rem;
+    padding: 5px 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: clamp(0.875rem, 2vw, 1rem);
     color: white;
@@ -186,23 +197,23 @@ th {
     align-items: center;
     justify-content: center;
     margin: 0 0.25rem;
+    margin-right: 5px;
 }
 
 .btn-edit {
-    background-color: var(--warning-color);
+    background-color: #2196F3;
 }
 
 .btn-delete {
-    background-color: var(--danger-color);
+    background-color: #f44336;
 }
 
 .mensaje {
     position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 1rem 2rem;
-    border-radius: 5px;
+    top: 20px;
+    right: 20px;
+    padding: 15px;
+    border-radius: 4px;
     font-size: clamp(0.875rem, 2vw, 1rem);
     z-index: 1000;
     display: none;
@@ -210,12 +221,12 @@ th {
 }
 
 .mensaje.exito {
-    background-color: var(--success-color);
+    background-color: #4CAF50;
     color: white;
 }
 
 .mensaje.error {
-    background-color: var(--danger-color);
+    background-color: #f44336;
     color: white;
 }
 
@@ -281,30 +292,33 @@ th {
     }
 }
 
-/* General background color */
-body {
-    background-color: var(--text-color);
-    color: var(--text-2-color);
+.dashboard {
+    padding: 20px;
 }
 
-/* Buttons and navigation */
-button {
-    background-color: var(--background-color)!important; ;
-    color: var(--text-color);
+.provider-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
 }
 
-button:hover, nav a:hover {
-    background-color: var(--primary-color);
+.providers-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Text on white backgrounds */
-.table-header {
-    background-color: #fff;
-    color: var(--text-2-color);
+.providers-table {
+    overflow-x: auto;
 }
 
-/* Hover effects */
-.table-row:hover {
-    background-color: var(--primary-color);
-    color: var(--text-color);
+.exito {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.error {
+    background-color: #f44336;
+    color: white;
 }

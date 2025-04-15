@@ -93,9 +93,111 @@ function crearEmpleado(event) {
 }
 
 // Agregar event listener cuando el DOM esté cargado
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('empleadoForm');
-    if (form) {
-        form.addEventListener('submit', crearEmpleado);
-    }
+    const btnMostrarUsuarios = document.getElementById('btnMostrarUsuarios');
+    const searchInput = document.getElementById('searchInput');
+    
+    form.addEventListener('submit', crearEmpleado);
+    
+    // Event listener para mostrar/ocultar tabla de usuarios
+    btnMostrarUsuarios.addEventListener('click', function() {
+        const tablaUsuarios = document.getElementById('tablaUsuarios');
+        if (tablaUsuarios.style.display === 'none') {
+            tablaUsuarios.style.display = 'block';
+            cargarUsuarios();
+        } else {
+            tablaUsuarios.style.display = 'none';
+        }
+    });
+
+    // Event listener para búsqueda
+    searchInput.addEventListener('input', function() {
+        cargarUsuarios(this.value.toLowerCase());
+    });
 });
+
+// Función para cargar usuarios
+function cargarUsuarios(filtro = '') {
+    const empleados = JSON.parse(localStorage.getItem('empleadosUsuarios')) || [];
+    const tablaBody = document.getElementById('tablaBody');
+    tablaBody.innerHTML = '';
+
+    empleados.filter(empleado => 
+        empleado.nombre.toLowerCase().includes(filtro) ||
+        empleado.apellido.toLowerCase().includes(filtro) ||
+        empleado.usuario.toLowerCase().includes(filtro)
+    ).forEach(empleado => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${empleado.nombre}</td>
+            <td>${empleado.apellido}</td>
+            <td>${empleado.usuario}</td>
+            <td>
+                <span class="password-mask">****</span>
+                <button class="btn-show" onclick="togglePassword(this, '${empleado.password}')">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+            <td>${new Date(empleado.fechaCreacion).toLocaleString()}</td>
+            <td>
+                <button class="btn-action btn-edit" onclick="editarUsuario('${empleado.usuario}')">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-action btn-delete" onclick="eliminarUsuario('${empleado.usuario}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tablaBody.appendChild(tr);
+    });
+}
+
+// Función para mostrar/ocultar contraseña
+function togglePassword(button, password) {
+    const span = button.previousElementSibling;
+    if (span.textContent === '****') {
+        span.textContent = password;
+        button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+        span.textContent = '****';
+        button.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+}
+
+// Función para editar usuario
+function editarUsuario(usuario) {
+    const empleados = JSON.parse(localStorage.getItem('empleadosUsuarios')) || [];
+    const empleado = empleados.find(emp => emp.usuario === usuario);
+    
+    if (empleado) {
+        document.getElementById('nombre').value = empleado.nombre;
+        document.getElementById('apellido').value = empleado.apellido;
+        document.getElementById('usuario').value = empleado.usuario;
+        document.getElementById('password').value = empleado.password;
+        document.getElementById('confirmPassword').value = empleado.password;
+        
+        // Eliminar usuario actual (sin confirmar)
+        eliminarUsuario(usuario, false);
+        
+        // Scroll al formulario
+        document.querySelector('.form-container').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// Función para eliminar usuario
+function eliminarUsuario(usuario, confirmar = true) {
+    if (confirmar && !confirm('¿Está seguro de eliminar este usuario?')) {
+        return;
+    }
+
+    const empleados = JSON.parse(localStorage.getItem('empleadosUsuarios')) || [];
+    const empleadosFiltrados = empleados.filter(emp => emp.usuario !== usuario);
+    localStorage.setItem('empleadosUsuarios', JSON.stringify(empleadosFiltrados));
+    
+    if (confirmar) {
+        mostrarMensaje('Usuario eliminado exitosamente', 'exito');
+    }
+    
+    cargarUsuarios();
+}

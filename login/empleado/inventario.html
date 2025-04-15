@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleado</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/gestion.css">
+</head>
+<body>
+    <header>
+        <h1>INVENTARIO-BAR GALILEO</h1>
+        <a href="index.html"><h2>MENU PRINCIPAL</h2></a>
+    </header>
+    <main>
+        <section style="width: 100% !important; max-width: 800px;" >
+            <div class="buscador">
+                <label for="buscarVenta">Buscar por nombre: </label>
+                <input type="text" id="buscarVenta" name="buscarVenta" placeholder="Buscar por nombre ">
+            </div>  
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>ID Producto</th>
+                        <th>Precio</th>
+                        <th>Categoria</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-productos">
+
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script src="js/inventario.js" defer type="module" ></script>
+</body>

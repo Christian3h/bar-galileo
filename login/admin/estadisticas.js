@@ -218,7 +218,7 @@ function actualizarListaProductos() {
             listaProductos.appendChild(itemProducto);
         });
     } else {
-        listaProductos.innerHTML = '<p class="no-items">No hay productos en el inventario</p>';
+        listaProductos.innerHTML = '<p class="no-items">No hay productos en el stock</p>';
     }
 }
 
