@@ -1,0 +1,345 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--text-color);
+    color: var(--text-2-color);
+}
+
+.dashboard {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Estilos del Header */
+header {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+nav {
+    display: flex;
+    gap: 15px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.btn-nav, .btn-cerrar {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-nav {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-cerrar {
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-nav:hover, .btn-cerrar:hover, nav a:hover {
+    transform: translateY(-2px);
+    background-color: var(--primary-color);
+}
+
+/* Estilos del Formulario */
+.form-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-2-color);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.form-group input[readonly] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.calculo-info {
+    display: block;
+    color: #666;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.form-group input:focus + .calculo-info {
+    color: var(--primary-color);
+}
+
+/* Estilo para campos de solo lectura */
+input[readonly] {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+/* Estilos de los Botones */
+.botones {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-guardar {
+    background: linear-gradient(135deg, var(--success-color), #27ae60);
+    color: white;
+}
+
+.btn-cancelar {
+    background: linear-gradient(135deg, var(--error-color), #c0392b);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+/* Estilos de la Tabla */
+.table-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.table-section h2 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: var(--background-color);
+    color: white;
+    font-weight: 500;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tr:hover {
+    background-color: #f1f4f6;
+}
+
+/* Estilos para valores monetarios */
+.moneda {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+}
+
+td:nth-child(3),
+td:nth-child(5),
+td:nth-child(6),
+td:nth-child(7) {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+    text-align: right;
+}
+
+/* Estilo para las horas */
+td:nth-child(4) {
+    text-align: center;
+}
+
+/* Estilos de los Mensajes */
+.mensaje {
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.mensaje.exito {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.mensaje.error {
+    background-color: var(--error-color);
+    color: white;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dashboard {
+        padding: 10px;
+    }
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    nav {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-nav, .btn-cerrar {
+        justify-content: center;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .botones {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table-container {
+        margin: 0 -1rem;
+    }
+
+    th, td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* General background color */
+body {
+    background-color: var(--text-color);
+    color: var(--text-2-color);
+}
+
+/* Buttons and navigation */
+button, nav {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+button:hover, nav a:hover {
+    background-color: var(--primary-color);
+}
+
+/* Text on white backgrounds */
+.summary-card {
+    background-color: #fff;
+    color: var(--text-2-color);
+}
+
+/* Hover effects */
+.summary-card:hover {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+}

@@ -1,11 +1,16 @@
+/*
 :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --background-color: #ecf0f1;
+    --text-color: #2c3e50;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --success-color: #2ecc71;
     --warning-color: #f1c40f;
     --danger-color: #e74c3c;
-    --text-color: #2c3e50;
-    --background-color: #f5f6fa;
 }
-
+*/
 * {
     margin: 0;
     padding: 0;
@@ -13,10 +18,12 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: var(--text-color);
     min-height: 100vh;
+    color: var(--text-color);
 }
 
 .dashboard {
@@ -45,7 +52,28 @@ header h1 {
 nav {
     display: flex;
     gap: 1rem;
+    align-items: center;
     flex-wrap: wrap;
+    padding: 1rem;
+}
+
+.btn-nav {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-nav i {
+    margin-right: 0.5rem;
+}
+
+.btn-nav:hover {
+    background-color: var(--primary-color-dark);
 }
 
 /* Estilos base para todos los botones */
@@ -411,8 +439,14 @@ nav {
     }
 
     nav {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-nav {
         width: 100%;
         justify-content: center;
+        margin-bottom: 0.5rem;
     }
 
     .stats-container {
@@ -506,4 +540,169 @@ nav {
         padding: 0.7rem 1.2rem;
         font-size: 0.9rem;
     }
+}
+
+.title {
+    text-align: center;
+    font-size: 2em;
+    color: var(--primary-color);
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 0 10px;
+}
+
+/* Estilo especial para el segundo container (Productos y Reportes) */
+.container:nth-of-type(2) {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+.container:nth-of-type(2) .section {
+    padding: 30px;
+}
+
+.container:nth-of-type(2) .button {
+    padding: 25px 40px;
+    font-size: 1.2em;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.container:nth-of-type(2) .button:hover{
+    background-color: var(--primary-color);
+} 
+
+.container:nth-of-type(2) .button i {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-5px);
+}
+
+.button {
+    width: 100%;
+    padding: 15px 25px;
+    font-size: 1em;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+
+.logout-button{
+    background-color: var(--background-color);
+    max-width: 200px;
+    color: var(--text-color);
+    margin-top: 8px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 7px;
+    padding: 5px 10px;
+    text-decoration: none;
+    box-shadow: 0 0 10px transparent;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.5s ease-in-out;
+}
+
+.logout-button:hover {
+    background-color: var(--primary-color);
+    box-shadow: 0 0 10px var(--text-2-color);
+}
+
+
+.button:hover {
+    background-color: var(--primary-color);
+    transform: scale(1.02);
+}
+
+/* Estilos específicos para cada tipo de botón */
+.container:first-of-type .button {
+    background-color: var(--secondary-color);
+}
+
+.container:nth-of-type(2) .button {
+    background-color: var(--background-color);
+}
+
+.container:last-of-type .button {
+    background-color: var(--primary-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container:nth-of-type(2) {
+        grid-template-columns: 1fr;
+    }
+
+    .container:nth-of-type(2) .button {
+        padding: 20px 30px;
+        min-height: 100px;
+        font-size: 1.1em;
+    }
+
+    .title {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Estilos para estados activos */
+.button:active {
+    transform: scale(0.98);
+}
+
+/* Estilos para accesibilidad */
+.button:focus {
+    outline: 3px solid rgba(52, 152, 219, 0.5);
+    outline-offset: 2px;
+}
+
+/* Estilos para mensajes de carga o estado */
+.loading {
+    opacity: 0.7;
+    cursor: wait;
 }

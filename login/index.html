@@ -220,6 +220,20 @@
             console.log('Cuenta de administrador creada:', adminDefault);
         }
 
+        function crearEmpleadoPorDefecto(){
+            const empleadoDefault = {
+                nombre: 'Empleado',
+                apellido: 'Sistema',
+                email: 'admin@sistema.com',
+                usuario: 'empleado',
+                password: 'empleado',
+                isLoggedIn: 'empleado',
+                fechaCreacion: new Date().toISOString()
+            };
+            localStorage.setItem('empleadosUsuarios', JSON.stringify([empleadoDefault]));
+            console.log('Cuenta de empleado creada:', empleadoDefault);
+        }
+
         // Inicializar cuenta de administrador por defecto
         document.addEventListener('DOMContentLoaded', function() {
             // Primero crear la cuenta de administrador si no existe
@@ -228,12 +242,17 @@
                 crearAdminPorDefecto();
             }
 
+            const empeladoExistente = localStorage.getItem('empleadosUsuarios');
+            if (!empeladoExistente) {
+                crearEmpleadoPorDefecto();
+            }
+
             // Luego verificar si hay sesión activa
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'admin') {
                 window.location.href = 'admin/estadisticas.html';
             } else if (isLoggedIn === 'empleado') {
-                window.location.href = 'admin/empleados.html';
+                window.location.href = 'empleado/index.html';
             }
         });
 
@@ -291,7 +310,7 @@
             if (empleado) {
                 localStorage.setItem('isLoggedIn', 'empleado');
                 localStorage.setItem('empleadoActual', JSON.stringify(empleado));
-                window.location.href = 'admin/empleados/empleados.html';
+                window.location.href = '/../login/empleado/index.html';
             } else {
                 mostrarMensaje('Credenciales incorrectas', 'error');
             }

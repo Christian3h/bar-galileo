@@ -15,6 +15,7 @@ h2, h4, h1 {
     align-items: center;
     height: 60vh;
     background: url('../img/Chill\ vibes.jpg') no-repeat center center/cover;
+    background-attachment: fixed;
     color: var(--text-color);
     text-align: center;
 }

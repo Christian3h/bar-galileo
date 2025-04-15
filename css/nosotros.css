@@ -1,0 +1,58 @@
+body{
+    background-color: var(--text-color);
+}
+
+.header-banner{
+    background-image: url(../img/botellas.jpg);
+    height: 93dvh;
+    background-size: cover;
+    background-position: center;
+    display: grid;
+    place-content: center;
+}
+
+.banner-text p{
+    color: var(--text-color);
+    font-weight: bold;
+    text-align: center;
+    margin: 0;
+    
+}
+
+.content-container{
+    width: 80%;
+    max-width: 800px;
+    padding-top: 80px;
+    margin: auto;
+    gap: 100px;
+}
+
+.history-section{
+    margin-bottom: 90px;
+}
+
+.history-section h2 {
+    color: var(--background-color);
+    margin-bottom: 30px;
+    position: relative; 
+}
+
+.history-section h2::after {
+    content: ' ';
+    background-color: var(--background-color);
+    height: 2px;
+    width: 60%;
+    position: absolute;
+    left: 20%;
+    bottom: -10px; 
+}
+
+.history-text{
+    text-align: justify;
+    font-size: 1.3rem;
+}
+
+.highlight{
+    color: var(--primary-color);
+    font-weight: bold;
+}

@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Empleados - Bar Galileo</title>
+    <title>Gestión de Proveedores - Bar Galileo</title>
     <link rel="stylesheet" href="variables.css">
     <link rel="stylesheet" href="empleados.css">
-    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="gestion_proveedores.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="dashboard">
         <header>
-            <h1>Gestión de Empleados - Bar Galileo</h1>
+            <h1>Gestión de Proveedores - Bar Galileo</h1>
             <nav>
                 <a href="estadisticas.html" class="btn-nav">
                     <i class="fas fa-chart-bar"></i> Estadísticas
@@ -25,8 +25,8 @@
 
         <div class="main-content">
             <div class="form-section">
-                <h2><i class="fas fa-user-plus"></i> Agregar Nuevo Empleado</h2>
-                <form id="empleadoForm" class="employee-form">
+                <h2><i class="fas fa-truck"></i> Agregar Nuevo Proveedor</h2>
+                <form id="proveedorForm" class="provider-form">
                     <div class="form-group">
                         <label for="nombre">Nombre:</label>
                         <input type="text" id="nombre" name="nombre" required>
@@ -36,7 +36,7 @@
                         <input type="text" id="apellido" name="apellido" required>
                     </div>
                     <div class="form-group">
-                        <label for="cedula">Cédula:</label>
+                        <label for="cedula">Cédula/RUC:</label>
                         <input type="text" id="cedula" name="cedula" required>
                     </div>
                     <div class="form-group">
@@ -44,47 +44,47 @@
                         <input type="tel" id="telefono" name="telefono" required>
                     </div>
                     <div class="form-group">
-                        <label for="salario">Salario:</label>
-                        <input type="number" id="salario" name="salario" step="0.01" min="0" required>
+                        <label for="productos">Productos:</label>
+                        <input type="text" id="productos" name="productos" required>
                     </div>
                     <div class="form-group">
-                        <label for="cargo">Cargo:</label>
-                        <select id="cargo" name="cargo" required>
-                            <option value="">Seleccione un cargo</option>
-                            <option value="Mesero">Mesero</option>
-                            <option value="Bartender">Bartender</option>
-                            <option value="Cocinero">Cocinero</option>
-                            <option value="Cajero">Cajero</option>
-                            <option value="Seguridad">Seguridad</option>
+                        <label for="categoria">Categoría de Productos:</label>
+                        <select id="categoria" name="categoria" required>
+                            <option value="">Seleccione una categoría</option>
+                            <option value="Bebidas">Bebidas</option>
+                            <option value="Licores">Licores</option>
+                            <option value="Alimentos">Alimentos</option>
+                            <option value="Insumos">Insumos</option>
+                            <option value="Equipamiento">Equipamiento</option>
                         </select>
                     </div>
                     <button type="submit" class="btn-submit">
-                        <i class="fas fa-save"></i> Guardar Empleado
+                        <i class="fas fa-save"></i> Guardar Proveedor
                     </button>
                 </form>
             </div>
 
-            <div class="employees-section">
-                <h2><i class="fas fa-users"></i> Lista de Empleados</h2>
+            <div class="providers-section">
+                <h2><i class="fas fa-truck"></i> Lista de Proveedores</h2>
                 <div class="search-bar">
-                    <input type="text" id="searchEmployee" placeholder="Buscar empleado...">
+                    <input type="text" id="searchProvider" placeholder="Buscar proveedor...">
                     <i class="fas fa-search"></i>
                 </div>
-                <div class="employees-table">
-                    <table id="employeesTable">
+                <div class="providers-table">
+                    <table id="providersTable">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
-                                <th>Cédula</th>
+                                <th>Cédula/RUC</th>
                                 <th>Teléfono</th>
-                                <th>Salario</th>
-                                <th>Cargo</th>
+                                <th>Productos</th>
+                                <th>Categoría</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="employeesList">
-                            <!-- Los empleados se cargarán aquí dinámicamente -->
+                        <tbody id="providersList">
+                            <!-- Los proveedores se cargarán aquí dinámicamente -->
                         </tbody>
                     </table>
                 </div>
@@ -92,6 +92,6 @@
         </div>
     </div>
     <div id="mensaje" class="mensaje"></div>
-    <script src="empleados.js"></script>
+    <script src="gestion_proveedores.js"></script>
 </body>
 </html>

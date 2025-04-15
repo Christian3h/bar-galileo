@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - Bar Galileo</title>
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="productos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1><i class="fas fa-box"></i> Gestión de Productos</h1>
+            <nav>
+                <a href="estadisticas.html" class="btn-nav">
+                    <i class="fas fa-chart-bar"></i> Volver a Estadísticas
+                </a>
+            </nav>
+        </header>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2><i class="fas fa-plus-circle"></i> Agregar Nuevo Producto</h2>
+                <form id="productoForm" class="product-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="nombre">Nombre del producto:</label>
+                            <input type="text" id="nombre" name="nombre" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="categoria">Categoría:</label>
+                            <select id="categoria" name="categoria" required>
+                                <option value="">Seleccione una categoría</option>
+                                <option value="Bebidas">Bebidas</option>
+                                <option value="Licores">Licores</option>
+                                <option value="Alimentos">Alimentos</option>
+                                <option value="Insumos">Insumos</option>
+                                <option value="Equipamiento">Equipamiento</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="number" id="cantidad" name="cantidad" min="0" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="precio">Precio Unitario:</label>
+                            <div class="precio-container">
+                                <span class="precio-simbolo">$</span>
+                                <input type="number" id="precio" name="precio" min="0" step="1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> Guardar Producto
+                        </button>
+                        <button type="reset" class="btn-reset">
+                            <i class="fas fa-times"></i> Limpiar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="products-section">
+                <h2><i class="fas fa-list"></i> Lista de Productos</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchProduct" placeholder="Buscar producto...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="products-table">
+                    <table id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsList">
+                            <!-- Los productos se cargarán aquí dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mensaje" class="mensaje"></div>
+    <script src="productos.js"></script>
+</body>
+</html>

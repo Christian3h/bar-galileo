@@ -1,0 +1,26 @@
+#mensaje-container {
+    width: 100%;
+    height: 50px;
+    display: none;  /* Ahora inicia oculto */
+    place-content: center;
+    opacity: 0;  
+    transform: translateY(-10px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#mensaje {
+    color: var(--text-color);
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+}
+
+.error {
+    background-color: var(--primary-color);
+}
+
+.acierto {
+    background-color: var(--background-color);
+}
