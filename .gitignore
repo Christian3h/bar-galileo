@@ -1,0 +1,58 @@
+# Entorno virtual
+venv/
+env/
+ENV/
+.venv/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de log
+*.log
+
+# Archivos temporales del sistema
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+
+# Archivos de base de datos SQLite
+*.sqlite3
+
+# Archivos de migraciones de Django (opcional ignorarlos si los generas en equipo)
+# Puedes dejar estos si deseas compartir las migraciones
+# **/migrations/*.py
+**/migrations/__pycache__/
+
+# Archivos de compilación
+build/
+dist/
+*.egg-info/
+
+# Archivos de media (si se generan localmente)
+media/
+
+# Archivos de configuración local
+local_settings.py
+.env
+.env.*
+
+# Archivos de cobertura y pruebas
+htmlcov/
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Archivos de node/npm si usas frontend con Django
+node_modules/
