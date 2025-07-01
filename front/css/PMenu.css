@@ -1,0 +1,95 @@
+body{
+    text-align: center;
+}
+
+.banner {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    /*background: url('https://i.pinimg.com/originals/4d/0c/70/4d0c70d8c03f26dd63aa473e446e1fcf.jpg') no-repeat center center/cover;
+    */
+    background-image: url(../img/portada.jpg);
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+
+.banner h1 {
+    font-size: 48px;
+    font-weight: bold;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8);
+}
+
+.menu-section {
+    background-color: var(--text-color);
+    padding: 50px 20px;
+}
+
+h2 {
+    color: var(--text-2-color);
+    font-size: 24px;
+}
+
+#texto-productos{
+    margin-bottom: 30px;
+}
+
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 7px;
+    width: 200px;
+    text-align: center;
+    perspective: 1000px; /* Efecto 3D */
+}
+
+.card {
+    width: 100%;
+    height: 250px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+}
+
+.item:hover .card {
+    transform: rotateY(180deg); /* Gira la tarjeta */
+}
+
+.front, .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+}
+
+.front img {
+    width: 150px;
+    height: 250px;
+    object-fit: contain;
+}
+
+.back {
+    background: var(--primary-color);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    border-radius: 5px;
+    transform: rotateY(180deg);
+    font-size: 14px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}

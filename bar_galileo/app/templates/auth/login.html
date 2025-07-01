@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Iniciar Sesión{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold mb-6">Acceder</h1>
+<form method="post" class="max-w-sm mx-auto">
+    {% csrf_token %}
+    <label class="block mb-4">Usuario
+        <input type="text" name="username" class="w-full border rounded p-2" required>
+    </label>
+    <label class="block mb-6">Contraseña
+        <input type="password" name="password" class="w-full border rounded p-2" required>
+    </label>
+    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded">Entrar</button>
+</form>
+{% endblock %}
+
+
+
+
+
+

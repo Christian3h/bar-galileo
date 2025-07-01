@@ -1,0 +1,331 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--text-color);
+}
+
+.dashboard {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+header {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.btn-nav {
+    padding: 10px 20px;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-nav:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.form-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 80px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-2-color);
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.precio-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.precio-simbolo {
+    position: absolute;
+    left: 10px;
+    color: var(--primary-color);
+}
+
+.precio-container input {
+    padding-left: 25px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn-submit,
+.btn-reset {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-submit {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.btn-reset {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.products-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.search-bar {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.75rem;
+    padding-left: 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.search-bar i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.products-table {
+    margin-top: 20px;
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: var(--background-color);
+    color: white;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    padding: 1rem;
+    text-align: left;
+}
+
+td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+/* Alinear columnas de números a la derecha */
+td:nth-child(3),
+td:nth-child(4),
+td:nth-child(5) {
+    text-align: right;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Alineación de columnas */
+.text-right {
+    text-align: right;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.cantidad-col {
+    width: 100px;
+}
+
+.precio-col,
+.total-col {
+    width: 150px;
+}
+
+.acciones-col {
+    width: 100px;
+    text-align: center;
+}
+
+/* Efectos hover y estilos de fila */
+.producto-row {
+    transition: all 0.3s ease;
+}
+
+.producto-row:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Botones de acción */
+.btn-group {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-delete {
+    background-color: var(--error-color);
+    color: white;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Mensaje cuando no hay productos */
+.no-productos {
+    text-align: center;
+    padding: 3rem !important;
+    color: #666;
+}
+
+.no-productos i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #ddd;
+}
+
+.no-productos p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.mensaje {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem;
+    border-radius: 5px;
+    display: none;
+    animation: slideIn 0.3s ease;
+}
+
+.mensaje.exito {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.mensaje.error {
+    background-color: var(--error-color);
+    color: white;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .form-grid{
+        gap: 7px;
+    }
+
+    .products-table {
+        margin: 10px -15px;
+        border-radius: 0;
+    }
+
+
+    .search-bar input{
+        width: auto;
+    }
+
+    th, td {
+        padding: 0.75rem;
+    }
+
+    .btn-group {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

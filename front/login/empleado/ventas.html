@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleado</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/gestion.css">
+</head>
+<body>
+    <header>
+        <h1>VENTAS-BAR GALILEO</h1>
+        <a href="index.html"><h2>MENU PRINCIPAL</h2></a>
+    </header>
+    <main>
+        <section>
+            <form>
+                <h2>Agregar nueva venta</h2>
+                <label for="cliente">Buscar cliente</label>
+                <select name="cliente" id="cliente">
+                    <option value="jej">pepe</option>
+                </select>
+                
+                <label for="producto">Producto:</label>
+                <select name="producto" id="producto">
+                    <option value="jej">Poker</option>
+                </select>
+
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" id="cantidad" name="cantidad" required>
+
+                <button>Guardar datos</button>
+            </form>
+        </section>
+
+        <section class="lista-clientes tabla-container">
+            <h2>Lista de ventas</h2>
+            <div class="buscador">
+                <label for="buscarVenta">Buscar venta: </label>
+                <input type="text" id="buscarVenta" name="buscarVenta" placeholder="Buscar venta por nombre ">
+            </div>    
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Editar</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-ventas">
+                    <tr>
+                        <td>Juan Perez</td>
+                        <td>Putas</td>
+                        <td>Las suficientes</td>
+                        <td><button class="btn-editar">Editar</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button id="btn-limpiar">Limpiar lista</button>
+        </section>
+    </main>
+    <script src="js/venta.js" defer type="module"></script>
+</body>
