@@ -1,7 +1,0 @@
-:root {
-    --primary-color: #8B0000; /* For hover effects */
-    --background-color: #1F3B2D; /* For buttons, nav, etc. */
-    --text-2-color: #2B2B2B; /* For text on white backgrounds */
-    --text-color: #EAE0C8; /* For general background color */
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
