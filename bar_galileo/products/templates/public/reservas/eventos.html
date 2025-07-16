@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Reservar evento{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Reserva tu Evento</h1>
+    <p>Completa el formulario a continuación para reservar tu evento corporativo o celebración especial en Bar Galileo.</p>
+    <form method="post" class="mt-4 p-4 border rounded bg-light shadow-sm">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Nombre del Evento</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Fecha</label>
+            <input type="date" name="fecha" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Número de Personas</label>
+            <input type="number" name="personas" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar solicitud</button>
+    </form>
+</div>
+{% endblock %}

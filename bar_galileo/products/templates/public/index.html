@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Menú{% endblock %}
+{% block content %}
+<h1 class="text-3xl font-semibold mb-6">Nuestro Menú</h1>
+{% for cat in categorias %}
+  <h2 class="text-2xl mt-8 mb-2">{{ cat.nombre_categoria }}</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {% for item in productos %}
+          {% if item.id_categoria == cat %}
+              <article class="border p-4 rounded-xl shadow-sm">
+                  <h3 class="font-medium text-lg">{{ item.nombre_producto }}</h3>
+                  <p class="text-sm text-gray-600">{{ item.descripcion|default:'—' }}</p>
+                  <p class="mt-2 font-semibold">${{ item.precio|floatformat:0 }}</p>
+              </article>
+          {% endif %}
+      {% endfor %}
+  </div>
+{% empty %}
+  <p>No hay productos disponibles.</p>
+{% endfor %}
+{% endblock %}
