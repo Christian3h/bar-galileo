@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{#
+    Plantilla para editar productos.
+    - Muestra el formulario de edición de un producto existente.
+    - Incluye botones para guardar cambios o cancelar.
+#}
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Producto</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <a href="{% url 'productos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

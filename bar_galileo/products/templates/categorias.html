@@ -1,0 +1,95 @@
+{% comment %} {#  
+    Plantilla principal para la gestión de categorías.
+    - Permite listar, agregar, editar y eliminar categorías.
+    - Usa DataTables para mostrar la tabla y Bootstrap para el diseño.
+    - El formulario de alta se muestra al pulsar el botón 'Agregar Categoría'.
+#} {% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Categorías</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Lista de Categorías</h1>
+        <button class="btn btn-primary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#formCategoria" aria-expanded="false" aria-controls="formCategoria">
+            Agregar Categoría
+        </button>
+        <div class="collapse mb-4" id="formCategoria">
+            <div class="card card-body">
+                <form id="formCategoriaAjax" method="post" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </form>
+            </div>
+        </div>
+        <table id="tabla-categorias" class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        var tabla = $('#tabla-categorias').DataTable({
+            ajax: {
+                url: '/api/categorias/',
+                dataSrc: 'data'
+            },
+            columns: [
+                { data: 'id' },
+                { data: 'nombre_categoria' },
+                { data: 'descripcion' },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `<a href="/categorias/editar/${row.id}/" class="btn btn-sm btn-warning me-1">Editar</a>` +
+                               `<a href="/categorias/eliminar/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                    },
+                    orderable: false
+                }
+            ],
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            }
+        });
+
+        $('#formCategoriaAjax').on('submit', function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            $.ajax({
+                url: '',
+                method: 'POST',
+                data: formData,
+                success: function() {
+                    $('#formCategoria').collapse('hide');
+                    $('#formCategoriaAjax')[0].reset();
+                    tabla.ajax.reload();
+                },
+                error: function(xhr) {
+                    alert('Error al agregar categoría.');
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html>

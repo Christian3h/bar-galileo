@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Marca</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">{{ form.marca.label_tag }}{{ form.marca }}</div>
+        <div class="mb-3">{{ form.descripcion.label_tag }}{{ form.descripcion }}</div>
+        <button type="submit" class="btn btn-success">Guardar cambios</button>
+        <a href="{% url 'marcas' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

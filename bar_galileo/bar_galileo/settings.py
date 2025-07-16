@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #apps propias 
+    'core', # se encarga las paginas de inicio
     'products',
     'accounts',
     #apps necesarias para la libreria django-allauth 
@@ -68,7 +69,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                os.path.join(BASE_DIR, 'accounts', 'templates'), 
+                os.path.join(BASE_DIR, 'accounts', 'templates'),
+                os.path.join(BASE_DIR, 'products', 'templates'), 
+                os.path.join(BASE_DIR, 'core', 'templates'), 
                 ],  
         'APP_DIRS': True,
         'OPTIONS': {
