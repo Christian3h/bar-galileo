@@ -6,33 +6,12 @@ Utiliza el modelo Producto y permite crear y editar productos desde el frontend.
 from django import forms
 from .models import Producto, Categoria, Proveedor, Marca
 
+
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = [
-            'nombre',
-            'precio',
-            'precio_compra',
-            'precio_venta',
-            'stock',
-            'descripcion',
-            'id_categoria',
-            'id_proveedor',
-            'id_marca',
-            'imagen',
-        ]
-        widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'precio': forms.NumberInput(attrs={'class': 'form-control'}),
-            'precio_compra': forms.NumberInput(attrs={'class': 'form-control'}),
-            'precio_venta': forms.NumberInput(attrs={'class': 'form-control'}),
-            'stock': forms.NumberInput(attrs={'class': 'form-control'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'id_categoria': forms.Select(attrs={'class': 'form-control'}),
-            'id_proveedor': forms.Select(attrs={'class': 'form-control'}),
-            'id_marca': forms.Select(attrs={'class': 'form-control'}),
-            # El widget de imagen se maneja automáticamente
-        }
+        fields = ['nombre', 'precio', 'precio_compra', 'precio_venta', 'stock', 'descripcion', 'id_categoria', 'id_proveedor', 'id_marca']
+        widgets = {campo: forms.TextInput(attrs={'class': 'form-control'}) for campo in ['nombre']}
 
 class CategoriaForm(forms.ModelForm):
     class Meta:
