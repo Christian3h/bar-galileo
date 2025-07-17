@@ -1,7 +1,4 @@
 # Entorno virtual
-venv/
-env/
-ENV/
 .venv/
 
 # Archivos de Python
@@ -56,3 +53,5 @@ coverage.xml
 
 # Archivos de node/npm si usas frontend con Django
 node_modules/
+
+secret-google.json
