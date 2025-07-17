@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'core', # se encarga las paginas de inicio
     'products',
     'accounts',
+    'tables',
     #apps necesarias para la libreria django-allauth 
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',

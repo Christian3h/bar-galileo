@@ -5,7 +5,9 @@ Define las URLs para vistas públicas, autenticación y CRUD de productos.
 
 from django.urls import path
 from . import views
-from . import views_api  # Asegúrate de importar views_api si es necesario
+from . import views_api  
+from .views import EliminarImagenProductoView
+
 
 urlpatterns = [
     # path("", views.IndexView.as_view(), name="index"),  # Página principal
@@ -32,6 +34,8 @@ urlpatterns = [
     path("marcas/", views.MarcasView.as_view(), name="marcas"),  # Listado y alta de marcas
     path("marcas/editar/<int:pk>/", views.MarcaUpdateView.as_view(), name="marca_editar"),  # Editar marca
     path("marcas/eliminar/<int:pk>/", views.MarcaDeleteView.as_view(), name="marca_eliminar"),  # Eliminar marca
+    path("productos/imagen/eliminar/<int:pk>/", EliminarImagenProductoView.as_view(), name="producto_imagen_eliminar"),
+
 ]
 
 
