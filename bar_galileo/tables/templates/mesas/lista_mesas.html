@@ -88,7 +88,13 @@
 </head>
 <body class="container mt-4">
 
+
     <h2>Mesas</h2>
+
+    <!-- Barra de búsqueda -->
+    <div class="mb-3">
+        <input type="text" id="busquedaMesas" class="form-control" placeholder="Buscar por nombre, descripción o estado..." onkeyup="filtrarMesas()">
+    </div>
 
     <!-- Mensajes -->
     {% if messages %}
@@ -106,7 +112,7 @@
     <!-- Tarjetas tipo grid -->
     <div class="mesas-container">
         {% for mesa in mesas %}
-            <div class="mesa-card {{ mesa.estado|slugify }}">
+            <div class="mesa-card {{ mesa.estado|slugify }}" data-nombre="{{ mesa.nombre|lower }}" data-descripcion="{{ mesa.descripcion|lower }}" data-estado="{{ mesa.estado|lower }}">
                 <!-- Nombre y Descripción -->
                 <div>
                     <div class="mesa-nombre" id="ver_nombre_{{ mesa.id }}">{{ mesa.nombre }}</div>
@@ -147,5 +153,27 @@
         {% endfor %}
     </div>
 
+</body>
+<script>
+    function filtrarMesas() {
+        var input = document.getElementById('busquedaMesas');
+        var filtro = input.value.toLowerCase();
+        var tarjetas = document.getElementsByClassName('mesa-card');
+        for (var i = 0; i < tarjetas.length; i++) {
+            var nombre = tarjetas[i].getAttribute('data-nombre');
+            var descripcion = tarjetas[i].getAttribute('data-descripcion');
+            var estado = tarjetas[i].getAttribute('data-estado');
+            if (
+                nombre.includes(filtro) ||
+                descripcion.includes(filtro) ||
+                estado.includes(filtro)
+            ) {
+                tarjetas[i].style.display = '';
+            } else {
+                tarjetas[i].style.display = 'none';
+            }
+        }
+    }
+</script>
 </body>
 </html>
