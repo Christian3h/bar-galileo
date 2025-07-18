@@ -45,7 +45,7 @@ class EliminarImagenProductoView(View):
         producto_id = imagen.producto.id_producto
 
         # Eliminar el archivo físico
-        path = os.path.join(settings.MEDIA_ROOT, str(imagen.imagen))
+        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
         if os.path.isfile(path):
             os.remove(path)
 
@@ -94,9 +94,27 @@ class ProductoUpdateView(UpdateView):
 
     def form_valid(self, form):
         producto = form.save()
-        for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
-            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
+
+        # Obtener el índice más alto de las imágenes actuales
+        imagenes_existentes = ProductoImagen.objects.filter(producto=producto).values_list('imagen', flat=True)
+        indices = []
+        for ruta in imagenes_existentes:
+            # Extraer el número después del guión bajo "_"
+            nombre_archivo = os.path.basename(ruta)  # ej: 1_0.webp
+            try:
+                indice = int(nombre_archivo.split('_')[-1].split('.')[0])
+                indices.append(indice)
+            except (IndexError, ValueError):
+                continue
+
+        siguiente_indice = max(indices) + 1 if indices else 0
+
+        # Guardar nuevas imágenes con índice correcto
+        for imagen in self.request.FILES.getlist('imagenes'):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{siguiente_indice}")
             ProductoImagen.objects.create(producto=producto, imagen=ruta)
+            siguiente_indice += 1  # incrementar para la siguiente imagen
+
         messages.success(self.request, "Producto actualizado correctamente.")
         return super().form_valid(form)
 
