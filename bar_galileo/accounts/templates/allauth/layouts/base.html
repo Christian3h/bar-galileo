@@ -37,7 +37,7 @@
 
                     {% if user.is_authenticated %}
                         <li> 
-                            <a href="{% url 'home' %}"> inicio </a>
+                            <a href="{% url 'index' %}"> inicio </a>
                         </li>
                         {% url 'account_email' as email_url_ %}
                         {% if email_url_ %}
