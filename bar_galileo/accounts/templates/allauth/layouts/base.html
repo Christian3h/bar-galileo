@@ -1,9 +1,12 @@
 {% load i18n %}
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
         <title>
             {% block head_title %}
             {% endblock head_title %}
@@ -14,17 +17,28 @@
     <body>
         {% block body %}
             {% if messages %}
-                <div>
-                    <strong>{% trans "Messages:" %}</strong>
+                <div class = "container-messages" >
                     <ul>
-                        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+                        {% for message in messages %}
+                        <li class="alert-message">
+                            <span class="message-text">{{ message }}</span>
+                            <button class="close-btn" onclick="this.parentElement.remove()">×</button>
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
             {% endif %}
-            <div>
-                <strong>{% trans "Menu:" %}</strong>
-                <ul>
+            <div class="container-menu">
+                <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+                <a href="/" class="logo">
+                    <img src="{% static 'img/vive-natural/icon/android-chrome-512x512.png' %}" width="40" height="40" class="logo">
+                </a>
+                <ul  id="menu-items" >
+
                     {% if user.is_authenticated %}
+                        <li> 
+                            <a href="{% url 'home' %}"> inicio </a>
+                        </li>
                         {% url 'account_email' as email_url_ %}
                         {% if email_url_ %}
                             <li>
@@ -83,4 +97,16 @@
         {% block extra_body %}
         {% endblock extra_body %}
     </body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const toggle = document.getElementById("menu-toggle");
+          const menu = document.getElementById("menu-items");
+      
+          if (toggle && menu) {
+            toggle.addEventListener("click", function () {
+              menu.classList.toggle("show");
+            });
+          }
+        });
+      </script>
 </html>

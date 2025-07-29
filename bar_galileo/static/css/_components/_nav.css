@@ -1,0 +1,145 @@
+/* ========== NAVIGATION STYLES ========== */
+
+/* ----- Estructura general del nav ----- */
+.nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: transparent;
+  transition: background 0.3s;
+  z-index: 1000;
+}
+
+/* Nav con scroll: fondo blanco y sombra */
+.nav.scrolled {
+  background: var(--color-secondary);
+  box-shadow: 0 2px 8px var(--color-shadow);
+}
+
+/* ----- Logo ----- */
+.logo {
+  font-weight: 600;
+  font-size: 1.25rem;
+  text-decoration: none;
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ----- Botón hamburguesa (solo móvil) ----- */
+.menu-toggle {
+  display: none; /* Solo visible en móvil */
+  font-size: 2.8rem;
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  z-index: 1001;
+  padding: 0.5rem 1rem;
+  line-height: 1;
+}
+
+/* ----- Contenedor de enlaces ----- */
+nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+/* ----- Enlaces de navegación ----- */
+nav a {
+  color: var(--color-dark);
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  position: relative;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* ----- Carrito de compras ----- */
+#carrito {
+  position: relative;
+}
+
+#carrito-cantidad {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  border-radius: 50%;
+  font-size: 0.75em;
+  padding: 0.15em 0.5em;
+  position: absolute;
+  top: -0.7em;
+  right: -1em;
+  width: 20px;
+  height: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Responsivo: mostrar solo en móvil */
+@media (max-width: 950px) {
+  .menu-toggle {
+    display: block;
+  }
+}
+
+
+/* ========== RESPONSIVE: MENÚ MÓVIL ========== */
+@media (max-width: 950px) {
+
+  /* Mostrar el botón hamburguesa */
+  .menu-toggle {
+    display: block;
+  }
+
+  /* Estilos del menú abierto (pantalla completa) */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    width: 100vw;
+    background-color: var(--color-secondary);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    z-index: 1000;
+  }
+
+  /* Mostrar el menú */
+  nav.open {
+    transform: translateX(0);
+  }
+
+  /* Hacer los enlaces grandes y fáciles de tocar */
+  nav a {
+    font-size: 1.5rem;
+    padding: 1rem 2rem;
+    width: 100%;
+    text-align: center;
+    justify-content: center
+
+
+  }
+
+  /* Desactivar scroll cuando el menú está abierto */
+  body.no-scroll {
+    overflow: hidden;
+  }
+}
