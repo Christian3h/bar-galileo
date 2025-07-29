@@ -1,3 +1,5 @@
+
+
 /* =======================================
    RESET + VARIABLES + COMPONENTES
 ======================================= */
@@ -10,6 +12,8 @@
    BASE
 ======================================= */
 /* Este aplica a toda la página */
+
+
 body {
     display: flex;
     margin: 0;
@@ -18,7 +22,28 @@ body {
     width: 100%;
 }
 
+@view-transition{
+  navigation: auto;
+}
 
+::view-transition-group(*){
+  animation-duration: .5s;
+}
+
+/* ::view-transition-old(root) {
+  animation: slide-up-fast .3s ease-out forwards;
+}
+
+@keyframes slide-up-fast {
+  from {
+    transform: translateY(100%);
+    
+  }
+  to {
+    transform: translateY(0);
+   
+  }
+} */
 .dashboard-container {
   width: 100%;
   padding: 2rem 3rem;
