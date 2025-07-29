@@ -23,10 +23,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('products.urls')),
-    path('', include('core.urls')),   
-    path('', include('tables.urls')),
-    path('dashboard/', include('admin_dashboard.urls')),
+    path('', include(('products.urls', 'products'), namespace='products')),
+    path('', include(('core.urls', 'core'), namespace='core')),
+    path('', include(('tables.urls', 'tables'), namespace='tables')),
+    path('dashboard/', include(('admin_dashboard.urls', 'admin_dashboard'), namespace='admin_dashboard')),
 ]
 
 if settings.DEBUG:

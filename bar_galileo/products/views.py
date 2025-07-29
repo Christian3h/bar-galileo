@@ -7,7 +7,7 @@
 #
 # Cada clase y método está documentado para facilitar el mantenimiento y la extensión del sistema.
 
-from django.views.generic import TemplateView, View, UpdateView, DeleteView
+from django.views.generic import TemplateView, View, UpdateView, DeleteView, CreateView
 from django.http import JsonResponse
 from django.contrib import messages
 from django.conf import settings
@@ -27,7 +27,6 @@ class ProductosJsonView(View):
             data.append({
                 'id': producto.id_producto,
                 'nombre': producto.nombre,
-                'precio': str(producto.precio),
                 'precio_compra': str(producto.precio_compra or ''),
                 'precio_venta': str(producto.precio_venta or ''),
                 'stock': producto.stock or '',
@@ -39,20 +38,7 @@ class ProductosJsonView(View):
             })
         return JsonResponse({'data': data})
 
-class EliminarImagenProductoView(View):
-    def post(self, request, pk):
-        imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
-        producto_id = imagen.producto.id_producto
 
-        # Eliminar el archivo físico
-        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
-        if os.path.isfile(path):
-            os.remove(path)
-
-        imagen.delete()
-
-        # Redirige a la lista o edición del producto
-        return redirect('productos')
     
 class ProductosView(TemplateView):
     template_name = "productos.html"
@@ -287,6 +273,21 @@ class MarcasView(TemplateView):
         context = self.get_context_data(**kwargs)
         context["form"] = form
         return self.render_to_response(context)
+    
+class EliminarImagenProductoView(View):
+    def post(self, request, pk):
+        imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
+        producto_id = imagen.producto.id_producto
+
+        # Eliminar el archivo físico
+        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
+        if os.path.isfile(path):
+            os.remove(path)
+
+        imagen.delete()
+
+        # Redirige a la lista o edición del producto
+        return redirect('products:products_edit_admin', pk=producto_id)
 
 class MarcaUpdateView(UpdateView):
     """
@@ -322,3 +323,112 @@ class MarcaDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Marca eliminada correctamente.")
         return super().delete(request, *args, **kwargs)
+    
+    
+    
+    
+class ProductosAdminView(TemplateView):
+    template_name = "admin/products.html"
+
+class ProductoCreateAdminView(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = "admin/products_form.html"
+    success_url = reverse_lazy("products:products_admin")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        context["imagenes"] = []
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)  # Guarda el producto
+        producto = self.object  # Ahora sí existe self.object
+
+        for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
+            ProductoImagen.objects.create(producto=producto, imagen=ruta)
+
+        messages.success(self.request, "Producto creado correctamente.")
+        return response
+
+
+class ProductoUpdateAdminView(UpdateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = "admin/products_form.html"
+    success_url = reverse_lazy("products:products_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        context["imagenes"] = ProductoImagen.objects.filter(producto=self.object)
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        producto = self.object
+
+        # Obtener índice más alto de imágenes existentes
+        imagenes_existentes = ProductoImagen.objects.filter(producto=producto).values_list('imagen', flat=True)
+        indices = []
+        for ruta in imagenes_existentes:
+            nombre_archivo = os.path.basename(ruta)
+            try:
+                indice = int(nombre_archivo.split('_')[-1].split('.')[0])
+                indices.append(indice)
+            except (IndexError, ValueError):
+                continue
+
+        siguiente_indice = max(indices) + 1 if indices else 0
+
+        # Guardar nuevas imágenes
+        for imagen in self.request.FILES.getlist('imagenes'):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{siguiente_indice}")
+            ProductoImagen.objects.create(producto=producto, imagen=ruta)
+            siguiente_indice += 1
+
+        messages.success(self.request, "Producto actualizado correctamente.")
+        return response
+
+class ProductoDeleteAdminView(DeleteView):
+    model = Producto
+    template_name = "admin/products_delete.html"
+    success_url = reverse_lazy("productos")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        producto = self.get_object()
+        imagenes = ProductoImagen.objects.filter(producto=producto)
+        for imagen in imagenes:
+            path = os.path.join(settings.BASE_DIR, 'static', imagen.imagen)
+            if os.path.exists(path):
+                os.remove(path)
+        imagenes.delete()
+        producto.delete()
+        messages.success(request, "Producto eliminado correctamente.")
+        return redirect(self.success_url)
+
+
+class EliminarImagenProductoAdminView(View):
+    def post(self, request, pk):
+        imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
+        producto_id = imagen.producto.id_producto
+
+        # Eliminar el archivo físico
+        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
+        if os.path.isfile(path):
+            os.remove(path)
+
+        imagen.delete()
+
+        # Redirige a la lista o edición del producto
+        return redirect('products:products_edit_admin', pk=producto_id)

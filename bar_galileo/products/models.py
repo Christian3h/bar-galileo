@@ -95,15 +95,13 @@ class Proveedor(models.Model):
     def __str__(self):
         return self.nombre
 
-# MODELO PRODUCTO
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
-    precio_compra = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    precio_venta = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    stock = models.IntegerField(null=True, blank=True)
-    descripcion = models.TextField(null=True, blank=True)
+    nombre = models.CharField(max_length=100, unique=True)
+    precio_compra = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
+    stock = models.IntegerField(default=0)
+    descripcion = models.TextField(blank=True)
     id_categoria = models.ForeignKey('Categoria', on_delete=models.SET_NULL, null=True, blank=True)
     id_proveedor = models.ForeignKey('Proveedor', on_delete=models.SET_NULL, null=True, blank=True)
     id_marca = models.ForeignKey('Marca', on_delete=models.SET_NULL, null=True, blank=True)
@@ -113,6 +111,25 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def clean(self):
+        # Validar que el nombre no esté vacío
+        if not self.nombre or not self.nombre.strip():
+            raise ValidationError({'nombre': 'El nombre no puede estar vacío.'})
+
+        # Validar que el precio de venta sea mayor que el de compra
+        if self.precio_venta <= self.precio_compra:
+            raise ValidationError({
+                'precio_venta': 'El precio de venta debe ser mayor que el de compra.'
+            })
+
+        # Validar que el stock no sea negativo
+        if self.stock is not None and self.stock < 0:
+            raise ValidationError({'stock': 'El stock no puede ser negativo.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Ejecuta las validaciones antes de guardar
+        super().save(*args, **kwargs)
 
 # MODELO PARA IMÁGENES
 class ProductoImagen(models.Model):

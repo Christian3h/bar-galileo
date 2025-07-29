@@ -1,0 +1,78 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Lista de Productos</h1>
+        <!-- Botón para mostrar el formulario -->
+        <table id="tabla-productos" class="">
+            <thead class="">
+                <tr>
+                    <th>ID</th>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Precio Compra</th>
+                    <th>Precio Venta</th>
+                    <th>Stock</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Proveedor</th>
+                    <th>Marca</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Inicializa la tabla de productos usando DataTables y carga los datos vía AJAX
+    $(document).ready(function() {
+        $('#tabla-productos').DataTable({
+            "ajax": {
+                "url": "/api/productos/",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { "data": "id" },
+                { 
+                    data: "imagen_url",
+                    render: function(data, type, row) {
+                        console.log(data);
+
+                        if (data) {
+                            return `<img src="${data}" alt="Imagen" style="max-width:60px;max-height:60px;">`;
+                        } else {
+                            return "Sin imagen";
+                        }
+                    },
+                    orderable: false
+                },
+                { "data": "nombre" },
+                { "data": "precio_compra" },
+                { "data": "precio_venta" },
+                { "data": "stock" },
+                { "data": "descripcion" },
+                { "data": "categoria" },
+                { "data": "proveedor" },
+                { "data": "marca" },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> ` +
+                               `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                    },
+                    orderable: false
+                }
+            ],
+            language: {
+            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                }
+        });
+    });
+    </script>
+
+
+
+{% endblock %}

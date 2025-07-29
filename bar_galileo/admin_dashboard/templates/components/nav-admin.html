@@ -1,15 +1,17 @@
 
     <header class="layout">
         <nav class="sidebar" id="sidebar" class="sidebar expanded">
-            <h2>Bar galileo</h2>
+            <a href="{% url 'admin_dashboard:dashboard' %}">
+                <h2>Bar galileo</h2>
+            </a>
             <ul class="menu">
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('productos-submenu')">
                         Productos
                     </button>
                     <ul id="productos-submenu" class="submenu hidden">
-                        <li><a >Crear</a></li>
-                        <li><a > Listar</a></li>
+                        <li><a href="{% url 'products:products_admin' %}" >Lista productos </a></li>
+                        <li><a href="{% url 'products:products_create_admin' %}" >Crear producto </a></li>
                     </ul>
                 </li>
                  <li>
