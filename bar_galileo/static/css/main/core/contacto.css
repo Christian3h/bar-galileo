@@ -1,0 +1,127 @@
+@import '../../_resets/_resets.css';
+@import '../../_variables/_colors.css';
+@import '../../_components/_nav.css';
+@import '../../_components/_footer.css';
+@import '../../_components/_buttons.css';
+
+body {
+  background: var(--color-light);
+}
+
+main.contacto-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1rem;
+}
+
+.contacto-titulo {
+  text-align: center;
+  margin: 2.5rem 0 2rem 0;
+}
+.contacto-titulo h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+.contacto-titulo p {
+  color: var(--color-dark);
+  font-size: 1.1rem;
+}
+.contacto-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto 2rem auto;
+  justify-content: center;
+}
+.contacto-info {
+  flex: 1 1 340px;
+  min-width: 320px;
+  background: var(--color-secondary);
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 16px var(--color-shadow);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.info-item img {
+  width: 32px;
+  height: 32px;
+}
+.whatsapp-section {
+  flex: 1 1 320px;
+  min-width: 280px;
+  background: var(--color-secondary);
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 16px var(--color-shadow);
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.whatsapp-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+.whatsapp-button a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  border-radius: 2rem;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: background .2s, color .2s;
+}
+.whatsapp-button a:hover {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+}
+.whatsapp-button img {
+  width: 32px;
+  height: 32px;
+}
+.whatsapp-info {
+  font-size: 1rem;
+  color: var(--color-dark);
+  margin-top: 0.5rem;
+}
+.whatsapp-horario {
+  font-size: 0.95rem;
+  color: var(--color-gray);
+}
+@media (max-width: 900px) {
+
+  main.contacto-container {
+    margin-top: 10dvh;
+  }
+
+
+  .contacto-grid {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .contacto-info, .whatsapp-section {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
