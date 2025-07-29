@@ -1,0 +1,132 @@
+/* =======================================
+   RESET + VARIABLES + COMPONENTES
+======================================= */
+@import '../../_resets/_resets.css';
+@import '../../_variables/_colors.css';
+@import '../../_components/_buttons.css';
+@import '../../_components/_nav_admin.css';
+
+/* =======================================
+   BASE
+======================================= */
+/* Este aplica a toda la página */
+body {
+    display: flex;
+    margin: 0;
+    font-family: sans-serif;
+    height: 100vh;
+    width: 100%;
+}
+
+
+.dashboard-container {
+  width: 100%;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
+  background-color: var(--color-light);
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--color-primary);
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.card {
+  background: var(--color-secondary);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-shadow);
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-dark);
+}
+
+.card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--color-accent);
+}
+
+.dashboard-charts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.chart-box {
+  background: var(--color-secondary);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--color-shadow);
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 300px;
+}
+
+.chart-box h4 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--color-dark);
+}
+
+.dummy-chart {
+  height: 200px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-light), #e8f5e9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-gray);
+  font-size: 0.9rem;
+}
+
+
+@media (max-width: 768px) {
+  .dashboard-cards,
+  .dashboard-charts {
+    flex-direction: column;
+  }
+
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .card,
+  .chart-box {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 1.5rem;
+  }
+
+  .card h3,
+  .chart-box h4 {
+    font-size: 1rem;
+  }
+
+  .card p {
+    font-size: 1.5rem;
+  }
+}
