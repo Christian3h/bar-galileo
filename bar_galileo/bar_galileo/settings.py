@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'products',
     'accounts',
     'tables',
+    #app para el dashboard
+    'admin_dashboard',
     #apps necesarias para la libreria django-allauth 
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',
@@ -81,6 +83,7 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, 'accounts', 'templates'),
                 os.path.join(BASE_DIR, 'products', 'templates'), 
                 os.path.join(BASE_DIR, 'core', 'templates'), 
+                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'), 
                 ],  
         'APP_DIRS': True,
         'OPTIONS': {
