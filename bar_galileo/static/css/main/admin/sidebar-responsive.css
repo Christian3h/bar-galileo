@@ -1,0 +1,146 @@
+/* Sidebar Responsive - Solución Simple y Funcional */
+
+/* Transiciones suaves */
+.sidebar,
+.main-content {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Header del sidebar */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-brand {
+    margin: 0;
+    color: white;
+    text-align: left;
+}
+
+.sidebar-brand h4 {
+    font-weight: 700;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.sidebar-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: none;
+}
+
+.sidebar-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+/* Botón toggle */
+.sidebar-toggle {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    background: var(--color-accent);
+}
+
+/* Estado colapsado */
+.sidebar.collapsed {
+    transform: translateX(-100%);
+}
+
+.main-content.expanded {
+    margin-left: 0;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .sidebar-close {
+        display: block;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar:not(.collapsed) {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+    .sidebar-close {
+        display: none;
+    }
+    
+    .sidebar {
+        transform: none;
+        left: 0;
+    }
+    
+    .sidebar.collapsed {
+        transform: none;
+    }
+    
+    .main-content {
+        margin-left: 280px;
+    }
+    
+    .main-content.expanded {
+        margin-left: 280px;
+    }
+}
+
+/* Overlay */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (max-width: 768px) {
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+body.sidebar-open {
+    overflow: hidden;
+}

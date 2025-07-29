@@ -1,0 +1,10 @@
+/* Colores principales para el e-commerce Vive Natural */
+:root {
+  --color-primary: #2e7d32;
+  --color-secondary: #fff;
+  --color-dark: #111;
+  --color-light: #faf8f5;
+  --color-accent: #388e3c;
+  --color-gray: #555;
+  --color-shadow: rgba(0,0,0,.05);
+}
