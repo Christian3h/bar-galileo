@@ -10,7 +10,7 @@ from .models import Producto, Categoria, Proveedor, Marca
 class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
-        fields = ['nombre', 'precio', 'precio_compra', 'precio_venta', 'stock', 'descripcion', 'id_categoria', 'id_proveedor', 'id_marca']
+        fields = ['nombre', 'precio_compra', 'precio_venta', 'stock', 'descripcion', 'id_categoria', 'id_proveedor', 'id_marca']
         widgets = {campo: forms.TextInput(attrs={'class': 'form-control'}) for campo in ['nombre']}
 
 class CategoriaForm(forms.ModelForm):
