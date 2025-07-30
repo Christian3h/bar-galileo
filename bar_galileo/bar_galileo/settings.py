@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'products',
     'accounts',
     'tables',
+    'roles',
+    'users',
     #app para el dashboard
     'admin_dashboard',
     #apps necesarias para la libreria django-allauth 
@@ -66,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'roles.middleware.PermissionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
