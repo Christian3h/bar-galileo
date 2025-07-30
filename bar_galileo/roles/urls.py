@@ -1,10 +1,10 @@
 from django.urls import path
-from . import views
+from .views import RolListView, RolCreateView, RolPermisosView
 
 app_name = 'roles'
 
 urlpatterns = [
-    path('roles/', views.rol_list, name='rol_list'),
-    path('roles/crear/', views.rol_create, name='rol_create'),
-    path('roles/<int:role_id>/permisos/', views.rol_permisos, name='rol_permisos'),
+    path('', RolListView.as_view(), name='rol_list'),
+    path('crear/', RolCreateView.as_view(), name='rol_create'),
+    path('<int:role_id>/permisos/', RolPermisosView.as_view(), name='rol_permisos'),
 ]

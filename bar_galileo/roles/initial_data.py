@@ -12,6 +12,8 @@ def crear_modulos_y_acciones():
 
     modulos = get_local_apps()
     if not modulos:
-        modulos = ['productos', 'mesas', 'usuarios', 'reservas', 'proveedores']
+        modules = ['products', 'tables', 'users', 'reservations', 'suppliers', 'roles', 'categories']
     for m in modulos:
         Module.objects.get_or_create(nombre=m)
+from roles.models import Module, Action, Role
+
