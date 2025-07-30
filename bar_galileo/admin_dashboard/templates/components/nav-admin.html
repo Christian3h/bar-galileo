@@ -46,8 +46,16 @@
                         Usuarios
                     </button>
                     <ul id="usuarios-submenu" class="submenu hidden">
-                        <li><a href="#">Crear</a></li>
-                        <li><a href="#">Listar</a></li>
+                        <li><a href="{% url 'users:user_list' %}">Lista de usuarios</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('roles-submenu')">
+                        Roles y Permisos
+                    </button>
+                    <ul id="roles-submenu" class="submenu hidden">
+                        <li><a href="{% url 'roles:rol_list' %}">Lista de roles</a></li>
+                        <li><a href="{% url 'roles:rol_create' %}">Crear rol</a></li>
                     </ul>
                 </li>
                 <li>
