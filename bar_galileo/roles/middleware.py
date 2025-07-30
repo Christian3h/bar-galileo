@@ -1,6 +1,7 @@
 from django.utils.deprecation import MiddlewareMixin
 from django.http import HttpResponseForbidden
 from roles.models import Module, Action, RolePermission
+from django.http import HttpResponse
 
 class PermissionMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
@@ -21,3 +22,4 @@ class PermissionMiddleware(MiddlewareMixin):
         except Exception:
             pass
         return None
+
