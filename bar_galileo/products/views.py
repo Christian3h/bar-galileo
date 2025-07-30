@@ -325,15 +325,16 @@ class MarcaDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
     
     
-    
+
+# vistas para el dashboard de administración de productos
     
 class ProductosAdminView(TemplateView):
-    template_name = "admin/products.html"
+    template_name = "admin/products/products.html"
 
 class ProductoCreateAdminView(CreateView):
     model = Producto
     form_class = ProductoForm
-    template_name = "admin/products_form.html"
+    template_name = "admin/products/products_form.html"
     success_url = reverse_lazy("products:products_admin")
 
     def get_context_data(self, **kwargs):
@@ -353,11 +354,10 @@ class ProductoCreateAdminView(CreateView):
         messages.success(self.request, "Producto creado correctamente.")
         return response
 
-
 class ProductoUpdateAdminView(UpdateView):
     model = Producto
     form_class = ProductoForm
-    template_name = "admin/products_form.html"
+    template_name = "admin/products/products_form.html"
     success_url = reverse_lazy("products:products_admin")
     pk_url_kwarg = "pk"
 
@@ -398,7 +398,7 @@ class ProductoUpdateAdminView(UpdateView):
 
 class ProductoDeleteAdminView(DeleteView):
     model = Producto
-    template_name = "admin/products_delete.html"
+    template_name = "admin/products/products_delete.html"
     success_url = reverse_lazy("productos")
     pk_url_kwarg = "pk"
 
@@ -417,7 +417,6 @@ class ProductoDeleteAdminView(DeleteView):
         messages.success(request, "Producto eliminado correctamente.")
         return redirect(self.success_url)
 
-
 class EliminarImagenProductoAdminView(View):
     def post(self, request, pk):
         imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
@@ -432,3 +431,94 @@ class EliminarImagenProductoAdminView(View):
 
         # Redirige a la lista o edición del producto
         return redirect('products:products_edit_admin', pk=producto_id)
+    
+# vistas para el dashboard de administración de cateegorías
+class ProveedoresAdminView(TemplateView):
+    template_name = "admin/proveedores/proveedores.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["proveedores"] = Proveedor.objects.all()
+        return context
+
+class ProveedorCreateAdminView(CreateView):
+    model = Proveedor
+    form_class = ProveedorForm
+    template_name = "admin/proveedores/proveedores_form.html"
+    success_url = reverse_lazy("products:proveedores_admin")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Proveedor creado correctamente.")
+        return super().form_valid(form)
+
+class ProveedorUpdateAdminView(UpdateView):
+    model = Proveedor
+    form_class = ProveedorForm
+    template_name = "admin/proveedores/proveedores_form.html"
+    success_url = reverse_lazy("products:proveedores_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Proveedor.objects.get(id_proveedor=self.kwargs.get(self.pk_url_kwarg))
+
+    def form_valid(self, form):
+        messages.success(self.request, "Proveedor actualizado correctamente.")
+        return super().form_valid(form)
+
+class ProveedorDeleteAdminView(DeleteView):
+    model = Proveedor
+    template_name = "admin/proveedores/proveedores_delete.html"
+    success_url = reverse_lazy("products:proveedores_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Proveedor.objects.get(id_proveedor=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Proveedor eliminado correctamente.")
+        return super().delete(request, *args, **kwargs)
+class CategoriasAdminView(TemplateView):
+    template_name = "admin/categories/categories.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categorias"] = Categoria.objects.all()
+        return context
+
+class CategoriaCreateAdminView(CreateView):
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = "admin/categories/categories_form.html"
+    success_url = reverse_lazy("products:categories_admin")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Categoría creada correctamente.")
+        return super().form_valid(form)
+
+class CategoriaUpdateAdminView(UpdateView):
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = "admin/categories/categories_form.html"
+    success_url = reverse_lazy("products:categories_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Categoria.objects.get(id_categoria=self.kwargs.get(self.pk_url_kwarg))
+
+    def form_valid(self, form):
+        messages.success(self.request, "Categoría actualizada correctamente.")
+        return super().form_valid(form)
+
+class CategoriaDeleteAdminView(DeleteView):
+    model = Categoria
+    template_name = "admin/categories/categories_delete.html"
+    success_url = reverse_lazy("products:categories_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Categoria.objects.get(id_categoria=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Categoría eliminada correctamente.")
+        return super().delete(request, *args, **kwargs)
+

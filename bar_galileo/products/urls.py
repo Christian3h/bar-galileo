@@ -4,6 +4,8 @@ Define las URLs para vistas públicas, autenticación y CRUD de productos.
 """
 
 from django.urls import path
+
+app_name = "products"
 from . import views
 from . import views_api  
 from .views import EliminarImagenProductoView
@@ -41,9 +43,19 @@ urlpatterns = [
     path('adminD/products/', views.ProductosAdminView.as_view(), name='products_admin'),
     path('adminD/products/create/', views.ProductoCreateAdminView.as_view(), name='products_create_admin'),
     path('adminD/products/update/<int:pk>/', views.ProductoUpdateAdminView.as_view(), name='products_edit_admin'),
-    path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),  # Eliminar producto
+    path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),  
     path("adminD/products_img/delete/<int:pk>/", views.EliminarImagenProductoAdminView.as_view(), name="producto_imagen_eliminar"),
-
+    
+    #### rutas para el dashboard de las categorías
+    path('adminD/categories/', views.CategoriasAdminView.as_view(), name='categories_admin'),
+    path('adminD/categories/create/', views.CategoriaCreateAdminView.as_view(), name='categories_create_admin'),
+    path('adminD/categories/update/<int:pk>/', views.CategoriaUpdateAdminView.as_view(), name='categories_edit_admin'),
+    path('adminD/categories/delete/<int:pk>/', views.CategoriaDeleteAdminView.as_view(), name='categories_delete_admin'),
+    #### rutas para el dashboard de los proveedores
+    path('adminD/proveedores/', views.ProveedoresAdminView.as_view(), name='proveedores_admin'),
+    path('adminD/proveedores/create/', views.ProveedorCreateAdminView.as_view(), name='proveedores_create_admin'),
+    path('adminD/proveedores/update/<int:pk>/', views.ProveedorUpdateAdminView.as_view(), name='proveedores_edit_admin'),
+    path('adminD/proveedores/delete/<int:pk>/', views.ProveedorDeleteAdminView.as_view(), name='proveedores_delete_admin'),
 ]
 
 

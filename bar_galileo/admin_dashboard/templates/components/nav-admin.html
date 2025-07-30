@@ -10,17 +10,35 @@
                         Productos
                     </button>
                     <ul id="productos-submenu" class="submenu hidden">
-                        <li><a href="{% url 'products:products_admin' %}" >Lista productos </a></li>
+                        <li><a href="{% url 'products:products_admin' %}" >Lista de productos </a></li>
                         <li><a href="{% url 'products:products_create_admin' %}" >Crear producto </a></li>
                     </ul>
                 </li>
+               <li>
+                    <button class="menu-btn" onclick="toggleMenu('categorias-submenu')">
+                        Categorías
+                    </button>
+                    <ul id="categorias-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:categories_admin' %}">Lista de categorías</a></li>
+                        <li><a href="{% url 'products:categories_create_admin' %}">Crear categoría</a></li>
+                    </ul>
+                </li>
+               <li>
+                    <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">
+                        Proveedores
+                    </button>
+                    <ul id="Proveedores-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:proveedores_create_admin' %}">Crear proveedor</a></li>
+                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
+                    </ul>
+                </li>
+
                  <li>
                     <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">
                         Mesas
                     </button>
                     <ul id="mesas-submenu" class="submenu hidden">
-                        <li><a >Crear</a></li>
-                        <li><a > Listar</a></li>
+                        <li>Esto esta pendien por implementar </li>
                     </ul>
                 </li>
                 <li>

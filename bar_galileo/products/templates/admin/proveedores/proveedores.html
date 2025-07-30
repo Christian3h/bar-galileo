@@ -1,0 +1,52 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Lista de Proveedores</h1>
+        <table id="tabla-proveedores" class="">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Contacto</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Inicializa la tabla de proveedores usando DataTables y carga los datos vía AJAX
+    $(document).ready(function() {
+        $('#tabla-proveedores').DataTable({
+            "ajax": {
+                "url": "/api/proveedores/",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "nombre" },
+                { "data": "contacto" },
+                { "data": "telefono" },
+                { "data": "direccion" },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        return `<a href="/adminD/proveedores/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> ` +
+                               `<a href="/adminD/proveedores/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                    },
+                    orderable: false
+                }
+            ],
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
+            }
+        });
+    });
+    </script>
+{% endblock %}

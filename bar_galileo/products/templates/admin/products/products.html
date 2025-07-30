@@ -50,8 +50,24 @@
                     orderable: false
                 },
                 { "data": "nombre" },
-                { "data": "precio_compra" },
-                { "data": "precio_venta" },
+                {
+                    data: "precio_compra",
+                    render: function(data, type, row) {
+                        return new Intl.NumberFormat('es-CO', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0
+                        }).format(data);
+                    }
+                },
+                {
+                    data: "precio_venta",
+                    render: function(data, type, row) {
+                        return new Intl.NumberFormat('es-CO', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0
+                        }).format(data);
+                    }
+                },
                 { "data": "stock" },
                 { "data": "descripcion" },
                 { "data": "categoria" },
@@ -67,7 +83,7 @@
                 }
             ],
             language: {
-            url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                url: "{% static 'js/DataTables/es-ES.json' %}"
                 }
         });
     });
