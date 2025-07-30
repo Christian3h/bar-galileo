@@ -16,6 +16,9 @@ from django.shortcuts import get_object_or_404, redirect
 from .models import Categoria, Producto, Proveedor, Marca, ProductoImagen, procesar_y_guardar_imagen
 from .forms import ProductoForm, CategoriaForm, ProveedorForm, MarcaForm
 import os
+from roles.decorators import permission_required
+from django.utils.decorators import method_decorator
+
 
 class ProductosJsonView(View):
     def get(self, request):
@@ -477,6 +480,8 @@ class ProveedorDeleteAdminView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(request, "Proveedor eliminado correctamente.")
         return super().delete(request, *args, **kwargs)
+    
+@method_decorator(permission_required('products', 'ver'), name='dispatch')
 class CategoriasAdminView(TemplateView):
     template_name = "admin/categories/categories.html"
 

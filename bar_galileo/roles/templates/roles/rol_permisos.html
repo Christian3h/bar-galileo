@@ -1,0 +1,52 @@
+{% extends 'base_admin.html' %}
+{% load roles_tags %}
+{% block content %}
+<h2>Permisos para el rol: {{ role.nombre }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Módulo</th>
+                {% for accion in acciones %}
+                <th>{{ accion.nombre|title }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for modulo in modulos %}
+            <tr>
+                <td>{{ modulo.nombre|title }}</td>
+                {% for accion in acciones %}
+                <td>
+                    <input type="checkbox" name="perm_{{ modulo.id }}_{{ accion.id }}" {% if permisos_dict|get_item:modulo.id|add:'_'|add:accion.id %}checked{% endif %}>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Guardar permisos</button>
+    <a href="{% url 'roles:rol_list' %}" class="btn btn-secondary">Volver</a>
+</form>
+
+<h4>Permisos actuales para este rol</h4>
+<table class="table table-sm table-bordered">
+    <thead>
+        <tr>
+            <th>Módulo</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for key, permiso in permisos_dict.items %}
+        <tr>
+            <td>{{ permiso.modulo.nombre }}</td>
+            <td>{{ permiso.accion.nombre }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="2">Sin permisos asignados</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
