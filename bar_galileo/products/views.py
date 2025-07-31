@@ -436,6 +436,53 @@ class EliminarImagenProductoAdminView(View):
         return redirect('products:products_edit_admin', pk=producto_id)
     
 # vistas para el dashboard de administración de cateegorías
+
+# --- Brands (Marca) admin views ---
+class BrandsAdminView(TemplateView):
+    template_name = "admin/brands/brands.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["brands"] = Marca.objects.all()
+        return context
+
+class BrandCreateAdminView(CreateView):
+    model = Marca
+    form_class = MarcaForm
+    template_name = "admin/brands/brands_form.html"
+    success_url = reverse_lazy("products:brands_admin")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Brand created successfully.")
+        return super().form_valid(form)
+
+class BrandUpdateAdminView(UpdateView):
+    model = Marca
+    form_class = MarcaForm
+    template_name = "admin/brands/brands_form.html"
+    success_url = reverse_lazy("products:brands_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Marca.objects.get(id_marca=self.kwargs.get(self.pk_url_kwarg))
+
+    def form_valid(self, form):
+        messages.success(self.request, "Brand updated successfully.")
+        return super().form_valid(form)
+
+class BrandDeleteAdminView(DeleteView):
+    model = Marca
+    template_name = "admin/brands/brands_delete.html"
+    success_url = reverse_lazy("products:brands_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Marca.objects.get(id_marca=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Brand deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
 class ProveedoresAdminView(TemplateView):
     template_name = "admin/proveedores/proveedores.html"
 
