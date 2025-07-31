@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Editar Producto</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="file" name="imagenes" multiple accept="image/*" class="form-control mb-3">
+        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+        <a href="{% url 'productos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+    <hr>
+    <h4>Imágenes actuales</h4>
+    <div class="row">
+        {% for imagen in imagenes %}
+            <div class="col-md-3 mb-3">
+                <img src="{% static imagen.imagen %}" class="img-thumbnail" style="max-width:120px;">
+                <form method="post" action="{% url 'producto_imagen_eliminar' imagen.id_imagen %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger mt-2">Eliminar</button>
+                </form>
+            </div>
+        {% empty %}
+            <p>No hay imágenes para este producto.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
