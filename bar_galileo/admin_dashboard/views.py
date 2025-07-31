@@ -3,10 +3,11 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from products.models import Producto, Categoria
 from tables.models import Mesa 
+from roles.decorators import permission_required
+from django.utils.decorators import method_decorator
 
 
-# Create your views here.
-
+@method_decorator(permission_required('dashboard', 'ver'), name='dispatch')
 class DashboardView(TemplateView):
     template_name = 'dashboard.html'
 

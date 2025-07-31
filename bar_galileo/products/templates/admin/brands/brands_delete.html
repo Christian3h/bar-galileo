@@ -1,0 +1,10 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+<h1>Eliminar marca</h1>
+<p>¿Estás seguro de que deseas eliminar la marca: <strong>{{ object.marca }}</strong>?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'products:brands_admin' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

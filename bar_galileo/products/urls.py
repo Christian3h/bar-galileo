@@ -56,6 +56,12 @@ urlpatterns = [
     path('adminD/proveedores/create/', views.ProveedorCreateAdminView.as_view(), name='proveedores_create_admin'),
     path('adminD/proveedores/update/<int:pk>/', views.ProveedorUpdateAdminView.as_view(), name='proveedores_edit_admin'),
     path('adminD/proveedores/delete/<int:pk>/', views.ProveedorDeleteAdminView.as_view(), name='proveedores_delete_admin'),
+
+    #### rutas para el dashboard de brands (marcas)
+    path('adminD/brands/', views.BrandsAdminView.as_view(), name='brands_admin'),
+    path('adminD/brands/create/', views.BrandCreateAdminView.as_view(), name='brands_create_admin'),
+    path('adminD/brands/update/<int:pk>/', views.BrandUpdateAdminView.as_view(), name='brands_update_admin'),
+    path('adminD/brands/delete/<int:pk>/', views.BrandDeleteAdminView.as_view(), name='brands_delete_admin'),
 ]
 
 
