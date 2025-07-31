@@ -7,7 +7,6 @@
             <th>Username</th>
             <th>Email</th>
             <th>Rol</th>
-            <th>Acción</th>
         </tr>
     </thead>
     <tbody>
@@ -20,14 +19,20 @@
                     {% csrf_token %}
                     <select name="rol_id">
                         {% for rol in roles %}
-                        <option value="{{ rol.id }}" {% if user.userprofile and user.userprofile.rol and user.userprofile.rol.id == rol.id %}selected{% endif %}>{{ rol.nombre }}</option>
+                            <option value="{{ rol.id }}"
+                                {% if user.userprofile and user.userprofile.rol and user.userprofile.rol.id == rol.id %}
+                                    selected
+                                {% elif not user.userprofile.rol and rol.nombre|lower == 'usuario' %}
+                                    selected
+                                {% endif %}>
+                                {{ rol.nombre }}
+                            </option>
                         {% endfor %}
                     </select>
                     <input type="hidden" name="user_id" value="{{ user.id }}">
                     <button type="submit" class="btn btn-sm btn-primary">Cambiar rol</button>
                 </form>
             </td>
-            <td></td>
         </tr>
         {% endfor %}
     </tbody>

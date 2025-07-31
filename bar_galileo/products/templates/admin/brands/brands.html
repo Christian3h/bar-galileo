@@ -1,0 +1,46 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+{% load roles_tags %}
+
+<h1>Lista de marcas</h1>
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<!-- DataTables JS y jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+<table id="brands-table" class="table display">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for brand in brands %}
+        <tr>
+            <td>{{ brand.id_marca }}</td>
+            <td>{{ brand.marca }}</td>
+            <td>
+                {% if request.user|has_perm:"brands,editar" %}
+                <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning">Editar</a>
+                {% endif %}
+                {% if request.user|has_perm:"brands,eliminar" %}
+                <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger">Eliminar</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+$(document).ready(function() {
+    $('#brands-table').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+        }
+    });
+});
+</script>
+{% endblock %}
