@@ -334,6 +334,11 @@ class MarcaDeleteView(DeleteView):
 class ProductosAdminView(TemplateView):
     template_name = "admin/products/products.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["products"] = Producto.objects.all()
+        return context
+
 class ProductoCreateAdminView(CreateView):
     model = Producto
     form_class = ProductoForm
@@ -437,7 +442,6 @@ class EliminarImagenProductoAdminView(View):
     
 # vistas para el dashboard de administración de cateegorías
 
-# --- Brands (Marca) admin views ---
 class BrandsAdminView(TemplateView):
     template_name = "admin/brands/brands.html"
 
