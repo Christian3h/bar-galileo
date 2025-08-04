@@ -6,6 +6,7 @@ function toggleMenu(id) {
 }
 
 function toggleSidebar() {
+  console.log('Toggling sidebar visibility');
   const sidebar = document.getElementById('sidebar');
   if (!sidebar) return;
 
