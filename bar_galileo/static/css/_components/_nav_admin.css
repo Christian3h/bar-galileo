@@ -21,9 +21,8 @@ header{
   overflow-y: auto;
 }
 
-.sidebar.collapsed {
-  min-width: 60px;
-  max-width: 60px;
+.collapsed {
+  left: 0 !important;
 }
 
 .sidebar h2 {
@@ -112,7 +111,7 @@ header{
 
 
 /* === Responsivo === */
-@media (max-width: 768px) {
+@media (max-width: 12000px) {
   .layout {
     flex-direction: column;
   }
