@@ -326,8 +326,8 @@
                 {
                     data: null,
                     render: function(data, type, row) {
-                        return `<a href="/marcas/editar/${row.id}/" class="btn btn-sm btn-warning me-1">Editar</a>` +
-                               `<a href="/marcas/eliminar/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        return '<a href="/marcas/editar/' + row.id + '/" class="btn btn-sm btn-warning me-1">Editar</a>' +
+                               '<a href="/marcas/eliminar/' + row.id + '/" class="btn btn-sm btn-danger">Eliminar</a>';
                     },
                     orderable: false
                 }
@@ -341,32 +341,16 @@
             e.preventDefault();
             var formData = $(this).serialize();
             $.ajax({
-                url: '/marcas/',
+                url: '',
                 method: 'POST',
                 data: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", $('[name=csrfmiddlewaretoken]').val());
-                },
-                success: function(response) {
-                    if (response.success) {
-                        document.getElementById('formMarca').classList.remove('show');
-                        $('#formMarcaAjax')[0].reset();
-                        tabla.ajax.reload();
-                        alert('Marca agregada correctamente.');
-                    } else {
-                        alert('Error: ' + (response.error || 'Error desconocido'));
-                    }
+                success: function() {
+                    document.getElementById('formMarca').classList.remove('show');
+                    $('#formMarcaAjax')[0].reset();
+                    tabla.ajax.reload();
                 },
                 error: function(xhr) {
-                    try {
-                        var errorResponse = JSON.parse(xhr.responseText);
-                        alert('Error al agregar marca: ' + (errorResponse.error || xhr.statusText));
-                    } catch(e) {
-                        alert('Error al agregar marca: ' + xhr.statusText + ' (Status: ' + xhr.status + ')');
-                    }
+                    alert('Error al agregar marca.');
                 }
             });
         });
