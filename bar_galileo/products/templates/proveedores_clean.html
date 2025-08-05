@@ -1,8 +1,34 @@
+{#  
+    Plantilla principal para la gestión de proveedores.
+    - Permite listar, agregar, editar y eliminar proveedores.
+    - Usa DataTables para mostrar la tabla y CSS nativo para el diseño.
+    - El formulario de alta se muestra al pulsar el botón 'Agregar Proveedor'.
+#}
 {% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lista de Marcas</title>
+        var tabla = $('#tabla-proveedores').DataTable({
+            ajax: {
+                url: '/api/proveedores/',
+                dataSrc: 'data'
+            },
+            columns: [
+                { data: 'id' },
+                { data: 'nombre' },
+                { data: 'direccion' },
+                { data: 'telefono' },
+                { data: 'email' },
+                { data: 'contacto' },
+                {
+                    data: null,
+                    render: function(data, type, row) {
+                        return `<a href="/proveedores/editar/${row.id}/" class="btn btn-sm btn-warning me-1">Editar</a>` +
+                               `<a href="/proveedores/eliminar/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                    },
+                    orderable: false
+                }
+            ],e Proveedores</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <style>
         * {
@@ -222,29 +248,29 @@
         }
 
         /* Tabla personalizada */
-        #tabla-marcas {
+        #tabla-proveedores {
             border: 1px solid #dee2e6;
             border-radius: 8px;
             overflow: hidden;
         }
 
-        #tabla-marcas thead {
+        #tabla-proveedores thead {
             background-color: #343a40;
             color: white;
         }
 
-        #tabla-marcas th,
-        #tabla-marcas td {
+        #tabla-proveedores th,
+        #tabla-proveedores td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #dee2e6;
         }
 
-        #tabla-marcas tbody tr:hover {
+        #tabla-proveedores tbody tr:hover {
             background-color: #f8f9fa;
         }
 
-        #tabla-marcas tbody tr:nth-child(even) {
+        #tabla-proveedores tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
 
@@ -279,25 +305,27 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="my-4">Lista de Marcas</h1>
-        <button class="btn btn-primary mb-3" type="button" onclick="toggleCollapse('formMarca')">
-            Agregar Marca
+        <h1 class="my-4">Lista de Proveedores</h1>
+        <button class="btn btn-primary mb-3" type="button" onclick="toggleCollapse('formProveedor')">
+            Agregar Proveedor
         </button>
-        <div class="collapse mb-4" id="formMarca">
+        <div class="collapse mb-4" id="formProveedor">
             <div class="card card-body">
-                <form id="formMarcaAjax" method="post" action="">
+                <form id="formProveedorAjax" method="post" action="">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-success">Guardar</button>
                 </form>
             </div>
         </div>
-        <table id="tabla-marcas">
+        <table id="tabla-proveedores">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Marca</th>
-                    <th>Descripción</th>
+                    <th>Proveedor</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -314,20 +342,22 @@
     }
 
     $(document).ready(function() {
-        var tabla = $('#tabla-marcas').DataTable({
+        var tabla = $('#tabla-proveedores').DataTable({
             ajax: {
-                url: '/api/marcas/',
+                url: '/api/proveedores/',
                 dataSrc: 'data'
             },
             columns: [
                 { data: 'id' },
-                { data: 'marca' },
-                { data: 'descripcion' },
+                { data: 'proveedor' },
+                { data: 'direccion' },
+                { data: 'telefono' },
+                { data: 'email' },
                 {
                     data: null,
                     render: function(data, type, row) {
-                        return `<a href="/marcas/editar/${row.id}/" class="btn btn-sm btn-warning me-1">Editar</a>` +
-                               `<a href="/marcas/eliminar/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        return `<a href="/proveedores/editar/${row.id}/" class="btn btn-sm btn-warning me-1">Editar</a>` +
+                               `<a href="/proveedores/eliminar/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
                     },
                     orderable: false
                 }
@@ -337,36 +367,20 @@
             }
         });
 
-        $('#formMarcaAjax').on('submit', function(e) {
+        $('#formProveedorAjax').on('submit', function(e) {
             e.preventDefault();
             var formData = $(this).serialize();
             $.ajax({
-                url: '/marcas/',
+                url: '',
                 method: 'POST',
                 data: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader("X-CSRFToken", $('[name=csrfmiddlewaretoken]').val());
-                },
-                success: function(response) {
-                    if (response.success) {
-                        document.getElementById('formMarca').classList.remove('show');
-                        $('#formMarcaAjax')[0].reset();
-                        tabla.ajax.reload();
-                        alert('Marca agregada correctamente.');
-                    } else {
-                        alert('Error: ' + (response.error || 'Error desconocido'));
-                    }
+                success: function() {
+                    document.getElementById('formProveedor').classList.remove('show');
+                    $('#formProveedorAjax')[0].reset();
+                    tabla.ajax.reload();
                 },
                 error: function(xhr) {
-                    try {
-                        var errorResponse = JSON.parse(xhr.responseText);
-                        alert('Error al agregar marca: ' + (errorResponse.error || xhr.statusText));
-                    } catch(e) {
-                        alert('Error al agregar marca: ' + xhr.statusText + ' (Status: ' + xhr.status + ')');
-                    }
+                    alert('Error al agregar proveedor.');
                 }
             });
         });

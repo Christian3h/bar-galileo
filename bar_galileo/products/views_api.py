@@ -9,10 +9,10 @@ def proveedores_json(request):
     for proveedor in proveedores:
         data.append({
             'id': proveedor.id_proveedor,
-            'nombre': proveedor.nombre,
-            'contacto': proveedor.contacto,
-            'telefono': proveedor.telefono,
+            'proveedor': proveedor.nombre,  # Cambiado de 'nombre' a 'proveedor' para que coincida con la plantilla
             'direccion': proveedor.direccion,
+            'telefono': proveedor.telefono,
+            'email': proveedor.contacto,  # Usando contacto como email para la plantilla
         })
     return JsonResponse({'data': data})
 

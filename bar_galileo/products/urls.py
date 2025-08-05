@@ -35,6 +35,10 @@ urlpatterns = [
     path("marcas/editar/<int:pk>/", views.MarcaUpdateView.as_view(), name="marca_editar"),  # Editar marca
     path("marcas/eliminar/<int:pk>/", views.MarcaDeleteView.as_view(), name="marca_eliminar"),  # Eliminar marca
     path("productos/imagen/eliminar/<int:pk>/", EliminarImagenProductoView.as_view(), name="producto_imagen_eliminar"),
+    # URLs para gestión de stock
+    path("stock/", views.StockView.as_view(), name="stock"),  # Vista principal de stock
+    path("stock/actualizar/", views.actualizar_stock, name="actualizar_stock"),  # Actualizar stock
+    path('api/stock/', views.StockJsonView.as_view(), name='stock_json'),  # API stock (JSON)
 
 ]
 

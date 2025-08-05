@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Proveedores</title>
+</head>
+<body>
+    <h1>Test de Proveedores</h1>
+    <p>Si ves esto, el template funciona correctamente.</p>
+    <ul>
+    {% for proveedor in proveedores %}
+        <li>{{ proveedor.nombre }} - {{ proveedor.contacto|default:"Sin contacto" }}</li>
+    {% empty %}
+        <li>No hay proveedores registrados</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
