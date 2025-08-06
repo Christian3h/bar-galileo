@@ -222,7 +222,7 @@
             <span class="icon">⚠️</span>
             Confirmar Eliminación
         </h5>
-        <a href="{% url 'mesas_lista' %}" class="btn btn-secondary btn-sm">
+        <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary btn-sm">
             ← Volver
         </a>
     </div>
@@ -254,7 +254,7 @@
                                     <br>
                                     <small class="text-muted">Factura #{{ pedido.factura.numero }}</small>
                                     <br>
-                                    <a href="{% url 'ver_factura' pedido.factura.id %}" class="btn btn-outline-primary btn-sm mt-1">
+                                    <a href="{% url 'tables:ver_factura' pedido.factura.id %}" class="btn btn-outline-primary btn-sm mt-1">
                                         📄 Ver Factura
                                     </a>
                                 {% endif %}
@@ -299,12 +299,12 @@
 
         <div class="row">
             <div class="col-6">
-                <a href="{% url 'mesas_lista' %}" class="btn btn-secondary w-100">
+                <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary w-100">
                     ❌ Cancelar
                 </a>
             </div>
             <div class="col-6">
-                <form method="post" action="{% url 'eliminar_mesa' mesa.id %}">
+                <form method="post" action="{% url 'tables:eliminar_mesa' mesa.id %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger w-100" onclick="return confirm('¿Confirma que desea eliminar esta mesa?')">
                         🗑️ Eliminar Mesa
@@ -358,12 +358,12 @@
 
                     <div class="row">
                         <div class="col-6">
-                            <a href="{% url 'mesas_lista' %}" class="btn btn-secondary w-100">
+                            <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary w-100">
                                 <i class="fas fa-times"></i> Cancelar
                             </a>
                         </div>
                         <div class="col-6">
-                            <form method="post" action="{% url 'eliminar_mesa' mesa.id %}">
+                            <form method="post" action="{% url 'tables:eliminar_mesa' mesa.id %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-danger w-100" onclick="return confirm('¿Confirma que desea eliminar esta mesa?')">
                                     <i class="fas fa-trash"></i> Eliminar Mesa

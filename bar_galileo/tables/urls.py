@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views, views_api
 
+app_name = 'tables'
+
 urlpatterns = [
     # Rutas existentes
     path('mesas/', views.lista_mesas, name='mesas_lista'),
