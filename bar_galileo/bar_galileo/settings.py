@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     #apps propias 
     'core', # se encarga las paginas de inicio
     'products',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     'tables',
     'roles',
     'users',

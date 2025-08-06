@@ -47,25 +47,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     socket.addEventListener("open", () => {
         console.log("[DEBUG][Front] WebSocket de notificaciones conectado");
-
-        // ✅ Solo pedimos las notificaciones cuando el WebSocket ya está listo
-        fetch("/api/notificaciones/pendientes/")
-            .then(response => {
-                if (!response.ok) throw new Error("Error al obtener notificaciones");
-                return response.json();
-            })
-            .then(data => {
-                if (Array.isArray(data)) {
-                    data.forEach(notif => {
-                        if (notif.mensaje) {
-                            mostrarNotificacion(notif.mensaje);
-                        }
-                    });
-                }
-            })
-            .catch(error => {
-                console.error("[DEBUG] Error al obtener notificaciones pendientes:", error);
-            });
     });
 
     socket.addEventListener("message", (e) => {
