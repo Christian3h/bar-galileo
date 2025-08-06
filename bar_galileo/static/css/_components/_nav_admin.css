@@ -1,0 +1,141 @@
+
+header{
+    background-color: var(--color-primary);
+}
+
+
+/* === Layout Base === */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* === Sidebar === */
+.sidebar {
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
+  padding: 1rem;
+  min-width: 220px;
+  max-width: 220px;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar.collapsed {
+  min-width: 60px;
+  max-width: 60px;
+}
+
+.sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* === Sidebar Menú === */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  text-align: left;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* === Submenu Animado === */
+.submenu {
+  list-style: none;
+  padding-left: 1rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.submenu.show {
+  max-height: 200px;
+}
+
+.submenu li a {
+  display: block;
+  color: var(--color-secondary);
+  padding: 0.3rem 0;
+  text-decoration: none;
+}
+
+/* === Main Content === */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+/* === Toggle Button === */
+.toggle-sidebar-btn {
+  background: var(--color-primary);
+  color: var(--color-secondary);
+  border: none;
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  display: none;
+}
+
+/* === Efectos hover para los botones y los enlaces === */
+.menu li:hover,
+.menu li:hover > .menu-btn,
+.submenu li:hover a {
+  background-color: var(--color-accent);   /* Verde más vivo */
+  color: var(--color-secondary);
+}
+
+/* === Submenús desplegados: diferenciar visualmente los <li> === */
+.submenu.show li {
+  background-color: rgba(255, 255, 255, 0.08); /* Fondo más claro al abrir */
+  border-left: 3px solid var(--color-secondary);
+  padding-left: 0.5rem;
+}
+
+/* === Transiciones suaves === */
+.menu li,
+.menu-btn,
+.submenu li a {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+
+/* === Responsivo === */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: -220px;
+    height: 100%;
+    z-index: 999;
+    min-width: 220px;
+    max-width: 220px;
+  }
+
+  .sidebar.mobile-show {
+    left: 0;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .toggle-sidebar-btn {
+    display: inline-block;
+  }
+}
