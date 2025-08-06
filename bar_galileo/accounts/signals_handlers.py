@@ -7,13 +7,16 @@ from django.contrib import messages
 
 @receiver(user_logged_in)
 def handle_user_logged_in(sender, request, user, **kwargs):
+    print(f"[DEBUG][Signals] Signal user_logged_in received for user: {user.username}")
     """
-    Usa el framework de mensajes de Django para notificar al usuario cuando inicia sesión.
+    Notifica al usuario cuando inicia sesión.
     """
-    messages.success(request, _("¡Bienvenido de nuevo! Has iniciado sesión correctamente."))
+    mensaje = _("¡Bienvenido de nuevo! Has iniciado sesión correctamente.")
+    notificar_usuario(user, str(mensaje))
 
 @receiver(user_signed_up)
 def handle_user_signed_up(sender, request, user, **kwargs):
+    print(f"[DEBUG][Signals] Signal user_signed_up received for user: {user.username}")
     """
     Notifica al usuario cuando se registra.
     """
@@ -22,6 +25,7 @@ def handle_user_signed_up(sender, request, user, **kwargs):
 
 @receiver(password_reset)
 def handle_password_reset(sender, request, user, **kwargs):
+    print(f"[DEBUG][Signals] Signal password_reset received for user: {user.username}")
     """
     Notifica al usuario cuando su contraseña ha sido reseteada.
     """
