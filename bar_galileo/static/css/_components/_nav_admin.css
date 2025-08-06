@@ -81,7 +81,7 @@ header{
   color: var(--color-secondary);
   border: none;
   font-size: 1.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1rem;   
   margin-bottom: 1rem;
   cursor: pointer;
   display: none;
@@ -105,7 +105,8 @@ header{
 /* === Transiciones suaves === */
 .menu li,
 .menu-btn,
-.submenu li a {
+.submenu li a  {
+
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
