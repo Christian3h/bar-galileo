@@ -29,6 +29,7 @@ urlpatterns = [
     path('dashboard/', include(('admin_dashboard.urls', 'admin_dashboard'), namespace='admin_dashboard')),
     path('rol/', include(('roles.urls', 'roles'), namespace='roles')),
     path('', include(('users.urls', 'users'), namespace='users')),
+    path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
 ]
 
 if settings.DEBUG:
