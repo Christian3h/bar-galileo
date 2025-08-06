@@ -109,6 +109,37 @@ class Producto(models.Model):
     class Meta:
         db_table = 'producto'
 
+    def save(self, *args, **kwargs):
+        # Verificar si es una actualización y si el stock cambió
+        if self.pk:
+            try:
+                old_instance = Producto.objects.get(pk=self.pk)
+                stock_cambio = old_instance.stock != self.stock
+            except Producto.DoesNotExist:
+                stock_cambio = True
+        else:
+            # Es un nuevo producto
+            stock_cambio = self.stock is not None
+        
+        # Guardar el producto
+        super().save(*args, **kwargs)
+        
+        # Si el stock cambió, crear un registro en la tabla Stock
+        if stock_cambio:
+            # Importar aquí para evitar importación circular
+            from .models import Stock
+            Stock.objects.create(
+                id_producto=self,
+                cantidad=self.stock or 0
+            )
+
+    def stock_actual(self):
+        """Obtiene el stock actual desde la tabla Stock"""
+        ultimo_stock = self.stocks.order_by('-fecha_hora').first()
+        if ultimo_stock:
+            return ultimo_stock.cantidad
+        return self.stock or 0
+
     def __str__(self):
         return self.nombre
 
