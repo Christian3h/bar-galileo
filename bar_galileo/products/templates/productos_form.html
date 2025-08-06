@@ -177,10 +177,10 @@
         {% csrf_token %}
         {{ form.as_p }}
         <label for="imagenes">Añadir nuevas imágenes:</label>
-        <input type="file" name="imagenes" multiple accept="image/*" id="imagenes">
+        <input type="file" name="imagenes" multiple accept="image/*" id="imagenes" class="form-control mb-3">
         <div style="margin-top: 20px;">
             <button type="submit" class="btn btn-success">Guardar Cambios</button>
-            <a href="{% url 'productos' %}" class="btn btn-secondary">Cancelar</a>
+            <a href="{% url 'products:products_admin' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
     
@@ -190,7 +190,7 @@
             {% for imagen in imagenes %}
                 <div class="image-item">
                     <img src="{% static imagen.imagen %}" alt="Imagen del producto">
-                    <form method="post" action="{% url 'producto_imagen_eliminar' imagen.id_imagen %}">
+                    <form method="post" action="{% url 'products:producto_imagen_eliminar' imagen.id_imagen %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar esta imagen?')">
                             Eliminar
