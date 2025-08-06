@@ -15,7 +15,7 @@ class StockInline(admin.TabularInline):
 
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'precio', 'stock', 'id_categoria', 'id_proveedor', 'id_marca')
+    list_display = ('nombre', 'precio_compra', 'precio_venta', 'stock', 'id_categoria', 'id_proveedor', 'id_marca')
     list_filter = ('id_categoria', 'id_proveedor', 'id_marca')
     search_fields = ('nombre', 'descripcion')
     inlines = [ProductoImagenInline, StockInline]
