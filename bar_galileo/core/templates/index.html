@@ -10,5 +10,27 @@
     <a href="{% url 'admin_dashboard:dashboard' %}">dashboard</a>
     <br>
     <a href="/accounts/email"> login</a>
+
+    <script>
+    // Prueba de conexión WebSocket para notificaciones
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws_path = ws_scheme + '://' + window.location.host + "/ws/notificaciones/";
+    const socket = new WebSocket(ws_path);
+
+    socket.onopen = function(e) {
+        console.log("WebSocket conectado");
+        alert("WebSocket conectado correctamente");
+    };
+    socket.onmessage = function(e) {
+        console.log("Mensaje recibido:", e.data);
+        alert("Notificación: " + e.data);
+    };
+    socket.onerror = function(e) {
+        console.error("WebSocket error:", e);
+    };
+    socket.onclose = function(e) {
+        console.log("WebSocket cerrado");
+    };
+    </script>
 </body>
 </html>
