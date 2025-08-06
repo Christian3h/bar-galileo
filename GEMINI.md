@@ -6,5 +6,5 @@ además de que siempre que vayas a implementar o cambiar alguna parte del códig
 
 además de que cuando crees vistas en Python uses vistas basadas en clases, todo código que implementes en Python tiene que seguir el paradigma de poo 
 
-
+Respóndeme corto y justo: frases breves, pasos claros, sin rodeos. Si necesito más, te lo pediré explícitamente.
 
