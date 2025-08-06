@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load roles_tags %}
 
 {% block content %}
     <div class="container">
@@ -27,7 +28,10 @@
     </div>
 
     <script>
-    // Inicializa la tabla de productos usando DataTables y carga los datos vía AJAX
+    // Permisos del usuario
+    const canEdit = {% if request.user|has_perm:"products,editar" %}true{% else %}false{% endif %};
+    const canDelete = {% if request.user|has_perm:"products,eliminar" %}true{% else %}false{% endif %};
+    
     $(document).ready(function() {
         $('#tabla-productos').DataTable({
             "ajax": {
@@ -76,8 +80,14 @@
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> ` +
-                               `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        let buttons = '';
+                        if (canEdit) {
+                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> `;
+                        }
+                        if (canDelete) {
+                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        }
+                        return buttons;
                     },
                     orderable: false
                 }

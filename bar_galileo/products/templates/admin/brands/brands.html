@@ -1,13 +1,10 @@
 {% extends 'base_admin.html' %}
 {% block content %}
+{%load static%}
 {% load roles_tags %}
 
 <h1>Lista de marcas</h1>
-<!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-<!-- DataTables JS y jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
 
 <table id="brands-table" class="table display">
     <thead>
@@ -38,7 +35,7 @@
 $(document).ready(function() {
     $('#brands-table').DataTable({
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+            url: "{% static 'js/DataTables/es-ES.json' %}"
         }
     });
 });
