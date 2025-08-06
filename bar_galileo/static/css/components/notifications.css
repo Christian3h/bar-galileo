@@ -1,0 +1,69 @@
+/* =======================================
+   NOTIFICACIONES
+======================================= */
+
+.container-messages {
+  position: fixed;
+  top: 100px;
+  right: 20px; /* Cambiado a la derecha */
+  width: auto;
+  max-width: 400px;
+  z-index: 2000;
+}
+
+.alert-message {
+  position: relative;
+  padding: 1rem 2rem 1rem 1.5rem;
+  background-color: #323232; /* Color oscuro como base */
+  color: #fff;
+  border-left: 4px solid #4CAF50; /* Verde para éxito */
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards;
+}
+
+.alert-message.error {
+    border-left-color: #f44336; /* Rojo para error */
+}
+
+.alert-message.info {
+    border-left-color: #2196F3; /* Azul para info */
+}
+
+.message-text {
+    font-size: 1rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #fff;
+  line-height: 1;
+  padding-left: 1rem;
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(110%);
+    }
+}
+
+.alert-message.fade-out {
+    animation: slideOut 0.5s forwards;
+}
