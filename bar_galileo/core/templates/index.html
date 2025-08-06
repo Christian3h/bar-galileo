@@ -18,18 +18,18 @@
     const socket = new WebSocket(ws_path);
 
     socket.onopen = function(e) {
-        console.log("WebSocket conectado");
-        alert("WebSocket conectado correctamente");
+ //       console.log("WebSocket conectado");
+  //      alert("WebSocket conectado correctamente");
     };
     socket.onmessage = function(e) {
-        console.log("Mensaje recibido:", e.data);
-        alert("Notificación: " + e.data);
+    //    console.log("Mensaje recibido:", e.data);
+     //   alert("Notificación: " + e.data);
     };
     socket.onerror = function(e) {
-        console.error("WebSocket error:", e);
+      //  console.error("WebSocket error:", e);
     };
     socket.onclose = function(e) {
-        console.log("WebSocket cerrado");
+       // console.log("WebSocket cerrado");
     };
     </script>
 </body>
