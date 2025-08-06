@@ -1,90 +1,91 @@
 {% load roles_tags %}
 <header class="layout">
-    <nav id="sidebar" class="sidebar expanded">
-        <a href="{% url 'admin_dashboard:dashboard' %}">
-            <h2>Bar galileo</h2>
-        </a>
-        <ul class="menu">
-            {% if request.user|has_perm:"products,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('productos-submenu')">Productos</button>
-                <ul id="productos-submenu" class="submenu hidden">
-                    <li><a href="{% url 'products:products_admin' %}">Lista de productos</a></li>
-                    {% if request.user|has_perm:"products,crear" %}
+    <div class="header-content">
+        <nav id="sidebar" class="sidebar expanded">
+            <ul class="menu">
+                <a href="{% url 'admin_dashboard:dashboard' %}">
+                    <h2>Bar galileo</h2>
+                </a>
+                {% if request.user|has_perm:"products,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('productos-submenu')">Productos</button>
+                    <ul id="productos-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:products_admin' %}">Lista de productos</a></li>
+                        {% if request.user|has_perm:"products,crear" %}
                         <li><a href="{% url 'products:products_create_admin' %}">Crear producto</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if request.user|has_perm:"categories,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('categorias-submenu')">Categorías</button>
-                <ul id="categorias-submenu" class="submenu hidden">
-                    <li><a href="{% url 'products:categories_admin' %}">Lista de categorías</a></li>
-                    {% if request.user|has_perm:"categories,crear" %}
+                {% if request.user|has_perm:"categories,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('categorias-submenu')">Categorías</button>
+                    <ul id="categorias-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:categories_admin' %}">Lista de categorías</a></li>
+                        {% if request.user|has_perm:"categories,crear" %}
                         <li><a href="{% url 'products:categories_create_admin' %}">Crear categoría</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if request.user|has_perm:"brands,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('brands-submenu')">Marcas</button>
-                <ul id="brands-submenu" class="submenu hidden">
-                    <li><a href="{% url 'products:brands_admin' %}">Lista de Marcas</a></li>
-                    {% if request.user|has_perm:"brands,crear" %}
+                {% if request.user|has_perm:"brands,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('brands-submenu')">Marcas</button>
+                    <ul id="brands-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:brands_admin' %}">Lista de Marcas</a></li>
+                        {% if request.user|has_perm:"brands,crear" %}
                         <li><a href="{% url 'products:brands_create_admin' %}">Crear Marca</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if request.user|has_perm:"providers,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
-                <ul id="Proveedores-submenu" class="submenu hidden">
-                    {% if request.user|has_perm:"providers,crear" %}
+                {% if request.user|has_perm:"providers,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
+                    <ul id="Proveedores-submenu" class="submenu hidden">
+                        {% if request.user|has_perm:"providers,crear" %}
                         <li><a href="{% url 'products:proveedores_create_admin' %}">Crear proveedor</a></li>
-                    {% endif %}
-                    <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
-                </ul>
-            </li>
-            {% endif %}
+                        {% endif %}
+                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if request.user|has_perm:"tables,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
-                <ul id="mesas-submenu" class="submenu hidden">
-                    <li>Esto está pendiente por implementar</li>
-                </ul>
-            </li>
-            {% endif %}
+                {% if request.user|has_perm:"tables,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
+                    <ul id="mesas-submenu" class="submenu hidden">
+                        <li>Esto está pendiente por implementar</li>
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if request.user|has_perm:"users,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('usuarios-submenu')">Usuarios</button>
-                <ul id="usuarios-submenu" class="submenu hidden">
-                    <li><a href="{% url 'users:user_list' %}">Lista de usuarios</a></li>
-                </ul>
-            </li>
-            {% endif %}
+                {% if request.user|has_perm:"users,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('usuarios-submenu')">Usuarios</button>
+                    <ul id="usuarios-submenu" class="submenu hidden">
+                        <li><a href="{% url 'users:user_list' %}">Lista de usuarios</a></li>
+                    </ul>
+                </li>
+                {% endif %}
 
-            {% if request.user|has_perm:"roles,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('roles-submenu')">Roles y Permisos</button>
-                <ul id="roles-submenu" class="submenu hidden">
-                    <li><a href="{% url 'roles:rol_list' %}">Lista de roles</a></li>
-                    {% if request.user|has_perm:"roles,crear" %}
+                {% if request.user|has_perm:"roles,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('roles-submenu')">Roles y Permisos</button>
+                    <ul id="roles-submenu" class="submenu hidden">
+                        <li><a href="{% url 'roles:rol_list' %}">Lista de roles</a></li>
+                        {% if request.user|has_perm:"roles,crear" %}
                         <li><a href="{% url 'roles:rol_create' %}">Crear rol</a></li>
-                    {% endif %}
-                </ul>
-            </li>
-            {% endif %}
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
 
-            
-            <!-- {% if request.user|has_perm:"dashboard,ver" %}
+
+                <!-- {% if request.user|has_perm:"dashboard,ver" %}
             <li>
                 <button class="menu-btn" onclick="toggleMenu('ajustes-submenu')">Ajustes</button>
                 <ul id="ajustes-submenu" class="submenu hidden">
@@ -93,6 +94,6 @@
                 </ul>
             </li>
             {% endif %} -->
-        </ul>
-    </nav>
+            </ul>
+        </nav>
 </header>
