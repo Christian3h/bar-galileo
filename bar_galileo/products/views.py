@@ -331,6 +331,7 @@ class MarcaDeleteView(DeleteView):
 
 # vistas para el dashboard de administración de productos
     
+@method_decorator(permission_required('products', 'ver'), name='dispatch')
 class ProductosAdminView(TemplateView):
     template_name = "admin/products/products.html"
 
@@ -339,6 +340,7 @@ class ProductosAdminView(TemplateView):
         context["products"] = Producto.objects.all()
         return context
 
+@method_decorator(permission_required('products', 'crear'), name='dispatch')
 class ProductoCreateAdminView(CreateView):
     model = Producto
     form_class = ProductoForm
@@ -362,6 +364,7 @@ class ProductoCreateAdminView(CreateView):
         messages.success(self.request, "Producto creado correctamente.")
         return response
 
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
 class ProductoUpdateAdminView(UpdateView):
     model = Producto
     form_class = ProductoForm
@@ -404,6 +407,7 @@ class ProductoUpdateAdminView(UpdateView):
         messages.success(self.request, "Producto actualizado correctamente.")
         return response
 
+@method_decorator(permission_required('products', 'eliminar'), name='dispatch')
 class ProductoDeleteAdminView(DeleteView):
     model = Producto
     template_name = "admin/products/products_delete.html"
@@ -425,6 +429,7 @@ class ProductoDeleteAdminView(DeleteView):
         messages.success(request, "Producto eliminado correctamente.")
         return redirect(self.success_url)
 
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
 class EliminarImagenProductoAdminView(View):
     def post(self, request, pk):
         imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
@@ -440,8 +445,10 @@ class EliminarImagenProductoAdminView(View):
         # Redirige a la lista o edición del producto
         return redirect('products:products_edit_admin', pk=producto_id)
     
+# desde este comendario hacia abajo es el codigo que se utlisa en el dashboard, estas son las vistas que se tienen que proteger las otras seran desactivadas 
 # vistas para el dashboard de administración de cateegorías
 
+@method_decorator(permission_required('brands', 'ver'), name='dispatch')
 class BrandsAdminView(TemplateView):
     template_name = "admin/brands/brands.html"
 
@@ -450,6 +457,7 @@ class BrandsAdminView(TemplateView):
         context["brands"] = Marca.objects.all()
         return context
 
+@method_decorator(permission_required('brands', 'crear'), name='dispatch')
 class BrandCreateAdminView(CreateView):
     model = Marca
     form_class = MarcaForm
@@ -460,6 +468,7 @@ class BrandCreateAdminView(CreateView):
         messages.success(self.request, "Brand created successfully.")
         return super().form_valid(form)
 
+@method_decorator(permission_required('brands', 'editar'), name='dispatch')
 class BrandUpdateAdminView(UpdateView):
     model = Marca
     form_class = MarcaForm
@@ -474,6 +483,7 @@ class BrandUpdateAdminView(UpdateView):
         messages.success(self.request, "Brand updated successfully.")
         return super().form_valid(form)
 
+@method_decorator(permission_required('brands', 'eliminar'), name='dispatch')
 class BrandDeleteAdminView(DeleteView):
     model = Marca
     template_name = "admin/brands/brands_delete.html"
@@ -487,6 +497,7 @@ class BrandDeleteAdminView(DeleteView):
         messages.success(request, "Brand deleted successfully.")
         return super().delete(request, *args, **kwargs)
 
+@method_decorator(permission_required('providers', 'ver'), name='dispatch')
 class ProveedoresAdminView(TemplateView):
     template_name = "admin/proveedores/proveedores.html"
 
@@ -495,6 +506,7 @@ class ProveedoresAdminView(TemplateView):
         context["proveedores"] = Proveedor.objects.all()
         return context
 
+@method_decorator(permission_required('providers', 'crear'), name='dispatch')
 class ProveedorCreateAdminView(CreateView):
     model = Proveedor
     form_class = ProveedorForm
@@ -505,6 +517,7 @@ class ProveedorCreateAdminView(CreateView):
         messages.success(self.request, "Proveedor creado correctamente.")
         return super().form_valid(form)
 
+@method_decorator(permission_required('providers', 'editar'), name='dispatch')
 class ProveedorUpdateAdminView(UpdateView):
     model = Proveedor
     form_class = ProveedorForm
@@ -519,6 +532,7 @@ class ProveedorUpdateAdminView(UpdateView):
         messages.success(self.request, "Proveedor actualizado correctamente.")
         return super().form_valid(form)
 
+@method_decorator(permission_required('providers', 'eliminar'), name='dispatch')
 class ProveedorDeleteAdminView(DeleteView):
     model = Proveedor
     template_name = "admin/proveedores/proveedores_delete.html"
@@ -532,7 +546,7 @@ class ProveedorDeleteAdminView(DeleteView):
         messages.success(request, "Proveedor eliminado correctamente.")
         return super().delete(request, *args, **kwargs)
     
-@method_decorator(permission_required('products', 'ver'), name='dispatch')
+@method_decorator(permission_required('categories', 'ver'), name='dispatch')
 class CategoriasAdminView(TemplateView):
     template_name = "admin/categories/categories.html"
 
@@ -541,6 +555,7 @@ class CategoriasAdminView(TemplateView):
         context["categorias"] = Categoria.objects.all()
         return context
 
+@method_decorator(permission_required('categories', 'crear'), name='dispatch')
 class CategoriaCreateAdminView(CreateView):
     model = Categoria
     form_class = CategoriaForm
@@ -551,6 +566,7 @@ class CategoriaCreateAdminView(CreateView):
         messages.success(self.request, "Categoría creada correctamente.")
         return super().form_valid(form)
 
+@method_decorator(permission_required('categories', 'editar'), name='dispatch')
 class CategoriaUpdateAdminView(UpdateView):
     model = Categoria
     form_class = CategoriaForm
@@ -565,6 +581,7 @@ class CategoriaUpdateAdminView(UpdateView):
         messages.success(self.request, "Categoría actualizada correctamente.")
         return super().form_valid(form)
 
+@method_decorator(permission_required('categories', 'eliminar'), name='dispatch')
 class CategoriaDeleteAdminView(DeleteView):
     model = Categoria
     template_name = "admin/categories/categories_delete.html"
