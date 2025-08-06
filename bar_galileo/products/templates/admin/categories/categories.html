@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load roles_tags %}
 
 {% block content %}
     <div class="container">
@@ -19,6 +20,10 @@
     </div>
 
     <script>
+    // Permisos del usuario
+    const canEdit = {% if request.user|has_perm:"categories,editar" %}true{% else %}false{% endif %};
+    const canDelete = {% if request.user|has_perm:"categories,eliminar" %}true{% else %}false{% endif %};
+
     // Inicializa la tabla de categorías usando DataTables y carga los datos vía AJAX
     $(document).ready(function() {
         $('#tabla-categorias').DataTable({
@@ -33,8 +38,14 @@
                 {
                     data: null,
                     render: function (data, type, row) {
-                        return `<a href="/adminD/categories/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> ` +
-                               `<a href="/adminD/categories/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        let buttons = '';
+                        if (canEdit) {
+                            buttons += `<a href="/adminD/categories/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> `;
+                        }
+                        if (canDelete) {
+                            buttons += `<a href="/adminD/categories/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        }
+                        return buttons;
                     },
                     orderable: false
                 }
