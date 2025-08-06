@@ -244,10 +244,10 @@
         <div class="header">
             <h1>Gestión de Stock</h1>
             <div class="nav-buttons">
-                <a href="{% url 'productos' %}" class="btn btn-secondary">
+                <a href="{% url 'products:productos' %}" class="btn btn-secondary">
                     Productos
                 </a>
-                <a href="{% url 'mesas_lista' %}" class="btn btn-primary">
+                <a href="{% url 'tables:mesas_lista' %}" class="btn btn-primary">
                     Mesas
                 </a>
             </div>
@@ -311,7 +311,7 @@
                 <h3>Actualizar Stock</h3>
                 <span class="close" onclick="cerrarModal()">&times;</span>
             </div>
-            <form method="post" action="{% url 'actualizar_stock' %}">
+            <form method="post" action="{% url 'products:actualizar_stock' %}">
                 <div>
                     {% csrf_token %}
                     <input type="hidden" id="producto_id" name="producto_id">

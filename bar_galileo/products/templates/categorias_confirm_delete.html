@@ -90,7 +90,7 @@
             <p style="margin-top: 10px; font-size: 14px;">Esta acción no se puede deshacer.</p>
         </div>
         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Confirmas que deseas eliminar esta categoría?')">🗑️ Eliminar</button>
-        <a href="{% url 'categorias' %}" class="btn btn-secondary">❌ Cancelar</a>
+        <a href="{% url 'products:categorias' %}" class="btn btn-secondary">❌ Cancelar</a>
     </form>
 </div>
 {% endblock %}

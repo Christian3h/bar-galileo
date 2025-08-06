@@ -153,5 +153,5 @@ def facturar_pedido_api(request, pedido_id):
     
     return JsonResponse({
         'success': True,
-        'factura_url': reverse('ver_factura', args=[factura.id])
+        'factura_url': reverse('tables:ver_factura', args=[factura.id])
     })

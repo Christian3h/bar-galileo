@@ -79,7 +79,7 @@
         {% csrf_token %}
         <p>¿Estás seguro de que deseas eliminar el proveedor <strong>{{ object.nombre }}</strong>?</p>
         <button type="submit" class="btn btn-danger">Eliminar</button>
-        <a href="{% url 'proveedores' %}" class="btn btn-secondary">Cancelar</a>
+        <a href="{% url 'products:proveedores' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 {% endblock %}

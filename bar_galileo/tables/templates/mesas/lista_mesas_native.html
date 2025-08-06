@@ -305,7 +305,7 @@
         
         <div class="header">
             <h2>Mesas</h2>
-            <a href="{% url 'productos' %}" class="btn btn-primary">Productos</a>
+            <a href="{% url 'products:productos' %}" class="btn btn-primary">Productos</a>
         </div>
 
         <!-- Mensajes -->
@@ -319,7 +319,7 @@
             </div>
         {% endif %}
 
-        <a href="{% url 'crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px;">Crear Mesa</a>
+        <a href="{% url 'tables:crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px;">Crear Mesa</a>
 
         <!-- Tarjetas tipo grid -->
         <div class="mesas-container">
@@ -336,7 +336,7 @@
                     </div>
 
                     <!-- Estado -->
-                    <form method="post" action="{% url 'actualizar_estado' mesa.id %}">
+                    <form method="post" action="{% url 'tables:actualizar_estado' mesa.id %}">
                         {% csrf_token %}
                         <div class="input-group">
                             <select name="estado" class="form-select">
@@ -357,13 +357,13 @@
                         <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}" onclick="habilitarEdicion('{{ mesa.id }}')">
                             Editar
                         </button>
-                        <a href="{% url 'confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
+                        <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
                             Eliminar
                         </a>
                     </div>
 
                     <!-- Formulario de edición -->
-                    <form method="post" action="{% url 'editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form" style="display: none;">
+                    <form method="post" action="{% url 'tables:editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form" style="display: none;">
                         {% csrf_token %}
                         <input type="text" name="nombre" value="{{ mesa.nombre }}" required>
                         <textarea name="descripcion" rows="2" required>{{ mesa.descripcion }}</textarea>
