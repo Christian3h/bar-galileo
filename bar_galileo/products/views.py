@@ -403,7 +403,7 @@ class EliminarImagenProductoView(View):
 
         # Redirige a la lista o edición del producto
         return redirect('products:products_edit_admin', pk=producto_id)
->>>>>>> 21ef74ab584ab406be320282eedfbb5c16308a7a
+
 
 class MarcaUpdateView(UpdateView):
     """
@@ -439,7 +439,6 @@ class MarcaDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Marca eliminada correctamente.")
         return super().delete(request, *args, **kwargs)
-<<<<<<< HEAD
 
 class StockView(TemplateView):
     """
@@ -510,7 +509,6 @@ class StockJsonView(View):
             })
         
         return JsonResponse({'data': productos_stock})
-=======
     
     
 
@@ -780,4 +778,3 @@ class CategoriaDeleteAdminView(DeleteView):
         messages.success(request, "Categoría eliminada correctamente.")
         return super().delete(request, *args, **kwargs)
 
->>>>>>> 21ef74ab584ab406be320282eedfbb5c16308a7a
