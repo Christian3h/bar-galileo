@@ -22,12 +22,17 @@ Thumbs.db
 .idea/
 
 # Archivos de base de datos SQLite
- *.sqlite3
+*.sqlite3
+db.sqlite3
 
 # Archivos de migraciones de Django (opcional ignorarlos si los generas en equipo)
 # Puedes dejar estos si deseas compartir las migraciones
 # **/migrations/*.py
 **/migrations/__pycache__/
+
+# Archivos estáticos recopilados
+staticfiles/
+collected_static/
 
 # Archivos de compilación
 build/

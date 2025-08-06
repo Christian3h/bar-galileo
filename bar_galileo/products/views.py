@@ -7,7 +7,7 @@
 #
 # Cada clase y método está documentado para facilitar el mantenimiento y la extensión del sistema.
 
-from django.views.generic import TemplateView, View, UpdateView, DeleteView
+from django.views.generic import TemplateView, View, UpdateView, DeleteView, CreateView
 from django.http import JsonResponse
 from django.contrib import messages
 from django.conf import settings
@@ -17,6 +17,8 @@ from .models import Categoria, Producto, Proveedor, Marca, ProductoImagen, proce
 from .forms import ProductoForm, CategoriaForm, ProveedorForm, MarcaForm
 import os
 import logging
+from roles.decorators import permission_required
+from django.utils.decorators import method_decorator
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,6 @@ class ProductosJsonView(View):
             data.append({
                 'id': producto.id_producto,
                 'nombre': producto.nombre,
-                'precio': str(producto.precio),
                 'precio_compra': str(producto.precio_compra or ''),
                 'precio_venta': str(producto.precio_venta or ''),
                 'stock': producto.stock or 0,
@@ -48,20 +49,7 @@ class ProductosJsonView(View):
             })
         return JsonResponse({'data': data})
 
-class EliminarImagenProductoView(View):
-    def post(self, request, pk):
-        imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
-        producto_id = imagen.producto.id_producto
 
-        # Eliminar el archivo físico
-        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
-        if os.path.isfile(path):
-            os.remove(path)
-
-        imagen.delete()
-
-        # Redirige a la lista o edición del producto
-        return redirect('productos')
     
 class ProductosView(TemplateView):
     template_name = "productos.html"
@@ -401,6 +389,22 @@ class MarcasView(TemplateView):
             context["form"] = form
             return self.render_to_response(context)
 
+class EliminarImagenProductoView(View):
+    def post(self, request, pk):
+        imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
+        producto_id = imagen.producto.id_producto
+
+        # Eliminar el archivo físico
+        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
+        if os.path.isfile(path):
+            os.remove(path)
+
+        imagen.delete()
+
+        # Redirige a la lista o edición del producto
+        return redirect('products:products_edit_admin', pk=producto_id)
+>>>>>>> 21ef74ab584ab406be320282eedfbb5c16308a7a
+
 class MarcaUpdateView(UpdateView):
     """
     Vista para editar una marca existente.
@@ -435,6 +439,7 @@ class MarcaDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Marca eliminada correctamente.")
         return super().delete(request, *args, **kwargs)
+<<<<<<< HEAD
 
 class StockView(TemplateView):
     """
@@ -505,3 +510,253 @@ class StockJsonView(View):
             })
         
         return JsonResponse({'data': productos_stock})
+=======
+    
+    
+
+# vistas para el dashboard de administración de productos
+    
+class ProductosAdminView(TemplateView):
+    template_name = "admin/products/products.html"
+
+class ProductoCreateAdminView(CreateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = "admin/products/products_form.html"
+    success_url = reverse_lazy("products:products_admin")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        context["imagenes"] = []
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)  # Guarda el producto
+        producto = self.object  # Ahora sí existe self.object
+
+        for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
+            ProductoImagen.objects.create(producto=producto, imagen=ruta)
+
+        messages.success(self.request, "Producto creado correctamente.")
+        return response
+
+class ProductoUpdateAdminView(UpdateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = "admin/products/products_form.html"
+    success_url = reverse_lazy("products:products_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["productos"] = Producto.objects.all()
+        context["imagenes"] = ProductoImagen.objects.filter(producto=self.object)
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        producto = self.object
+
+        # Obtener índice más alto de imágenes existentes
+        imagenes_existentes = ProductoImagen.objects.filter(producto=producto).values_list('imagen', flat=True)
+        indices = []
+        for ruta in imagenes_existentes:
+            nombre_archivo = os.path.basename(ruta)
+            try:
+                indice = int(nombre_archivo.split('_')[-1].split('.')[0])
+                indices.append(indice)
+            except (IndexError, ValueError):
+                continue
+
+        siguiente_indice = max(indices) + 1 if indices else 0
+
+        # Guardar nuevas imágenes
+        for imagen in self.request.FILES.getlist('imagenes'):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{siguiente_indice}")
+            ProductoImagen.objects.create(producto=producto, imagen=ruta)
+            siguiente_indice += 1
+
+        messages.success(self.request, "Producto actualizado correctamente.")
+        return response
+
+class ProductoDeleteAdminView(DeleteView):
+    model = Producto
+    template_name = "admin/products/products_delete.html"
+    success_url = reverse_lazy("productos")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        producto = self.get_object()
+        imagenes = ProductoImagen.objects.filter(producto=producto)
+        for imagen in imagenes:
+            path = os.path.join(settings.BASE_DIR, 'static', imagen.imagen)
+            if os.path.exists(path):
+                os.remove(path)
+        imagenes.delete()
+        producto.delete()
+        messages.success(request, "Producto eliminado correctamente.")
+        return redirect(self.success_url)
+
+class EliminarImagenProductoAdminView(View):
+    def post(self, request, pk):
+        imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
+        producto_id = imagen.producto.id_producto
+
+        # Eliminar el archivo físico
+        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
+        if os.path.isfile(path):
+            os.remove(path)
+
+        imagen.delete()
+
+        # Redirige a la lista o edición del producto
+        return redirect('products:products_edit_admin', pk=producto_id)
+    
+# vistas para el dashboard de administración de cateegorías
+
+# --- Brands (Marca) admin views ---
+class BrandsAdminView(TemplateView):
+    template_name = "admin/brands/brands.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["brands"] = Marca.objects.all()
+        return context
+
+class BrandCreateAdminView(CreateView):
+    model = Marca
+    form_class = MarcaForm
+    template_name = "admin/brands/brands_form.html"
+    success_url = reverse_lazy("products:brands_admin")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Brand created successfully.")
+        return super().form_valid(form)
+
+class BrandUpdateAdminView(UpdateView):
+    model = Marca
+    form_class = MarcaForm
+    template_name = "admin/brands/brands_form.html"
+    success_url = reverse_lazy("products:brands_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Marca.objects.get(id_marca=self.kwargs.get(self.pk_url_kwarg))
+
+    def form_valid(self, form):
+        messages.success(self.request, "Brand updated successfully.")
+        return super().form_valid(form)
+
+class BrandDeleteAdminView(DeleteView):
+    model = Marca
+    template_name = "admin/brands/brands_delete.html"
+    success_url = reverse_lazy("products:brands_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Marca.objects.get(id_marca=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Brand deleted successfully.")
+        return super().delete(request, *args, **kwargs)
+
+class ProveedoresAdminView(TemplateView):
+    template_name = "admin/proveedores/proveedores.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["proveedores"] = Proveedor.objects.all()
+        return context
+
+class ProveedorCreateAdminView(CreateView):
+    model = Proveedor
+    form_class = ProveedorForm
+    template_name = "admin/proveedores/proveedores_form.html"
+    success_url = reverse_lazy("products:proveedores_admin")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Proveedor creado correctamente.")
+        return super().form_valid(form)
+
+class ProveedorUpdateAdminView(UpdateView):
+    model = Proveedor
+    form_class = ProveedorForm
+    template_name = "admin/proveedores/proveedores_form.html"
+    success_url = reverse_lazy("products:proveedores_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Proveedor.objects.get(id_proveedor=self.kwargs.get(self.pk_url_kwarg))
+
+    def form_valid(self, form):
+        messages.success(self.request, "Proveedor actualizado correctamente.")
+        return super().form_valid(form)
+
+class ProveedorDeleteAdminView(DeleteView):
+    model = Proveedor
+    template_name = "admin/proveedores/proveedores_delete.html"
+    success_url = reverse_lazy("products:proveedores_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Proveedor.objects.get(id_proveedor=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Proveedor eliminado correctamente.")
+        return super().delete(request, *args, **kwargs)
+    
+@method_decorator(permission_required('products', 'ver'), name='dispatch')
+class CategoriasAdminView(TemplateView):
+    template_name = "admin/categories/categories.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categorias"] = Categoria.objects.all()
+        return context
+
+class CategoriaCreateAdminView(CreateView):
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = "admin/categories/categories_form.html"
+    success_url = reverse_lazy("products:categories_admin")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Categoría creada correctamente.")
+        return super().form_valid(form)
+
+class CategoriaUpdateAdminView(UpdateView):
+    model = Categoria
+    form_class = CategoriaForm
+    template_name = "admin/categories/categories_form.html"
+    success_url = reverse_lazy("products:categories_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Categoria.objects.get(id_categoria=self.kwargs.get(self.pk_url_kwarg))
+
+    def form_valid(self, form):
+        messages.success(self.request, "Categoría actualizada correctamente.")
+        return super().form_valid(form)
+
+class CategoriaDeleteAdminView(DeleteView):
+    model = Categoria
+    template_name = "admin/categories/categories_delete.html"
+    success_url = reverse_lazy("products:categories_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Categoria.objects.get(id_categoria=self.kwargs.get(self.pk_url_kwarg))
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, "Categoría eliminada correctamente.")
+        return super().delete(request, *args, **kwargs)
+
+>>>>>>> 21ef74ab584ab406be320282eedfbb5c16308a7a

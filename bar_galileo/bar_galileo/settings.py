@@ -47,6 +47,10 @@ INSTALLED_APPS = [
     'products',
     'accounts',
     'tables',
+    'roles',
+    'users',
+    #app para el dashboard
+    'admin_dashboard',
     #apps necesarias para la libreria django-allauth 
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',
@@ -64,11 +68,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'roles.middleware.PermissionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #middleware neceasrio para la libreria django-allauth
     'allauth.account.middleware.AccountMiddleware'
 ]
 
@@ -81,6 +85,7 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, 'accounts', 'templates'),
                 os.path.join(BASE_DIR, 'products', 'templates'), 
                 os.path.join(BASE_DIR, 'core', 'templates'), 
+                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'), 
                 ],  
         'APP_DIRS': True,
         'OPTIONS': {

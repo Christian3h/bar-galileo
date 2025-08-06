@@ -3,11 +3,6 @@
     Plantilla de confirmación para eliminar productos.
     - Muestra el nombre del producto a eliminar y botones para confirmar o cancelar.
 #}
-{% extends 'base.html' %}
-{#
-    Plantilla de confirmación para eliminar productos.
-    - Muestra el nombre del producto a eliminar y botones para confirmar o cancelar.
-#}
 {% block content %}
 <style>
     .confirm-container {
@@ -100,7 +95,7 @@
             <p style="margin-top: 10px; font-size: 14px;">Esta acción no se puede deshacer.</p>
         </div>
         <button type="submit" class="btn btn-danger" onclick="return confirm('¿Confirmas que deseas eliminar este producto?')">🗑️ Eliminar</button>
-        <a href="{% url 'productos' %}" class="btn btn-secondary">❌ Cancelar</a>
+        <a href="{% url 'products:products_admin' %}" class="btn btn-secondary">❌ Cancelar</a>
     </form>
 </div>
 {% endblock %}
