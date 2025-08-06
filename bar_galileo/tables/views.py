@@ -20,7 +20,7 @@ def crear_mesa(request):
             else:
                 form.save()
                 messages.success(request, "Mesa creada exitosamente.")
-                return redirect('mesas_lista')
+                return redirect('tables:mesas_lista')
         else:
             messages.error(request, "Esta Mesa ya está registrada.")
     else:
@@ -40,7 +40,7 @@ def eliminar_mesa(request, mesa_id):
     # Si hay pedidos sin facturar, no permitir eliminar y mostrar mensaje
     if pedidos_sin_facturar.exists():
         messages.error(request, "No se puede eliminar la mesa porque tiene pedidos sin facturar. Por favor, facture todos los pedidos antes de eliminar la mesa.")
-        return redirect('confirmar_eliminar_mesa', mesa_id=mesa.id)
+        return redirect('tables:confirmar_eliminar_mesa', mesa_id=mesa.id)
 
     # Para pedidos facturados, solo quitamos la referencia a la mesa
     if pedidos_facturados.exists():
@@ -54,7 +54,7 @@ def eliminar_mesa(request, mesa_id):
         mensaje += f" Los pedidos facturados ({pedidos_facturados.count()}) se mantuvieron para registro contable."
 
     messages.success(request, mensaje)
-    return redirect('mesas_lista')
+    return redirect('tables:mesas_lista')
 
 def cambiar_estado(request, mesa_id):
     mesa = get_object_or_404(Mesa, id=mesa_id)
@@ -68,7 +68,7 @@ def cambiar_estado(request, mesa_id):
     else:
         messages.error(request, "Estado inválido.")
 
-    return redirect('mesas_lista')
+    return redirect('tables:mesas_lista')
 
 @require_POST
 def editar_mesa(request, mesa_id):
@@ -79,18 +79,18 @@ def editar_mesa(request, mesa_id):
     # Validar nombre vacío
     if not nuevo_nombre:
         messages.error(request, "El nombre de la mesa no puede estar vacío.")
-        return redirect('mesas_lista')
+        return redirect('tables:mesas_lista')
 
     # Validar nombre duplicado (excepto la misma mesa)
     if Mesa.objects.exclude(id=mesa_id).filter(nombre__iexact=nuevo_nombre).exists():
         messages.error(request, f"Ya existe una mesa con el nombre '{nuevo_nombre}'.")
-        return redirect('mesas_lista')
+        return redirect('tables:mesas_lista')
 
     mesa.nombre = nuevo_nombre
     mesa.descripcion = nueva_desc
     mesa.save()
     messages.success(request, "Mesa actualizada correctamente.")
-    return redirect('mesas_lista')
+    return redirect('tables:mesas_lista')
 
 def ver_factura(request, factura_id):
     factura = get_object_or_404(Factura, id=factura_id)
@@ -153,4 +153,4 @@ def liberar_mesa(request, mesa_id):
             f"La mesa '{mesa.nombre}' no tiene pedidos sin facturar que eliminar."
         )
     
-    return redirect('mesas_lista')
+    return redirect('tables:mesas_lista')

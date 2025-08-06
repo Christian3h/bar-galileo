@@ -68,7 +68,7 @@ class ProductosView(TemplateView):
                 ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
                 ProductoImagen.objects.create(producto=producto, imagen=ruta)
             messages.success(request, "Producto agregado correctamente.")
-            return redirect("productos")
+            return redirect("products:productos")
         context = self.get_context_data()
         context["form"] = form
         return self.render_to_response(context)
@@ -78,7 +78,7 @@ class ProductoUpdateView(UpdateView):
     model = Producto
     form_class = ProductoForm
     template_name = "productos_form.html"
-    success_url = reverse_lazy("productos")
+    success_url = reverse_lazy("products:productos")
     pk_url_kwarg = "pk"
 
     def get_object(self, queryset=None):
@@ -119,7 +119,7 @@ class ProductoUpdateView(UpdateView):
 class ProductoDeleteView(DeleteView):
     model = Producto
     template_name = "productos_confirm_delete.html"
-    success_url = reverse_lazy("productos")
+    success_url = reverse_lazy("products:productos")
     pk_url_kwarg = "pk"
 
     def get_object(self, queryset=None):
@@ -200,7 +200,7 @@ class CategoriasView(TemplateView):
             if form.is_valid():
                 form.save()
                 messages.success(request, "Categoría agregada correctamente.")
-                return redirect("categorias")
+                return redirect("products:categorias")
             context = self.get_context_data(**kwargs)
             context["form"] = form
             return self.render_to_response(context)
@@ -212,7 +212,7 @@ class CategoriaUpdateView(UpdateView):
     model = Categoria
     form_class = CategoriaForm
     template_name = "categorias_form.html"
-    success_url = reverse_lazy("categorias")
+    success_url = reverse_lazy("products:categorias")
     pk_url_kwarg = "pk"
     lookup_field = "id_categoria"
 
@@ -229,7 +229,7 @@ class CategoriaDeleteView(DeleteView):
     """
     model = Categoria
     template_name = "categorias_confirm_delete.html"
-    success_url = reverse_lazy("categorias")
+    success_url = reverse_lazy("products:categorias")
     pk_url_kwarg = "pk"
     lookup_field = "id_categoria"
 
@@ -293,7 +293,7 @@ class ProveedoresView(TemplateView):
             if form.is_valid():
                 form.save()
                 messages.success(request, "Proveedor agregado correctamente.")
-                return redirect("proveedores")
+                return redirect("products:proveedores")
             context = self.get_context_data(**kwargs)
             context["form"] = form
             return self.render_to_response(context)
@@ -305,7 +305,7 @@ class ProveedorUpdateView(UpdateView):
     model = Proveedor
     form_class = ProveedorForm
     template_name = "proveedores_form.html"
-    success_url = reverse_lazy("proveedores")
+    success_url = reverse_lazy("products:proveedores")
     pk_url_kwarg = "pk"
     lookup_field = "id_proveedor"
 
@@ -322,7 +322,7 @@ class ProveedorDeleteView(DeleteView):
     """
     model = Proveedor
     template_name = "proveedores_confirm_delete.html"
-    success_url = reverse_lazy("proveedores")
+    success_url = reverse_lazy("products:proveedores")
     pk_url_kwarg = "pk"
     lookup_field = "id_proveedor"
 
@@ -384,7 +384,7 @@ class MarcasView(TemplateView):
             if form.is_valid():
                 form.save()
                 messages.success(request, "Marca agregada correctamente.")
-                return redirect("marcas")
+                return redirect("products:marcas")
             context = self.get_context_data(**kwargs)
             context["form"] = form
             return self.render_to_response(context)
@@ -412,7 +412,7 @@ class MarcaUpdateView(UpdateView):
     model = Marca
     form_class = MarcaForm
     template_name = "marcas_form.html"
-    success_url = reverse_lazy("marcas")
+    success_url = reverse_lazy("products:marcas")
     pk_url_kwarg = "pk"
     lookup_field = "id_marca"
 
@@ -429,7 +429,7 @@ class MarcaDeleteView(DeleteView):
     """
     model = Marca
     template_name = "marcas_confirm_delete.html"
-    success_url = reverse_lazy("marcas")
+    success_url = reverse_lazy("products:marcas")
     pk_url_kwarg = "pk"
     lookup_field = "id_marca"
 
@@ -485,7 +485,7 @@ def actualizar_stock(request):
         except (Producto.DoesNotExist, ValueError):
             messages.error(request, "Error al actualizar el stock")
     
-    return redirect('stock')
+    return redirect('products:stock')
 
 class StockJsonView(View):
     """
@@ -594,7 +594,7 @@ class ProductoUpdateAdminView(UpdateView):
 class ProductoDeleteAdminView(DeleteView):
     model = Producto
     template_name = "admin/products/products_delete.html"
-    success_url = reverse_lazy("productos")
+    success_url = reverse_lazy("products:productos")
     pk_url_kwarg = "pk"
 
     def get_object(self, queryset=None):
