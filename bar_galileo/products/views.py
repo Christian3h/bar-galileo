@@ -13,26 +13,34 @@ from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
-from .models import Categoria, Producto, Proveedor, Marca, ProductoImagen, procesar_y_guardar_imagen
+from .models import Categoria, Producto, Proveedor, Marca, ProductoImagen, procesar_y_guardar_imagen, Stock
 from .forms import ProductoForm, CategoriaForm, ProveedorForm, MarcaForm
 import os
+import logging
 from roles.decorators import permission_required
 from django.utils.decorators import method_decorator
 
+logger = logging.getLogger(__name__)
 
 class ProductosJsonView(View):
     def get(self, request):
-        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes').all()
+        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes', 'stocks').all()
         data = []
         for producto in productos:
             primera_imagen = producto.imagenes.first()
             imagen_url = request.build_absolute_uri(f'/static/{primera_imagen.imagen}') if primera_imagen else ''
+            
+            # Obtener el stock actual de la tabla Stock
+            ultimo_stock = producto.stocks.order_by('-fecha_hora').first()
+            stock_actual = ultimo_stock.cantidad if ultimo_stock else (producto.stock or 0)
+            
             data.append({
                 'id': producto.id_producto,
                 'nombre': producto.nombre,
                 'precio_compra': str(producto.precio_compra or ''),
                 'precio_venta': str(producto.precio_venta or ''),
-                'stock': producto.stock or '',
+                'stock': producto.stock or 0,
+                'stock_actual': stock_actual,
                 'descripcion': producto.descripcion or '',
                 'categoria': producto.id_categoria.nombre_categoria if producto.id_categoria else '',
                 'proveedor': producto.id_proveedor.nombre if producto.id_proveedor else '',
@@ -154,14 +162,48 @@ class CategoriasView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = CategoriaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Categoría agregada correctamente.")
-            return redirect("categorias")
-        context = self.get_context_data(**kwargs)
-        context["form"] = form
-        return self.render_to_response(context)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Manejar petición AJAX
+            try:
+                form = CategoriaForm(request.POST)
+                if form.is_valid():
+                    categoria = form.save()
+                    return JsonResponse({
+                        'success': True, 
+                        'message': 'Categoría agregada correctamente.',
+                        'data': {
+                            'id': categoria.id_categoria,
+                            'nombre_categoria': categoria.nombre_categoria,
+                            'descripcion': categoria.descripcion
+                        }
+                    })
+                else:
+                    errors = dict(form.errors.items())
+                    error_messages = []
+                    for field, field_errors in errors.items():
+                        for error in field_errors:
+                            error_messages.append(f"{field}: {error}")
+                    return JsonResponse({
+                        'success': False, 
+                        'error': '; '.join(error_messages),
+                        'errors': errors
+                    }, status=400)
+            except Exception as e:
+                logger.error(f"Error en CategoriasView POST AJAX: {str(e)}")
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Error interno del servidor: {str(e)}'
+                }, status=500)
+        else:
+            # Manejar petición normal
+            form = CategoriaForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Categoría agregada correctamente.")
+                return redirect("categorias")
+            context = self.get_context_data(**kwargs)
+            context["form"] = form
+            return self.render_to_response(context)
 
 class CategoriaUpdateView(UpdateView):
     """
@@ -211,14 +253,50 @@ class ProveedoresView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = ProveedorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Proveedor agregado correctamente.")
-            return redirect("proveedores")
-        context = self.get_context_data(**kwargs)
-        context["form"] = form
-        return self.render_to_response(context)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Manejar petición AJAX
+            try:
+                form = ProveedorForm(request.POST)
+                if form.is_valid():
+                    proveedor = form.save()
+                    return JsonResponse({
+                        'success': True, 
+                        'message': 'Proveedor agregado correctamente.',
+                        'data': {
+                            'id': proveedor.id_proveedor,
+                            'nombre': proveedor.nombre,
+                            'contacto': proveedor.contacto,
+                            'telefono': proveedor.telefono,
+                            'direccion': proveedor.direccion
+                        }
+                    })
+                else:
+                    errors = dict(form.errors.items())
+                    error_messages = []
+                    for field, field_errors in errors.items():
+                        for error in field_errors:
+                            error_messages.append(f"{field}: {error}")
+                    return JsonResponse({
+                        'success': False, 
+                        'error': '; '.join(error_messages),
+                        'errors': errors
+                    }, status=400)
+            except Exception as e:
+                logger.error(f"Error en ProveedoresView POST AJAX: {str(e)}")
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Error interno del servidor: {str(e)}'
+                }, status=500)
+        else:
+            # Manejar petición normal
+            form = ProveedorForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Proveedor agregado correctamente.")
+                return redirect("proveedores")
+            context = self.get_context_data(**kwargs)
+            context["form"] = form
+            return self.render_to_response(context)
 
 class ProveedorUpdateView(UpdateView):
     """
@@ -268,15 +346,49 @@ class MarcasView(TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = MarcaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Marca agregada correctamente.")
-            return redirect("marcas")
-        context = self.get_context_data(**kwargs)
-        context["form"] = form
-        return self.render_to_response(context)
-    
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Manejar petición AJAX
+            try:
+                form = MarcaForm(request.POST)
+                if form.is_valid():
+                    marca = form.save()
+                    return JsonResponse({
+                        'success': True, 
+                        'message': 'Marca agregada correctamente.',
+                        'data': {
+                            'id': marca.id_marca,
+                            'marca': marca.marca,
+                            'descripcion': marca.descripcion
+                        }
+                    })
+                else:
+                    errors = dict(form.errors.items())
+                    error_messages = []
+                    for field, field_errors in errors.items():
+                        for error in field_errors:
+                            error_messages.append(f"{field}: {error}")
+                    return JsonResponse({
+                        'success': False, 
+                        'error': '; '.join(error_messages),
+                        'errors': errors
+                    }, status=400)
+            except Exception as e:
+                logger.error(f"Error en MarcasView POST AJAX: {str(e)}")
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Error interno del servidor: {str(e)}'
+                }, status=500)
+        else:
+            # Manejar petición normal
+            form = MarcaForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Marca agregada correctamente.")
+                return redirect("marcas")
+            context = self.get_context_data(**kwargs)
+            context["form"] = form
+            return self.render_to_response(context)
+
 class EliminarImagenProductoView(View):
     def post(self, request, pk):
         imagen = get_object_or_404(ProductoImagen, id_imagen=pk)
@@ -291,6 +403,7 @@ class EliminarImagenProductoView(View):
 
         # Redirige a la lista o edición del producto
         return redirect('products:products_edit_admin', pk=producto_id)
+
 
 class MarcaUpdateView(UpdateView):
     """
@@ -326,6 +439,76 @@ class MarcaDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Marca eliminada correctamente.")
         return super().delete(request, *args, **kwargs)
+
+class StockView(TemplateView):
+    """
+    Vista principal para la gestión de stock: muestra la lista de productos con su stock actual.
+    """
+    template_name = "stock.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Obtener todos los productos con su último registro de stock
+        productos_stock = []
+        productos = Producto.objects.all()
+        
+        for producto in productos:
+            ultimo_stock = Stock.objects.filter(id_producto=producto).order_by('-fecha_hora').first()
+            stock_cantidad = ultimo_stock.cantidad if ultimo_stock else (producto.stock or 0)
+            
+            productos_stock.append({
+                'producto': producto,
+                'stock_actual': stock_cantidad,
+                'ultimo_movimiento': ultimo_stock.fecha_hora if ultimo_stock else None
+            })
+        
+        context["productos_stock"] = productos_stock
+        return context
+
+def actualizar_stock(request):
+    """
+    Vista para actualizar el stock de un producto específico
+    """
+    if request.method == 'POST':
+        producto_id = request.POST.get('producto_id')
+        nueva_cantidad = request.POST.get('cantidad')
+        
+        try:
+            producto = Producto.objects.get(id_producto=producto_id)
+            nueva_cantidad = int(nueva_cantidad)
+            
+            # Actualizar el stock en el producto
+            producto.stock = nueva_cantidad
+            producto.save()  # Esto automáticamente creará un registro en Stock
+            
+            messages.success(request, f"Stock actualizado para {producto.nombre}: {nueva_cantidad}")
+        except (Producto.DoesNotExist, ValueError):
+            messages.error(request, "Error al actualizar el stock")
+    
+    return redirect('stock')
+
+class StockJsonView(View):
+    """
+    API para obtener datos de stock en formato JSON
+    """
+    def get(self, request):
+        productos_stock = []
+        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').all()
+        
+        for producto in productos:
+            ultimo_stock = Stock.objects.filter(id_producto=producto).order_by('-fecha_hora').first()
+            stock_cantidad = ultimo_stock.cantidad if ultimo_stock else (producto.stock or 0)
+            
+            productos_stock.append({
+                'id': producto.id_producto,
+                'nombre': producto.nombre,
+                'stock_producto': producto.stock or 0,
+                'stock_actual': stock_cantidad,
+                'categoria': producto.id_categoria.nombre_categoria if producto.id_categoria else '',
+                'ultimo_movimiento': ultimo_stock.fecha_hora.strftime('%d/%m/%Y %H:%M') if ultimo_stock else 'Sin movimientos'
+            })
+        
+        return JsonResponse({'data': productos_stock})
     
     
 
