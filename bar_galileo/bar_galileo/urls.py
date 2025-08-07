@@ -16,12 +16,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('products.urls')),
-    path('', include('core.urls')),   
-    path('', include('tables.urls'))
+    path('', include(('products.urls', 'products'), namespace='products')),
+    path('', include(('core.urls', 'core'), namespace='core')),
+    path('', include(('tables.urls', 'tables'), namespace='tables')),
+    path('dashboard/', include(('admin_dashboard.urls', 'admin_dashboard'), namespace='admin_dashboard')),
+    path('rol/', include(('roles.urls', 'roles'), namespace='roles')),
+    path('', include(('users.urls', 'users'), namespace='users')),
+    path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
