@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
         <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
+        <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
         <title>
             {% block head_title %}
             {% endblock head_title %}
@@ -16,18 +17,7 @@
     </head>
     <body>
         {% block body %}
-            {% if messages %}
-                <div class = "container-messages" >
-                    <ul>
-                        {% for message in messages %}
-                        <li class="alert-message">
-                            <span class="message-text">{{ message }}</span>
-                            <button class="close-btn" onclick="this.parentElement.remove()">×</button>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
+            {% include 'components/notificaciones.html' %}
             <div class="container-menu">
                 <button class="menu-toggle" id="menu-toggle">&#9776;</button>
                 <a href="/" class="logo">
@@ -96,6 +86,7 @@
         {% endblock body %}
         {% block extra_body %}
         {% endblock extra_body %}
+        <script src="{% static 'js/admin/notification_history.js' %}"></script>
     </body>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
