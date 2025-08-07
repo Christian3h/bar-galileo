@@ -1,0 +1,37 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+
+<div class="dashboard-container">
+  <h2 class="dashboard-title">Estadísticas</h2>
+
+  <section class="dashboard-cards">
+    <div class="card">
+      <h3>Productos</h3>
+      <p>{{ productos }}</p>
+    </div>
+    <div class="card">
+      <h3>Categorías</h3>
+      <p>{{ categorias }}</p>
+    </div>
+    <div class="card">
+      <h3>Mesas</h3>
+      <p>{{ mesas }}</p>
+    </div>
+  </section>
+
+  <section class="dashboard-charts">
+    <article class="chart-box">
+      <h4>Ventas mensuales</h4>
+      <div class="dummy-chart">[Gráfico aquí]</div>
+    </article>
+
+    <article class="chart-box">
+      <h4>Popularidad</h4>
+      <div class="dummy-chart">[Gráfico aquí]</div>
+    </article>
+  </section>
+</div>
+  
+
+{% endblock %}

@@ -17,6 +17,9 @@ import os
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -42,25 +45,37 @@ INSTALLED_APPS = [
     #apps propias 
     'core', # se encarga las paginas de inicio
     'products',
-    'accounts',
+    'accounts.apps.AccountsConfig',
     'tables',
+    'roles',
+    'users',
+    #app para el dashboard
+    'admin_dashboard',
     #apps necesarias para la libreria django-allauth 
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    #app para el manejo de las notificaciones 
+    'channels',
+    'notifications',
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'roles.middleware.PermissionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #middleware neceasrio para la libreria django-allauth
     'allauth.account.middleware.AccountMiddleware'
 ]
 
@@ -73,6 +88,8 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, 'accounts', 'templates'),
                 os.path.join(BASE_DIR, 'products', 'templates'), 
                 os.path.join(BASE_DIR, 'core', 'templates'), 
+                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'), 
+                os.path.join(BASE_DIR, 'notifications', 'templates')
                 ],  
         'APP_DIRS': True,
         'OPTIONS': {
@@ -87,6 +104,7 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'bar_galileo.wsgi.application'
+ASGI_APPLICATION = 'bar_galileo.asgi.application'
 
 
 # Database
@@ -134,9 +152,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -180,7 +195,19 @@ EMAIL_HOST_USER = os.getenv('emailHost')
 EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
 
 
-
 #bar-galileo
 
 ALLOWED_HOSTS = ['*'] #permitir varios enlaces 
+
+
+
+# configuracion para el backend de las nofifaciones channels
+WSGI_APPLICATION = 'bar_galileo.asgi.application'
+
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
+    },
+}

@@ -1,0 +1,104 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% load roles_tags %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Lista de Productos</h1>
+        <!-- Botón para mostrar el formulario -->
+        <table id="tabla-productos" class="">
+            <thead class="">
+                <tr>
+                    <th>ID</th>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Precio Compra</th>
+                    <th>Precio Venta</th>
+                    <th>Stock</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Proveedor</th>
+                    <th>Marca</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Permisos del usuario
+    const canEdit = {% if request.user|has_perm:"products,editar" %}true{% else %}false{% endif %};
+    const canDelete = {% if request.user|has_perm:"products,eliminar" %}true{% else %}false{% endif %};
+    
+    $(document).ready(function() {
+        $('#tabla-productos').DataTable({
+            "ajax": {
+                "url": "/api/productos/",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { "data": "id" },
+                { 
+                    data: "imagen_url",
+                    render: function(data, type, row) {
+                        console.log(data);
+
+                        if (data) {
+                            return `<img src="${data}" alt="Imagen" style="max-width:60px;max-height:60px;">`;
+                        } else {
+                            return "Sin imagen";
+                        }
+                    },
+                    orderable: false
+                },
+                { "data": "nombre" },
+                {
+                    data: "precio_compra",
+                    render: function(data, type, row) {
+                        return new Intl.NumberFormat('es-CO', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0
+                        }).format(data);
+                    }
+                },
+                {
+                    data: "precio_venta",
+                    render: function(data, type, row) {
+                        return new Intl.NumberFormat('es-CO', {
+                            style: 'decimal',
+                            minimumFractionDigits: 0
+                        }).format(data);
+                    }
+                },
+                { "data": "stock" },
+                { "data": "descripcion" },
+                { "data": "categoria" },
+                { "data": "proveedor" },
+                { "data": "marca" },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        let buttons = '';
+                        if (canEdit) {
+                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> `;
+                        }
+                        if (canDelete) {
+                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        }
+                        return buttons;
+                    },
+                    orderable: false
+                }
+            ],
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
+                }
+        });
+    });
+    </script>
+
+
+
+{% endblock %}
