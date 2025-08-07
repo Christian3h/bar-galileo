@@ -1,0 +1,59 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% load roles_tags %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">Lista de Categorías</h1>
+        <table id="tabla-categorias" class="">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Permisos del usuario
+    const canEdit = {% if request.user|has_perm:"categories,editar" %}true{% else %}false{% endif %};
+    const canDelete = {% if request.user|has_perm:"categories,eliminar" %}true{% else %}false{% endif %};
+
+    // Inicializa la tabla de categorías usando DataTables y carga los datos vía AJAX
+    $(document).ready(function() {
+        $('#tabla-categorias').DataTable({
+            "ajax": {
+                "url": "/api/categorias/",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { "data": "id" },
+                { "data": "nombre_categoria" },
+                { "data": "descripcion" },
+                {
+                    data: null,
+                    render: function (data, type, row) {
+                        let buttons = '';
+                        if (canEdit) {
+                            buttons += `<a href="/adminD/categories/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> `;
+                        }
+                        if (canDelete) {
+                            buttons += `<a href="/adminD/categories/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                        }
+                        return buttons;
+                    },
+                    orderable: false
+                }
+            ],
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
+            }
+        });
+    });
+    </script>
+{% endblock %}

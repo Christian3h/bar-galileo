@@ -5,10 +5,12 @@
     {% translate "Account Inactive" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% translate "Account Inactive" %}
-    {% endelement %}
-    {% element p %}
-        {% translate "This account is inactive." %}
-    {% endelement %}
+    <div class="container-login">
+        {% element h1 %}
+            {% translate "Account Inactive" %}
+        {% endelement %}
+        {% element p %}
+            {% translate "This account is inactive." %}
+        {% endelement %}
+    </div>
 {% endblock content %}

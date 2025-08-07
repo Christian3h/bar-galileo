@@ -4,6 +4,8 @@ Define las URLs para vistas públicas, autenticación y CRUD de productos.
 """
 
 from django.urls import path
+
+app_name = "products"
 from . import views
 from . import views_api  
 from .views import EliminarImagenProductoView
@@ -35,7 +37,35 @@ urlpatterns = [
     path("marcas/editar/<int:pk>/", views.MarcaUpdateView.as_view(), name="marca_editar"),  # Editar marca
     path("marcas/eliminar/<int:pk>/", views.MarcaDeleteView.as_view(), name="marca_eliminar"),  # Eliminar marca
     path("productos/imagen/eliminar/<int:pk>/", EliminarImagenProductoView.as_view(), name="producto_imagen_eliminar"),
+    # URLs para gestión de stock
+    path("stock/", views.StockView.as_view(), name="stock"),  # Vista principal de stock
+    path("stock/actualizar/", views.actualizar_stock, name="actualizar_stock"),  # Actualizar stock
+    path('api/stock/', views.StockJsonView.as_view(), name='stock_json'),  # API stock (JSON)
 
+
+    #### rutas para el dashboard de los administradores 
+    path('adminD/products/', views.ProductosAdminView.as_view(), name='products_admin'),
+    path('adminD/products/create/', views.ProductoCreateAdminView.as_view(), name='products_create_admin'),
+    path('adminD/products/update/<int:pk>/', views.ProductoUpdateAdminView.as_view(), name='products_edit_admin'),
+    path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),  
+    path("adminD/products_img/delete/<int:pk>/", views.EliminarImagenProductoAdminView.as_view(), name="producto_imagen_eliminar"),
+    
+    #### rutas para el dashboard de las categorías
+    path('adminD/categories/', views.CategoriasAdminView.as_view(), name='categories_admin'),
+    path('adminD/categories/create/', views.CategoriaCreateAdminView.as_view(), name='categories_create_admin'),
+    path('adminD/categories/update/<int:pk>/', views.CategoriaUpdateAdminView.as_view(), name='categories_edit_admin'),
+    path('adminD/categories/delete/<int:pk>/', views.CategoriaDeleteAdminView.as_view(), name='categories_delete_admin'),
+    #### rutas para el dashboard de los proveedores
+    path('adminD/proveedores/', views.ProveedoresAdminView.as_view(), name='proveedores_admin'),
+    path('adminD/proveedores/create/', views.ProveedorCreateAdminView.as_view(), name='proveedores_create_admin'),
+    path('adminD/proveedores/update/<int:pk>/', views.ProveedorUpdateAdminView.as_view(), name='proveedores_edit_admin'),
+    path('adminD/proveedores/delete/<int:pk>/', views.ProveedorDeleteAdminView.as_view(), name='proveedores_delete_admin'),
+
+    #### rutas para el dashboard de brands (marcas)
+    path('adminD/brands/', views.BrandsAdminView.as_view(), name='brands_admin'),
+    path('adminD/brands/create/', views.BrandCreateAdminView.as_view(), name='brands_create_admin'),
+    path('adminD/brands/update/<int:pk>/', views.BrandUpdateAdminView.as_view(), name='brands_update_admin'),
+    path('adminD/brands/delete/<int:pk>/', views.BrandDeleteAdminView.as_view(), name='brands_delete_admin'),
 ]
 
 

@@ -1,0 +1,30 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+<h2>Roles</h2>
+<table id="roles-table" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rol in roles %}
+        <tr>
+            <td>{{ rol.nombre }}</td>
+            <td>{{ rol.descripcion }}</td>
+            <td>
+                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-primary">Editar permisos</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'roles:rol_create' %}" class="btn btn-success">Crear nuevo rol</a>
+<script>
+$(document).ready(function() {
+    $('#roles-table').DataTable();
+});
+</script>
+{% endblock %}

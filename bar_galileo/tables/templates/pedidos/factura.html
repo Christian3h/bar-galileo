@@ -1,0 +1,279 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .factura-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .factura-header {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .factura-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .factura-body {
+        padding: 30px;
+    }
+
+    .empresa-info {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .empresa-info h3 {
+        color: #333;
+        margin: 0 0 15px 0;
+        font-size: 1.5rem;
+    }
+
+    .empresa-info p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .factura-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .factura-table thead {
+        background-color: #f8f9fa;
+    }
+
+    .factura-table th,
+    .factura-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .factura-table th {
+        font-weight: 600;
+        color: #333;
+        background-color: #f8f9fa;
+    }
+
+    .factura-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .factura-table tfoot {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-end {
+        text-align: right;
+    }
+
+    .text-success {
+        color: #28a745;
+    }
+
+    .text-muted {
+        color: #6c757d;
+    }
+
+    .estado-pago {
+        text-align: center;
+        margin-top: 30px;
+        padding: 20px;
+        background: #d4edda;
+        border-radius: 8px;
+        border: 1px solid #c3e6cb;
+    }
+
+    .estado-pago h4 {
+        color: #155724;
+        margin: 0 0 10px 0;
+        font-size: 1.3rem;
+    }
+
+    .estado-pago p {
+        color: #155724;
+        margin: 0;
+        font-style: italic;
+    }
+
+    .botones-accion {
+        margin-top: 30px;
+        text-align: center;
+        padding-top: 20px;
+        border-top: 2px solid #eee;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-block;
+        margin: 0 10px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    @media print {
+        body {
+            margin: 0;
+            background: white;
+        }
+
+        .factura-container {
+            box-shadow: none;
+            border-radius: 0;
+            max-width: none;
+        }
+
+        .btn, .botones-accion {
+            display: none !important;
+        }
+
+        .factura-header {
+            background: #f8f9fa !important;
+            color: #333 !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .estado-pago {
+            background: #f8f9fa !important;
+            border: 1px solid #ddd !important;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .factura-table th {
+            background-color: #f8f9fa !important;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .factura-container {
+            margin: 10px;
+        }
+
+        .factura-body {
+            padding: 20px;
+        }
+
+        .factura-table {
+            font-size: 14px;
+        }
+
+        .factura-table th,
+        .factura-table td {
+            padding: 8px 10px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+    }
+</style>
+
+<div class="factura-container">
+    <div class="factura-header">
+        <h2>Factura #{{ factura.numero }}</h2>
+    </div>
+    
+    <div class="factura-body">
+        <!-- Información del Local -->
+        <div class="empresa-info">
+            <h3>Bar Galileo</h3>
+            <p><strong>Mesa:</strong> {{ factura.pedido.mesa.nombre }}</p>
+            <p><strong>Fecha:</strong> {{ factura.fecha|date:"d/m/Y H:i" }}</p>
+        </div>
+
+        <!-- Detalles del Pedido -->
+        <table class="factura-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-end">Precio Unit.</th>
+                    <th class="text-end">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in factura.pedido.items.all %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td class="text-center">{{ item.cantidad }}</td>
+                    <td class="text-end">${{ item.precio_unitario|floatformat:2 }}</td>
+                    <td class="text-end">${{ item.subtotal|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                    <td class="text-end"><strong>${{ factura.total|floatformat:2 }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Estado y Pie de Página -->
+        <div class="estado-pago">
+            <h4>✅ PAGADO</h4>
+            <p>¡Gracias por su preferencia!</p>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="botones-accion">
+            <button class="btn btn-primary" onclick="window.print()">
+                🖨️ Imprimir
+            </button>
+            <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary">
+                ← Volver a Mesas
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

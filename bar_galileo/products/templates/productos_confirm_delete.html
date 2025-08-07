@@ -4,13 +4,98 @@
     - Muestra el nombre del producto a eliminar y botones para confirmar o cancelar.
 #}
 {% block content %}
-<div class="container mt-4">
-    <h2>¿Estás seguro de que deseas eliminar este producto?</h2>
+<style>
+    .confirm-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    h2 {
+        color: #dc3545;
+        margin-bottom: 30px;
+        font-size: 1.8rem;
+    }
+
+    .warning-message {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        color: #856404;
+    }
+
+    .warning-message p {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-block;
+        margin: 10px;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+
+    @media (max-width: 768px) {
+        .confirm-container {
+            margin: 10px;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+    }
+</style>
+
+<div class="confirm-container">
+    <h2>⚠️ Eliminar Producto</h2>
     <form method="post">
         {% csrf_token %}
-        <p><strong>{{ object.nombre }}</strong></p>
-        <button type="submit" class="btn btn-danger">Eliminar</button>
-        <a href="{% url 'productos' %}" class="btn btn-secondary">Cancelar</a>
+        <div class="warning-message">
+            <p>¿Estás seguro de que deseas eliminar el producto:</p>
+            <p><strong>{{ object.nombre }}</strong>?</p>
+            <p style="margin-top: 10px; font-size: 14px;">Esta acción no se puede deshacer.</p>
+        </div>
+        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Confirmas que deseas eliminar este producto?')">🗑️ Eliminar</button>
+        <a href="{% url 'products:products_admin' %}" class="btn btn-secondary">❌ Cancelar</a>
     </form>
 </div>
 {% endblock %}
