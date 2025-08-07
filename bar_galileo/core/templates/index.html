@@ -1,14 +1,264 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bar- galileo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bar- galileo</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <style>
+    /* Estilos para la sección de acceso rápido */
+    .quick-access {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2.5rem 0 1.5rem 0;
+    }
+    .quick-btn {
+      background: var(--color-green);
+      color: var(--color-white);
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      padding: 1.2rem 2.5rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 16px rgba(16, 185, 129, 0.15);
+      transition: background 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .quick-btn:hover {
+      background: var(--color-green-dark);
+      box-shadow: 0 4px 24px rgba(16, 185, 129, 0.3);
+    }
+    .section-anchor {
+      position: relative;
+      top: -80px;
+      visibility: hidden;
+      height: 0;
+    }
+  </style>
 </head>
 <body>
-    <h1>Pagina de inicio del bar galileo</h1>
-    <a href="{% url 'admin_dashboard:dashboard' %}">dashboard</a>
-    <br>
-    <a href="/accounts/email"> login</a>
+
+  <!-- ACCESO RÁPIDO -->
+  <div class="quick-access">
+    <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn">Dashboard</a>
+    <a href="#login-section" class="quick-btn">Login</a>
+  </div>
+
+  <!-- NAVBAR NUEVA -->
+  <nav class="navbar">
+    <div class="nav-container" style="display: flex; align-items: center; justify-content: space-between;">
+      <div class="logo">BAR GALILEO</div>
+      <ul class="nav-menu">
+        <li><a href="#cocktails-section">COCKTAILS</a></li>
+        <li><a href="#experiencia-section">EXPERIENCIA</a></li>
+        <li><a href="#eventos-section">EVENTOS</a></li>
+        <li><a href="#reservas-section">RESERVAS</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <button class="btn-green" data-action="login">LOGIN</button>
+        <button class="btn-green" data-action="reservar">RESERVAR MESA</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="experiencia-section">
+    <div class="badge">EXPERIENCIA PREMIUM</div>
+    <h1 class="hero-title">
+      <span class="text-white">BAR</span> <span class="text-red">GALILEO</span>
+    </h1>
+    <p class="hero-subtitle">
+      Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-green" data-action="carta">EXPLORAR CARTA</button>
+      <button class="btn-green" data-action="historia">NUESTRA HISTORIA</button>
+    </div>
+  </header>
+
+  <!-- SIGNATURE COCKTAILS -->
+  <span class="section-anchor" id="cocktails-section"></span>
+  <section class="signature-section">
+    <div class="badge">SELECCIÓN ESPECIAL</div>
+    <h2 class="signature-title">
+      <span class="text-white">CÓCTELES</span> <span class="text-red">SIGNATURE</span>
+    </h2>
+    <p class="signature-subtitle">
+      Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo
+    </p>
+    <div class="signature-cards">
+      <div class="signature-card">
+        <div class="card-badge">ESPECIAL</div>
+        <div class="card-icon">🍸</div>
+      </div>
+      <div class="signature-card">
+        <div class="card-badge">ESPECIAL</div>
+        <div class="card-icon">🍹</div>
+      </div>
+      <div class="signature-card">
+        <div class="card-badge">ESPECIAL</div>
+        <div class="card-icon">🥃</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS -->
+  <span class="section-anchor" id="carta-section"></span>
+  <section class="products-section">
+    <h2 class="products-title">Nuestros Productos</h2>
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-carousel">
+          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 1" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Producto Uno</h3>
+          <p class="product-price">$19.99</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-carousel">
+          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 2" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Producto Dos</h3>
+          <p class="product-price">$24.99</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-carousel">
+          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 3" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Producto Especial</h3>
+          <p class="product-price">$29.99</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COCTELES DESTACADOS -->
+  <span class="section-anchor" id="eventos-section"></span>
+  <section class="products-section">
+    <h2 class="products-title">COCTELES DESTACADOS</h2>
+    <div class="products-grid">
+
+      <div class="product-card">
+        <div class="product-carousel">
+          <button class="carousel-btn prev">&#8592;</button>
+          <img src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" class="product-img" alt="Cóctel Tropical" />
+          <button class="carousel-btn next">&#8594;</button>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Cóctel Tropical</h3>
+          <p class="product-price">$120</p>
+          <button class="btn-green">Ver producto</button>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-carousel">
+          <button class="carousel-btn prev">&#8592;</button>
+          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" class="product-img" alt="Cóctel Sunset" />
+          <button class="carousel-btn next">&#8594;</button>
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Cóctel Sunset</h3>
+          <p class="product-price">$110</p>
+          <button class="btn-green">Ver producto</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECCIÓN RESERVAS -->
+  <span class="section-anchor" id="reservas-section"></span>
+  <section class="products-section" style="background: linear-gradient(90deg, var(--color-dark) 60%, var(--color-black) 100%);">
+    <h2 class="products-title">Reservas</h2>
+    <div style="text-align:center; color: var(--color-gray); font-size:1.2rem;">
+      <p>¡Reserva tu mesa y asegura tu lugar en Bar Galileo!</p>
+      <a href="https://wa.me/XXXXXXXXXXX" class="btn-green" style="margin-top:1rem;display:inline-block;">Reservar por WhatsApp</a>
+      <!-- Cambia el número por el tuyo real -->
+    </div>
+  </section>
+
+  <!-- SECCIÓN LOGIN -->
+  <span class="section-anchor" id="login-section"></span>
+  <section class="products-section" style="background: linear-gradient(90deg, var(--color-black) 60%, #2b2b37 100%);">
+    <h2 class="products-title">Iniciar Sesión</h2>
+    <div style="text-align:center; color: var(--color-gray); font-size:1.2rem;">
+      <a href="/accounts/email" class="btn-green" style="margin-top:1rem;display:inline-block;">Ir a Login</a>
+    </div>
+  </section>
+
+    <script>
+    // Prueba de conexión WebSocket para notificaciones
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws_path = ws_scheme + '://' + window.location.host + "/ws/notificaciones/";
+    const socket = new WebSocket(ws_path);
+
+    socket.onopen = function(e) {
+ //       console.log("WebSocket conectado");
+  //      alert("WebSocket conectado correctamente");
+    };
+    socket.onmessage = function(e) {
+    //    console.log("Mensaje recibido:", e.data);
+     //   alert("Notificación: " + e.data);
+    };
+    socket.onerror = function(e) {
+      //  console.error("WebSocket error:", e);
+    };
+    socket.onclose = function(e) {
+       // console.log("WebSocket cerrado");
+    };
+    
+    // Scroll suave para enlaces de navbar y acceso rápido
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.onclick = function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({behavior: 'smooth'});
+        }
+      }
+    });
+
+    // Botones de la navbar
+    document.querySelectorAll('.nav-buttons .btn-green').forEach(btn => {
+      if (btn.dataset.action === 'login') {
+        btn.onclick = () => document.getElementById('login-section').scrollIntoView({behavior: 'smooth'});
+      }
+      if (btn.dataset.action === 'reservar') {
+        btn.onclick = () => document.getElementById('reservas-section').scrollIntoView({behavior: 'smooth'});
+      }
+    });
+
+    // Botones del hero
+    document.querySelectorAll('.hero-buttons .btn-green').forEach(btn => {
+      if (btn.dataset.action === 'carta') {
+        btn.onclick = () => document.getElementById('carta-section').scrollIntoView({behavior: 'smooth'});
+      }
+      if (btn.dataset.action === 'historia') {
+        btn.onclick = () => document.getElementById('cocktails-section').scrollIntoView({behavior: 'smooth'});
+      }
+    });
+
+    // Botones "Ver producto"
+    document.querySelectorAll('.product-info .btn-green').forEach(btn => {
+      if(btn.textContent.trim() === 'Ver producto') {
+        btn.onclick = () => alert('Aquí iría la página del producto.');
+      }
+    });
+
+    // Botones de carrusel
+    document.querySelectorAll('.carousel-btn').forEach(btn => {
+      btn.onclick = () => alert('Aquí iría la funcionalidad del carrusel.');
+    });
+  </script>
 </body>
 </html>
