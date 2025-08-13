@@ -1,4 +1,4 @@
-{% extends "account/base_manage_email.html" %}
+{% extends "account/base_entrance.html" %}
 {% load static allauth i18n %}
 {% block head_title %}
     {% trans "Email Addresses" %}
@@ -6,11 +6,11 @@
 {% block content %}
     <div class="container-login">
         {% element h1 %}
-            {% trans "Email Addresses" %}
+            {% trans "Direcciones de Correo" %}
         {% endelement %}
         {% if emailaddresses %}
             {% element p %}
-                {% trans 'The following email addresses are associated with your account:' %}
+                {% trans 'Las siguientes direcciones de correo están asociadas con tu cuenta:' %}
             {% endelement %}
             {% url 'account_email' as email_url %}
             {% element form form=form action=email_url method="post" tags="email,list" %}
@@ -23,16 +23,16 @@
                                     {{ emailaddress.email }}
                                     {% if emailaddress.verified %}
                                         {% element badge tags="success,email,verified" %}
-                                            {% translate "Verified" %}
+                                            {% translate "Verificado" %}
                                         {% endelement %}
                                     {% else %}
                                         {% element badge tags="warning,email,unverified" %}
-                                            {% translate "Unverified" %}
+                                            {% translate "Sin verificar" %}
                                         {% endelement %}
                                     {% endif %}
                                     {% if emailaddress.primary %}
                                         {% element badge tags="email,primary" %}
-                                            {% translate "Primary" %}
+                                            {% translate "Principal" %}
                                         {% endelement %}
                                     {% endif %}
                                 {% endslot %}
@@ -41,23 +41,24 @@
                     {% endfor %}
                 {% endslot %}
                 {% slot actions %}
-                    {% element button type="submit" name="action_primary" %}
-                        {% trans 'Make Primary' %}
+                    {% element button type="submit" name="action_primary" tags="prominent,login" %}
+                        {% trans 'Hacer Principal' %}
                     {% endelement %}
                     {% element button tags="secondary" type="submit" name="action_send" %}
-                        {% trans 'Re-send Verification' %}
+                        {% trans 'Reenviar Verificación' %}
                     {% endelement %}
                     {% element button tags="danger,delete" type="submit" name="action_remove" %}
-                        {% trans 'Remove' %}
+                        {% trans 'Eliminar' %}
                     {% endelement %}
                 {% endslot %}
             {% endelement %}
         {% else %}
             {% include "account/snippets/warn_no_email.html" %}
         {% endif %}
+        
         {% if can_add_email %}
             {% element h2 %}
-                {% trans "Add Email Address" %}
+                {% trans "Agregar Correo Electrónico" %}
             {% endelement %}
             {% url 'account_email' as action_url %}
             {% element form form=form method="post" action=action_url tags="email,add" %}
@@ -67,19 +68,24 @@
                     {% endelement %}
                 {% endslot %}
                 {% slot actions %}
-                    {% element button name="action_add" type="submit" %}
-                        {% trans "Add Email" %}
+                    {% element button name="action_add" type="submit" tags="prominent,login" %}
+                        {% trans "Agregar Correo" %}
                     {% endelement %}
                 {% endslot %}
             {% endelement %}
         {% endif %}
+        
+        <div class="nav-links">
+            <a href="{% url 'account_change_password' %}">Cambiar contraseña</a>
+            <a href="{% url 'core:index' %}">Volver al inicio</a>
+        </div>
     </div>
 {% endblock content %}
 {% block extra_body %}
     <script src="{% static 'account/js/account.js' %}"></script>
     <script src="{% static 'account/js/onload.js' %}"></script>
     <script data-allauth-onload="allauth.account.forms.manageEmailForm" type="application/json">{
-    "i18n": {"confirmDelete": "{% trans 'Do you really want to remove the selected email address?' %}"}
+    "i18n": {"confirmDelete": "¿Realmente deseas eliminar la dirección de correo seleccionada?"}
 }
     </script>
 {% endblock extra_body %}
