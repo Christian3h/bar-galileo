@@ -110,36 +110,35 @@
   <span class="section-anchor" id="carta-section"></span>
   <section class="products-section">
     <h2 class="products-title">Nuestros Productos</h2>
-    <div class="products-grid" id="productos-grid">
-      {% for producto in productos %}
-        <div class="product-card" data-index="{{ forloop.counter0 }}" {% if forloop.counter0 >= 3 %}style="display: none;"{% endif %}>
-          <div class="product-carousel">
-            {% if producto.imagenes.all %}
-              {% with imagen=producto.imagenes.first %}
-                {% if imagen %}
-                  <img src="{% static imagen.imagen %}" class="product-img" alt="{{ producto.nombre }}">
-                {% else %}
-                  <img src="{% static 'img/no-image.png' %}" class="product-img" alt="Sin imagen">
-                {% endif %}
-              {% endwith %}
-            {% else %}
-              <img src="{% static 'img/no-image.png' %}" class="product-img" alt="Sin imagen">
-            {% endif %}
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">{{ producto.nombre }}</h3>
-            <p class="product-price">${{ producto.precio_venta }}</p>
-          </div>
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-carousel">
+          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 1" />
         </div>
-      {% empty %}
-        <p>No hay productos disponibles.</p>
-      {% endfor %}
+        <div class="product-info">
+          <h3 class="product-name">Producto Uno</h3>
+          <p class="product-price">$19.99</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-carousel">
+          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 2" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Producto Dos</h3>
+          <p class="product-price">$24.99</p>
+        </div>
+      </div>
+      <div class="product-card">
+        <div class="product-carousel">
+          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 3" />
+        </div>
+        <div class="product-info">
+          <h3 class="product-name">Producto Especial</h3>
+          <p class="product-price">$29.99</p>
+        </div>
+      </div>
     </div>
-    {% if productos|length > 3 %}
-    <div style="text-align: center; margin-top: 2rem;">
-      <button id="toggle-productos-btn" class="btn-green">Ver más productos</button>
-    </div>
-    {% endif %}
   </section>
 
   <!-- COCTELES DESTACADOS -->
@@ -260,36 +259,6 @@
     document.querySelectorAll('.carousel-btn').forEach(btn => {
       btn.onclick = () => alert('Aquí iría la funcionalidad del carrusel.');
     });
-
-    // Funcionalidad para mostrar/ocultar productos
-    const toggleProductosBtn = document.getElementById('toggle-productos-btn');
-    if (toggleProductosBtn) {
-      let mostrandoTodos = false;
-      
-      toggleProductosBtn.onclick = () => {
-        const productCards = document.querySelectorAll('#productos-grid .product-card');
-        
-        if (!mostrandoTodos) {
-          // Mostrar todos los productos
-          productCards.forEach((card, index) => {
-            if (index >= 3) {
-              card.style.display = 'block';
-            }
-          });
-          toggleProductosBtn.textContent = 'Ocultar productos';
-          mostrandoTodos = true;
-        } else {
-          // Ocultar productos adicionales (mostrar solo los primeros 3)
-          productCards.forEach((card, index) => {
-            if (index >= 3) {
-              card.style.display = 'none';
-            }
-          });
-          toggleProductosBtn.textContent = 'Ver más productos';
-          mostrandoTodos = false;
-        }
-      };
-    }
   </script>
 </body>
 </html>
