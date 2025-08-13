@@ -38,6 +38,43 @@
       visibility: hidden;
       height: 0;
     }
+    
+    /* Estilos para productos */
+    .product-description {
+      color: var(--color-gray);
+      font-size: 0.9rem;
+      margin: 0.5rem 0;
+      line-height: 1.4;
+    }
+    
+    .product-info {
+      padding: 1rem;
+    }
+    
+    .product-info .btn-green {
+      margin-top: 0.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    
+    /* Estilos para botones de productos */
+    .productos-botones {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .productos-botones .btn-green {
+      transition: all 0.3s ease;
+    }
+    
+    .productos-botones .btn-green:hover {
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
@@ -110,35 +147,43 @@
   <span class="section-anchor" id="carta-section"></span>
   <section class="products-section">
     <h2 class="products-title">Nuestros Productos</h2>
-    <div class="products-grid">
+    <div class="products-grid" id="productos-grid">
+      {% for producto in productos_iniciales %}
       <div class="product-card">
         <div class="product-carousel">
-          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 1" />
+          {% if producto.imagenes.exists %}
+            <img src="{% static producto.imagenes.first.imagen %}" class="product-img" alt="{{ producto.nombre }}" />
+          {% else %}
+            <img src="https://via.placeholder.com/400x300?text=Sin+Imagen" class="product-img" alt="{{ producto.nombre }}" />
+          {% endif %}
         </div>
         <div class="product-info">
-          <h3 class="product-name">Producto Uno</h3>
-          <p class="product-price">$19.99</p>
+          <h3 class="product-name">{{ producto.nombre }}</h3>
+          <p class="product-price">${{ producto.precio_venta }}</p>
+          <p class="product-description">{{ producto.descripcion|truncatewords:10 }}</p>
+          <button class="btn-green" data-producto-id="{{ producto.id_producto }}">Ver producto</button>
         </div>
       </div>
-      <div class="product-card">
-        <div class="product-carousel">
-          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 2" />
-        </div>
-        <div class="product-info">
-          <h3 class="product-name">Producto Dos</h3>
-          <p class="product-price">$24.99</p>
-        </div>
+      {% empty %}
+      <div style="text-align: center; color: var(--color-gray); grid-column: 1 / -1;">
+        <p>No hay productos disponibles en este momento.</p>
       </div>
-      <div class="product-card">
-        <div class="product-carousel">
-          <img src="https://via.placeholder.com/400x300" class="product-img" alt="Producto 3" />
-        </div>
-        <div class="product-info">
-          <h3 class="product-name">Producto Especial</h3>
-          <p class="product-price">$29.99</p>
-        </div>
+      {% endfor %}
+    </div>
+    
+    {% if total_productos > 3 %}
+    <div class="productos-botones" style="text-align: center; margin-top: 2rem;">
+      <button id="mostrar-mas-productos" class="btn-green" style="padding: 1rem 2rem; font-size: 1.1rem;">
+        Mostrar más productos
+      </button>
+      <button id="mostrar-menos-productos" class="btn-green" style="padding: 1rem 2rem; font-size: 1.1rem; display: none;">
+        Mostrar menos productos
+      </button>
+      <div id="loading-productos" style="display: none; margin-top: 1rem; color: var(--color-gray);">
+        Cargando productos...
       </div>
     </div>
+    {% endif %}
   </section>
 
   <!-- COCTELES DESTACADOS -->
@@ -227,6 +272,103 @@
         }
       }
     });
+    
+    // Variables para la paginación de productos
+    let currentOffset = 3; // Ya tenemos 3 productos cargados inicialmente
+    let isLoading = false;
+    let productosOriginales = 3; // Número de productos iniciales
+    
+    // Función para cargar más productos
+    function cargarMasProductos() {
+        if (isLoading) return;
+        
+        isLoading = true;
+        const loadingEl = document.getElementById('loading-productos');
+        const btnMostrarMas = document.getElementById('mostrar-mas-productos');
+        const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
+        
+        loadingEl.style.display = 'block';
+        btnMostrarMas.style.display = 'none';
+        
+        fetch(`/productos/ajax/?offset=${currentOffset}&limit=6`)
+            .then(response => response.json())
+            .then(data => {
+                const productosGrid = document.getElementById('productos-grid');
+                
+                data.productos.forEach(producto => {
+                    const productCard = document.createElement('div');
+                    productCard.className = 'product-card producto-adicional';
+                    
+                    const imagenSrc = producto.imagen_url || 'https://via.placeholder.com/400x300?text=Sin+Imagen';
+                    
+                    productCard.innerHTML = `
+                        <div class="product-carousel">
+                            <img src="${imagenSrc}" class="product-img" alt="${producto.nombre}" />
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">${producto.nombre}</h3>
+                            <p class="product-price">$${producto.precio}</p>
+                            <p class="product-description">${producto.descripcion ? producto.descripcion.substring(0, 60) + '...' : ''}</p>
+                            <button class="btn-green" data-producto-id="${producto.id}">Ver producto</button>
+                        </div>
+                    `;
+                    
+                    productosGrid.appendChild(productCard);
+                });
+                
+                currentOffset += data.productos.length;
+                
+                if (data.has_more) {
+                    btnMostrarMas.style.display = 'inline-block';
+                } else {
+                    btnMostrarMas.style.display = 'none';
+                }
+                
+                // Mostrar botón "Mostrar menos productos"
+                btnMostrarMenos.style.display = 'inline-block';
+                
+                loadingEl.style.display = 'none';
+                isLoading = false;
+            })
+            .catch(error => {
+                console.error('Error cargando productos:', error);
+                loadingEl.style.display = 'none';
+                btnMostrarMas.style.display = 'inline-block';
+                isLoading = false;
+            });
+    }
+    
+    // Función para mostrar menos productos (volver a los 3 iniciales)
+    function mostrarMenosProductos() {
+        const productosGrid = document.getElementById('productos-grid');
+        const btnMostrarMas = document.getElementById('mostrar-mas-productos');
+        const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
+        
+        // Eliminar todos los productos adicionales
+        const productosAdicionales = productosGrid.querySelectorAll('.producto-adicional');
+        productosAdicionales.forEach(producto => {
+            producto.remove();
+        });
+        
+        // Resetear variables
+        currentOffset = productosOriginales;
+        
+        // Mostrar botón "Mostrar más" y ocultar "Mostrar menos"
+        btnMostrarMas.style.display = 'inline-block';
+        btnMostrarMenos.style.display = 'none';
+    }
+    
+    // Event listeners para los botones
+    const btnMostrarMas = document.getElementById('mostrar-mas-productos');
+    const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
+    
+    if (btnMostrarMas) {
+        btnMostrarMas.addEventListener('click', cargarMasProductos);
+    }
+    
+    if (btnMostrarMenos) {
+        btnMostrarMenos.addEventListener('click', mostrarMenosProductos);
+    }
 
     // Botones de la navbar
     document.querySelectorAll('.nav-buttons .btn-green').forEach(btn => {
@@ -248,11 +390,13 @@
       }
     });
 
-    // Botones "Ver producto"
-    document.querySelectorAll('.product-info .btn-green').forEach(btn => {
-      if(btn.textContent.trim() === 'Ver producto') {
-        btn.onclick = () => alert('Aquí iría la página del producto.');
-      }
+    // Delegación de eventos para botones "Ver producto" (incluye nuevos productos cargados)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('btn-green') && e.target.dataset.productoId) {
+            const productoId = e.target.dataset.productoId;
+            alert(`Ver detalles del producto ID: ${productoId}`);
+            // Aquí puedes agregar la lógica para mostrar detalles del producto
+        }
     });
 
     // Botones de carrusel
