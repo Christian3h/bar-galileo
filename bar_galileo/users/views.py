@@ -24,3 +24,43 @@ def user_list(request):
         profile.save()
         return redirect('users:user_list')
     return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
+
+
+# Vista para el panel de usuario
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def panel_usuario(request):
+    # Aquí puedes obtener datos reales del usuario
+    user = request.user
+    # Ejemplo de datos, reemplaza por datos reales de tu modelo
+    datos = {
+        'nombre': user.get_full_name() or user.username,
+        'cedula': getattr(user, 'cedula', '1.234.567.890'),
+        'telefono': getattr(user, 'telefono', '+57 312 456 7890'),
+        'email': user.email,
+        'direccion': getattr(user, 'direccion', 'Cra 15 #85-23, Bogotá'),
+        'cliente_desde': 'Enero 2023',
+        'emergencia': {
+            'nombre': 'María Elena Mendoza',
+            'relacion': 'Esposa',
+            'telefono': '+57 314 396 2770',
+            'telefono_alt': '+57 314 396 2770',
+            'sangre': 'O+ Positivo',
+            'alergias': 'Mariscos, Cacahuetes',
+        },
+        'cuenta_actual': {
+            'total': 45750,
+            'items': [
+                {'nombre': 'Cervezas (3)', 'precio': 18000},
+                {'nombre': 'Alitas BBQ', 'precio': 15500},
+                {'nombre': 'Nachos Supreme', 'precio': 12250},
+            ]
+        },
+        'historial_mensual': {
+            'mes': 'Julio',
+            'total': 450000,
+            'barras': [120000, 160000, 90000, 180000, 140000],
+        }
+    }
+    return render(request, 'users/panel de usuario.html', {'datos': datos})

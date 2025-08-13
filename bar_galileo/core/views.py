@@ -9,7 +9,3 @@ class indexView(ListView):
     model = Producto
     template_name = 'index.html'
     context_object_name = 'productos'
-
-def index(request):
-    productos = Producto.objects.all()
-    return render(request, 'index.html', {'productos': productos})

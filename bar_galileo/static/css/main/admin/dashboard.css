@@ -37,11 +37,11 @@ body {
 @keyframes slide-up-fast {
   from {
     transform: translateY(100%);
-    
+
   }
   to {
     transform: translateY(0);
-   
+
   }
 } */
 
@@ -59,7 +59,7 @@ body {
 .dashboard-title {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
 }
 
 .dashboard-cards {
@@ -70,9 +70,10 @@ body {
 }
 
 .card {
-  background: var(--color-secondary);
+  background: transparent ;
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--color-shadow);
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 4px 8px var(--color-primary);
   padding: 1.5rem;
   flex: 1;
   min-width: 250px;
@@ -82,12 +83,13 @@ body {
 
 .card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 4px 30px var(--color-primary);
 }
 
 .card h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
 }
 
 .card p {
@@ -103,9 +105,9 @@ body {
 }
 
 .chart-box {
-  background: var(--color-secondary);
+  background: transparent;
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--color-shadow);
+  border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
   min-width: 300px;
@@ -114,14 +116,14 @@ body {
 .chart-box h4 {
   font-size: 1.2rem;
   margin-bottom: 1rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
 }
 
 .dummy-chart {
   height: 200px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--color-light), #e8f5e9);
   display: flex;
+  border: 2px solid var(--color-primary);
   justify-content: center;
   align-items: center;
   color: var(--color-gray);
