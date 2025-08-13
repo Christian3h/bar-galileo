@@ -1,20 +1,17 @@
-
-header{
-    background-color: var(--color-primary);
+header {
+  background-color: var(--color-light);
 }
-
 
 /* === Layout Base === */
 .layout {
   display: flex;
-  min-height: 100vh;
+  /* min-height: 100dvh; */
 }
 
 /* === Sidebar === */
 .sidebar {
-  background-color: var(--color-primary);
+  background-color: var(--color-light);
   color: var(--color-secondary);
-  padding: 1rem;
   min-width: 220px;
   max-width: 220px;
   transition: all 0.3s ease;
@@ -35,6 +32,10 @@ header{
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.menu > * {
+  margin: 10px 10px;
 }
 
 .menu-btn {
@@ -77,12 +78,11 @@ header{
 
 /* === Toggle Button === */
 .toggle-sidebar-btn {
-  background: var(--color-primary);
   color: var(--color-secondary);
+  background: transparent;
   border: none;
-  font-size: 1.5rem;
-  padding: 0.5rem 1rem;   
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   display: none;
 }
@@ -91,25 +91,32 @@ header{
 .menu li:hover,
 .menu li:hover > .menu-btn,
 .submenu li:hover a {
-  background-color: var(--color-accent);   /* Verde más vivo */
+  background-color: var(--color-accent); /* Verde más vivo */
   color: var(--color-secondary);
 }
 
 /* === Submenús desplegados: diferenciar visualmente los <li> === */
 .submenu.show li {
+  margin: 5px 0 5px 0;
+  border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.08); /* Fondo más claro al abrir */
   border-left: 3px solid var(--color-secondary);
-  padding-left: 0.5rem;
+  padding-left: 3px;
 }
+
+
 
 /* === Transiciones suaves === */
 .menu li,
 .menu-btn,
-.submenu li a  {
+.submenu li a {
 
-  transition: background-color 0.2s ease, color 0.2s ease;
+  border-radius: 5px;
+  padding: 3px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
-
 
 /* === Responsivo === */
 @media (max-width: 12000px) {
