@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dashboard Vive Natural - Estilo mejorado</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700&family=Open+Sans&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
+
+<style>
+  :root {
+    --color-primary: #62733d;
+    --color-secondary: #a68932;
+    --color-dark: #bf452a;
+    --color-light: #262626;
+    --color-accent: #0d0d0d;
+    --color-gray: #a68932;
+    --color-shadow: #62733d;
+  }
+
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-light));
+    font-family: 'Open Sans', sans-serif;
+    color: var(--color-secondary);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    background-color: var(--color-light);
+    width: 280px;
+    padding: 30px 25px;
+    box-shadow: 4px 0 12px rgba(0,0,0,0.7);
+    transition: width 0.4s ease;
+    font-family: 'Merriweather', serif;
+    letter-spacing: 1px;
+  }
+
+  .sidebar.collapsed {
+    width: 70px;
+  }
+
+  .sidebar h2 {
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+
+  .sidebar ul {
+    list-style: none;
+  }
+
+  .sidebar ul li {
+    margin: 20px 0;
+  }
+
+  .sidebar ul li a {
+    text-decoration: none;
+    color: var(--color-secondary);
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    display: block;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+  .sidebar ul li a:hover {
+    background: var(--color-primary);
+    color: var(--color-light);
+    box-shadow: 0 0 10px var(--color-primary);
+  }
+
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-accent);
+  }
+
+  .topbar {
+    background-color: var(--color-dark);
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--color-secondary);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    font-family: 'Merriweather', serif;
+  }
+
+  .topbar h1 {
+    font-weight: 700;
+    font-size: 1.8rem;
+  }
+
+  .topbar button {
+    background: transparent;
+    border: 2px solid var(--color-secondary);
+    color: var(--color-secondary);
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    transition: background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .topbar button:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-accent);
+    box-shadow: 0 0 15px var(--color-secondary);
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px;
+  }
+
+  /* Tabla */
+  table.dataTable {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 15px !important;
+  }
+  table.dataTable thead th {
+    background-color: var(--color-primary);
+    color: var(--color-light);
+    font-family: 'Merriweather', serif;
+    font-weight: 700;
+    border: none !important;
+    padding: 12px 18px;
+    border-radius: 10px 10px 0 0;
+  }
+  table.dataTable tbody td {
+    background: var(--color-light);
+    border: none !important;
+    color: var(--color-secondary);
+    padding: 14px 18px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-primary);
+    transition: background-color 0.3s ease;
+  }
+  table.dataTable tbody tr:hover td {
+    background-color: var(--color-primary);
+    color: var(--color-accent);
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--color-secondary);
+  }
+
+  /* Notificaciones */
+  .notifications {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 320px;
+    height: 100%;
+    background: var(--color-dark);
+    box-shadow: -3px 0 15px rgba(0,0,0,0.7);
+    padding: 30px;
+    color: var(--color-secondary);
+    font-family: 'Merriweather', serif;
+    transition: right 0.5s ease;
+  }
+  .notifications.active {
+    right: 0;
+  }
+  .notifications h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+  }
+  .notifications ul {
+    list-style: none;
+  }
+  .notifications ul li {
+    margin: 20px 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar {
+      position: fixed;
+      top: 0; left: -280px;
+      height: 100%;
+      z-index: 1500;
+      transition: left 0.5s ease;
+    }
+    .sidebar.active {
+      left: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <nav class="sidebar" id="sidebar">
+    <h2>Vive Natural</h2>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Pedidos</a></li>
+      <li><a href="#">Productos</a></li>
+      <li><a href="#">Usuarios</a></li>
+    </ul>
+  </nav>
+  <div class="main">
+    <header class="topbar">
+      <button id="toggleSidebar">☰</button>
+      <h1>Dashboard</h1>
+      <button id="toggleNotifications">🔔</button>
+    </header>
+    <main class="content">
+      <table id="example" class="display responsive nowrap" style="width:100%">
+        <thead>
+          <tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Manzanilla</td><td>Infusiones</td><td>$5</td><td>120</td><td>2025-08-12</td></tr>
+          <tr><td>Miel Natural</td><td>Alimentos</td><td>$10</td><td>50</td><td>2025-08-11</td></tr>
+          <tr><td>Shampoo Herbal</td><td>Cuidado Personal</td><td>$8</td><td>80</td><td>2025-08-10</td></tr>
+        </tbody>
+      </table>
+    </main>
+  </div>
+  <aside class="notifications" id="notifications">
+    <h3>Notificaciones</h3>
+    <ul>
+      <li>Nuevo pedido recibido</li>
+      <li>Stock bajo: Miel Natural</li>
+      <li>Se agregó un nuevo producto</li>
+    </ul>
+  </aside>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script>
+    $(document).ready(() => {
+      $('#example').DataTable({
+        responsive: true,
+        language: {
+          url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        }
+      });
+    });
+
+    const sidebar = document.getElementById('sidebar');
+    const notifications = document.getElementById('notifications');
+    document.getElementById('toggleSidebar').onclick = () => {
+      if(window.innerWidth <= 900) {
+        sidebar.classList.toggle('active');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    };
+    document.getElementById('toggleNotifications').onclick = () => {
+      notifications.classList.toggle('active');
+    };
+  </script>
+</body>
+</html>

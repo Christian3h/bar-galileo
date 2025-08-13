@@ -1,10 +1,11 @@
+{%load static%}
 {% load roles_tags %}
 <header class="layout">
     <div class="header-content">
         <nav id="sidebar" class="sidebar expanded">
             <ul class="menu">
                 <a href="{% url 'admin_dashboard:dashboard' %}">
-                    <h2>Bar galileo</h2>
+                    <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo">
                 </a>
                 {% if request.user|has_perm:"products,ver" %}
                 <li>

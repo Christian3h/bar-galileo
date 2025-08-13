@@ -1,8 +1,0 @@
-/* ------------- FOOTER ------------- */
-footer {
-  padding: 2rem;
-  text-align: center;
-  font-size: .875rem;
-  color: var(--color-gray);
-}
-footer p { font-weight: 500; margin-bottom: .5rem; }
