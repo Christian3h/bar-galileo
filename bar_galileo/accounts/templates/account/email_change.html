@@ -1,4 +1,4 @@
-{% extends "account/base_manage_email.html" %}
+{% extends "account/base_entrance.html" %}
 {% load i18n %}
 {% load allauth %}
 {% block head_title %}
@@ -7,56 +7,76 @@
 {% block content %}
     <div class="container-login">
         {% element h1 %}
-            {% trans "Email Address" %}
+            {% trans "Cambiar Correo Electrónico" %}
         {% endelement %}
+        
         {% if not emailaddresses %}
             {% include "account/snippets/warn_no_email.html" %}
         {% endif %}
-        {% url 'account_email' as action_url %}
-        {% element form method="post" action=action_url %}
-            {% slot body %}
-                {% csrf_token %}
-                {% if current_emailaddress %}
-                    {% element field id="current_email" disabled=True type="email" value=current_emailaddress.email %}
-                        {% slot label %}
-                            {% translate "Current email" %}:
-                        {% endslot %}
-                    {% endelement %}
-                {% endif %}
-                {% if new_emailaddress %}
-                    {% element field id="new_email" value=new_emailaddress.email disabled=True type="email" %}
-                        {% slot label %}
-                            {% if not current_emailaddress %}
-                                {% translate "Current email" %}:
-                            {% else %}
-                                {% translate "Changing to" %}:
-                            {% endif %}
-                        {% endslot %}
-                        {% slot help_text %}
-                            {% blocktranslate %}Your email address is still pending verification.{% endblocktranslate %}
-                            {% element button form="pending-email" type="submit" name="action_send" tags="minor,secondary" %}
-                                {% trans 'Re-send Verification' %}
+        
+        <!-- Sección de correo actual -->
+        <div class="form-section">
+            <h2>Información Actual</h2>
+            {% if current_emailaddress %}
+                <div class="email-info-item">
+                    <label>Correo actual:</label>
+                    <div class="email-display">
+                        {{ current_emailaddress.email }}
+                        {% if current_emailaddress.verified %}
+                            <span class="badge badge-verified">Verificado</span>
+                        {% else %}
+                            <span class="badge badge-unverified">Sin verificar</span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            
+            {% if new_emailaddress %}
+                <div class="email-info-item pending-email">
+                    <label>Cambiando a:</label>
+                    <div class="email-display">
+                        {{ new_emailaddress.email }}
+                        <span class="badge badge-pending">Pendiente de verificación</span>
+                    </div>
+                    <div class="pending-actions">
+                        <p class="help-text">Tu nueva dirección de correo está pendiente de verificación.</p>
+                        <div class="button-group">
+                            {% element button form="pending-email" type="submit" name="action_send" tags="secondary" %}
+                                {% trans 'Reenviar Verificación' %}
                             {% endelement %}
                             {% if current_emailaddress %}
-                                {% element button form="pending-email" type="submit" name="action_remove" tags="danger,minor" %}
-                                    {% trans 'Cancel Change' %}
+                                {% element button form="pending-email" type="submit" name="action_remove" tags="danger" %}
+                                    {% trans 'Cancelar Cambio' %}
                                 {% endelement %}
                             {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Formulario para cambiar email -->
+        <div class="form-section">
+            <h2>{% if new_emailaddress %}Cambiar a Otro Correo{% else %}Nuevo Correo Electrónico{% endif %}</h2>
+            {% url 'account_email' as action_url %}
+            {% element form method="post" action=action_url %}
+                {% slot body %}
+                    {% csrf_token %}
+                    {% element field id=form.email.auto_id name="email" value=form.email.value errors=form.email.errors type="email" %}
+                        {% slot label %}
+                            {% translate "Nueva dirección de correo:" %}
                         {% endslot %}
                     {% endelement %}
-                {% endif %}
-                {% element field id=form.email.auto_id name="email" value=form.email.value errors=form.email.errors type="email" %}
-                    {% slot label %}
-                        {% translate "Change to" %}:
-                    {% endslot %}
-                {% endelement %}
-            {% endslot %}
-            {% slot actions %}
-                {% element button name="action_add" type="submit" %}
-                    {% trans "Change Email" %}
-                {% endelement %}
-            {% endslot %}
-        {% endelement %}
+                {% endslot %}
+                {% slot actions %}
+                    {% element button name="action_add" type="submit" tags="prominent,login" %}
+                        {% trans "Cambiar Correo" %}
+                    {% endelement %}
+                {% endslot %}
+            {% endelement %}
+        </div>
+        
+        <!-- Formulario oculto para acciones de email pendiente -->
         {% if new_emailaddress %}
             <form style="display: none"
                 id="pending-email"
@@ -66,5 +86,12 @@
                 <input type="hidden" name="email" value="{{ new_emailaddress.email }}">
             </form>
         {% endif %}
+        
+        <!-- Enlaces de navegación -->
+        <div class="nav-links">
+            <a href="{% url 'account_email' %}">Gestionar todos los correos</a>
+            <a href="{% url 'account_change_password' %}">Cambiar contraseña</a>
+            <a href="{% url 'core:index' %}">Volver al inicio</a>
+        </div>
     </div>
 {% endblock content %}

@@ -1,33 +1,30 @@
-
-
 /* =======================================
    RESET + VARIABLES + COMPONENTES
 ======================================= */
-@import '../../_resets/_resets.css';
-@import '../../_variables/_colors.css';
-@import '../../_components/_buttons.css';
-@import '../../_components/_nav_admin.css';
+@import "../../_resets/_resets.css";
+@import "../../_variables/_colors.css";
+@import "../../_components/_buttons.css";
+@import "../../_components/_nav_admin.css";
+@import "../../_components/_forms.css";
 
 /* =======================================
    BASE
 ======================================= */
 /* Este aplica a toda la página */
 
-
 body {
-    display: flex;
-    margin: 0;
-    font-family: sans-serif;
-    height: 100vh;
-    width: 100%;
+  display: flex;
+  margin: 0;
+  font-family: sans-serif;
+  height: 100vh;
 }
 
-@view-transition{
+@view-transition {
   navigation: auto;
 }
 
-::view-transition-group(*){
-  animation-duration: .5s;
+::view-transition-group(*) {
+  animation-duration: 0.5s;
 }
 
 /* ::view-transition-old(root) {
@@ -37,15 +34,15 @@ body {
 @keyframes slide-up-fast {
   from {
     transform: translateY(100%);
-    
+
   }
   to {
     transform: translateY(0);
-   
+
   }
 } */
 
-.container{
+.container {
   max-width: 100%;
 }
 
@@ -53,13 +50,12 @@ body {
   width: 100%;
   padding: 2rem 3rem;
   box-sizing: border-box;
-  background-color: var(--color-light);
 }
 
 .dashboard-title {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: var(--color-primary);
+  color: var(--color-secondary);
 }
 
 .dashboard-cards {
@@ -70,9 +66,10 @@ body {
 }
 
 .card {
-  background: var(--color-secondary);
+  background: transparent;
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--color-shadow);
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 4px 8px var(--color-primary);
   padding: 1.5rem;
   flex: 1;
   min-width: 250px;
@@ -82,12 +79,13 @@ body {
 
 .card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 4px 30px var(--color-primary);
 }
 
 .card h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
 }
 
 .card p {
@@ -103,9 +101,9 @@ body {
 }
 
 .chart-box {
-  background: var(--color-secondary);
+  background: transparent;
   border-radius: 12px;
-  box-shadow: 0 4px 12px var(--color-shadow);
+  border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
   min-width: 300px;
@@ -114,20 +112,19 @@ body {
 .chart-box h4 {
   font-size: 1.2rem;
   margin-bottom: 1rem;
-  color: var(--color-dark);
+  color: var(--color-secondary);
 }
 
 .dummy-chart {
   height: 200px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--color-light), #e8f5e9);
   display: flex;
+  border: 2px solid var(--color-primary);
   justify-content: center;
   align-items: center;
   color: var(--color-gray);
   font-size: 0.9rem;
 }
-
 
 @media (max-width: 768px) {
   .dashboard-cards,
@@ -159,4 +156,28 @@ body {
   .card p {
     font-size: 1.5rem;
   }
+}
+
+.dataTables_wrapper {
+  text-align: center;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+  text-align: left;
+}
+
+/*estilos para las tablas */
+
+.table {
+  width: 50% !important;
+}
+
+.dt-paging-button {
+  color: var(--color-secondary) !important;
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--color-secondary) !important;
 }
