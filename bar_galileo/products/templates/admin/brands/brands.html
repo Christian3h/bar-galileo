@@ -1,43 +1,48 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-{%load static%}
+{% load static %}
 {% load roles_tags %}
 
 <h1>Lista de marcas</h1>
 
+<!-- Contenedor responsivo -->
+<div class="table-responsive">
+    <table id="brands-table" class="table display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for brand in brands %}
+            <tr>
+                <td>{{ brand.id_marca }}</td>
+                <td>{{ brand.marca }}</td>
+                <td>
+                    {% if request.user|has_perm:"brands,editar" %}
+                    <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning">Editar</a>
+                    {% endif %}
+                    {% if request.user|has_perm:"brands,eliminar" %}
+                    <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-<table id="brands-table" class="table display">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for brand in brands %}
-        <tr>
-            <td>{{ brand.id_marca }}</td>
-            <td>{{ brand.marca }}</td>
-            <td>
-                {% if request.user|has_perm:"brands,editar" %}
-                <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning">Editar</a>
-                {% endif %}
-                {% if request.user|has_perm:"brands,eliminar" %}
-                <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger">Eliminar</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
 <script>
 $(document).ready(function() {
     $('#brands-table').DataTable({
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
-        }
+        },
+        responsive: true // Activar el modo responsive de DataTables
     });
 });
 </script>
+
 {% endblock %}

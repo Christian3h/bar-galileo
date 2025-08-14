@@ -47,10 +47,10 @@
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
                     <ul id="Proveedores-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                         {% if request.user|has_perm:"providers,crear" %}
                         <li><a href="{% url 'products:proveedores_create_admin' %}">Crear proveedor</a></li>
                         {% endif %}
-                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                     </ul>
                 </li>
                 {% endif %}
