@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     #app para el manejo de las notificaciones 
     'channels',
     'notifications',
+    'django.contrib.humanize',
 ]
 
 AUTHENTICATION_BACKENDS = [

@@ -1,3 +1,72 @@
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
+# Editar información personal
+@require_POST
+def get_perfil(user):
+    from .models import PerfilUsuario
+    perfil, _ = PerfilUsuario.objects.get_or_create(user=user)
+    return perfil
+
+def editar_info(request):
+    perfil = get_perfil(request.user)
+    perfil.nombre = request.POST.get('nombre')
+    perfil.cedula = request.POST.get('cedula')
+    perfil.telefono = request.POST.get('telefono')
+    request.user.email = request.POST.get('email')
+    perfil.direccion = request.POST.get('direccion')
+    perfil.cliente_desde = request.POST.get('cliente_desde')
+    perfil.save()
+    request.user.save()
+    messages.success(request, '¡Información personal actualizada correctamente!')
+    return redirect('users:panel_usuario')
+
+# Borrar información personal
+@require_POST
+def borrar_info(request):
+    perfil = get_perfil(request.user)
+    perfil.nombre = ''
+    perfil.cedula = ''
+    perfil.telefono = ''
+    request.user.email = ''
+    perfil.direccion = ''
+    perfil.cliente_desde = ''
+    perfil.save()
+    request.user.save()
+    messages.success(request, '¡Información personal borrada correctamente!')
+    return redirect('users:panel_usuario')
+
+# Editar contacto de emergencia
+@require_POST
+def editar_emergencia(request):
+    from .models import Emergencia
+    perfil = get_perfil(request.user)
+    emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
+    emergencia.nombre = request.POST.get('emergencia_nombre')
+    emergencia.relacion = request.POST.get('emergencia_relacion')
+    emergencia.telefono = request.POST.get('emergencia_telefono')
+    emergencia.telefono_alt = request.POST.get('emergencia_telefono_alt')
+    emergencia.sangre = request.POST.get('emergencia_sangre')
+    emergencia.alergias = request.POST.get('emergencia_alergias')
+    emergencia.save()
+    messages.success(request, '¡Contacto de emergencia actualizado correctamente!')
+    return redirect('users:panel_usuario')
+
+# Borrar contacto de emergencia
+@require_POST
+def borrar_emergencia(request):
+    from .models import Emergencia
+    perfil = get_perfil(request.user)
+    emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
+    emergencia.nombre = ''
+    emergencia.relacion = ''
+    emergencia.telefono = ''
+    emergencia.telefono_alt = ''
+    emergencia.sangre = ''
+    emergencia.alergias = ''
+    emergencia.save()
+    messages.success(request, '¡Contacto de emergencia borrado correctamente!')
+    return redirect('users:panel_usuario')
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from roles.models import UserProfile, Role
@@ -31,36 +100,27 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def panel_usuario(request):
-    # Aquí puedes obtener datos reales del usuario
-    user = request.user
-    # Ejemplo de datos, reemplaza por datos reales de tu modelo
+    from .models import PerfilUsuario, Emergencia
+    perfil = get_perfil(request.user)
+    emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
+    # Aquí debes construir el dict datos como antes, pero asegurando que emergencia siempre existe
     datos = {
-        'nombre': user.get_full_name() or user.username,
-        'cedula': getattr(user, 'cedula', '1.234.567.890'),
-        'telefono': getattr(user, 'telefono', '+57 312 456 7890'),
-        'email': user.email,
-        'direccion': getattr(user, 'direccion', 'Cra 15 #85-23, Bogotá'),
-        'cliente_desde': 'Enero 2023',
-        'emergencia': {
-            'nombre': 'María Elena Mendoza',
-            'relacion': 'Esposa',
-            'telefono': '+57 314 396 2770',
-            'telefono_alt': '+57 314 396 2770',
-            'sangre': 'O+ Positivo',
-            'alergias': 'Mariscos, Cacahuetes',
-        },
+        'nombre': perfil.nombre,
+        'cedula': perfil.cedula,
+        'telefono': perfil.telefono,
+        'email': request.user.email,
+        'direccion': perfil.direccion,
+        'cliente_desde': perfil.cliente_desde,
         'cuenta_actual': {
-            'total': 45750,
-            'items': [
-                {'nombre': 'Cervezas (3)', 'precio': 18000},
-                {'nombre': 'Alitas BBQ', 'precio': 15500},
-                {'nombre': 'Nachos Supreme', 'precio': 12250},
-            ]
+            'total': 0,
+            'items': []
         },
-        'historial_mensual': {
-            'mes': 'Julio',
-            'total': 450000,
-            'barras': [120000, 160000, 90000, 180000, 140000],
+        'emergencia': {
+            'nombre': emergencia.nombre,
+            'relacion': emergencia.relacion,
+            'telefono': emergencia.telefono,
+            'telefono_alt': emergencia.telefono_alt,
+            'sangre': emergencia.sangre,
+            'alergias': emergencia.alergias,
         }
     }
-    return render(request, 'users/panel de usuario.html', {'datos': datos})
