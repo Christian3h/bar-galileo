@@ -4,23 +4,130 @@
 {% block head_title %}
     {% trans "Sign In" %}
 {% endblock head_title %}
+
 {% block content %}
-    <div class="container-login">
-        {% element h1 %}
+    <style>
+        html, body {
+            min-height: 100vh;
+            background: #141414 !important;
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+        }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-galileo-container {
+            background: #181818;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.7);
+            max-width: 410px;
+            width: 100%;
+            margin: 48px auto;
+            padding: 40px 32px 32px 32px;
+            color: #e0c97a;
+            border: 2px solid #232323;
+            position: relative;
+        }
+        .login-galileo-title {
+            color: #e0c97a;
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+        .login-galileo-signup-text {
+            color: #7a845c;
+            text-align: center;
+            margin-bottom: 22px;
+            font-size: 1.05rem;
+        }
+        .login-galileo-link {
+            color: #c96e4f;
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .login-galileo-link:hover {
+            color: #e0c97a;
+        }
+        .login-galileo-form input,
+        .login-galileo-form select {
+            background: #232323;
+            color: #e0c97a;
+            border: 1.5px solid #353535;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            width: 100%;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .login-galileo-form input:focus {
+            border: 1.5px solid #e0c97a;
+        }
+        .login-galileo-btn {
+            background: linear-gradient(90deg, #e0c97a 60%, #7a845c 100%);
+            color: #181818;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 0;
+            width: 100%;
+            font-weight: bold;
+            font-size: 1.08rem;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px #23232333;
+            transition: background 0.2s, color 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .login-galileo-btn:hover {
+            background: linear-gradient(90deg, #c96e4f 60%, #e0c97a 100%);
+            color: #fff;
+        }
+        .login-galileo-btn-outline {
+            background: transparent;
+            color: #e0c97a;
+            border: 1.5px solid #e0c97a;
+            border-radius: 8px;
+            padding: 12px 0;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .login-galileo-btn-outline:hover {
+            background: #e0c97a;
+            color: #181818;
+        }
+        .login-galileo-btn-group {
+            margin-top: 16px;
+        }
+        hr {
+            border: none;
+            border-top: 1.5px solid #353535;
+            margin: 24px 0 16px 0;
+            opacity: 0.7;
+        }
+    </style>
+    <div class="login-galileo-container">
+        {% element h1 class="login-galileo-title" %}
             {% trans "Sign In" %}
         {% endelement %}
         {% if not SOCIALACCOUNT_ONLY %}
             {% setvar link %}
-                <a href="{{ signup_url }}">
-                {% endsetvar %}
-                {% setvar end_link %}
+                <a href="{{ signup_url }}" class="login-galileo-link">
+            {% endsetvar %}
+            {% setvar end_link %}
                 </a>
             {% endsetvar %}
-            {% element p %}
+            {% element p class="login-galileo-signup-text" %}
                 {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
             {% endelement %}
-            {% url 'account_login' as login_url %}
-            {% element form form=form method="post" action=login_url tags="entrance,login" %}
+            {% url 'account_' as _url %}
+            {% element form form=form method="post" action=_url tags="entrance," class="login-galileo-form" %}
                 {% slot body %}
                     {% csrf_token %}
                     {% element fields form=form unlabeled=True %}
@@ -28,36 +135,36 @@
                     {{ redirect_field }}
                 {% endslot %}
                 {% slot actions %}
-                    {% element button type="submit" tags="prominent,login"  %}
+                    {% element button type="submit" tags="prominent," class="login-galileo-btn" %}
                         {% trans "Sign In" %}
                     {% endelement %}
                 {% endslot %}
             {% endelement %}
         {% endif %}
-        {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
+        {% if _BY_CODE_ENABLED or PASSKEY__ENABLED %}
             {% element hr %}
             {% endelement %}
-            {% element button_group vertical=True   %}
-                {% if PASSKEY_LOGIN_ENABLED %}
-                    {% element button type="submit" form="mfa_login" id="passkey_login" tags="prominent,login,outline,primary"  %}
+            {% element button_group vertical=True class="login-galileo-btn-group" %}
+                {% if PASSKEY__ENABLED %}
+                    {% element button type="submit" form="mfa_" id="passkey_" tags="prominent,,outline,primary" class="login-galileo-btn-outline" %}
                         {% trans "Sign in with a passkey" %}
                     {% endelement %}
                 {% endif %}
-                {% if LOGIN_BY_CODE_ENABLED %}
-                    {% element button href=request_login_code_url tags="prominent,login,outline,primary"  %}
+                {% if _BY_CODE_ENABLED %}
+                    {% element button href=request__code_url tags="prominent,,outline,primary" class="login-galileo-btn-outline" %}
                         {% trans "Send me a sign-in code" %}
                     {% endelement %}
                 {% endif %}
             {% endelement %}
         {% endif %}
         {% if SOCIALACCOUNT_ENABLED %}
-            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+            {% include "socialaccount/snippets/.html" with page_layout="entrance" %}
         {% endif %}
     </div>
-    {% endblock content %}
-    {% block extra_body %}
-        {{ block.super }}
-        {% if PASSKEY_LOGIN_ENABLED %}
-            {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
-        {% endif %}
+{% endblock content %}
+{% block extra_body %}
+    {{ block.super }}
+    {% if PASSKEY__ENABLED %}
+        {% include "mfa/webauthn/snippets/_script.html" with button_id="passkey_" %}
+    {% endif %}
 {% endblock %}
