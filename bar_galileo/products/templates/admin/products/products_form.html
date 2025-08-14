@@ -4,7 +4,7 @@
 {% block content %}
 <h1>{% if object %}Editar{% else %}Crear{% endif %} Producto</h1>
 
-<a href="{% url 'products:products_admin' %}">Volver</a>
+<a href="{% url 'products:products_admin' %}" class="btn btn-secondary" >Volver</a>
 
 <!-- Formulario principal de creación/edición -->
 <form method="post" enctype="multipart/form-data">
