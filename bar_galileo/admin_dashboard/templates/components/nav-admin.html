@@ -1,10 +1,11 @@
+{%load static%}
 {% load roles_tags %}
 <header class="layout">
     <div class="header-content">
         <nav id="sidebar" class="sidebar expanded">
             <ul class="menu">
                 <a href="{% url 'admin_dashboard:dashboard' %}">
-                    <h2>Bar galileo</h2>
+                    <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo">
                 </a>
                 {% if request.user|has_perm:"products,ver" %}
                 <li>
@@ -46,10 +47,10 @@
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
                     <ul id="Proveedores-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                         {% if request.user|has_perm:"providers,crear" %}
                         <li><a href="{% url 'products:proveedores_create_admin' %}">Crear proveedor</a></li>
                         {% endif %}
-                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                     </ul>
                 </li>
                 {% endif %}

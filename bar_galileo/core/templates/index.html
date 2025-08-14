@@ -38,7 +38,7 @@
       visibility: hidden;
       height: 0;
     }
-    
+
     /* Estilos para productos */
     .product-description {
       color: var(--color-gray);
@@ -46,11 +46,11 @@
       margin: 0.5rem 0;
       line-height: 1.4;
     }
-    
+
     .product-info {
       padding: 1rem;
     }
-    
+
     .product-info .btn-green {
       margin-top: 0.5rem;
       width: 100%;
@@ -58,7 +58,7 @@
       border-radius: 8px;
       font-size: 0.9rem;
     }
-    
+
     /* Estilos para botones de productos */
     .productos-botones {
       display: flex;
@@ -67,11 +67,11 @@
       align-items: center;
       flex-wrap: wrap;
     }
-    
+
     .productos-botones .btn-green {
       transition: all 0.3s ease;
     }
-    
+
     .productos-botones .btn-green:hover {
       transform: translateY(-2px);
     }
@@ -85,60 +85,94 @@
     <a href="#login-section" class="quick-btn">Login</a>
   </div>
 
-  <!-- NAVBAR NUEVA -->
-  <nav class="navbar">
-    <div class="nav-container" style="display: flex; align-items: center; justify-content: space-between;">
-      <div class="logo">BAR GALILEO</div>
-      <ul class="nav-menu">
-        <li><a href="#cocktails-section">COCKTAILS</a></li>
-        <li><a href="#experiencia-section">EXPERIENCIA</a></li>
-        <li><a href="#eventos-section">EVENTOS</a></li>
-        <li><a href="#reservas-section">RESERVAS</a></li>
-      </ul>
-      <div class="nav-buttons">
-        <button class="btn-green" data-action="login">LOGIN</button>
-        <button class="btn-green" data-action="reservar">RESERVAR MESA</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <header class="hero" id="experiencia-section">
-    <div class="badge">EXPERIENCIA PREMIUM</div>
-    <h1 class="hero-title">
-      <span class="text-white">BAR</span> <span class="text-red">GALILEO</span>
-    </h1>
-    <p class="hero-subtitle">
-      Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable
-    </p>
-    <div class="hero-buttons">
-      <button class="btn-green" data-action="carta">EXPLORAR CARTA</button>
-      <button class="btn-green" data-action="historia">NUESTRA HISTORIA</button>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <div class="logo">BAR GALILEO</div>
+        <ul class="nav-menu">
+          <li><a href="#cocktails-section">COCKTAILS</a></li>
+          <li><a href="#about">EXPERIENCIA</a></li>
+          <li><a href="#carta-section">CARTA</a></li>
+          <li><a href="#reservas-section">RESERVAS</a></li>
+          <li><a href="#contact">CONTACTO</a></li>
+        </ul>
+        <div class="nav-buttons">
+          <a href="#login-section" class="nav-button">LOGIN</a>
+          <a href="#reservas-section" class="nav-button">RESERVAR MESA</a>
+        </div>
+      </nav>
     </div>
   </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="experiencia-section">
+    <div class="hero-carousel">
+      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80')"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=2070&q=80')"></div>
+    </div>
+
+    <div class="hero-content">
+      <h1>BAR GALILEO</h1>
+      <p>Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable</p>
+      <div class="hero-buttons">
+        <button class="hero-button" data-action="carta">EXPLORAR CARTA</button>
+        <button class="hero-button" data-action="historia">NUESTRA HISTORIA</button>
+      </div>
+    </div>
+
+    <div class="hero-dots">
+      <span class="hero-dot active" data-slide="0"></span>
+      <span class="hero-dot" data-slide="1"></span>
+      <span class="hero-dot" data-slide="2"></span>
+      <span class="hero-dot" data-slide="3"></span>
+      <span class="hero-dot" data-slide="4"></span>
+      <span class="hero-dot" data-slide="5"></span>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-content">
+          <h2>Acerca de Bar Galileo</h2>
+          <p>Somos más que un bar, somos un espacio donde la pasión por la coctelería se encuentra con la elegancia y el diseño. Nuestro equipo de mixólogos expertos crea experiencias únicas para cada huésped.</p>
+          <p>Con una carta cuidadosamente seleccionada de destilados premium, ingredientes frescos y técnicas innovadoras, transformamos cada cóctel en una experiencia sensorial inolvidable.</p>
+          <p>Únete a nosotros y descubre por qué Bar Galileo se ha convertido en el destino preferido para los amantes de la buena coctelería en la ciudad.</p>
+        </div>
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Interior de Bar Galileo">
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- SIGNATURE COCKTAILS -->
   <span class="section-anchor" id="cocktails-section"></span>
   <section class="signature-section">
-    <div class="badge">SELECCIÓN ESPECIAL</div>
-    <h2 class="signature-title">
-      <span class="text-white">CÓCTELES</span> <span class="text-red">SIGNATURE</span>
-    </h2>
-    <p class="signature-subtitle">
-      Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo
-    </p>
-    <div class="signature-cards">
-      <div class="signature-card">
-        <div class="card-badge">ESPECIAL</div>
-        <div class="card-icon">🍸</div>
-      </div>
-      <div class="signature-card">
-        <div class="card-badge">ESPECIAL</div>
-        <div class="card-icon">🍹</div>
-      </div>
-      <div class="signature-card">
-        <div class="card-badge">ESPECIAL</div>
-        <div class="card-icon">🥃</div>
+    <div class="container">
+      <h2>CÓCTELES SIGNATURE</h2>
+      <p class="signature-subtitle">
+        Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo
+      </p>
+      <div class="signature-cards">
+        <div class="signature-card">
+          <div class="card-badge">ESPECIAL</div>
+          <div class="card-icon">🍸</div>
+        </div>
+        <div class="signature-card">
+          <div class="card-badge">ESPECIAL</div>
+          <div class="card-icon">🍹</div>
+        </div>
+        <div class="signature-card">
+          <div class="card-badge">ESPECIAL</div>
+          <div class="card-icon">🥃</div>
+        </div>
       </div>
     </div>
   </section>
@@ -170,7 +204,7 @@
       </div>
       {% endfor %}
     </div>
-    
+
     {% if total_productos > 3 %}
     <div class="productos-botones" style="text-align: center; margin-top: 2rem;">
       <button id="mostrar-mas-productos" class="btn-green" style="padding: 1rem 2rem; font-size: 1.1rem;">
@@ -186,58 +220,72 @@
     {% endif %}
   </section>
 
-  <!-- COCTELES DESTACADOS -->
-  <span class="section-anchor" id="eventos-section"></span>
+  <!-- PRODUCTOS DESDE BASE DE DATOS -->
+  <span class="section-anchor" id="carta-section"></span>
   <section class="products-section">
-    <h2 class="products-title">COCTELES DESTACADOS</h2>
-    <div class="products-grid">
-
-      <div class="product-card">
-        <div class="product-carousel">
-          <button class="carousel-btn prev">&#8592;</button>
-          <img src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80" class="product-img" alt="Cóctel Tropical" />
-          <button class="carousel-btn next">&#8594;</button>
+    <div class="container">
+      <h2 class="products-title">Nuestros Productos</h2>
+      <div class="products-grid" id="productos-grid">
+        {% for producto in productos_iniciales %}
+        <div class="product-card">
+          <div class="product-carousel">
+            {% if producto.imagenes.exists %}
+              <img src="{% static producto.imagenes.first.imagen %}" class="product-img" alt="{{ producto.nombre }}" />
+            {% else %}
+              <img src="https://via.placeholder.com/400x300?text=Sin+Imagen" class="product-img" alt="{{ producto.nombre }}" />
+            {% endif %}
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">{{ producto.nombre }}</h3>
+            <p class="product-price">${{ producto.precio_venta }}</p>
+            <p class="product-description">{{ producto.descripcion|truncatewords:10 }}</p>
+            <button class="btn-green" data-producto-id="{{ producto.id_producto }}">Ver producto</button>
+          </div>
         </div>
-        <div class="product-info">
-          <h3 class="product-name">Cóctel Tropical</h3>
-          <p class="product-price">$120</p>
-          <button class="btn-green">Ver producto</button>
+        {% empty %}
+        <div style="text-align: center; color: #ccc; grid-column: 1 / -1;">
+          <p>No hay productos disponibles en este momento.</p>
         </div>
+        {% endfor %}
       </div>
 
-      <div class="product-card">
-        <div class="product-carousel">
-          <button class="carousel-btn prev">&#8592;</button>
-          <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" class="product-img" alt="Cóctel Sunset" />
-          <button class="carousel-btn next">&#8594;</button>
-        </div>
-        <div class="product-info">
-          <h3 class="product-name">Cóctel Sunset</h3>
-          <p class="product-price">$110</p>
-          <button class="btn-green">Ver producto</button>
+      {% if total_productos > 3 %}
+      <div class="productos-botones">
+        <button id="mostrar-mas-productos" class="btn-green">
+          Mostrar más productos
+        </button>
+        <button id="mostrar-menos-productos" class="btn-green" style="display: none;">
+          Mostrar menos productos
+        </button>
+        <div id="loading-productos" style="display: none;">
+
         </div>
       </div>
-
+      {% endif %}
     </div>
   </section>
 
   <!-- SECCIÓN RESERVAS -->
   <span class="section-anchor" id="reservas-section"></span>
-  <section class="products-section" style="background: linear-gradient(90deg, var(--color-dark) 60%, var(--color-black) 100%);">
-    <h2 class="products-title">Reservas</h2>
-    <div style="text-align:center; color: var(--color-gray); font-size:1.2rem;">
-      <p>¡Reserva tu mesa y asegura tu lugar en Bar Galileo!</p>
-      <a href="https://wa.me/XXXXXXXXXXX" class="btn-green" style="margin-top:1rem;display:inline-block;">Reservar por WhatsApp</a>
-      <!-- Cambia el número por el tuyo real -->
+  <section class="reservas-section">
+    <div class="container">
+      <h2 class="products-title">Reservas</h2>
+      <p style="font-size: 18px; margin-bottom: 40px; color: #ccc;">
+        ¡Reserva tu mesa y asegura tu lugar en Bar Galileo!
+      </p>
+      <a href="https://wa.me/XXXXXXXXXXX" class="nav-button">Reservar por WhatsApp</a>
     </div>
   </section>
 
   <!-- SECCIÓN LOGIN -->
   <span class="section-anchor" id="login-section"></span>
-  <section class="products-section" style="background: linear-gradient(90deg, var(--color-black) 60%, #2b2b37 100%);">
-    <h2 class="products-title">Iniciar Sesión</h2>
-    <div style="text-align:center; color: var(--color-gray); font-size:1.2rem;">
-      <a href="/accounts/email" class="btn-green" style="margin-top:1rem;display:inline-block;">Ir a Login</a>
+  <section class="login-section">
+    <div class="container">
+      <h2 class="products-title">Iniciar Sesión</h2>
+      <p style="font-size: 18px; margin-bottom: 40px; color: #ccc;">
+        Accede a tu cuenta para disfrutar de beneficios exclusivos
+      </p>
+      <a href="/accounts/email" class="nav-button">Ir a Login</a>
     </div>
   </section>
 
@@ -261,7 +309,7 @@
     socket.onclose = function(e) {
        // console.log("WebSocket cerrado");
     };
-    
+
     // Scroll suave para enlaces de navbar y acceso rápido
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.onclick = function(e) {
@@ -272,35 +320,35 @@
         }
       }
     });
-    
+
     // Variables para la paginación de productos
     let currentOffset = 3; // Ya tenemos 3 productos cargados inicialmente
     let isLoading = false;
     let productosOriginales = 3; // Número de productos iniciales
-    
+
     // Función para cargar más productos
     function cargarMasProductos() {
         if (isLoading) return;
-        
+
         isLoading = true;
         const loadingEl = document.getElementById('loading-productos');
         const btnMostrarMas = document.getElementById('mostrar-mas-productos');
         const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
-        
+
         loadingEl.style.display = 'block';
         btnMostrarMas.style.display = 'none';
-        
+
         fetch(`/productos/ajax/?offset=${currentOffset}&limit=6`)
             .then(response => response.json())
             .then(data => {
                 const productosGrid = document.getElementById('productos-grid');
-                
+
                 data.productos.forEach(producto => {
                     const productCard = document.createElement('div');
                     productCard.className = 'product-card producto-adicional';
-                    
+
                     const imagenSrc = producto.imagen_url || 'https://via.placeholder.com/400x300?text=Sin+Imagen';
-                    
+
                     productCard.innerHTML = `
                         <div class="product-carousel">
                             <img src="${imagenSrc}" class="product-img" alt="${producto.nombre}" />
@@ -312,21 +360,21 @@
                             <button class="btn-green" data-producto-id="${producto.id}">Ver producto</button>
                         </div>
                     `;
-                    
+
                     productosGrid.appendChild(productCard);
                 });
-                
+
                 currentOffset += data.productos.length;
-                
+
                 if (data.has_more) {
                     btnMostrarMas.style.display = 'inline-block';
                 } else {
                     btnMostrarMas.style.display = 'none';
                 }
-                
+
                 // Mostrar botón "Mostrar menos productos"
                 btnMostrarMenos.style.display = 'inline-block';
-                
+
                 loadingEl.style.display = 'none';
                 isLoading = false;
             })
@@ -337,35 +385,35 @@
                 isLoading = false;
             });
     }
-    
+
     // Función para mostrar menos productos (volver a los 3 iniciales)
     function mostrarMenosProductos() {
         const productosGrid = document.getElementById('productos-grid');
         const btnMostrarMas = document.getElementById('mostrar-mas-productos');
         const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
-        
+
         // Eliminar todos los productos adicionales
         const productosAdicionales = productosGrid.querySelectorAll('.producto-adicional');
         productosAdicionales.forEach(producto => {
             producto.remove();
         });
-        
+
         // Resetear variables
         currentOffset = productosOriginales;
-        
+
         // Mostrar botón "Mostrar más" y ocultar "Mostrar menos"
         btnMostrarMas.style.display = 'inline-block';
         btnMostrarMenos.style.display = 'none';
     }
-    
+
     // Event listeners para los botones
     const btnMostrarMas = document.getElementById('mostrar-mas-productos');
     const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
-    
+
     if (btnMostrarMas) {
         btnMostrarMas.addEventListener('click', cargarMasProductos);
     }
-    
+
     if (btnMostrarMenos) {
         btnMostrarMenos.addEventListener('click', mostrarMenosProductos);
     }
