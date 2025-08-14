@@ -1,7 +1,7 @@
 {% extends 'base_admin.html' %}
 {% load roles_tags %}
 {% block content %}
-<h2>Permisos de {{ role.nombre }}</h2>
+<h2>Permissions for role: {{ role.nombre }}</h2>
 <a href="{% url 'roles:rol_list' %}" class="btn btn-secondary">volver</a>
 <form method="post">
     {% csrf_token %}
@@ -19,7 +19,7 @@
             <tr>
                 <td>{{ modulo.nombre|title }}</td>
                 {% for accion in acciones %}
-                    <td style="text-align: center;">
+                    <td>
                         <input type="checkbox" name="perm_{{ modulo.id }}_{{ accion.id }}"
                                {% for permiso in permisos %}
                                    {% if permiso.modulo_id == modulo.id and permiso.accion_id == accion.id %}
@@ -34,6 +34,6 @@
     </table>
 
 
-    <button type="submit" class="btn btn-primary">Guardar permisos</button>
+    <button type="submit" class="btn btn-primary">Save permissions</button>
 </form>
 {% endblock %}
