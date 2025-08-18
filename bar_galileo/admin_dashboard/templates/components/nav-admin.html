@@ -56,13 +56,17 @@
                 {% endif %}
 
                 {% if request.user|has_perm:"tables,ver" %}
+                {% if request.user|has_perm:"tables,ver" %}
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
                     <ul id="mesas-submenu" class="submenu hidden">
                         <li><a href="{% url 'tables:mesas_lista' %}">Lista de Mesas</a></li>
+                        {% if request.user|has_perm:"tables,crear" %}
                         <li><a href="{% url 'tables:crear_mesa' %}">Crear Mesa</a></li>
+                        {% endif %}
                     </ul>
                 </li>
+                {% endif %}
                 {% endif %}
 
                 {% if request.user|has_perm:"users,ver" %}

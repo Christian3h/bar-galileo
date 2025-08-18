@@ -26,7 +26,9 @@
   </div>
   {% endif %}
 
+  {% if request.user|has_perm:"tables,crear" %}
   <a href="{% url 'tables:crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px">Crear Mesa</a>
+  {% endif %}
 
   <!-- Tarjetas tipo grid -->
   <div class="mesas-container">
@@ -47,10 +49,11 @@
       </div>
 
       <!-- Estado -->
+      {% if request.user|has_perm:"tables,editar" %}
       <form method="post" action="{% url 'tables:actualizar_estado' mesa.id %}">
         {% csrf_token %}
         <div class="input-group">
-          <select name="estado" class="form-select">
+          <select name="estado" class="form-select" onchange="this.form.submit()">
             <option value="disponible" {% if mesa.estado == "disponible" %}selected{% endif %}>
               Disponible
             </option>
@@ -64,22 +67,32 @@
               Fuera de servicio
             </option>
           </select>
-          <!-- Botón Guardar removido porque ya no es necesario -->
         </div>
       </form>
+      {% else %}
+      <div class="input-group">
+        <select name="estado" class="form-select" disabled>
+            <option>{{ mesa.get_estado_display }}</option>
+        </select>
+      </div>
+      {% endif %}
 
       <!-- Acciones -->
       <div class="acciones">
         <button class="btn btn-primary btn-sm" onclick="gestionarPedido('{{ mesa.id }}')">
           Pedido
         </button>
+        {% if request.user|has_perm:"tables,editar" %}
         <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}"
           onclick="habilitarEdicion('{{ mesa.id }}')">
           Editar
         </button>
+        {% endif %}
+        {% if request.user|has_perm:"tables,eliminar" %}
         <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
           Eliminar
         </a>
+        {% endif %}
       </div>
 
       <!-- Formulario de edición -->
