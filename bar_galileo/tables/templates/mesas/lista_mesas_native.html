@@ -17,15 +17,6 @@
     <a href="{% url 'products:products_admin' %}" class="btn btn-primary">Productos</a>
   </div>
 
-  <!-- Mensajes -->
-  {% if messages %}
-  <div>
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
   {% if request.user|has_perm:"tables,crear" %}
   <a href="{% url 'tables:crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px">Crear Mesa</a>
   {% endif %}
@@ -97,11 +88,32 @@
 
       <!-- Formulario de edición -->
       <form method="post" action="{% url 'tables:editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form"
-        style="display: none">
+        style="{% if error_mesa_pk == mesa.pk %}display: block;{% else %}display: none;{% endif %}">
         {% csrf_token %}
-        <input type="text" name="nombre" value="{{ mesa.nombre }}" required />
-        <textarea name="descripcion" rows="2" required>
-{{ mesa.descripcion }}</textarea>
+        <input type="hidden" name="estado" value="{{ mesa.estado }}">
+
+        {% if error_mesa_pk == mesa.pk and edit_form %}
+            <div class="form-group">
+                <input type="text" name="nombre" class="form-control" value="{{ edit_form.nombre.value|default:'' }}" required>
+                {% for error in edit_form.nombre.errors %}
+                    <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <textarea name="descripcion" class="form-control" rows="2" required>{{ edit_form.descripcion.value|default:'' }}</textarea>
+                {% for error in edit_form.descripcion.errors %}
+                    <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="form-group">
+                <input type="text" name="nombre" class="form-control" value="{{ mesa.nombre }}" required />
+            </div>
+            <div class="form-group">
+                <textarea name="descripcion" class="form-control" rows="2" required>{{ mesa.descripcion }}</textarea>
+            </div>
+        {% endif %}
+
         <div class="acciones">
           <button type="submit" class="btn btn-success btn-sm">Guardar</button>
           <button type="button" class="btn btn-danger btn-sm" onclick="cancelarEdicion('{{ mesa.id }}')">

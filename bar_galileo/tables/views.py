@@ -60,6 +60,15 @@ class MesaUpdateView(UpdateView):
 
         return response
 
+    def form_invalid(self, form):
+        # Si el formulario es inválido, renderiza de nuevo la lista de mesas
+        # con el formulario de edición visible y mostrando los errores.
+        return render(self.request, 'mesas/lista_mesas_native.html', {
+            'mesas': Mesa.objects.all().order_by('nombre'),
+            'edit_form': form,
+            'error_mesa_pk': self.object.pk,
+        })
+
 @method_decorator(permission_required('tables', 'eliminar'), name='dispatch')
 class MesaDeleteView(DeleteView):
     model = Mesa
