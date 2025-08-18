@@ -1,0 +1,395 @@
+/* =======================================
+ * ESTILOS REFACTORIZADOS - SISTEMA DE MESAS
+ * ======================================= */
+
+/* =======================================
+ * CONTENEDORES PRINCIPALES
+ * ======================================= */
+
+ *{
+  color: var(--color-secondary) !important ;
+ }
+
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+  background: transparent;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+h2 {
+  color: var(--color-light);
+  font-size: 2rem;
+  margin: 0;
+}
+
+/* =======================================
+ * ALERTAS CON COLORES DE LA PALETA
+ * ======================================= */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
+
+.alert-success {
+  background-color: rgba(98, 115, 61, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.alert-error {
+  background-color: rgba(191, 69, 42, 0.1);
+  border: 1px solid var(--color-dark);
+  color: var(--color-dark);
+}
+
+/* =======================================
+ * GRID DE MESAS ACTUALIZADO
+ * ======================================= */
+.mesas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.mesa-card {
+  background: transparent;
+  border-radius: 12px;
+  border: 2px solid;
+  padding: 1.5rem;
+  color: var(--color-light);
+  box-shadow: 0 4px 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  min-height: 200px;
+  max-width: 650px;
+}
+
+
+.mesa-card:hover {
+  transform: translateY(-4px);
+}
+
+/* =======================================
+ * ESTADOS DE MESA CON COLORES DE LA PALETA
+ * ======================================= */
+.disponible {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 8px var(--color-shadow);
+  background-color: rgba(98, 115, 61, 0.05);
+}
+
+.disponible:hover {
+  box-shadow: 0 8px 25px var(--color-shadow);
+}
+
+.ocupada {
+  border-color: var(--color-dark);
+  box-shadow: 0 4px 8px var(--color-dark);
+  background-color: rgba(191, 69, 42, 0.05);
+}
+
+.ocupada:hover {
+  box-shadow: 0 8px 25px var(--color-dark);
+}
+
+.reservada {
+  border-color: var(--color-secondary);
+  box-shadow: 0 4px 8px var(--color-secondary);
+  background-color: rgba(166, 137, 50, 0.05);
+}
+
+.reservada:hover {
+  box-shadow: 0 8px 25px var(--color-secondary);
+}
+
+.fuera-de-servicio {
+  border-color: var(--color-gray);
+  box-shadow: 0 4px 8px var(--color-gray);
+  background-color: rgba(166, 137, 50, 0.03);
+  opacity: 0.7;
+}
+
+.fuera-de-servicio:hover {
+  box-shadow: 0 8px 25px var(--color-gray);
+}
+
+/* =======================================
+ * CONTENIDO DE CARDS
+ * ======================================= */
+.mesa-nombre {
+  font-weight: bold;
+  font-size: 2rem;
+  color: var(--color-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.mesa-desc {
+  font-size: 0.9rem;
+  color: var(--color-gray);
+  margin-bottom: 1rem;
+}
+
+.pedido-activo {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--color-secondary);
+  color: white !important;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border: 1px solid var(--color-primary);
+}
+
+/* =======================================
+ * FORMULARIOS Y CONTROLES
+ * ======================================= */
+.input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.form-select,
+.form-control {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-secondary);
+  transition: all 0.3s ease;
+}
+
+.form-select:focus,
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(98, 115, 61, 0.25);
+  transform: translateY(-1px);
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: transparent;
+  color: var(--color-light);
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(98, 115, 61, 0.25);
+  transform: translateY(-1px);
+}
+
+.acciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.mesa-form {
+  margin-top: 1rem;
+}
+
+/* =======================================
+ * MODAL ACTUALIZADO
+ * ======================================= */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  overflow: scroll;
+}
+
+.modal-content {
+  background: var(--color-light);
+  border: 2px solid var(--color-primary);
+  border-radius: 12px;
+  margin: 5% auto;
+  padding: 2rem;
+  width: 85%;
+  max-width: 900px;
+  box-shadow: 0 8px 32px var(--color-primary);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+.modal-header h3 {
+  color: var(--color-light);
+  margin: 0;
+}
+
+.close {
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--color-light);
+  transition: all 0.3s ease;
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+  border-radius: 50%;
+}
+
+.close:hover {
+  color: var(--color-dark);
+  transform: scale(1.1);
+}
+
+.modal-body {
+  display: flex;
+  gap: 2rem;
+}
+
+.productos-lista {
+  flex: 1;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  background: transparent;
+}
+
+.producto-item {
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid var(--color-primary);
+  color: var(--color-light);
+}
+
+.producto-item:hover {
+  background-color: rgba(98, 115, 61, 0.1);
+  transform: translateX(5px);
+}
+
+.producto-item .precio {
+  font-weight: bold;
+  color: var(--color-secondary);
+}
+
+.pedido-items {
+  flex: 1;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1rem;
+  background: transparent;
+}
+
+.cantidad-badge {
+  background: var(--color-secondary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 15px;
+  margin-right: 8px;
+  font-size: 0.8rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--color-primary);
+}
+
+/* =======================================
+ * RESPONSIVE DESIGN
+ * ======================================= */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 1.5rem;
+  }
+
+  .mesa-card{
+    max-width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .mesas-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .modal-body {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 2% auto;
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .mesa-card {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .acciones .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

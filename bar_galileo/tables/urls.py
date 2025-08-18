@@ -4,12 +4,14 @@ from . import views, views_api
 app_name = 'tables'
 
 urlpatterns = [
-    # Rutas existentes
-    path('mesas/', views.lista_mesas, name='mesas_lista'),
-    path('mesas/crear/', views.crear_mesa, name='crear_mesa'),
-    path('mesas/<int:mesa_id>/editar/', views.editar_mesa, name='editar_mesa'),
+    # Rutas para Mesas con Vistas Basadas en Clases
+    path('mesas/', views.MesaListView.as_view(), name='mesas_lista'),
+    path('mesas/crear/', views.MesaCreateView.as_view(), name='crear_mesa'),
+    path('mesas/<int:pk>/editar/', views.MesaUpdateView.as_view(), name='editar_mesa'),
+    path('mesas/<int:pk>/eliminar/', views.MesaDeleteView.as_view(), name='eliminar_mesa'),
+
+    # Rutas que aún usan vistas basadas en funciones (si las hay)
     path('mesas/<int:mesa_id>/confirmar-eliminar/', views.confirmar_eliminar_mesa, name='confirmar_eliminar_mesa'),
-    path('mesas/<int:mesa_id>/eliminar/', views.eliminar_mesa, name='eliminar_mesa'),
     path('mesas/<int:mesa_id>/liberar/', views.liberar_mesa, name='liberar_mesa'),
     path('mesas/<int:mesa_id>/estado/', views.cambiar_estado, name='actualizar_estado'),
     

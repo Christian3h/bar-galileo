@@ -59,7 +59,8 @@
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
                     <ul id="mesas-submenu" class="submenu hidden">
-                        <li>Esto está pendiente por implementar</li>
+                        <li><a href="{% url 'tables:mesas_lista' %}">Lista de Mesas</a></li>
+                        <li><a href="{% url 'tables:crear_mesa' %}">Crear Mesa</a></li>
                     </ul>
                 </li>
                 {% endif %}

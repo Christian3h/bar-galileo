@@ -134,8 +134,8 @@ def facturar_pedido_api(request, pedido_id):
                 # Restar la cantidad vendida del stock
                 nuevo_stock = max(0, producto.stock - item.cantidad)
                 producto.stock = nuevo_stock
-                producto.save()  # Esto automáticamente creará un registro en Stock
-        
+                producto.save(update_fields=['stock'])
+
         # Crear la factura
         factura = Factura.objects.create(
             pedido=pedido,
