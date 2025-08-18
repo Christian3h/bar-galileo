@@ -358,6 +358,10 @@ textarea:focus {
     flex-direction: column;
   }
 
+  .modal{
+    overflow: scroll;
+  }
+
   .modal-content {
     width: 95%;
     margin: 2% auto;
@@ -378,6 +382,10 @@ textarea:focus {
   .mesa-card {
     padding: 1rem;
     max-width: 100%;
+  }
+
+  .modal{
+    overflow: scroll;
   }
 
   .acciones {

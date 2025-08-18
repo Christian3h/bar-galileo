@@ -6,18 +6,49 @@
 // ===== VARIABLES GLOBALES =====
 let mesaActualId = null;
 let pedidoActual = {};
-let listaCompletaProductos = []; // Almacena la lista de productos con todos sus datos (incluido stock)
+let listaCompletaProductos = [];
 const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]")?.value || "";
+
+// ===== COMPONENTES DE UI (TOAST Y CONFIRM) =====
+
+function showToast(message, type = 'error') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.remove();
+  }, 5000);
+}
+
+function showConfirm(title, message) {
+  return new Promise(resolve => {
+    const modal = document.getElementById('confirmModal');
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmMessage').textContent = message;
+
+    const confirmBtn = document.getElementById('confirmOk');
+    const cancelBtn = document.getElementById('confirmCancel');
+    const closeBtn = document.getElementById('confirmClose');
+
+    const cleanup = () => {
+      modal.style.display = 'none';
+      confirmBtn.onclick = null;
+      cancelBtn.onclick = null;
+      closeBtn.onclick = null;
+    };
+
+    confirmBtn.onclick = () => { cleanup(); resolve(true); };
+    cancelBtn.onclick = () => { cleanup(); resolve(false); };
+    closeBtn.onclick = () => { cleanup(); resolve(false); };
+
+    modal.style.display = 'flex';
+  });
+}
 
 // ===== MANEJO DE ERRORES Y PETICIONES API =====
 
-/**
- * Realiza una petición fetch y maneja la respuesta, extrayendo errores de la API.
- * @param {string} url - La URL para la petición.
- * @param {object} options - Opciones para la petición fetch.
- * @returns {Promise<object>} - La respuesta JSON de la API.
- * @throws {Error} - Lanza un error con el mensaje de la API si la respuesta no es ok.
- */
 async function apiFetch(url, options) {
   const response = await fetch(url, options);
   if (!response.ok) {
@@ -27,31 +58,58 @@ async function apiFetch(url, options) {
   return response.json();
 }
 
+// ===== LÓGICA DE VISIBILIDAD Y ESTADOS DE MESA =====
+
+function actualizarVisibilidadBotonPedido(mesaCard) {
+    const botonPedido = mesaCard.querySelector('button[onclick*="gestionarPedido"]');
+    if (botonPedido) {
+        const estado = mesaCard.classList.contains('ocupada');
+        botonPedido.style.display = estado ? 'inline-block' : 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.mesa-card').forEach(actualizarVisibilidadBotonPedido);
+});
+
+document.addEventListener('change', async (event) => {
+    if (event.target.matches('select[name="estado"]')) {
+        const select = event.target;
+        const mesaCard = select.closest('.mesa-card');
+        const formulario = select.closest('form');
+        const estadoSeleccionado = select.value;
+
+        // Actualizar clase de la tarjeta para reflejar el nuevo estado visualmente
+        mesaCard.classList.remove('disponible', 'ocupada', 'reservada', 'fuera-de-servicio');
+        mesaCard.classList.add(estadoSeleccionado.replace(/\s+/g, '-').toLowerCase());
+
+        // Actualizar visibilidad del botón de pedido inmediatamente
+        actualizarVisibilidadBotonPedido(mesaCard);
+
+        // Enviar el formulario para guardar el cambio en el backend
+        formulario.submit();
+    }
+});
+
+
 // ===== GESTIÓN DEL MODAL DE PEDIDO =====
 
-/**
- * Abre el modal de gestión de pedidos para una mesa específica.
- * @param {number} mesaId - El ID de la mesa.
- */
 async function gestionarPedido(mesaId) {
   mesaActualId = mesaId;
   try {
     const data = await apiFetch(`/api/mesas/${mesaId}/pedido/`);
     document.getElementById("mesaNombre").textContent = data.mesa.nombre;
     pedidoActual = data.pedido;
-    listaCompletaProductos = data.productos; // Guardar lista de productos
+    listaCompletaProductos = data.productos;
     actualizarListaProductosUI();
     actualizarPedidoItemsUI();
     document.getElementById("pedidoModal").style.display = "block";
   } catch (error) {
     console.error("Error al obtener datos del pedido:", error);
-    alert(error.message);
+    showToast(error.message);
   }
 }
 
-/**
- * Actualiza la UI con la lista de productos disponibles.
- */
 function actualizarListaProductosUI() {
   const lista = document.getElementById("productosLista");
   lista.innerHTML = listaCompletaProductos.map(p => `
@@ -70,9 +128,6 @@ function actualizarListaProductosUI() {
   `).join("");
 }
 
-/**
- * Actualiza la UI con los items del pedido actual.
- */
 function actualizarPedidoItemsUI() {
   const itemsContainer = document.getElementById("pedidoItems");
   if (pedidoActual && pedidoActual.items && pedidoActual.items.length > 0) {
@@ -106,10 +161,6 @@ function actualizarPedidoItemsUI() {
 
 // ===== ACCIONES DE ITEMS DEL PEDIDO =====
 
-/**
- * Agrega un nuevo producto o incrementa la cantidad de uno existente.
- * @param {number} productoId - El ID del producto a agregar.
- */
 async function agregarOActualizarItem(productoId) {
   const itemExistente = pedidoActual.items.find(i => i.producto.id === productoId);
   if (itemExistente) {
@@ -117,7 +168,7 @@ async function agregarOActualizarItem(productoId) {
   } else {
     const producto = listaCompletaProductos.find(p => p.id_producto === productoId);
     if (producto.stock < 1) {
-      alert("No hay stock disponible para este producto.");
+      showToast("No hay stock disponible para este producto.");
       return;
     }
     try {
@@ -130,16 +181,11 @@ async function agregarOActualizarItem(productoId) {
       actualizarPedidoItemsUI();
     } catch (error) {
       console.error('Error al agregar producto:', error);
-      alert(error.message);
+      showToast(error.message);
     }
   }
 }
 
-/**
- * Cambia la cantidad de un item existente en el pedido.
- * @param {number} itemId - El ID del item del pedido.
- * @param {number} nuevaCantidad - La nueva cantidad para el item.
- */
 async function cambiarCantidadItem(itemId, nuevaCantidad) {
   if (nuevaCantidad < 1) {
     await eliminarItem(itemId);
@@ -149,7 +195,7 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
   const item = pedidoActual.items.find(i => i.id === itemId);
   const producto = listaCompletaProductos.find(p => p.id_producto === item.producto.id);
   if (producto.stock < nuevaCantidad) {
-    alert(`Stock insuficiente. Disponible: ${producto.stock}`);
+    showToast(`Stock insuficiente. Disponible: ${producto.stock}`);
     return;
   }
 
@@ -163,15 +209,14 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
     actualizarPedidoItemsUI();
   } catch (error) {
     console.error('Error al actualizar cantidad:', error);
-    alert(error.message);
+    showToast(error.message);
   }
 }
 
-/**
- * Elimina un item del pedido.
- * @param {number} itemId - El ID del item a eliminar.
- */
 async function eliminarItem(itemId) {
+    const confirmado = await showConfirm('Eliminar Item', '¿Estás seguro de que deseas eliminar este item del pedido?');
+    if (!confirmado) return;
+
   try {
     const data = await apiFetch(`/api/pedidos/eliminar-item/${itemId}/`, {
       method: "DELETE",
@@ -179,9 +224,10 @@ async function eliminarItem(itemId) {
     });
     pedidoActual = data.pedido;
     actualizarPedidoItemsUI();
+    showToast('Item eliminado correctamente', 'success');
   } catch (error) {
     console.error('Error al eliminar item:', error);
-    alert(error.message);
+    showToast(error.message);
   }
 }
 
@@ -189,23 +235,24 @@ async function eliminarItem(itemId) {
 
 async function facturarPedido() {
   if (!pedidoActual || !pedidoActual.items || !pedidoActual.items.length) {
-    alert("No hay items en el pedido para facturar.");
+    showToast("No hay items en el pedido para facturar.");
     return;
   }
 
-  if (confirm("¿Estás seguro de que deseas facturar este pedido? Esta acción actualizará el inventario.")) {
+  const confirmado = await showConfirm('Facturar Pedido', '¿Estás seguro de que deseas facturar este pedido? Esta acción actualizará el inventario.');
+  if (confirmado) {
     try {
       const data = await apiFetch(`/api/pedidos/${pedidoActual.id}/facturar/`, {
         method: "POST",
         headers: { "X-CSRFToken": csrfToken },
       });
       if (data.success) {
-        alert('Pedido facturado exitosamente');
-        window.location.reload();
+        showToast('Pedido facturado exitosamente', 'success');
+        setTimeout(() => window.location.reload(), 1500);
       }
     } catch (error) {
       console.error('Error al facturar:', error);
-      alert(error.message);
+      showToast(error.message);
     }
   }
 }
@@ -230,7 +277,7 @@ window.onclick = (event) => {
   }
 };
 
-// ===== LÓGICA DE EDICIÓN DE MESA (sin cambios) =====
+// ===== LÓGICA DE EDICIÓN DE MESA =====
 
 function habilitarEdicion(id) {
   document.getElementById("ver_nombre_" + id).style.display = "none";
