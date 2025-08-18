@@ -117,6 +117,9 @@ def eliminar_item_api(request, item_id):
         }
     })
 
+from django.contrib.auth.models import User
+from notifications.utils import notificar_usuario
+
 @transaction.atomic
 def facturar_pedido_api(request, pedido_id):
     """API para facturar un pedido"""
@@ -146,10 +149,15 @@ def facturar_pedido_api(request, pedido_id):
         pedido.estado = 'facturado'
         pedido.save()
         
-        # Liberar la mesa (solo si la mesa aún existe)
+        # Liberar la mesa y notificar
         if pedido.mesa:
-            pedido.mesa.estado = 'disponible'
-            pedido.mesa.save()
+            mesa = pedido.mesa
+            mesa.estado = 'disponible'
+            mesa.save()
+
+            # Notificar al usuario que realizó la acción
+            mensaje = f"El pedido de la mesa '{mesa.nombre}' fue facturado. La mesa está ahora disponible."
+            notificar_usuario(request.user, mensaje)
     
     return JsonResponse({
         'success': True,

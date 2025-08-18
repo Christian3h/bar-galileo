@@ -20,13 +20,6 @@
 </head>
 
 <body>
-    {% if messages %}
-        <div id="django-messages" style="display: none;">
-            {% for message in messages %}
-                <div class="{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
     {% include "components/notificaciones.html" %}
     {% include "components/nav-admin.html" %}
 
