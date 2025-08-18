@@ -18,6 +18,7 @@ urlpatterns = [
     # Rutas API para pedidos
     path('api/mesas/<int:mesa_id>/pedido/', views_api.mesa_pedido_api, name='api_mesa_pedido'),
     path('api/pedidos/agregar-item/', views_api.agregar_item_api, name='api_agregar_item'),
+    path('api/pedidos/actualizar-item/<int:item_id>/', views_api.actualizar_item_api, name='api_actualizar_item'),
     path('api/pedidos/eliminar-item/<int:item_id>/', views_api.eliminar_item_api, name='api_eliminar_item'),
     path('api/pedidos/<int:pedido_id>/facturar/', views_api.facturar_pedido_api, name='api_facturar_pedido'),
     
