@@ -5,56 +5,71 @@ from .models import Mesa, Factura
 from .forms import MesaForm
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
 
-def lista_mesas(request):
-    mesas = Mesa.objects.all().order_by('nombre')
-    return render(request, 'mesas/lista_mesas_native.html', {'mesas': mesas})
+class MesaListView(ListView):
+    model = Mesa
+    template_name = 'mesas/lista_mesas_native.html'
+    context_object_name = 'mesas'
 
-def crear_mesa(request):
-    if request.method == 'POST':
-        form = MesaForm(request.POST)
-        if form.is_valid():
-            nombre = form.cleaned_data['nombre']
-            if Mesa.objects.filter(nombre__iexact=nombre).exists():
-                messages.error(request, f"La mesa con nombre '{nombre}' ya existe.")
-            else:
-                form.save()
-                messages.success(request, "Mesa creada exitosamente.")
-                return redirect('tables:mesas_lista')
-        else:
-            messages.error(request, "Esta Mesa ya está registrada.")
-    else:
-        form = MesaForm()
+    def get_queryset(self):
+        return Mesa.objects.all().order_by('nombre')
 
-    return render(request, 'mesas/crear_mesa.html', {'form': form})
+class MesaCreateView(SuccessMessageMixin, CreateView):
+    model = Mesa
+    form_class = MesaForm
+    template_name = 'mesas/crear_mesa.html'
+    success_url = reverse_lazy('tables:mesas_lista')
+    success_message = "Mesa creada exitosamente."
 
-@require_POST
-def eliminar_mesa(request, mesa_id):
-    mesa = get_object_or_404(Mesa, id=mesa_id)
-    mesa_nombre = mesa.nombre
+    def form_valid(self, form):
+        nombre = form.cleaned_data['nombre']
+        if Mesa.objects.filter(nombre__iexact=nombre).exists():
+            messages.error(self.request, f"La mesa con nombre '{nombre}' ya existe.")
+            return self.form_invalid(form)
+        return super().form_valid(form)
 
-    # Obtener pedidos asociados a la mesa
-    pedidos_facturados = mesa.pedidos.filter(factura__isnull=False)
-    pedidos_sin_facturar = mesa.pedidos.filter(factura__isnull=True)
+    def form_invalid(self, form):
+        messages.error(self.request, "Por favor, corrige los errores en el formulario.")
+        return super().form_invalid(form)
 
-    # Si hay pedidos sin facturar, no permitir eliminar y mostrar mensaje
-    if pedidos_sin_facturar.exists():
-        messages.error(request, "No se puede eliminar la mesa porque tiene pedidos sin facturar. Por favor, facture todos los pedidos antes de eliminar la mesa.")
-        return redirect('tables:confirmar_eliminar_mesa', mesa_id=mesa.id)
+class MesaUpdateView(SuccessMessageMixin, UpdateView):
+    model = Mesa
+    form_class = MesaForm
+    template_name = 'mesas/editar_mesa.html' # You might need to create this template
+    success_url = reverse_lazy('tables:mesas_lista')
+    success_message = "Mesa actualizada correctamente."
 
-    # Para pedidos facturados, solo quitamos la referencia a la mesa
-    if pedidos_facturados.exists():
-        pedidos_facturados.update(mesa=None)
+    def form_valid(self, form):
+        nombre = form.cleaned_data['nombre']
+        if Mesa.objects.exclude(pk=self.object.pk).filter(nombre__iexact=nombre).exists():
+            messages.error(self.request, f"Ya existe una mesa con el nombre '{nombre}'.")
+            return self.form_invalid(form)
+        return super().form_valid(form)
 
-    # Ahora podemos eliminar la mesa sin problemas
-    mesa.delete()
+class MesaDeleteView(DeleteView):
+    model = Mesa
+    template_name = 'mesas/confirmar_eliminar.html' # Assumes this is the confirmation page
+    success_url = reverse_lazy('tables:mesas_lista')
 
-    mensaje = f"Mesa '{mesa_nombre}' eliminada correctamente."
-    if pedidos_facturados.exists():
-        mensaje += f" Los pedidos facturados ({pedidos_facturados.count()}) se mantuvieron para registro contable."
+    def post(self, request, *args, **kwargs):
+        mesa = self.get_object()
+        mesa_nombre = mesa.nombre
+        pedidos_sin_facturar = mesa.pedidos.filter(factura__isnull=True)
 
-    messages.success(request, mensaje)
-    return redirect('tables:mesas_lista')
+        if pedidos_sin_facturar.exists():
+            messages.error(request, f"No se puede eliminar la mesa '{mesa_nombre}' porque tiene pedidos sin facturar.")
+            return redirect('tables:mesas_lista')
+
+        pedidos_facturados = mesa.pedidos.filter(factura__isnull=False)
+        if pedidos_facturados.exists():
+            pedidos_facturados.update(mesa=None)
+
+        messages.success(request, f"Mesa '{mesa_nombre}' eliminada correctamente.")
+        return super().post(request, *args, **kwargs)
+
 
 def cambiar_estado(request, mesa_id):
     mesa = get_object_or_404(Mesa, id=mesa_id)
