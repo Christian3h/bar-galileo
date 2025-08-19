@@ -1,9 +1,9 @@
 /* =======================================
    RESET + VARIABLES + COMPONENTES
 ======================================= */
-@import '../../_resets/_resets.css';
-@import '../../_variables/_colors.css';
-@import '../../_components/_buttons.css';
+@import "../../_resets/_resets.css";
+@import "../../_variables/_colors.css";
+@import "../../_components/_buttons.css";
 
 /* =======================================
    BASE - ESTILO GALILEO
@@ -15,7 +15,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   background-color: #0a0a0a;
   color: #333;
   line-height: 1.6;
@@ -31,12 +31,15 @@ body {
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 20px 0;
   background: transparent;
   transition: background 0.3s;
   backdrop-filter: blur(10px);
   background: rgba(0, 0, 0, 0.9);
   border-bottom: 1px solid #333;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  padding 10px;
 }
 
 .container-menu .logo {
@@ -84,16 +87,17 @@ body {
   overflow: hidden;
   background: #0a0a0a;
   padding-top: 80px;
+  flex-direction: column;
 }
 
 .container-login::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6));
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
   z-index: 1;
 }
 
@@ -142,7 +146,7 @@ body {
   background: #0a0a0a;
   color: white;
   font-size: 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   transition: all 0.3s;
 }
 
@@ -213,7 +217,7 @@ body {
   padding: 12px 25px;
   border-radius: 6px;
   transition: all 0.3s;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .container-login .button-group button:hover {
@@ -350,7 +354,7 @@ body {
 }
 
 .container-login button.loading::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -364,8 +368,12 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* =======================================
@@ -391,16 +399,16 @@ body {
   .container-menu {
     padding: 15px 20px;
   }
-  
+
   .menu-toggle {
     display: block;
   }
-  
+
   .container-menu .logo {
     margin-left: 0;
     font-size: 24px;
   }
-  
+
   .container-menu ul {
     display: none;
     flex-direction: column;
@@ -409,20 +417,20 @@ body {
     margin-top: 20px;
     margin-right: 0;
   }
-  
+
   .container-menu ul.show {
     display: flex;
   }
-  
+
   .container-login {
     padding: 100px 20px 20px;
   }
-  
+
   .container-login h1 {
     font-size: 36px;
     letter-spacing: 2px;
   }
-  
+
   .container-login form {
     max-width: 350px;
     padding: 30px 25px;
@@ -458,7 +466,7 @@ body {
   background: #0a0a0a;
   color: white;
   font-size: 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   transition: all 0.3s;
   box-sizing: border-box;
 }
@@ -493,7 +501,7 @@ body {
   transition: all 0.3s;
   width: 100%;
   text-transform: uppercase;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .container-login button[type="submit"]:hover,
@@ -541,7 +549,7 @@ body {
 }
 
 .container-login .divider::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 0;
@@ -570,7 +578,7 @@ body {
   padding: 12px 25px;
   border-radius: 6px;
   transition: all 0.3s;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   margin-top: 15px;
   width: 100%;
 }
@@ -724,7 +732,7 @@ body {
   padding: 12px 25px;
   border-radius: 6px;
   transition: all 0.3s;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   margin-left: 10px;
 }
 
@@ -741,7 +749,7 @@ body {
   padding: 12px 25px;
   border-radius: 6px;
   transition: all 0.3s;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   margin-left: 10px;
 }
 
@@ -883,8 +891,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Mejoras para secciones de formulario */
@@ -895,16 +908,16 @@ body {
 }
 
 .container-login .form-section h2:before {
-  content: '✉️';
+  content: "✉️";
   font-size: 20px;
 }
 
 .container-login .form-section:first-of-type h2:before {
-  content: '📧';
+  content: "📧";
 }
 
 .container-login .form-section:last-of-type h2:before {
-  content: '📝';
+  content: "📝";
 }
 
 /* Estilos para el formulario de cambio */
@@ -963,16 +976,16 @@ body {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .container-login .pending-actions .button-group {
     flex-direction: column;
   }
-  
+
   .container-login .pending-actions button {
     width: 100%;
     min-width: auto;
   }
-  
+
   .container-login .form-section {
     padding: 20px 15px;
   }

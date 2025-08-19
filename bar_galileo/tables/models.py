@@ -59,9 +59,12 @@ class Factura(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.numero:
-            last_factura = Factura.objects.order_by('-id').first()
-            next_number = '1' if not last_factura else str(int(last_factura.numero) + 1)
+            # Fetch only the 'numero' field to avoid loading potentially corrupt data in other fields.
+            last_numero = Factura.objects.order_by('-id').values_list('numero', flat=True).first()
+            next_number = '1' if not last_numero else str(int(last_numero) + 1)
             self.numero = next_number.zfill(8)
-        if not self.total:
+        
+        # Check for None specifically to handle totals that are 0.
+        if self.total is None:
             self.total = self.pedido.total()
         super().save(*args, **kwargs)

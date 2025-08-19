@@ -4,6 +4,8 @@ from roles.models import UserProfile, Role
 from roles.forms import UserProfileForm
 from django.db.models import Case, When, Value, IntegerField
 
+from notifications.utils import notificar_usuario
+
 def user_list(request):
     users = User.objects.all().select_related('userprofile')
     # Ordenar: usuarios con rol al final
@@ -22,6 +24,11 @@ def user_list(request):
         profile, _ = UserProfile.objects.get_or_create(user=user)
         profile.rol_id = rol_id
         profile.save()
+        
+        rol = Role.objects.get(id=rol_id)
+        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.name}'."
+        notificar_usuario(request.user, mensaje)
+
         return redirect('users:user_list')
     return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
 
