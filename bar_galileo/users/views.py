@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.decorators.http import require_POST
 # Editar información personal
-@require_POST
+
 def get_perfil(user):
     from .models import PerfilUsuario
     perfil, _ = PerfilUsuario.objects.get_or_create(user=user)
@@ -104,6 +104,34 @@ def panel_usuario(request):
     perfil = get_perfil(request.user)
     emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
     # Aquí debes construir el dict datos como antes, pero asegurando que emergencia siempre existe
+    historial_mensual = {
+        'ene': {'mes': 'Enero', 'total': 120000, 'barras': [120000, 80000, 90000, 100000, 110000]},
+        'feb': {'mes': 'Febrero', 'total': 160000, 'barras': [160000, 120000, 90000, 180000, 140000]},
+        'mar': {'mes': 'Marzo', 'total': 90000, 'barras': [90000, 70000, 60000, 80000, 90000]},
+        'abr': {'mes': 'Abril', 'total': 180000, 'barras': [180000, 150000, 120000, 170000, 160000]},
+        'may': {'mes': 'Mayo', 'total': 140000, 'barras': [140000, 130000, 120000, 110000, 100000]},
+        'jun': {'mes': 'Junio', 'total': 200000, 'barras': [200000, 180000, 170000, 160000, 150000]},
+        'jul': {'mes': 'Julio', 'total': 450000, 'barras': [120000, 160000, 90000, 180000, 140000]},
+        'ago': {'mes': 'Agosto', 'total': 220000, 'barras': [220000, 210000, 200000, 190000, 180000]},
+        'sep': {'mes': 'Septiembre', 'total': 170000, 'barras': [170000, 160000, 150000, 140000, 130000]},
+        'oct': {'mes': 'Octubre', 'total': 190000, 'barras': [190000, 180000, 170000, 160000, 150000]},
+        'nov': {'mes': 'Noviembre', 'total': 210000, 'barras': [210000, 200000, 190000, 180000, 170000]},
+        'dic': {'mes': 'Diciembre', 'total': 250000, 'barras': [250000, 240000, 230000, 220000, 210000]},
+    }
+    import json
+    # Obtener la cuenta actual del usuario (pedidos no facturados)
+    from tables.models import Pedido, PedidoItem
+    pedidos = Pedido.objects.filter(estado='en_proceso', mesa__isnull=True)
+    # Si tienes una relación directa entre usuario y pedido, ajusta el filtro
+    items = []
+    total = 0
+    for pedido in pedidos:
+        for item in pedido.items.all():
+            items.append({
+                'nombre': item.producto.nombre,
+                'precio': int(item.subtotal()),
+            })
+            total += int(item.subtotal())
     datos = {
         'nombre': perfil.nombre,
         'cedula': perfil.cedula,
@@ -112,8 +140,8 @@ def panel_usuario(request):
         'direccion': perfil.direccion,
         'cliente_desde': perfil.cliente_desde,
         'cuenta_actual': {
-            'total': 0,
-            'items': []
+            'total': total,
+            'items': items
         },
         'emergencia': {
             'nombre': emergencia.nombre,
@@ -122,5 +150,7 @@ def panel_usuario(request):
             'telefono_alt': emergencia.telefono_alt,
             'sangre': emergencia.sangre,
             'alergias': emergencia.alergias,
-        }
+        },
+        'historial_mensual': json.dumps(historial_mensual)
     }
+    return render(request, 'users/panel de usuario.html', {'datos': datos})
