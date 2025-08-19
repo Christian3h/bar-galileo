@@ -16,6 +16,59 @@
         {% endfor %}
       </div>
     {% endif %}
+
+    <script>
+// Mostrar/ocultar formularios de edición
+function toggleInfoForm(show) {
+  document.getElementById('info-display').style.display = show ? 'none' : '';
+  document.getElementById('info-form').style.display = show ? '' : 'none';
+}
+function toggleEmergenciaForm(show) {
+  document.getElementById('emergencia-display').style.display = show ? 'none' : '';
+  document.getElementById('emergencia-form').style.display = show ? '' : 'none';
+}
+// Datos de historial mensual desde Django
+const historialMensual = JSON.parse('{{ datos.historial_mensual|safe|escapejs }}');
+console.log('historialMensual:', historialMensual);
+
+function selectMonth(btn, mesKey) {
+  console.log('Botón clickeado:', mesKey);
+  document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const chart = document.querySelector('.history-chart');
+  chart.innerHTML = '';
+  if (historialMensual[mesKey] && historialMensual[mesKey].barras) {
+    historialMensual[mesKey].barras.forEach(valor => {
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+      bar.style.height = (valor / 500000 * 100) + '%';
+      bar.setAttribute('data-amount', '$' + valor.toLocaleString());
+      chart.appendChild(bar);
+    });
+    document.getElementById('month-total').textContent = `Total ${historialMensual[mesKey].mes} 2025: $${historialMensual[mesKey].total.toLocaleString()}`;
+  } else {
+    chart.innerHTML = '<div style="color:red">No hay datos para este mes</div>';
+    document.getElementById('month-total').textContent = 'Sin datos';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.month-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      selectMonth(btn, btn.getAttribute('data-mes'));
+    });
+  });
+  const activeBtn = document.querySelector('.month-btn.active');
+  if (activeBtn) {
+    selectMonth(activeBtn, activeBtn.getAttribute('data-mes'));
+  }
+});
+        setTimeout(function() {
+          document.querySelectorAll('.alert-success').forEach(function(el) {
+            el.style.display = 'none';
+          });
+        }, 3500);
+    </script>
     <div class="container">
       <div class="header">
         <h1>🍺 Bar Galileo</h1>
@@ -49,19 +102,19 @@
             <div class="card-title">Historial Mensual</div>
           </div>
           <div class="month-selector">
-            <button class="month-btn" onclick="selectMonth(this, 'ene')">Ene</button>
-            <button class="month-btn" onclick="selectMonth(this, 'feb')">Feb</button>
-            <button class="month-btn" onclick="selectMonth(this, 'mar')">Mar</button>
-            <button class="month-btn" onclick="selectMonth(this, 'abr')">Abr</button>
-            <button class="month-btn" onclick="selectMonth(this, 'may')">May</button>
-            <button class="month-btn" onclick="selectMonth(this, 'jun')">Jun</button>
-            <button class="month-btn active" onclick="selectMonth(this, 'jul')">Jul</button>
-            <button class="month-btn" onclick="selectMonth(this, 'ago')">Ago</button>
-            <button class="month-btn" onclick="selectMonth(this, 'sep')">Sep</button>
-            <button class="month-btn" onclick="selectMonth(this, 'oct')">Oct</button>
-            <button class="month-btn" onclick="selectMonth(this, 'nov')">Nov</button>
-            <button class="month-btn" onclick="selectMonth(this, 'dic')">Dic</button>
-          </div>
+  <button class="month-btn" data-mes="ene">Ene</button>
+  <button class="month-btn" data-mes="feb">Feb</button>
+  <button class="month-btn" data-mes="mar">Mar</button>
+  <button class="month-btn" data-mes="abr">Abr</button>
+  <button class="month-btn" data-mes="may">May</button>
+  <button class="month-btn" data-mes="jun">Jun</button>
+  <button class="month-btn active" data-mes="jul">Jul</button>
+  <button class="month-btn" data-mes="ago">Ago</button>
+  <button class="month-btn" data-mes="sep">Sep</button>
+  <button class="month-btn" data-mes="oct">Oct</button>
+  <button class="month-btn" data-mes="nov">Nov</button>
+  <button class="month-btn" data-mes="dic">Dic</button>
+</div>
           <div class="history-chart">
             <div class="chart-bar" style="height: 60%;" data-amount="$120k"></div>
             <div class="chart-bar" style="height: 80%;" data-amount="$160k"></div>
@@ -79,16 +132,26 @@
             <div class="card-icon user-info">👤</div>
             <div class="card-title">Mi Información</div>
           </div>
-          <form method="post" action="{% url 'users:editar_info' %}" class="edit-form">
+          <div id="info-display">
+            <div class="info-row"><span class="info-label">Nombre:</span><span class="info-value">{{ datos.nombre }}</span></div>
+            <div class="info-row"><span class="info-label">Cédula:</span><span class="info-value">{{ datos.cedula }}</span></div>
+            <div class="info-row"><span class="info-label">Teléfono:</span><span class="info-value">{{ datos.telefono }}</span></div>
+            <div class="info-row"><span class="info-label">Email:</span><span class="info-value">{{ datos.email }}</span></div>
+            <div class="info-row"><span class="info-label">Dirección:</span><span class="info-value">{{ datos.direccion }}</span></div>
+            <div class="info-row"><span class="info-label">Cliente desde:</span><span class="info-value">{{ datos.cliente_desde }}</span></div>
+            <button type="button" class="edit-btn" onclick="toggleInfoForm(true)">Editar</button>
+          </div>
+          <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form" style="display:none;">
             {% csrf_token %}
             <div class="info-row"><span class="info-label">Nombre:</span><input type="text" name="nombre" value="{{ datos.nombre }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Cédula:</span><input type="text" name="cedula" value="{{ datos.cedula }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Teléfono:</span><input type="text" name="telefono" value="{{ datos.telefono }}" class="info-input"></div>
+            <div class="info-row"><span class="info-label">Cédula:</span><input type="number" name="cedula" value="{{ datos.cedula }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
+            <div class="info-row"><span class="info-label">Teléfono:</span><input type="number" name="telefono" value="{{ datos.telefono }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
             <div class="info-row"><span class="info-label">Email:</span><input type="email" name="email" value="{{ datos.email }}" class="info-input"></div>
             <div class="info-row"><span class="info-label">Dirección:</span><input type="text" name="direccion" value="{{ datos.direccion }}" class="info-input"></div>
             <div class="info-row"><span class="info-label">Cliente desde:</span><input type="text" name="cliente_desde" value="{{ datos.cliente_desde }}" class="info-input"></div>
             <button type="submit" class="edit-btn">Guardar Cambios</button>
             <button type="submit" formaction="{% url 'users:borrar_info' %}" class="delete-btn" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
+            <button type="button" class="edit-btn" onclick="toggleInfoForm(false)">Cancelar</button>
           </form>
         </div>
         <!-- Contacto de Emergencia -->
@@ -97,18 +160,27 @@
             <div class="card-icon emergency-contact">🚨</div>
             <div class="card-title">Contacto de Emergencia</div>
           </div>
-          <form method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form">
+          <div id="emergencia-display">
+            <div class="info-row"><span class="info-label">Nombre:</span><span class="info-value">{{ datos.emergencia.nombre }}</span></div>
+            <div class="info-row"><span class="info-label">Relación:</span><span class="info-value">{{ datos.emergencia.relacion }}</span></div>
+            <div class="info-row"><span class="info-label">Teléfono:</span><span class="info-value">{{ datos.emergencia.telefono }}</span></div>
+            <div class="info-row"><span class="info-label">Teléfono Alternativo:</span><span class="info-value">{{ datos.emergencia.telefono_alt }}</span></div>
+            <div class="info-row"><span class="info-label">Tipo de Sangre:</span><span class="info-value">{{ datos.emergencia.sangre }}</span></div>
+            <div class="info-row"><span class="info-label">Alergias:</span><span class="info-value">{{ datos.emergencia.alergias }}</span></div>
+            <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Editar</button>
+          </div>
+          <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form" style="display:none;">
             {% csrf_token %}
             <div class="info-row"><span class="info-label">Nombre:</span><input type="text" name="emergencia_nombre" value="{{ datos.emergencia.nombre }}" class="info-input"></div>
             <div class="info-row"><span class="info-label">Relación:</span><input type="text" name="emergencia_relacion" value="{{ datos.emergencia.relacion }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Teléfono:</span><input type="text" name="emergencia_telefono" value="{{ datos.emergencia.telefono }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Teléfono Alternativo:</span><input type="text" name="emergencia_telefono_alt" value="{{ datos.emergencia.telefono_alt }}" class="info-input"></div>
+            <div class="info-row"><span class="info-label">Teléfono:</span><input type="number" name="emergencia_telefono" value="{{ datos.emergencia.telefono }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
+            <div class="info-row"><span class="info-label">Teléfono Alternativo:</span><input type="number" name="emergencia_telefono_alt" value="{{ datos.emergencia.telefono_alt }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
             <div class="info-row"><span class="info-label">Tipo de Sangre:</span><input type="text" name="emergencia_sangre" value="{{ datos.emergencia.sangre }}" class="info-input"></div>
             <div class="info-row"><span class="info-label">Alergias:</span><input type="text" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input"></div>
             <button type="submit" class="edit-btn">Guardar Cambios</button>
             <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" class="delete-btn" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
+            <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(false)">Cancelar</button>
           </form>
-          <button class="emergency-btn" onclick="callEmergency()">📞 Llamar en Emergencia</button>
         </div>
       </div>
     </div>
