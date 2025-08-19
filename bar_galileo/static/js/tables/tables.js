@@ -298,7 +298,7 @@ async function facturarPedido() {
       });
       if (data.success) {
         showToast('Pedido facturado exitosamente', 'success');
-        setTimeout(() => window.location.reload(), 1500);
+        window.location.href = data.factura_url;
       }
     } catch (error) {
       console.error('Error al facturar:', error);

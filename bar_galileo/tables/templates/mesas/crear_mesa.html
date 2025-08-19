@@ -5,12 +5,6 @@
 <h1>Crear Mesa</h1>
 <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary">Volver</a>
 
-{% if messages %}
-{% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-{% endfor %}
-{% endif %}
-
 <form method="post" class="form-style">
     {% csrf_token %}
     {{ form.as_p }}
