@@ -47,21 +47,26 @@
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
                     <ul id="Proveedores-submenu" class="submenu hidden">
+                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                         {% if request.user|has_perm:"providers,crear" %}
                         <li><a href="{% url 'products:proveedores_create_admin' %}">Crear proveedor</a></li>
                         {% endif %}
-                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                     </ul>
                 </li>
                 {% endif %}
 
                 {% if request.user|has_perm:"tables,ver" %}
+                {% if request.user|has_perm:"tables,ver" %}
                 <li>
                     <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
                     <ul id="mesas-submenu" class="submenu hidden">
-                        <li>Esto está pendiente por implementar</li>
+                        <li><a href="{% url 'tables:mesas_lista' %}">Lista de Mesas</a></li>
+                        {% if request.user|has_perm:"tables,crear" %}
+                        <li><a href="{% url 'tables:crear_mesa' %}">Crear Mesa</a></li>
+                        {% endif %}
                     </ul>
                 </li>
+                {% endif %}
                 {% endif %}
 
                 {% if request.user|has_perm:"users,ver" %}

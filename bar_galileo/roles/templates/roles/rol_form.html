@@ -1,10 +1,10 @@
 {% extends 'base_admin.html' %}
 {% block content %}
 <h2>Crear Rol</h2>
+<a href="{% url 'roles:rol_list' %}" class="btn btn-secondary">Volver</a>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-success">Guardar</button>
-    <a href="{% url 'roles:rol_list' %}" class="btn btn-secondary">Volver</a>
 </form>
 {% endblock %}
