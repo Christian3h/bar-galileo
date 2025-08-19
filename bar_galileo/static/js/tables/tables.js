@@ -7,7 +7,7 @@
 let mesaActualId = null;
 let pedidoActual = {};
 let listaCompletaProductos = [];
-let virtualStock = {}; // Objeto para el stock virtual: { productoId: cantidad }
+let virtualStock = {};
 const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]")?.value || "";
 
 // ===== COMPONENTES DE UI (TOAST Y CONFIRM) =====
@@ -54,7 +54,6 @@ function setupWebSocket() {
       if (virtualStock[product_id] !== undefined) {
         virtualStock[product_id] += delta;
       }
-      // Si el modal de pedido está abierto, actualizar la UI
       if (document.getElementById("pedidoModal").style.display === "block") {
         actualizarListaProductosUI();
         actualizarPedidoItemsUI();
@@ -92,12 +91,9 @@ async function gestionarPedido(mesaId) {
     document.getElementById("mesaNombre").textContent = data.mesa.nombre;
     pedidoActual = data.pedido;
     listaCompletaProductos = data.productos;
-
-    // Inicializar el stock virtual
     listaCompletaProductos.forEach(p => {
       virtualStock[p.id_producto] = p.stock - (data.reservas_stock[p.id_producto] || 0);
     });
-
     actualizarListaProductosUI();
     actualizarPedidoItemsUI();
     document.getElementById("pedidoModal").style.display = "block";
@@ -112,7 +108,7 @@ function actualizarListaProductosUI() {
   lista.innerHTML = listaCompletaProductos.map(p => {
     const stock = virtualStock[p.id_producto] || 0;
     return `
-    <div class="producto-item ${stock <= 0 ? 'disabled' : ''}" onclick="agregarOActualizarItem(${p.id_producto})">
+    <div class="producto-item ${stock <= 0 ? 'disabled' : ''}" onclick="mostrarControlCantidad(${p.id_producto})">
       <div class="producto-row">
         <div class="producto-main">
           ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" class="producto-thumb">` : `<div class="thumb-placeholder">Sin img</div>`}
@@ -155,42 +151,93 @@ function actualizarPedidoItemsUI() {
   }
 }
 
-// ===== ACCIONES DE ITEMS DEL PEDIDO =====
+// ===== MODAL DE CANTIDAD =====
 
-async function agregarOActualizarItem(productoId) {
+function mostrarControlCantidad(productoId) {
+  const producto = listaCompletaProductos.find(p => p.id_producto === productoId);
   const stock = virtualStock[productoId] || 0;
-  const itemExistente = pedidoActual.items.find(i => i.producto.id === productoId);
-  const cantidadActualEnPedido = itemExistente ? itemExistente.cantidad : 0;
-
-  if (stock <= cantidadActualEnPedido) {
-    showToast("No hay más stock disponible para este producto.");
+  if (stock <= 0) {
+    showToast("No hay stock disponible para este producto.");
     return;
   }
 
-  if (itemExistente) {
-    await cambiarCantidadItem(itemExistente.id, itemExistente.cantidad + 1);
-  } else {
-    try {
-      const data = await apiFetch("/api/pedidos/agregar-item/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
-        body: JSON.stringify({ mesa_id: mesaActualId, producto_id: productoId, cantidad: 1 }),
-      });
-      pedidoActual = data.pedido;
-      actualizarPedidoItemsUI();
-    } catch (error) {
-      console.error('Error al agregar producto:', error);
-      showToast(error.message);
-    }
+  cerrarModalCantidad(); // Cerrar si ya hay uno abierto
+  const modal = document.createElement('div');
+  modal.id = 'modalCantidad';
+  modal.className = 'modal-overlay';
+  modal.innerHTML = `
+    <div class="modal-box">
+      <h4 class="modal-title">Agregar ${producto.nombre}</h4>
+      <p class="modal-price">Precio: $${producto.precio_venta} / Stock: ${stock}</p>
+      <div class="modal-counter">
+        <button type="button" onclick="cambiarCantidadEnModal(-1)" class="btn-cantidad btn-cantidad--lg">-</button>
+        <input type="number" id="cantidadInput" value="1" min="1" max="${stock}" class="input-cantidad" />
+        <button type="button" onclick="cambiarCantidadEnModal(1)" class="btn-cantidad btn-cantidad--lg">+</button>
+      </div>
+      <div class="modal-actions">
+        <button onclick="cerrarModalCantidad()" class="btn btn-danger btn-sm">Cancelar</button>
+        <button onclick="confirmarAgregarProducto(${productoId})" class="btn btn-success btn-sm">Agregar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.getElementById('cantidadInput').focus();
+}
+
+function cambiarCantidadEnModal(delta) {
+  const input = document.getElementById('cantidadInput');
+  const max = parseInt(input.max, 10);
+  let newValue = parseInt(input.value, 10) + delta;
+  if (newValue < 1) newValue = 1;
+  if (newValue > max) newValue = max;
+  input.value = newValue;
+}
+
+function cerrarModalCantidad() {
+  const modal = document.getElementById('modalCantidad');
+  if (modal) modal.remove();
+}
+
+// ===== ACCIONES DE ITEMS DEL PEDIDO =====
+
+async function confirmarAgregarProducto(productoId) {
+  const cantidad = parseInt(document.getElementById('cantidadInput').value, 10);
+  if (isNaN(cantidad) || cantidad < 1) return;
+
+  const stock = virtualStock[productoId] || 0;
+  const itemExistente = pedidoActual.items.find(i => i.producto.id === productoId);
+  const cantidadPrevia = itemExistente ? itemExistente.cantidad : 0;
+
+  if (stock < cantidadPrevia + cantidad) {
+    showToast(`Stock insuficiente. Solo puedes agregar ${stock - cantidadPrevia} más.`);
+    return;
+  }
+
+  try {
+    const data = await apiFetch("/api/pedidos/agregar-item/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+      body: JSON.stringify({ mesa_id: mesaActualId, producto_id: productoId, cantidad: cantidad }),
+    });
+    // Actualización local inmediata para el cliente actual
+    virtualStock[productoId] -= cantidad;
+    pedidoActual = data.pedido;
+    actualizarPedidoItemsUI();
+    actualizarListaProductosUI();
+    cerrarModalCantidad();
+  } catch (error) {
+    console.error('Error al agregar producto:', error);
+    showToast(error.message);
   }
 }
 
 async function cambiarCantidadItem(itemId, nuevaCantidad) {
+  const item = pedidoActual.items.find(i => i.id === itemId);
+  const old_cantidad = item.cantidad;
+
   if (nuevaCantidad < 1) { return await eliminarItem(itemId); }
 
-  const item = pedidoActual.items.find(i => i.id === itemId);
-  const stock = virtualStock[item.producto.id] || 0;
-
+  const stock = virtualStock[item.producto.id] + old_cantidad; // Stock total disponible
   if (stock < nuevaCantidad) {
     showToast(`Stock insuficiente. Disponible: ${stock}`);
     return;
@@ -202,8 +249,11 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
       headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
       body: JSON.stringify({ cantidad: nuevaCantidad }),
     });
+    const delta = nuevaCantidad - old_cantidad;
+    virtualStock[item.producto.id] -= delta;
     pedidoActual = data.pedido;
     actualizarPedidoItemsUI();
+    actualizarListaProductosUI();
   } catch (error) {
     console.error('Error al actualizar cantidad:', error);
     showToast(error.message);
@@ -214,13 +264,18 @@ async function eliminarItem(itemId) {
   const confirmado = await showConfirm('Eliminar Item', '¿Estás seguro de que deseas eliminar este item del pedido?');
   if (!confirmado) return;
 
+  const item = pedidoActual.items.find(i => i.id === itemId);
+  const { id: productoId, cantidad } = item.producto;
+
   try {
     const data = await apiFetch(`/api/pedidos/eliminar-item/${itemId}/`, {
       method: "DELETE",
       headers: { "X-CSRFToken": csrfToken },
     });
+    virtualStock[productoId] += cantidad;
     pedidoActual = data.pedido;
     actualizarPedidoItemsUI();
+    actualizarListaProductosUI();
     showToast('Item eliminado correctamente', 'success');
   } catch (error) {
     console.error('Error al eliminar item:', error);
@@ -256,13 +311,11 @@ async function facturarPedido() {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.mesa-card').forEach(actualizarVisibilidadBotonPedido);
-    setupWebSocket(); // Iniciar conexión WebSocket
+    setupWebSocket();
 });
 
 document.addEventListener('change', (event) => {
     if (event.target.matches('select[name="estado"]')) {
-        const select = event.target;
-        const mesaCard = select.closest('.mesa-card');
         select.closest('form').submit();
     }
 });
