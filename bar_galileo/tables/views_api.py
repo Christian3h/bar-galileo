@@ -88,11 +88,17 @@ def agregar_item_api(request):
     # ... (validación de stock, creación/actualización de item)
     # ...
     # Después de guardar el item exitosamente:
-    _broadcast_stock_update(producto.id_producto, cantidad_a_agregar)
+    _broadcast_stock_update(producto.id_producto, -cantidad_a_agregar)
     
     # ... (código existente para devolver la respuesta)
     pedido, _ = Pedido.objects.get_or_create(mesa_id=data['mesa_id'], estado='en_proceso')
     item, created = PedidoItem.objects.get_or_create(pedido=pedido, producto=producto, defaults={'precio_unitario': producto.precio_venta})
+    
+    # Validar stock antes de modificar
+    cantidad_total_requerida = (item.cantidad if not created else 0) + cantidad_a_agregar
+    if producto.stock < cantidad_total_requerida:
+        return JsonResponse({'error': f'Stock insuficiente para {producto.nombre}. Disponible: {producto.stock}'}, status=400)
+
     if not created:
         item.cantidad += cantidad_a_agregar
     else:
@@ -109,13 +115,21 @@ def actualizar_item_api(request, item_id):
     data = json.loads(request.body)
     nueva_cantidad = data.get('cantidad')
 
-    # Lógica de negocio...
-    # ... (validación, etc.)
-    item.cantidad = nueva_cantidad
-    item.save()
+    if nueva_cantidad is None or not isinstance(nueva_cantidad, int) or nueva_cantidad < 0:
+        return JsonResponse({'error': 'Cantidad no válida'}, status=400)
+
+    # Validar stock
+    if item.producto.stock < nueva_cantidad:
+        return JsonResponse({'error': f'Stock insuficiente para {item.producto.nombre}. Disponible: {item.producto.stock}'}, status=400)
+
+    if nueva_cantidad == 0:
+        item.delete()
+    else:
+        item.cantidad = nueva_cantidad
+        item.save()
 
     delta = nueva_cantidad - old_cantidad
-    _broadcast_stock_update(item.producto.id_producto, delta)
+    _broadcast_stock_update(item.producto.id_producto, -delta)
     
     return JsonResponse({'pedido': _serialize_pedido(item.pedido)})
 
@@ -128,7 +142,7 @@ def eliminar_item_api(request, item_id):
 
     item.delete()
 
-    _broadcast_stock_update(producto_id, -cantidad_eliminada)
+    _broadcast_stock_update(producto_id, cantidad_eliminada)
     
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
