@@ -3,6 +3,18 @@
  * Incluye edición de mesas, gestión de modales para pedidos, y comunicación con la API y WebSockets.
  */
 
+// Función de utilidad para formatear números como precios
+function formatNumberForPrice(number) {
+  if (number === null || number === undefined) {
+    return '';
+  }
+  // Convertir a número y luego a entero para eliminar decimales
+  const num = parseInt(number);
+  // Usar Intl.NumberFormat para formatear con separador de miles (punto)
+  return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 0 }).format(num);
+}
+
+
 // ===== VARIABLES GLOBALES =====
 let mesaActualId = null;
 let pedidoActual = {};
@@ -117,7 +129,7 @@ function actualizarListaProductosUI() {
             <small class="text-muted">Stock: ${stock}</small>
           </div>
         </div>
-        <span class="precio">$${p.precio_venta}</span>
+        <span class="precio">${formatNumberForPrice(p.precio_venta)}</span>
       </div>
     </div>
   `}).join("");
@@ -138,13 +150,13 @@ function actualizarPedidoItemsUI() {
               <span class="cantidad-valor">${item.cantidad}</span>
               <button onclick="cambiarCantidadItem(${item.id}, ${item.cantidad + 1})" class="btn-cantidad" ${atascadoEnStock ? 'disabled' : ''}>+</button>
             </div>
-            <span class="subtotal">$${item.subtotal}</span>
+            <span class="subtotal">${formatNumberForPrice(item.subtotal)}</span>
             <button class="btn btn-sm btn-danger btn-eliminar" onclick="eliminarItem(${item.id})">×</button>
           </div>
         </div>
       `;
     }).join("");
-    document.getElementById("pedidoTotal").textContent = Number(pedidoActual.total || 0).toFixed(2);
+    document.getElementById("pedidoTotal").textContent = formatNumberForPrice(pedidoActual.total || 0);
   } else {
     itemsContainer.innerHTML = '<p class="pedido-vacio">No hay items en el pedido</p>';
     document.getElementById("pedidoTotal").textContent = "0.00";
@@ -168,7 +180,7 @@ function mostrarControlCantidad(productoId) {
   modal.innerHTML = `
     <div class="modal-box">
       <h4 class="modal-title">Agregar ${producto.nombre}</h4>
-      <p class="modal-price">Precio: $${producto.precio_venta} / Stock: ${stock}</p>
+      <p class="modal-price">Precio: ${formatNumberForPrice(producto.precio_venta)} / Stock: ${stock}</p>
       <div class="modal-counter">
         <button type="button" onclick="cambiarCantidadEnModal(-1)" class="btn-cantidad btn-cantidad--lg">-</button>
         <input type="number" id="cantidadInput" value="1" min="1" max="${stock}" class="input-cantidad" />

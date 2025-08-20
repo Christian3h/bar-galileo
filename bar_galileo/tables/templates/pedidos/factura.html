@@ -1,6 +1,7 @@
 {% extends 'base_admin.html' %}
 
 {% load static %}
+{% load format_tags %}
 
 {% load roles_tags %}
 {% block extra_css %}
@@ -36,15 +37,15 @@
                 <tr>
                     <td>{{ item.producto.nombre }}</td>
                     <td class="text-center">{{ item.cantidad }}</td>
-                    <td class="text-end">${{ item.precio_unitario|floatformat:2 }}</td>
-                    <td class="text-end">${{ item.subtotal|floatformat:2 }}</td>
+                    <td class="text-end">${{ item.precio_unitario|format_price }}</td>
+                    <td class="text-end">${{ item.subtotal|format_price }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
             <tfoot>
                 <tr>
                     <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                    <td class="text-end"><strong>${{ factura.total|floatformat:2 }}</strong></td>
+                    <td class="text-end"><strong>${{ factura.total|format_price }}</strong></td>
                 </tr>
             </tfoot>
         </table>

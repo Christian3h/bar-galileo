@@ -1,10 +1,18 @@
 {% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/admin/delete_confirmation.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Eliminar Categoría</h1>
-<p>¿Estás seguro de que deseas eliminar la categoría "{{ object.nombre_categoria }}"?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Eliminar</button>
-        <a href="{% url 'products:categories_admin' %}">Cancelar</a>
-</form>
+<div class="delete-confirmation-container">
+    <h2>¿Estás seguro de que deseas eliminar esta categoría?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p><strong>{{ object.nombre_categoria }}</strong></p>
+        <button type="submit" class="btn-danger">Eliminar</button>
+        <a href="{% url 'products:categories_admin' %}" class="btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

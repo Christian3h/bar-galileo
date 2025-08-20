@@ -1,4 +1,5 @@
 {% load static %}
+{% load format_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -158,7 +159,7 @@
           </div>
           <div class="product-info">
             <h3 class="product-name">{{ producto.nombre }}</h3>
-            <p class="product-price">${{ producto.precio_venta }}</p>
+            <p class="product-price">${{ producto.precio_venta|format_price }}</p>
             <p class="product-description">{{ producto.descripcion|truncatewords:10 }}</p>
             <button class="btn-green" data-producto-id="{{ producto.id_producto }}">Ver producto</button>
           </div>
