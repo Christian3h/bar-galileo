@@ -10,7 +10,7 @@ class Mesa(models.Model):
         ('fuera de servicio', 'Fuera de servicio'),
     ]
     
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=50)
     descripcion = models.TextField(blank=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='disponible')
 
