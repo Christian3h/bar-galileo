@@ -1,0 +1,549 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Detalle de Factura #{{ factura.numero }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2 class="dashboard-title">Factura #{{ factura.numero }}</h2>
+        <div class="header-actions">
+            <a href="{% url 'facturacion:lista_facturas' %}" class="btn-back">← Volver a la lista</a>
+        </div>
+    </div>
+
+    <div class="factura-detail">
+        <div class="factura-info">
+            <div class="info-section">
+                <h3>Información General</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Número de Factura:</label>
+                        <span class="factura-numero">#{{ factura.numero }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Fecha:</label>
+                        <span>{{ factura.fecha|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Mesa:</label>
+                        <span>
+                            {% if factura.pedido.mesa %}
+                                {{ factura.pedido.mesa.nombre }}
+                            {% else %}
+                                <span class="text-muted">Sin mesa asignada</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <label>Estado del Pedido:</label>
+                        <span class="estado-badge estado-{{ factura.pedido.estado }}">
+                            {{ factura.pedido.get_estado_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>Detalles del Pedido</h3>
+                <div class="pedido-items">
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in factura.pedido.items.all %}
+                            <tr>
+                                <td>{{ item.producto.nombre }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>${{ item.precio_unitario|floatformat:2 }}</td>
+                                <td>${{ item.subtotal|floatformat:2 }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">
+                                    No hay items en este pedido
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="3"><strong>Total:</strong></td>
+                                <td><strong>${{ factura.total|floatformat:2 }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="factura-actions">
+            <div class="action-buttons">
+                <a href="{% url 'facturacion:eliminar_factura' factura.id %}" 
+                   class="btn-danger"
+                   onclick="return confirm('¿Estás seguro de que deseas eliminar esta factura? Esta acción no se puede deshacer.')">
+                    🗑️ Eliminar Factura
+                </a>
+                <button onclick="window.print()" class="btn-print">
+                    🖨️ Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Contenedor principal responsive */
+.dashboard-container {
+    max-width: 100vw;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Header responsive */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.dashboard-title {
+    margin: 0;
+    font-size: 1.3rem;
+    color: #333;
+    flex: 1;
+    min-width: 200px;
+}
+
+.header-actions .btn-back {
+    padding: 6px 12px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.header-actions .btn-back:hover {
+    background: #545b62;
+}
+
+/* Detalle de factura responsive */
+.factura-detail {
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.factura-info {
+    padding: 12px;
+}
+
+.info-section {
+    margin-bottom: 15px;
+}
+
+.info-section h3 {
+    color: #333;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #007bff;
+    font-size: 1rem;
+}
+
+/* Grid de información responsive */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    border-left: 3px solid #007bff;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #555;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.info-item span {
+    font-size: 13px;
+    color: #333;
+    word-break: break-word;
+}
+
+.factura-numero {
+    font-family: monospace;
+    font-weight: bold;
+    color: #007bff;
+    font-size: 14px !important;
+}
+
+/* Estados con colores */
+.estado-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: inline-block;
+    max-width: fit-content;
+}
+
+.estado-en_proceso {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.estado-facturado {
+    background: #d1edff;
+    color: #0c5460;
+}
+
+.estado-cancelado {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Tabla de items responsive - sin scroll horizontal */
+.pedido-items {
+    margin-top: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    table-layout: fixed; /* Fuerza el ancho de columnas */
+}
+
+.items-table th,
+.items-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden;
+}
+
+/* Definir anchos específicos para cada columna */
+.items-table th:nth-child(1),
+.items-table td:nth-child(1) { 
+    width: 35%; 
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.items-table th:nth-child(2),
+.items-table td:nth-child(2) { 
+    width: 18%; 
+    text-align: center;
+    white-space: nowrap;
+}
+
+.items-table th:nth-child(3),
+.items-table td:nth-child(3) { 
+    width: 23.5%; 
+    text-align: right;
+    white-space: nowrap;
+}
+
+.items-table th:nth-child(4),
+.items-table td:nth-child(4) { 
+    width: 23.5%; 
+    text-align: right;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.items-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.items-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.total-row {
+    background: #f0f7ff !important;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.total-row td {
+    border-top: 2px solid #007bff;
+    padding: 15px 10px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #6c757d;
+}
+
+/* Acciones de la factura */
+.factura-actions {
+    background: #f8f9fa;
+    padding: 12px;
+    border-top: 1px solid #eee;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-danger, .btn-print {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-print {
+    background: #28a745;
+    color: white;
+}
+
+.btn-print:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 10px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 8px;
+    }
+    
+    .dashboard-title {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+    }
+    
+    .header-actions .btn-back {
+        align-self: center;
+        max-width: 150px;
+        padding: 5px 10px;
+    }
+    
+    .factura-info {
+        padding: 10px;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .info-section h3 {
+        font-size: 0.9rem;
+    }
+    
+    .items-table {
+        font-size: 11px;
+    }
+    
+    .items-table th,
+    .items-table td {
+        padding: 6px 3px;
+    }
+    
+    /* Ocultar columna de precio unitario en móviles para más espacio */
+    .items-table th:nth-child(3),
+    .items-table td:nth-child(3) {
+        display: none;
+    }
+    
+    /* Reajustar anchos sin la columna de precio unitario */
+    .items-table th:nth-child(1),
+    .items-table td:nth-child(1) { width: 55%; } /* Producto */
+    .items-table th:nth-child(2),
+    .items-table td:nth-child(2) { width: 20%; } /* Cantidad */
+    .items-table th:nth-child(4),
+    .items-table td:nth-child(4) { width: 25%; } /* Subtotal */
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .btn-danger, .btn-print {
+        width: 100%;
+        max-width: 200px;
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 8px;
+    }
+    
+    .dashboard-title {
+        font-size: 1rem;
+    }
+    
+    .info-item {
+        padding: 6px;
+    }
+    
+    .info-item label {
+        font-size: 10px;
+    }
+    
+    .info-item span {
+        font-size: 12px;
+    }
+    
+    .items-table {
+        font-size: 10px;
+    }
+    
+    .items-table th,
+    .items-table td {
+        padding: 4px 2px;
+    }
+    
+    /* En pantallas muy pequeñas, optimizar distribución */
+    .items-table th:nth-child(1),
+    .items-table td:nth-child(1) { width: 50%; } /* Producto */
+    .items-table th:nth-child(2),
+    .items-table td:nth-child(2) { width: 20%; } /* Cantidad */
+    .items-table th:nth-child(4),
+    .items-table td:nth-child(4) { width: 30%; } /* Subtotal */
+    
+    .btn-danger, .btn-print {
+        padding: 10px 20px;
+        font-size: 13px;
+        min-width: auto;
+    }
+    
+    .factura-actions {
+        padding: 15px;
+    }
+}
+
+/* Estilos para impresión */
+@media print {
+    .dashboard-header .header-actions,
+    .factura-actions {
+        display: none !important;
+    }
+    
+    .dashboard-container {
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .factura-detail {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .info-item {
+        background: white;
+        border: 1px solid #ddd;
+    }
+    
+    .items-table {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}
+
+/* Eliminar cualquier posible scroll horizontal */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Asegurar que ningún elemento cause scroll horizontal */
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.dashboard-container,
+.factura-detail,
+.items-table,
+.pedido-items,
+.info-grid,
+.info-section,
+.factura-info {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+</style>
+{% endblock %}

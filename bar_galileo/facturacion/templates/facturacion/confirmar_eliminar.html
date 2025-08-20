@@ -1,0 +1,354 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Eliminar Factura #{{ factura.numero }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2 class="dashboard-title">Eliminar Factura</h2>
+        <div class="header-actions">
+            <a href="{% url 'facturacion:lista_facturas' %}" class="btn-back">← Volver a la lista</a>
+        </div>
+    </div>
+
+    <div class="confirm-delete">
+        <div class="warning-icon">⚠️</div>
+        <h3>¿Estás seguro de que deseas eliminar esta factura?</h3>
+        <p class="warning-text">
+            Esta acción no se puede deshacer. Una vez eliminada, no podrás recuperar la información de esta factura.
+        </p>
+
+        <div class="factura-preview">
+            <h4>Detalles de la factura a eliminar:</h4>
+            <div class="preview-info">
+                <div class="preview-item">
+                    <strong>Número:</strong> #{{ factura.numero }}
+                </div>
+                <div class="preview-item">
+                    <strong>Fecha:</strong> {{ factura.fecha|date:"d/m/Y H:i" }}
+                </div>
+                <div class="preview-item">
+                    <strong>Mesa:</strong> 
+                    {% if factura.pedido.mesa %}
+                        {{ factura.pedido.mesa.nombre }}
+                    {% else %}
+                        Sin mesa asignada
+                    {% endif %}
+                </div>
+                <div class="preview-item">
+                    <strong>Total:</strong> ${{ factura.total|floatformat:2 }}
+                </div>
+            </div>
+        </div>
+
+        <div class="confirm-actions">
+            <form method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn-confirm-delete">
+                    🗑️ Sí, eliminar factura
+                </button>
+            </form>
+            <a href="{% url 'facturacion:detalle_factura' factura.id %}" class="btn-cancel">
+                ❌ Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Contenedor principal responsive */
+.dashboard-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.dashboard-title {
+    color: #333;
+    margin: 0;
+    font-size: 24px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.header-actions .btn-back {
+    padding: 10px 20px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.header-actions .btn-back:hover {
+    background: #545b62;
+}
+
+.confirm-delete {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.warning-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.confirm-delete h3 {
+    color: #dc3545;
+    margin-bottom: 15px;
+    font-size: 24px;
+    word-wrap: break-word;
+}
+
+.warning-text {
+    color: #6c757d;
+    margin-bottom: 30px;
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.factura-preview {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 20px;
+    margin: 30px 0;
+    text-align: left;
+    overflow: hidden;
+}
+
+.factura-preview h4 {
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.preview-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+
+.preview-item {
+    padding: 12px;
+    background: white;
+    border-radius: 4px;
+    border-left: 4px solid #007bff;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.preview-item strong {
+    color: #555;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-confirm-delete,
+.btn-cancel {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    min-width: 180px;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.btn-confirm-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-confirm-delete:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #545b62;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 768px) {
+    .dashboard-container {
+        padding: 10px;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .dashboard-title {
+        font-size: 20px;
+    }
+    
+    .header-actions .btn-back {
+        align-self: center;
+        max-width: 200px;
+    }
+    
+    .confirm-delete {
+        padding: 25px 15px;
+        margin: 0 5px;
+    }
+    
+    .confirm-delete h3 {
+        font-size: 20px;
+    }
+    
+    .warning-text {
+        font-size: 15px;
+    }
+    
+    .factura-preview {
+        padding: 15px;
+        margin: 20px 0;
+    }
+    
+    .factura-preview h4 {
+        font-size: 16px;
+    }
+    
+    .preview-info {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .preview-item {
+        padding: 10px;
+    }
+    
+    .confirm-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .btn-confirm-delete,
+    .btn-cancel {
+        width: 100%;
+        max-width: 280px;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 8px;
+    }
+    
+    .dashboard-title {
+        font-size: 18px;
+    }
+    
+    .confirm-delete {
+        padding: 20px 10px;
+    }
+    
+    .warning-icon {
+        font-size: 3em;
+    }
+    
+    .confirm-delete h3 {
+        font-size: 18px;
+    }
+    
+    .warning-text {
+        font-size: 14px;
+    }
+    
+    .factura-preview h4 {
+        font-size: 15px;
+    }
+    
+    .preview-item {
+        padding: 8px;
+    }
+    
+    .preview-item strong {
+        font-size: 13px;
+    }
+    
+    .btn-confirm-delete,
+    .btn-cancel {
+        padding: 10px 20px;
+        font-size: 14px;
+        max-width: 100%;
+    }
+}
+
+/* Eliminar cualquier posible scroll horizontal */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* Asegurar que ningún elemento cause scroll horizontal */
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.dashboard-container,
+.confirm-delete,
+.factura-preview,
+.preview-info {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+</style>
+{% endblock %}
