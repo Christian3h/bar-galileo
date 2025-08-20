@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load format_tags %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/main/tables/tables.css' %}" />
@@ -43,7 +44,7 @@
                                     <span class="status-badge success">Facturado</span>
                                 </div>
                                 <div class="order-details-right">
-                                    <span class="price-badge primary">${{ pedido.total|floatformat:2 }}</span>
+                                    <span class="price-badge primary">{{ pedido.total|format_price }}</span>
                                     {% if pedido.factura %}
                                         <br>
                                         <small>Factura #{{ pedido.factura.numero }}</small>

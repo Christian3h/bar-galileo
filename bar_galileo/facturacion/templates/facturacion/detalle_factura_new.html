@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load format_tags %}
 
 {% block title %}Detalle de Factura #{{ factura.numero }}{% endblock %}
 
@@ -60,8 +61,8 @@
                         <tr>
                             <td>{{ item.producto.nombre }}</td>
                             <td class="text-center">{{ item.cantidad }}</td>
-                            <td class="text-right hide-mobile">${{ item.precio_unitario|floatformat:2 }}</td>
-                            <td class="text-right">${{ item.subtotal|floatformat:2 }}</td>
+                            <td class="text-right hide-mobile">{{ item.precio_unitario|format_price }}</td>
+                            <td class="text-right">{{ item.subtotal|format_price }}</td>
                         </tr>
                         {% empty %}
                         <tr>
@@ -75,7 +76,7 @@
                         <tr class="total-row">
                             <td colspan="3" class="hide-mobile"><strong>Total:</strong></td>
                             <td colspan="2" class="show-mobile"><strong>Total:</strong></td>
-                            <td class="text-right"><strong>${{ factura.total|floatformat:2 }}</strong></td>
+                            <td class="text-right"><strong>{{ factura.total|format_price }}</strong></td>
                         </tr>
                     </tfoot>
                 </table>

@@ -1,5 +1,9 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load format_tags %}
+
+{% block title %}Confirmar Eliminación - Factura #{{ factura.numero }}{% endblock %}xtends 'base_admin.html' %}
+{% load static %}
 
 {% block title %}Eliminar Factura #{{ factura.numero }}{% endblock %}
 
@@ -37,7 +41,7 @@
                     {% endif %}
                 </div>
                 <div class="preview-item">
-                    <strong>Total:</strong> ${{ factura.total|floatformat:2 }}
+                    <strong>Total:</strong> {{ factura.total|format_price }}
                 </div>
             </div>
         </div>
