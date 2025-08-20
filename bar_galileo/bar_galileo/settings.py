@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'users',
     #app para el dashboard
     'admin_dashboard',
+    #app para facturación
+    'facturacion',
     #apps necesarias para la libreria django-allauth 
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',

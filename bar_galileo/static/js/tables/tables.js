@@ -3,15 +3,27 @@
  * Incluye edición de mesas, gestión de modales para pedidos, y comunicación con la API y WebSockets.
  */
 
-// Función de utilidad para formatear números como precios
+// Función de utilidad para formatear números como precios colombianos
 function formatNumberForPrice(number) {
-  if (number === null || number === undefined) {
-    return '';
+  if (number === null || number === undefined || number === '') {
+    return '$0';
   }
-  // Convertir a número y luego a entero para eliminar decimales
-  const num = parseInt(number);
-  // Usar Intl.NumberFormat para formatear con separador de miles (punto)
-  return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 0 }).format(num);
+  
+  try {
+    // Convertir a número y luego a entero para eliminar decimales
+    const num = parseInt(number);
+    
+    // Usar Intl.NumberFormat para formatear con separador de miles (punto)
+    const formatted = new Intl.NumberFormat('de-DE', { 
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(num);
+    
+    // Retornar con símbolo de peso colombiano
+    return `$${formatted}`;
+  } catch (error) {
+    return '$0';
+  }
 }
 
 
@@ -159,7 +171,7 @@ function actualizarPedidoItemsUI() {
     document.getElementById("pedidoTotal").textContent = formatNumberForPrice(pedidoActual.total || 0);
   } else {
     itemsContainer.innerHTML = '<p class="pedido-vacio">No hay items en el pedido</p>';
-    document.getElementById("pedidoTotal").textContent = "0.00";
+    document.getElementById("pedidoTotal").textContent = "$0";
   }
 }
 
