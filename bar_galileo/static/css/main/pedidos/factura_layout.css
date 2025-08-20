@@ -1,0 +1,189 @@
+/* static/css/main/pedidos/factura_layout.css */
+
+/* Base styles for the invoice container */
+.factura-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background: #ffffff; /* White background */
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: Arial, sans-serif; /* Neutral font */
+    color: var(--color-light); /* Dark text color */
+}
+
+/* Header section */
+.factura-header {
+    background: var(--color-primary); /* Using primary color for header */
+    color: #ffffff; /* White text for contrast */
+    padding: 20px;
+    text-align: center;
+}
+
+.factura-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+/* Body section */
+.factura-body {
+    padding: 30px;
+}
+
+/* Company/Table info */
+.empresa-info {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--color-primary); /* Using primary color for border */
+}
+
+.empresa-info h3 {
+    color: var(--color-light); /* Dark text color */
+    margin: 0 0 15px 0;
+    font-size: 1.5rem;
+}
+
+.empresa-info p {
+    margin: 5px 0;
+    color: var(--color-gray); /* Gray text color */
+    font-size: 14px;
+}
+
+/* Invoice table */
+.factura-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border: 1px solid var(--color-primary); /* Primary color for table border */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.factura-table thead {
+    background-color: rgba(var(--color-primary-rgb), 0.1); /* Light primary background for header */
+}
+
+.factura-table th,
+.factura-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.3); /* Lighter primary for row borders */
+}
+
+.factura-table th {
+    font-weight: 600;
+    color: var(--color-light); /* Dark text for header */
+    background-color: rgba(var(--color-primary-rgb), 0.1); /* Ensure consistency */
+}
+
+.factura-table tbody tr:hover {
+    background-color: rgba(var(--color-primary-rgb), 0.05); /* Very light hover effect */
+}
+
+.factura-table tfoot {
+    background-color: rgba(var(--color-primary-rgb), 0.1); /* Light primary background for footer */
+    font-weight: 600;
+    color: var(--color-light); /* Dark text for footer */
+}
+
+/* Text alignment helpers */
+.text-center {
+    text-align: center;
+}
+
+.text-end {
+    text-align: right;
+}
+
+/* Status section */
+.estado-pago {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(var(--color-primary-rgb), 0.1); /* Light primary background */
+    border-radius: 8px;
+    border: 1px solid var(--color-primary); /* Primary color border */
+}
+
+.estado-pago h4 {
+    color: var(--color-primary); /* Primary color text */
+    margin: 0 0 10px 0;
+    font-size: 1.3rem;
+}
+
+.estado-pago p {
+    color: var(--color-primary); /* Primary color text */
+    margin: 0;
+    font-style: italic;
+}
+
+/* Action buttons container */
+.botones-accion {
+    margin-top: 30px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 2px solid var(--color-primary); /* Primary color border */
+}
+
+/* Print specific styles */
+@media print {
+    body {
+        margin: 0;
+        background: white;
+    }
+
+    .factura-container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: none;
+    }
+
+    .btn, .botones-accion {
+        display: none !important; /* Hide buttons when printing */
+    }
+
+    .factura-header {
+        background: var(--color-primary) !important; /* Ensure primary color for print header */
+        color: #ffffff !important; /* White text for print header */
+        -webkit-print-color-adjust: exact; /* For exact color printing */
+    }
+
+    .estado-pago {
+        background: rgba(var(--color-primary-rgb), 0.1) !important; /* Light primary for print status */
+        border: 1px solid var(--color-primary) !important; /* Primary border for print status */
+        -webkit-print-color-adjust: exact;
+    }
+
+    .factura-table th {
+        background-color: rgba(var(--color-primary-rgb), 0.1) !important; /* Light primary for print table header */
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .factura-container {
+        margin: 10px;
+    }
+
+    .factura-body {
+        padding: 20px;
+    }
+
+    .factura-table {
+        font-size: 14px;
+    }
+
+    .factura-table th,
+    .factura-table td {
+        padding: 8px 10px;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+    }
+}

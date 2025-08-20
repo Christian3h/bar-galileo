@@ -2,121 +2,114 @@
 {% load static %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/main/tables/tables.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main/tables/tables.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/main/tables/confirmar_eliminar_layout.css' %}" />
 {% endblock %}
 
 {% block title %}Confirmar Eliminación - Mesa {{ mesa.nombre }}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">
-                        <i class="fas fa-exclamation-triangle text-warning"></i>
-                        Confirmar Eliminación
-                    </h5>
-                    <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-arrow-left"></i> Volver
-                    </a>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning" role="alert">
-                        <h6><i class="fas fa-exclamation-circle"></i> ¿Está seguro que desea eliminar la mesa "{{ mesa.nombre }}"?</h6>
-                    </div>
+<div class="delete-confirmation-container">
+    <div class="delete-confirmation-card">
+        <div class="card-header-custom">
+            <h5 class="card-title-custom">
+                <i class="fas fa-exclamation-triangle icon-warning"></i>
+                Confirmar Eliminación
+            </h5>
+            <a href="{% url 'tables:mesas_lista' %}" class="btn">
+                <i class="btn-primary"></i> Volver
+            </a>
+        </div>
+        <div class="card-body-custom">
+            <div class="message-box warning">
+                <h6><i class="fas fa-exclamation-circle"></i> ¿Está seguro que desea eliminar la mesa "{{ mesa.nombre }}"?</h6>
+            </div>
 
-                    {% if pedidos_con_factura %}
-                        <div class="alert alert-info" role="alert">
-                            <h6><i class="fas fa-info-circle"></i> Información importante</h6>
-                            <p class="mb-2">Esta mesa tiene pedidos facturados que se mantendrán para registro contable:</p>
-                            
-                            <div class="mb-3">
-                                <strong>Pedidos con factura ({{ pedidos_con_factura|length }}):</strong>
-                                <ul class="list-group list-group-flush mt-2">
-                                    {% for pedido in pedidos_con_factura %}
-                                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>Pedido #{{ pedido.id }}</strong>
-                                            <br>
-                                            <small class="text-muted">{{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</small>
-                                            <br>
-                                            <span class="badge bg-success">Facturado</span>
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="badge bg-primary">${{ pedido.total|floatformat:2 }}</span>
-                                            {% if pedido.factura %}
-                                                <br>
-                                                <small class="text-muted">Factura #{{ pedido.factura.numero }}</small>
-                                                <br>
-                                                <a href="{% url 'tables:ver_factura' pedido.factura.id %}" class="btn btn-outline-primary btn-sm mt-1">
+            {% if pedidos_con_factura %}
+                <div class="message-box info">
+                    <h6><i class="fas fa-info-circle"></i> Información importante</h6>
+                    <p>Esta mesa tiene pedidos facturados que se mantendrán para registro contable:</p>
+
+                    <div class="order-list-section">
+                        <strong>Pedidos con factura ({{ pedidos_con_factura|length }}):</strong>
+                        <ul class="order-list">
+                            {% for pedido in pedidos_con_factura %}
+                            <li class="order-item">
+                                <div>
+                                    <strong>Pedido #{{ pedido.id }}</strong>
+                                    <br>
+                                    <small>{{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                                    <br>
+                                    <span class="status-badge success">Facturado</span>
+                                </div>
+                                <div class="order-details-right">
+                                    <span class="price-badge primary">${{ pedido.total|floatformat:2 }}</span>
+                                    {% if pedido.factura %}
+                                        <br>
+                                        <small>Factura #{{ pedido.factura.numero }}</small>
+                                        <br>
+                                        <a href="{% url 'tables:ver_factura' pedido.factura.id %}" class="btn btn-primary btn-sm">
                                                     <i class="fas fa-file-invoice"></i> Ver Factura
                                                 </a>
-                                            {% endif %}
-                                        </div>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <p class="mb-0"><strong>Estos pedidos se conservarán sin referencia a la mesa para mantener el historial contable.</strong></p>
-                        </div>
-                    {% endif %}
-
-                    {% if pedidos_sin_factura %}
-                        <div class="alert alert-warning" role="alert">
-                            <h6><i class="fas fa-exclamation-triangle"></i> Pedidos sin facturar</h6>
-                            <p>Esta mesa tiene {{ pedidos_sin_factura|length }} pedido(s) sin facturar que será(n) eliminado(s):</p>
-                            <ul class="list-group list-group-flush">
-                                {% for pedido in pedidos_sin_factura %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Pedido #{{ pedido.id }}</strong>
-                                        <br>
-                                        <small class="text-muted">{{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</small>
-                                    </div>
-                                    <div class="text-end">
-                                        <span class="badge bg-warning">{{ pedido.estado|capfirst }}</span>
-                                        <br>
-                                        <small class="text-muted">Total: ${{ pedido.total|floatformat:2 }}</small>
-                                    </div>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endif %}
-
-                    {% if not pedidos_con_factura and not pedidos_sin_factura %}
-                        <div class="alert alert-success" role="alert">
-                            <h6><i class="fas fa-check-circle"></i> Mesa sin pedidos</h6>
-                            <p>Esta mesa no tiene pedidos asociados y puede ser eliminada sin problemas.</p>
-                        </div>
-                    {% endif %}
-
-                    <div class="row">
-                        <div class="col-6">
-                            <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary w-100">
-                                <i class="fas fa-times"></i> Cancelar
-                            </a>
-                        </div>
-                        <div class="col-6">
-                            {% if pedidos_sin_factura %}
-                                <button type-="button" class="btn btn-danger w-100" disabled title="No se puede eliminar la mesa porque tiene pedidos sin facturar">
-                                    <i class="fas fa-ban"></i> No se puede eliminar
-                                </button>
-                                <div class="alert alert-danger mt-2" role="alert">
-                                    <i class="fas fa-exclamation-triangle"></i> No se puede eliminar la mesa porque tiene pedidos sin facturar. Por favor, facture todos los pedidos antes de eliminar la mesa.
+                                    {% endif %}
                                 </div>
-                            {% else %}
-                                <form method="post" action="{% url 'tables:eliminar_mesa' mesa.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-danger w-100" onclick="return confirm('¿Confirma que desea eliminar esta mesa?')">
-                                        <i class="fas fa-trash"></i> Eliminar Mesa
-                                    </button>
-                                </form>
-                            {% endif %}
-                        </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
+                    <p><strong>Estos pedidos se conservarán sin referencia a la mesa para mantener el historial contable.</strong></p>
                 </div>
+            {% endif %}
+
+            {% if pedidos_sin_factura %}
+                <div class="message-box warning">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Pedidos sin facturar</h6>
+                    <p>Esta mesa tiene {{ pedidos_sin_factura|length }} pedido(s) sin facturar que será(n) eliminado(s):</p>
+                    <ul class="order-list">
+                        {% for pedido in pedidos_sin_factura %}
+                        <li class="order-item">
+                            <div>
+                                <strong>Pedido #{{ pedido.id }}</strong>
+                                <br>
+                                <small>{{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <div class="order-details-right">
+                                <span class="status-badge warning">{{ pedido.estado|capfirst }}</span>
+                                <br>
+                                <small>Total: ${{ pedido.total|floatformat:2 }}</small>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if not pedidos_con_factura and not pedidos_sin_factura %}
+                <div class="message-box success">
+                    <h6><i class="fas fa-check-circle"></i> Mesa sin pedidos</h6>
+                    <p>Esta mesa no tiene pedidos asociados y puede ser eliminada sin problemas.</p>
+                </div>
+            {% endif %}
+
+            <div class="action-buttons-container">
+                <a href="{% url 'tables:mesas_lista' %}" class="btn">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                {% if pedidos_sin_factura %}
+                    <button type="button" class="btn btn-danger btn-lg" disabled>
+                        <i class="fas fa-ban"></i> No se puede eliminar
+                    </button>
+                    <div class="message-box error">
+                        <i class="fas fa-exclamation-triangle"></i> Para eliminar esta mesa, primero debe facturar o liberar todos los pedidos pendientes.
+                    </div>
+                {% else %}
+                    <form method="post" action="{% url 'tables:eliminar_mesa' mesa.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-lg" onclick="return confirm('¿Confirma que desea eliminar esta mesa?')">
+                            <i class="fas fa-trash"></i> Eliminar Mesa
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>
