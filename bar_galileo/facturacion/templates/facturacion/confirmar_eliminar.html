@@ -2,357 +2,303 @@
 {% load static %}
 {% load format_tags %}
 
-{% block title %}Confirmar Eliminación - Factura #{{ factura.numero }}{% endblock %}xtends 'base_admin.html' %}
-{% load static %}
-
 {% block title %}Eliminar Factura #{{ factura.numero }}{% endblock %}
 
 {% block content %}
 <div class="dashboard-container">
-    <div class="dashboard-header">
+    <div class="header-section">
         <h2 class="dashboard-title">Eliminar Factura</h2>
         <div class="header-actions">
-            <a href="{% url 'facturacion:lista_facturas' %}" class="btn-back">← Volver a la lista</a>
+            <a href="{% url 'facturacion:lista_facturas' %}" class="btn btn-secondary">← Volver a la lista</a>
         </div>
     </div>
 
-    <div class="confirm-delete">
-        <div class="warning-icon">⚠️</div>
-        <h3>¿Estás seguro de que deseas eliminar esta factura?</h3>
-        <p class="warning-text">
-            Esta acción no se puede deshacer. Una vez eliminada, no podrás recuperar la información de esta factura.
-        </p>
+    <div class="confirm-delete-container">
+        <div class="warning-section">
+            <div class="warning-icon">⚠️</div>
+            <h3>¿Estás seguro de que deseas eliminar esta factura?</h3>
+            <p class="warning-text">
+                Esta acción no se puede deshacer. Una vez eliminada, no podrás recuperar la información de esta factura.
+            </p>
+        </div>
 
-        <div class="factura-preview">
-            <h4>Detalles de la factura a eliminar:</h4>
-            <div class="preview-info">
-                <div class="preview-item">
-                    <strong>Número:</strong> #{{ factura.numero }}
+        <div class="info-section">
+            <h3>Detalles de la factura a eliminar</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Número de Factura:</label>
+                    <span class="factura-numero">#{{ factura.numero }}</span>
                 </div>
-                <div class="preview-item">
-                    <strong>Fecha:</strong> {{ factura.fecha|date:"d/m/Y H:i" }}
+                <div class="info-item">
+                    <label>Fecha:</label>
+                    <span>{{ factura.fecha|date:"d/m/Y H:i" }}</span>
                 </div>
-                <div class="preview-item">
-                    <strong>Mesa:</strong> 
-                    {% if factura.pedido.mesa %}
-                        {{ factura.pedido.mesa.nombre }}
-                    {% else %}
-                        Sin mesa asignada
-                    {% endif %}
+                <div class="info-item">
+                    <label>Mesa:</label>
+                    <span>
+                        {% if factura.pedido.mesa %}
+                            {{ factura.pedido.mesa.nombre }}
+                        {% else %}
+                            <span class="text-muted">Sin mesa asignada</span>
+                        {% endif %}
+                    </span>
                 </div>
-                <div class="preview-item">
-                    <strong>Total:</strong> {{ factura.total|format_price }}
+                <div class="info-item">
+                    <label>Total:</label>
+                    <span class="total-amount">{{ factura.total|format_price }}</span>
                 </div>
             </div>
         </div>
 
-        <div class="confirm-actions">
-            <form method="POST" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" class="btn-confirm-delete">
-                    🗑️ Sí, eliminar factura
-                </button>
-            </form>
-            <a href="{% url 'facturacion:detalle_factura' factura.id %}" class="btn-cancel">
-                ❌ Cancelar
-            </a>
+        <div class="actions-section">
+            <div class="action-buttons">
+                <form method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        🗑️ Sí, eliminar factura
+                    </button>
+                </form>
+                <a href="{% url 'facturacion:detalle_factura' factura.id %}" class="btn btn-secondary">
+                    ❌ Cancelar
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Contenedor principal responsive */
-.dashboard-container {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 15px;
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-
-.dashboard-header {
+/* Header section */
+.header-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 1rem;
 }
 
-.dashboard-title {
-    color: #333;
-    margin: 0;
-    font-size: 24px;
-    flex: 1;
-    min-width: 200px;
+/* Contenedor principal de confirmación */
+.confirm-delete-container {
+    background: transparent;
+    border: 2px solid var(--color-primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.header-actions .btn-back {
-    padding: 10px 20px;
-    background: #6c757d;
-    color: white;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-.header-actions .btn-back:hover {
-    background: #545b62;
-}
-
-.confirm-delete {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 40px;
+/* Sección de advertencia */
+.warning-section {
     text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
-    overflow: hidden;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--color-primary);
 }
 
 .warning-icon {
-    font-size: 4em;
-    margin-bottom: 20px;
+    font-size: 4rem;
+    margin-bottom: 1rem;
     display: block;
 }
 
-.confirm-delete h3 {
+.warning-section h3 {
     color: #dc3545;
-    margin-bottom: 15px;
-    font-size: 24px;
-    word-wrap: break-word;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .warning-text {
-    color: #6c757d;
-    margin-bottom: 30px;
-    font-size: 16px;
-    line-height: 1.5;
-    word-wrap: break-word;
+    color: var(--color-gray);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0;
 }
 
-.factura-preview {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 20px;
-    margin: 30px 0;
-    text-align: left;
-    overflow: hidden;
+/* Sección de información */
+.info-section {
+    margin-bottom: 2rem;
 }
 
-.factura-preview h4 {
-    color: #333;
-    margin-bottom: 15px;
-    text-align: center;
-    font-size: 18px;
+.info-section h3 {
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-primary);
+    font-size: 1.3rem;
 }
 
-.preview-info {
+/* Grid de información */
+.info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    width: 100%;
+    gap: 1rem;
 }
 
-.preview-item {
-    padding: 12px;
-    background: white;
-    border-radius: 4px;
-    border-left: 4px solid #007bff;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
+.info-item {
+    background: transparent;
+    border: 1px solid var(--color-primary);
+    padding: 1rem;
+    border-radius: 8px;
 }
 
-.preview-item strong {
-    color: #555;
+.info-item label {
     display: block;
-    margin-bottom: 5px;
-    font-size: 14px;
     font-weight: 600;
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.confirm-actions {
+.info-item span {
+    font-size: 1rem;
+    color: var(--color-accent);
+    word-break: break-word;
+}
+
+.factura-numero {
+    font-family: monospace;
+    font-weight: bold;
+    color: var(--color-secondary);
+    font-size: 1.2rem !important;
+}
+
+.total-amount {
+    font-weight: bold;
+    color: var(--color-secondary);
+    font-size: 1.1rem !important;
+}
+
+/* Acciones */
+.actions-section {
+    background: rgba(162, 137, 50, 0.1);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-primary);
+}
+
+.action-buttons {
     display: flex;
-    gap: 20px;
+    gap: 1rem;
     justify-content: center;
-    margin-top: 30px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
-.btn-confirm-delete,
-.btn-cancel {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 6px;
-    text-decoration: none;
+.action-buttons form {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.action-buttons .btn {
+    width: 220px;
+    height: 48px;
+    padding: 12px 16px;
     font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    min-width: 180px;
     justify-content: center;
+    gap: 8px;
     box-sizing: border-box;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: top;
+    margin: 0;
 }
 
-.btn-confirm-delete {
-    background: #dc3545;
-    color: white;
+.text-muted {
+    color: var(--color-gray);
+    font-style: italic;
 }
 
-.btn-confirm-delete:hover {
-    background: #c82333;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-}
-
-.btn-cancel {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-cancel:hover {
-    background: #545b62;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
-}
-
-/* Responsive breakpoints */
+/* Responsive design */
 @media (max-width: 768px) {
-    .dashboard-container {
-        padding: 10px;
-    }
-    
-    .dashboard-header {
+    .header-section {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
-        gap: 10px;
     }
     
-    .dashboard-title {
-        font-size: 20px;
+    .confirm-delete-container {
+        padding: 1rem;
     }
     
-    .header-actions .btn-back {
-        align-self: center;
-        max-width: 200px;
-    }
-    
-    .confirm-delete {
-        padding: 25px 15px;
-        margin: 0 5px;
-    }
-    
-    .confirm-delete h3 {
-        font-size: 20px;
-    }
-    
-    .warning-text {
-        font-size: 15px;
-    }
-    
-    .factura-preview {
-        padding: 15px;
-        margin: 20px 0;
-    }
-    
-    .factura-preview h4 {
-        font-size: 16px;
-    }
-    
-    .preview-info {
+    .info-grid {
         grid-template-columns: 1fr;
-        gap: 10px;
     }
     
-    .preview-item {
-        padding: 10px;
+    .info-section h3 {
+        font-size: 1.1rem;
     }
     
-    .confirm-actions {
+    .warning-section h3 {
+        font-size: 1.3rem;
+    }
+    
+    .warning-icon {
+        font-size: 3rem;
+    }
+    
+    .action-buttons {
         flex-direction: column;
         align-items: center;
-        gap: 15px;
     }
     
-    .btn-confirm-delete,
-    .btn-cancel {
+    .action-buttons .btn {
         width: 100%;
         max-width: 280px;
         min-width: auto;
+        height: auto;
+        white-space: normal;
+        overflow: visible;
     }
 }
 
 @media (max-width: 480px) {
-    .dashboard-container {
-        padding: 8px;
-    }
-    
     .dashboard-title {
-        font-size: 18px;
+        font-size: 1.5rem;
     }
     
-    .confirm-delete {
-        padding: 20px 10px;
+    .info-item {
+        padding: 0.75rem;
     }
     
-    .warning-icon {
-        font-size: 3em;
+    .info-item label {
+        font-size: 0.8rem;
     }
     
-    .confirm-delete h3 {
-        font-size: 18px;
+    .info-item span {
+        font-size: 0.9rem;
+    }
+    
+    .factura-numero {
+        font-size: 1rem !important;
+    }
+    
+    .total-amount {
+        font-size: 1rem !important;
+    }
+    
+    .actions-section {
+        padding: 1rem;
+    }
+    
+    .warning-section h3 {
+        font-size: 1.2rem;
     }
     
     .warning-text {
-        font-size: 14px;
+        font-size: 0.9rem;
     }
     
-    .factura-preview h4 {
-        font-size: 15px;
-    }
-    
-    .preview-item {
-        padding: 8px;
-    }
-    
-    .preview-item strong {
-        font-size: 13px;
-    }
-    
-    .btn-confirm-delete,
-    .btn-cancel {
-        padding: 10px 20px;
-        font-size: 14px;
+    .action-buttons .btn {
+        width: 100%;
         max-width: 100%;
+        min-width: auto;
     }
-}
-
-/* Eliminar cualquier posible scroll horizontal */
-html, body {
-    overflow-x: hidden;
-    max-width: 100%;
-}
-
-/* Asegurar que ningún elemento cause scroll horizontal */
-* {
-    box-sizing: border-box;
-    max-width: 100%;
-}
-
-.dashboard-container,
-.confirm-delete,
-.factura-preview,
-.preview-info {
-    max-width: 100%;
-    overflow-x: hidden;
 }
 </style>
 {% endblock %}
