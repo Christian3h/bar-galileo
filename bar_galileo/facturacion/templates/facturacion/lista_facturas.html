@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load format_tags %}
 
 {% block title %}Facturación - Lista de Facturas{% endblock %}
 
@@ -15,7 +16,7 @@
         </div>
         <div class="card">
             <h3>Ingresos Totales</h3>
-            <p>${{ estadisticas.total_ingresos|floatformat:2 }}</p>
+            <p>{{ estadisticas.total_ingresos|format_price }}</p>
         </div>
         <div class="card">
             <h3>Facturas Hoy</h3>
@@ -23,7 +24,7 @@
         </div>
         <div class="card">
             <h3>Ingresos Hoy</h3>
-            <p>${{ estadisticas.ingresos_hoy|floatformat:2 }}</p>
+            <p>{{ estadisticas.ingresos_hoy|format_price }}</p>
         </div>
     </section>
 

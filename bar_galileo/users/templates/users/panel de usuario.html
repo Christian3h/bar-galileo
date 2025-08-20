@@ -1,4 +1,5 @@
 {% load humanize %}
+{% load format_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,12 +24,12 @@
                         <span class="h5 mb-0">Cuenta Actual</span>
                     </div>
                     <div class="card-body">
-                        <div class="display-5 fw-bold text-success text-center mb-3">${{ datos.cuenta_actual.total|intcomma }}</div>
+                        <div class="display-5 fw-bold text-success text-center mb-3">{{ datos.cuenta_actual.total|format_price }}</div>
                         <ul class="list-group mb-3">
                             {% for item in datos.cuenta_actual.items %}
-                            <li class="list-group-item d-flex justify-content-between">{{ item.nombre }}<span>${{ item.precio|intcomma }}</span></li>
+                            <li class="list-group-item d-flex justify-content-between">{{ item.nombre }}<span>{{ item.precio|format_price }}</span></li>
                             {% endfor %}
-                            <li class="list-group-item d-flex justify-content-between fw-bold text-success"><span><span class="badge bg-success rounded-circle me-2" style="width:12px;height:12px;"> </span>Total a Pagar</span><span>${{ datos.cuenta_actual.total|intcomma }}</span></li>
+                            <li class="list-group-item d-flex justify-content-between fw-bold text-success"><span><span class="badge bg-success rounded-circle me-2" style="width:12px;height:12px;"> </span>Total a Pagar</span><span>{{ datos.cuenta_actual.total|format_price }}</span></li>
                         </ul>
                     </div>
                 </div>

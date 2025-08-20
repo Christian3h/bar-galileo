@@ -29,7 +29,13 @@ class FacturaSegura:
     
     @property
     def total_display(self):
-        return f"${self.total:.2f}"
+        """
+        Muestra el total en formato de precio colombiano
+        """
+        from django.contrib.humanize.templatetags.humanize import intcomma
+        price_int = int(round(float(self.total)))
+        formatted_price = intcomma(price_int).replace(',', '.')
+        return f"${formatted_price}"
 
 class FacturacionManager:
     """
