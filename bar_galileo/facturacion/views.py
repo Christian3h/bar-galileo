@@ -102,7 +102,11 @@ def eliminar_factura(request, factura_id):
     """
     Vista para eliminar una factura
     """
-    factura = get_object_or_404(Factura, id=factura_id)
+    try:
+        factura = get_object_or_404(Factura, id=factura_id)
+    except Exception as e:
+        messages.error(request, f'Error al cargar la factura: {str(e)}. Es posible que la factura tenga datos corruptos.')
+        return redirect('facturacion:lista_facturas')
     
     if request.method == 'POST':
         numero_factura = factura.numero
