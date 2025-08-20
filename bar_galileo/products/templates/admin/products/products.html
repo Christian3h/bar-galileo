@@ -61,7 +61,7 @@
                     data: "precio_compra",
                     render: function(data, type, row) {
                         // Formateamos el precio de compra con comas en miles
-                        return new Intl.NumberFormat('es-CO', {
+                        return new Intl.NumberFormat('de-DE', {
                             style: 'decimal',
                             minimumFractionDigits: 0
                         }).format(data);
@@ -71,7 +71,7 @@
                     data: "precio_venta",
                     render: function(data, type, row) {
                         // Formateamos el precio de venta con comas en miles
-                        return new Intl.NumberFormat('es-CO', {
+                        return new Intl.NumberFormat('de-DE', {
                             style: 'decimal',
                             minimumFractionDigits: 0
                         }).format(data);

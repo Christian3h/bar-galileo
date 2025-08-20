@@ -44,7 +44,7 @@ class MesaCreateView(CreateView):
 class MesaUpdateView(UpdateView):
     model = Mesa
     form_class = MesaForm
-    template_name = 'mesas/editar_mesa.html'
+    template_name = 'mesas/crear_mesa.html' # Usando crear_mesa.html temporalmente hasta que editar_mesa.html sea creado o definido.
     success_url = reverse_lazy('tables:mesas_lista')
 
     def form_valid(self, form):
@@ -81,6 +81,8 @@ class MesaDeleteView(DeleteView):
         pedidos_sin_facturar = mesa.pedidos.filter(factura__isnull=True)
 
         if pedidos_sin_facturar.exists():
+            from django.contrib import messages
+            messages.error(request, f"No se puede eliminar la mesa '{mesa_nombre}' porque tiene pedidos sin facturar.")
             return redirect('tables:mesas_lista')
 
         pedidos_facturados = mesa.pedidos.filter(factura__isnull=False)
@@ -117,8 +119,20 @@ def confirmar_eliminar_mesa(request, mesa_id):
     mesa = get_object_or_404(Mesa, id=mesa_id)
     
     pedidos = mesa.pedidos.all()
-    pedidos_con_factura = [p for p in pedidos if hasattr(p, 'factura')]
-    pedidos_sin_factura = [p for p in pedidos if not hasattr(p, 'factura')]
+    pedidos_con_factura = []
+    pedidos_sin_factura = []
+    for p in pedidos:
+        try:
+            # Intenta acceder a la factura para ver si existe y es válida
+            if hasattr(p, 'factura') and p.factura:
+                pedidos_con_factura.append(p)
+            else:
+                pedidos_sin_factura.append(p)
+        except Exception as e:
+            # Si ocurre un error (como InvalidOperation), asume que no hay una factura válida
+            # o que los datos están corruptos, y trata el pedido como sin factura.
+            print(f"Error al verificar factura para pedido {p.id}: {e}") # Log the error
+            pedidos_sin_factura.append(p)
     
     context = {
         'mesa': mesa,
