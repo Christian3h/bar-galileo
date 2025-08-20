@@ -1,0 +1,349 @@
+:root {
+  --color-black: #0e0e0e;
+  --color-dark: #18181b;
+  --color-white: #ffffff;
+  --color-gray: #cbd5e1;
+  --color-green: #10b981;
+  --color-green-dark: #059669;
+  --color-red: #ef4444;
+  --color-red-dark: #dc2626;
+}
+
+/* --- GLOBAL --- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(90deg, var(--color-black) 60%, #2b2b37 100%);
+  color: var(--color-white);
+  min-height: 100vh;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(6px);
+  padding: 1.5rem 3rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  transition: background 0.3s ease;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 2rem;
+  color: var(--color-green);
+  letter-spacing: 2px;
+}
+
+.nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-menu li a {
+  text-decoration: none;
+  color: var(--color-white);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.nav-menu li a:hover {
+  color: var(--color-green);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-green {
+  background: var(--color-green);
+  border: none;
+  padding: 0.7rem 2rem;
+  color: var(--color-white);
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 2px 16px rgba(16, 185, 129, 0.15);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.btn-green:hover {
+  background: var(--color-green-dark);
+  box-shadow: 0 4px 24px rgba(16, 185, 129, 0.3);
+}
+
+/* --- HERO --- */
+.hero {
+  text-align: center;
+  padding: 6rem 2rem 4rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  border-radius: 24px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--color-red);
+  color: var(--color-white);
+  font-weight: 700;
+  padding: 0.5rem 1.5rem;
+  border-radius: 999px;
+  margin-bottom: 2.5rem;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 16px rgba(239, 68, 68, 0.15);
+}
+
+.hero-title {
+  font-size: 5rem;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: 2px;
+}
+
+.text-white {
+  color: var(--color-white);
+}
+
+.text-red {
+  color: var(--color-red);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: var(--color-gray);
+  margin: 2.5rem 0 2rem 0;
+  line-height: 1.6;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2.5rem;
+}
+
+/* --- SIGNATURE SECTION --- */
+.signature-section {
+  background: linear-gradient(90deg, var(--color-dark) 60%, var(--color-black) 100%);
+  padding: 4rem 2rem 5rem 2rem;
+  text-align: center;
+  margin-top: 0;
+}
+
+.signature-title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin: 1.5rem 0 0.5rem 0;
+  letter-spacing: 2px;
+}
+
+.signature-subtitle {
+  font-size: 1.15rem;
+  color: var(--color-gray);
+  margin: 1.5rem 0 3rem 0;
+  line-height: 1.6;
+}
+
+.signature-cards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.signature-card {
+  background: var(--color-dark);
+  border: 2px solid rgba(239, 68, 68, 0.15);
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  width: 260px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+
+.signature-card:hover {
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.18);
+  border: 2px solid var(--color-red);
+}
+
+.card-badge {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: var(--color-red);
+  color: var(--color-white);
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 16px rgba(239, 68, 68, 0.15);
+}
+
+.card-icon {
+  background: var(--color-red);
+  color: var(--color-white);
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-top: 40px;
+  box-shadow: 0 2px 16px rgba(239, 68, 68, 0.15);
+}
+
+/* --- PRODUCTS SECTION --- */
+.products-section {
+  background: linear-gradient(90deg, var(--color-black) 60%, #2b2b37 100%);
+  padding: 4rem 2rem 6rem 2rem;
+  text-align: center;
+}
+
+.products-title {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 3rem;
+  color: var(--color-green);
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.product-card {
+  background: #1f2937;
+  border: 2px solid rgba(16, 185, 129, 0.1);
+  border-radius: 32px;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 460px;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.15);
+  border: 2px solid var(--color-green);
+}
+
+.product-carousel {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+  z-index: 1;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.carousel-btn:hover {
+  background: var(--color-green);
+}
+
+.carousel-btn.prev {
+  left: 10px;
+}
+
+.carousel-btn.next {
+  right: 10px;
+}
+
+.product-info {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.product-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0;
+}
+
+.product-price {
+  font-size: 1.15rem;
+  color: var(--color-gray);
+  margin: 0;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .nav-menu {
+    display: none;
+  }
+
+  .hero {
+    padding: 3rem 1rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .signature-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .signature-card {
+    width: 90vw;
+    max-width: 320px;
+    height: 220px;
+  }
+
+  .signature-title {
+    font-size: 2.2rem;
+  }
+}

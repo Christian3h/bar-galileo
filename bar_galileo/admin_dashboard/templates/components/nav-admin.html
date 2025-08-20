@@ -90,6 +90,15 @@
                 </li>
                 {% endif %}
 
+                {% if request.user|has_perm:"facturacion,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('facturacion-submenu')">Facturación</button>
+                    <ul id="facturacion-submenu" class="submenu hidden">
+                        <li><a href="{% url 'facturacion:lista_facturas' %}">Lista de facturas</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
 
                 <!-- {% if request.user|has_perm:"dashboard,ver" %}
             <li>
