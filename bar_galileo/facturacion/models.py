@@ -146,3 +146,66 @@ class FacturacionManager:
             return FacturaOriginal.objects.get(id=factura_id)
         except FacturaOriginal.DoesNotExist:
             return None
+        except InvalidOperation as e:
+            logger.error(f"Error de decimal corrupto en factura {factura_id}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Error inesperado al obtener factura {factura_id}: {e}")
+            return None
+    
+    @staticmethod
+    def obtener_factura_por_id_seguro(factura_id):
+        """
+        Obtiene una factura por ID usando SQL directo para evitar errores de conversión
+        """
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT 
+                    f.id,
+                    f.numero,
+                    f.total,
+                    f.fecha,
+                    f.pedido_id,
+                    m.nombre as mesa_nombre
+                FROM tables_factura f
+                LEFT JOIN tables_pedido p ON f.pedido_id = p.id
+                LEFT JOIN tables_mesa m ON p.mesa_id = m.id
+                WHERE f.id = %s
+            """, [factura_id])
+            
+            row = cursor.fetchone()
+            if row:
+                return FacturaSegura(
+                    id=row[0],
+                    numero=row[1],
+                    total=row[2],
+                    fecha=row[3],
+                    pedido_id=row[4],
+                    mesa_nombre=row[5]
+                )
+            return None
+        
+    @staticmethod
+    def verificar_facturas_corruptas():
+        """
+        Identifica facturas con datos corruptos
+        """
+        facturas_corruptas = []
+        
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT id, numero, total FROM tables_factura ORDER BY id")
+            
+            for row in cursor.fetchall():
+                factura_id, numero, total = row
+                try:
+                    # Intentar convertir el total a Decimal
+                    if total is not None:
+                        Decimal(str(total))
+                except (InvalidOperation, ValueError):
+                    facturas_corruptas.append({
+                        'id': factura_id,
+                        'numero': numero,
+                        'total_corrupto': str(total)
+                    })
+        
+        return facturas_corruptas
