@@ -9,18 +9,140 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <style>
+    .avatar-fixed-corner {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 1300;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar, .user-avatar-initials {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #d4af37;
+      background: #222;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #222;
+    }
+    .user-avatar-initials {
+      background: #d4af37;
+      color: #222;
+    }
+    .user-avatar-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background: #1a1a1a;
+      min-width: 150px;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      z-index: 2000;
+      padding: 10px 0;
+    }
+    .avatar-fixed-corner:focus-within .user-avatar-dropdown-content,
+    .avatar-fixed-corner:hover .user-avatar-dropdown-content {
+      display: block;
+    }
+    .user-avatar-dropdown-content a {
+      color: #d4af37;
+      padding: 10px 20px;
+      display: block;
+      text-decoration: none;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
+    .user-avatar-dropdown-content a:hover {
+      background: #222;
+    }
+    /* Negrilla para Dashboard y LOGIN */
+    .nav-menu .nav-strong {
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff !important;
+      text-transform: uppercase;
+    }
+    /* Responsive hamburguesa */
+    @media (max-width: 900px) {
+      .menu-toggle {
+        display: block;
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        z-index: 1201;
+      }
+      .nav-menu {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: #111;
+        z-index: 1002;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        padding: 20px 0 10px 0;
+        text-align: center;
+      }
+      .nav-menu.show {
+        display: flex;
+      }
+      .nav-menu li {
+        margin: 0 0 10px 0;
+      }
+    }
+    @media (min-width: 901px) {
+      .menu-toggle {
+        display: none !important;
+      }
+      .nav-menu {
+        display: flex !important;
+        position: static;
+        background: none;
+        box-shadow: none;
+        flex-direction: row;
+        align-items: center;
+        gap: 40px;
+        padding: 0;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Avatar fijo en la esquina superior derecha -->
+  {% if user.is_authenticated %}
+    <div class="avatar-fixed-corner" tabindex="0">
+      {% if user.userprofile.avatar %}
+        <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
+      {% else %}
+        <span class="user-avatar-initials">
+          {{ user.get_full_name|default:user.username|slice:":1"|upper }}
+        </span>
+      {% endif %}
+      <div class="user-avatar-dropdown-content">
+        <div style="padding: 10px 20px; color: #fff; font-size: 15px;">
+          {{ user.get_full_name|default:user.username }}
+        </div>
+        <a href="{% url 'account_email' %}">Perfil</a>
+        <a href="{% url 'account_logout' %}">Cerrar sesión</a>
+      </div>
+    </div>
+  {% endif %}
 
-  <!-- ACCESO RÁPIDO -->
-  <div class="quick-access">
-    <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn">Dashboard</a>
-  </div>
-
-  <!-- Header -->
   <header class="header">
     <div class="container">
-      <nav class="nav">
+      <nav class="nav" style="position:relative;">
         <div class="logo">BAR GALILEO</div>
         <button class="menu-toggle" id="menu-toggle">&#9776;</button>
         <ul class="nav-menu" id="nav-menu">
@@ -29,11 +151,11 @@
           <li><a href="#carta-section">CARTA</a></li>
           <li><a href="#reservas-section">RESERVAS</a></li>
           <li><a href="#contact">CONTACTO</a></li>
+          <li><a href="{% url 'admin_dashboard:dashboard' %}" class="nav-strong">Dashboard</a></li>
+          {% if not user.is_authenticated %}
+            <li><a href="/accounts/login/" class="nav-strong">LOGIN</a></li>
+          {% endif %}
         </ul>
-        <div class="nav-buttons">
-          <a href="/accounts/login/" class="nav-button">LOGIN</a>
-          <a href="#reservas-section" class="nav-button">RESERVAR MESA</a>
-        </div>
       </nav>
     </div>
   </header>
@@ -198,6 +320,25 @@
     </div>
   </section>
 
+  <!-- BOTÓN DASHBOARD ORDENADO DEBAJO DE RESERVAS -->
+  <div style="text-align:center; margin: 40px 0;">
+    <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn" style="font-size:17px; padding:12px 32px; display:inline-block;">
+      Ir al Dashboard
+    </a>
+  </div>
+
+  <!-- SECCIÓN LOGIN (debe permanecer y llevar directo al login) -->
+  <span class="section-anchor" id="login-section"></span>
+  <section class="login-section">
+    <div class="container">
+      <h2 class="products-title">Iniciar Sesión</h2>
+      <p style="font-size: 18px; margin-bottom: 40px; color: #ccc;">
+        Accede a tu cuenta para disfrutar de beneficios exclusivos
+      </p>
+      <a href="/accounts/login/" class="nav-button">Ir a Login</a>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="footer" id="contact">
     <div class="container">
@@ -290,7 +431,7 @@
 
   <script src="{% static 'js/index.js' %}"></script>
   <script>
-    // Menú hamburguesa responsive
+    // Menú hamburguesa funcional y profesional
     document.addEventListener("DOMContentLoaded", function () {
       const toggle = document.getElementById("menu-toggle");
       const menu = document.getElementById("nav-menu");
@@ -299,20 +440,6 @@
           menu.classList.toggle("show");
         });
       }
-      // Cierra el menú al hacer click en un enlace (opcional)
-      document.querySelectorAll('.nav-menu a').forEach(link => {
-        link.addEventListener('click', () => {
-          menu.classList.remove('show');
-        });
-      });
-    });
-  </script>
-</body>
-</html>
-          menu.classList.toggle("show");
-        });
-      }
-      // Cierra el menú al hacer click en un enlace (opcional)
       document.querySelectorAll('.nav-menu a').forEach(link => {
         link.addEventListener('click', () => {
           menu.classList.remove('show');

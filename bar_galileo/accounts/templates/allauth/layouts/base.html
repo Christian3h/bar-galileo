@@ -11,6 +11,64 @@
         <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
         <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
         <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+        <style>
+        /* Avatar Gmail style */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4af37;
+            background: #222;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .user-avatar-initials {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #d4af37;
+            color: #222;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #d4af37;
+            vertical-align: middle;
+        }
+        .user-avatar-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-avatar-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #1a1a1a;
+            min-width: 180px;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            z-index: 2000;
+            padding: 10px 0;
+        }
+        .user-avatar-dropdown:hover .user-avatar-dropdown-content,
+        .user-avatar-dropdown:focus-within .user-avatar-dropdown-content {
+            display: block;
+        }
+        .user-avatar-dropdown-content a {
+            color: #d4af37;
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        .user-avatar-dropdown-content a:hover {
+            background: #222;
+        }
+        </style>
         <title>
             {% block head_title %}
             {% endblock head_title %}
@@ -40,6 +98,26 @@
                         {% url 'account_logout' as logout_url_ %}
                         {% if logout_url_ %}
                             <li><a href="{{ logout_url_ }}">Cerrar Sesión</a></li>
+                        {% endif %}
+                        {% if user.is_staff or user.is_superuser %}
+                        <li>
+                            <div class="user-avatar-dropdown" tabindex="0">
+                                {% if user.userprofile.avatar %}
+                                    <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
+                                {% else %}
+                                    <span class="user-avatar-initials">
+                                        {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                    </span>
+                                {% endif %}
+                                <div class="user-avatar-dropdown-content">
+                                    <div style="padding: 10px 20px; color: #fff; font-size: 15px;">
+                                        {{ user.get_full_name|default:user.username }}
+                                    </div>
+                                    <a href="{% url 'account_email' %}">Cambiar foto</a>
+                                    <a href="{% url 'account_email' %}?remove_avatar=1">Eliminar foto</a>
+                                </div>
+                            </div>
+                        </li>
                         {% endif %}
                     {% else %}
                         <li><a href="{% url 'core:index' %}">Inicio</a></li>
