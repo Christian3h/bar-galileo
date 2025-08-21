@@ -15,7 +15,6 @@
   <!-- ACCESO RÁPIDO -->
   <div class="quick-access">
     <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn">Dashboard</a>
-    <a href="#login-section" class="quick-btn">Login</a>
   </div>
 
   <!-- Header -->
@@ -23,7 +22,8 @@
     <div class="container">
       <nav class="nav">
         <div class="logo">BAR GALILEO</div>
-        <ul class="nav-menu">
+        <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+        <ul class="nav-menu" id="nav-menu">
           <li><a href="#cocktails-section">COCKTAILS</a></li>
           <li><a href="#about">EXPERIENCIA</a></li>
           <li><a href="#carta-section">CARTA</a></li>
@@ -31,7 +31,7 @@
           <li><a href="#contact">CONTACTO</a></li>
         </ul>
         <div class="nav-buttons">
-          <a href="#login-section" class="nav-button">LOGIN</a>
+          <a href="/accounts/login/" class="nav-button">LOGIN</a>
           <a href="#reservas-section" class="nav-button">RESERVAR MESA</a>
         </div>
       </nav>
@@ -198,18 +198,6 @@
     </div>
   </section>
 
-  <!-- SECCIÓN LOGIN -->
-  <span class="section-anchor" id="login-section"></span>
-  <section class="login-section">
-    <div class="container">
-      <h2 class="products-title">Iniciar Sesión</h2>
-      <p style="font-size: 18px; margin-bottom: 40px; color: #ccc;">
-        Accede a tu cuenta para disfrutar de beneficios exclusivos
-      </p>
-      <a href="/accounts/email" class="nav-button">Ir a Login</a>
-    </div>
-  </section>
-
   <!-- Footer -->
   <footer class="footer" id="contact">
     <div class="container">
@@ -301,5 +289,36 @@
   </footer>
 
   <script src="{% static 'js/index.js' %}"></script>
+  <script>
+    // Menú hamburguesa responsive
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("nav-menu");
+      if (toggle && menu) {
+        toggle.addEventListener("click", function () {
+          menu.classList.toggle("show");
+        });
+      }
+      // Cierra el menú al hacer click en un enlace (opcional)
+      document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('show');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+          menu.classList.toggle("show");
+        });
+      }
+      // Cierra el menú al hacer click en un enlace (opcional)
+      document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('show');
+        });
+      });
+    });
+  </script>
 </body>
 </html>
