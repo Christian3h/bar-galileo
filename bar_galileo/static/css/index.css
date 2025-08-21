@@ -64,6 +64,8 @@ body {
 .nav-buttons {
   display: flex;
   gap: 15px;
+  align-items: center;
+  margin-left: auto;
 }
 
 .nav-button {
@@ -87,7 +89,7 @@ body {
 /* ACCESO RÁPIDO - Mejorado */
 .quick-access {
   position: fixed;
-  top: 18px;
+  top: 70px;
   right: 18px;
   z-index: 1200;
   display: flex;
@@ -135,6 +137,7 @@ body {
   cursor: pointer;
   margin-left: 10px;
   z-index: 1100;
+  /* Nuevo: posición absoluta en móvil */
 }
 
 @media (max-width: 900px) {
@@ -147,6 +150,10 @@ body {
   }
   .menu-toggle {
     display: block;
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    z-index: 1201;
   }
   .nav-menu {
     display: none;
@@ -174,6 +181,7 @@ body {
     gap: 8px;
     margin-left: 0;
     margin-top: 10px;
+    align-items: flex-end;
   }
   .nav-button {
     width: 100%;
@@ -187,27 +195,36 @@ body {
     top: 10px;
     right: 10px;
   }
+  .user-avatar-dropdown {
+    position: absolute;
+    right: 70px;
+    top: 12px;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 /* Ajuste para que el acceso rápido no tape el menú en móvil */
 @media (max-width: 600px) {
   .quick-access {
-    position: static;
-    margin: 10px auto 0 auto;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-    background: rgba(20, 20, 20, 0.92);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-    border-radius: 16px;
-    gap: 8px;
+    top: 60px;
+    right: 8px;
+    padding: 7px 8px;
+    gap: 7px;
+    border-radius: 14px;
   }
   .quick-btn {
     font-size: 13px;
     padding: 7px 10px;
     min-width: 80px;
     border-radius: 12px;
+  }
+  .user-avatar-dropdown {
+    right: 60px;
+    top: 10px;
+  }
+  .nav-buttons {
+    align-items: flex-end;
   }
 }
 
@@ -899,6 +916,10 @@ body {
   }
   .menu-toggle {
     display: block;
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    z-index: 1201;
   }
   .nav-menu {
     display: none;
@@ -926,6 +947,7 @@ body {
     gap: 8px;
     margin-left: 0;
     margin-top: 10px;
+    align-items: flex-end;
   }
   .nav-button {
     width: 100%;
@@ -939,26 +961,98 @@ body {
     top: 10px;
     right: 10px;
   }
+  .user-avatar-dropdown {
+    position: absolute;
+    right: 70px;
+    top: 12px;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 /* Ajuste para que el acceso rápido no tape el menú en móvil */
 @media (max-width: 600px) {
   .quick-access {
-    position: static;
-    margin: 10px auto 0 auto;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-    background: rgba(20, 20, 20, 0.92);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
-    border-radius: 16px;
-    gap: 8px;
+    top: 60px;
+    right: 8px;
+    padding: 7px 8px;
+    gap: 7px;
+    border-radius: 14px;
   }
   .quick-btn {
     font-size: 13px;
     padding: 7px 10px;
     min-width: 80px;
     border-radius: 12px;
+  }
+  .user-avatar-dropdown {
+    right: 60px;
+    top: 10px;
+  }
+  .nav-buttons {
+    align-items: flex-end;
+  }
+}
+
+/* Avatar Gmail style - mejor alineación */
+.user-avatar-dropdown {
+  display: flex;
+  align-items: center;
+  margin-left: 18px;
+  margin-right: 0;
+  position: relative;
+  z-index: 1202;
+}
+.user-avatar,
+.user-avatar-initials {
+  margin-left: 0;
+  margin-right: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Ajuste para los botones y avatar en la barra */
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* En móvil: avatar y menú hamburguesa bien alineados */
+@media (max-width: 900px) {
+  .nav {
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .menu-toggle {
+    display: block;
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    z-index: 1201;
+  }
+  .user-avatar-dropdown {
+    position: absolute;
+    right: 70px;
+    top: 12px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .nav-buttons {
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 0;
+    margin-top: 10px;
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-avatar-dropdown {
+    right: 60px;
+    top: 10px;
+  }
+  .nav-buttons {
+    align-items: flex-end;
   }
 }
