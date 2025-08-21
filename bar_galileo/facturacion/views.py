@@ -84,17 +84,44 @@ def detalle_factura(request, factura_id):
     """
     Vista para mostrar el detalle de una factura específica
     """
-    factura = FacturacionManager.obtener_factura_por_id(factura_id)
-    
-    if not factura:
-        messages.error(request, 'Factura no encontrada.')
+    try:
+        factura = FacturacionManager.obtener_factura_por_id(factura_id)
+        
+        # Si el método normal falla, intentamos con el método seguro
+        if not factura:
+            factura = FacturacionManager.obtener_factura_por_id_seguro(factura_id)
+            
+            if factura:
+                messages.warning(request, 'Esta factura contiene algunos datos corruptos. Se muestra información limitada.')
+            else:
+                messages.error(request, 'Factura no encontrada.')
+                return redirect('facturacion:lista_facturas')
+        
+        context = {
+            'factura': factura,
+        }
+        
+        return render(request, 'facturacion/detalle_factura.html', context)
+        
+    except InvalidOperation as e:
+        logger.error(f"Error de datos corruptos en factura {factura_id}: {e}")
+        # Intentar con el método seguro
+        try:
+            factura = FacturacionManager.obtener_factura_por_id_seguro(factura_id)
+            if factura:
+                messages.warning(request, 'Esta factura contiene datos corruptos. Se muestra información limitada.')
+                context = {'factura': factura}
+                return render(request, 'facturacion/detalle_factura.html', context)
+            else:
+                messages.error(request, 'Factura no encontrada.')
+                return redirect('facturacion:lista_facturas')
+        except Exception:
+            messages.error(request, 'La factura contiene datos corruptos y no puede ser mostrada.')
+            return redirect('facturacion:lista_facturas')
+    except Exception as e:
+        logger.error(f"Error inesperado en detalle_factura para ID {factura_id}: {e}")
+        messages.error(request, f'Error al cargar la factura: {str(e)}')
         return redirect('facturacion:lista_facturas')
-    
-    context = {
-        'factura': factura,
-    }
-    
-    return render(request, 'facturacion/detalle_factura.html', context)
 
 @login_required
 @permission_required('facturacion', 'eliminar')
@@ -102,17 +129,59 @@ def eliminar_factura(request, factura_id):
     """
     Vista para eliminar una factura
     """
+    factura = None
     try:
-        factura = get_object_or_404(Factura, id=factura_id)
+        # Intentar obtener la factura con el método normal
+        factura = FacturacionManager.obtener_factura_por_id(factura_id)
+        
+        # Si falla, intentar con el método seguro
+        if not factura:
+            factura = FacturacionManager.obtener_factura_por_id_seguro(factura_id)
+            if factura:
+                messages.warning(request, 'Esta factura contiene datos corruptos pero se puede eliminar.')
+        
+        if not factura:
+            messages.error(request, 'Factura no encontrada.')
+            return redirect('facturacion:lista_facturas')
+            
+    except InvalidOperation as e:
+        logger.error(f"Error de datos corruptos al cargar factura {factura_id} para eliminar: {e}")
+        # Intentar con el método seguro
+        try:
+            factura = FacturacionManager.obtener_factura_por_id_seguro(factura_id)
+            if factura:
+                messages.warning(request, 'Esta factura contiene datos corruptos pero se puede eliminar.')
+            else:
+                messages.error(request, 'Factura no encontrada.')
+                return redirect('facturacion:lista_facturas')
+        except Exception:
+            messages.error(request, 'Error: La factura contiene datos corruptos y no puede ser procesada.')
+            return redirect('facturacion:lista_facturas')
     except Exception as e:
-        messages.error(request, f'Error al cargar la factura: {str(e)}. Es posible que la factura tenga datos corruptos.')
+        logger.error(f"Error inesperado al cargar factura {factura_id} para eliminar: {e}")
+        messages.error(request, f'Error al cargar la factura: {str(e)}')
         return redirect('facturacion:lista_facturas')
     
     if request.method == 'POST':
-        numero_factura = factura.numero
-        factura.delete()
-        messages.success(request, f'Factura #{numero_factura} eliminada exitosamente.')
-        return redirect('facturacion:lista_facturas')
+        try:
+            # Eliminar usando SQL directo para evitar problemas con datos corruptos
+            from django.db import connection
+            with connection.cursor() as cursor:
+                # Obtener el número antes de eliminar
+                cursor.execute("SELECT numero FROM tables_factura WHERE id = %s", [factura_id])
+                numero_result = cursor.fetchone()
+                numero_factura = numero_result[0] if numero_result else f"ID-{factura_id}"
+                
+                # Eliminar la factura
+                cursor.execute("DELETE FROM tables_factura WHERE id = %s", [factura_id])
+                
+            messages.success(request, f'Factura #{numero_factura} eliminada exitosamente.')
+            return redirect('facturacion:lista_facturas')
+            
+        except Exception as e:
+            logger.error(f"Error al eliminar factura {factura_id}: {e}")
+            messages.error(request, f'Error al eliminar la factura: {str(e)}')
+            return redirect('facturacion:lista_facturas')
     
     context = {
         'factura': factura,
@@ -144,3 +213,24 @@ def buscar_facturas_ajax(request):
         return JsonResponse({'facturas': resultados})
     
     return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+@login_required
+@permission_required('facturacion', 'administrar')
+def diagnostico_facturas(request):
+    """
+    Vista para diagnosticar facturas con datos corruptos
+    """
+    try:
+        facturas_corruptas = FacturacionManager.verificar_facturas_corruptas()
+        
+        context = {
+            'facturas_corruptas': facturas_corruptas,
+            'total_corruptas': len(facturas_corruptas),
+        }
+        
+        return render(request, 'facturacion/diagnostico_facturas.html', context)
+        
+    except Exception as e:
+        logger.error(f"Error en diagnostico_facturas: {e}")
+        messages.error(request, f'Error al ejecutar diagnóstico: {str(e)}')
+        return redirect('facturacion:lista_facturas')
