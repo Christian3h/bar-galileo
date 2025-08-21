@@ -84,10 +84,13 @@ def detalle_factura(request, factura_id):
     """
     Vista para mostrar el detalle de una factura específica
     """
-    factura = FacturacionManager.obtener_factura_por_id(factura_id)
-    
-    if not factura:
-        messages.error(request, 'Factura no encontrada.')
+    try:
+        factura = FacturacionManager.obtener_factura_por_id(factura_id)
+        if not factura:
+            messages.error(request, 'Factura no encontrada.')
+            return redirect('facturacion:lista_facturas')
+    except InvalidOperation:
+        messages.error(request, f'La factura con ID {factura_id} contiene datos corruptos y no se puede mostrar.')
         return redirect('facturacion:lista_facturas')
     
     context = {
@@ -104,10 +107,13 @@ def eliminar_factura(request, factura_id):
     """
     try:
         factura = get_object_or_404(Factura, id=factura_id)
-    except Exception as e:
-        messages.error(request, f'Error al cargar la factura: {str(e)}. Es posible que la factura tenga datos corruptos.')
+    except InvalidOperation:
+        messages.error(request, f'La factura con ID {factura_id} tiene datos corruptos y no se puede eliminar.')
         return redirect('facturacion:lista_facturas')
-    
+    except Factura.DoesNotExist:
+        messages.error(request, 'La factura que intentas eliminar no existe.')
+        return redirect('facturacion:lista_facturas')
+
     if request.method == 'POST':
         numero_factura = factura.numero
         factura.delete()
