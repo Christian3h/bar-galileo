@@ -1,0 +1,63 @@
+.delete-confirmation-container {
+    background-color: var(--bg-secondary);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-light);
+    max-width: 500px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.delete-confirmation-container h2 {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.delete-confirmation-container p {
+    color: var(--text-secondary);
+    font-size: 1.1em;
+    margin-bottom: 30px;
+}
+
+.delete-confirmation-container p strong {
+    color: var(--text-highlight);
+}
+
+.delete-confirmation-container form {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.delete-confirmation-container .btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.delete-confirmation-container .btn-danger:hover {
+    background-color: var(--color-danger-dark);
+}
+
+.delete-confirmation-container .btn-secondary {
+    background-color: var(--color-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 10px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.delete-confirmation-container .btn-secondary:hover {
+    background-color: var(--color-secondary-dark);
+    color: var(--text-primary-dark);
+}
