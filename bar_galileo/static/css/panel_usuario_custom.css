@@ -1,3 +1,68 @@
+/* Estilo para campos de formulario en columna, igual que tablas */
+.form-field-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 22px;
+}
+.form-label {
+    color: #A68932;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+/* Estilo para inputs y selects en formularios tipo panel */
+.info-input, .info-row input, .info-row select, .info-row textarea {
+    background: #262626;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 1.1em;
+    margin-left: 0;
+    box-shadow: none;
+    transition: border 0.3s;
+}
+.info-input:focus, .info-row input:focus, .info-row select:focus, .info-row textarea:focus {
+    border-color: #A68932;
+    outline: none;
+}
+.edit-form button, .edit-btn {
+    background: #181818;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+    border-radius: 6px;
+    padding: 10px 32px;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 16px 8px 0 0;
+    box-shadow: none;
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+.edit-form button:hover, .edit-btn:hover {
+    background: #d4af37;
+    color: #181818;
+    border: 2px solid #d4af37;
+}
+.delete-btn {
+    background: #BF452A;
+    color: #fff;
+    border: 2px solid #d4af37;
+    border-radius: 6px;
+    padding: 10px 32px;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin: 16px 8px 0 0;
+    box-shadow: none;
+    transition: background 0.3s, color 0.3s, border 0.3s;
+}
+.delete-btn:hover {
+    background: #d4af37;
+    color: #BF452A;
+    border: 2px solid #BF452A;
+}
 /* Mensajes tipo notificación */
 .messages {
     position: fixed;
@@ -31,22 +96,23 @@
     padding: 10px 22px;
     border: none;
     border-radius: 8px;
-    font-size: 1em;
-    font-weight: bold;
-    margin: 10px 8px 0 0;
+        font-size: 1em;
+        font-weight: bold;
+        margin: 10px 8px 0 0;
     cursor: pointer;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
     box-shadow: 0 2px 8px rgba(34,139,34,0.08);
 }
 .edit-btn {
-    background: linear-gradient(135deg, #32cd32 60%, #228b22 100%);
-    color: #fff;
-    border: 1px solid #228b22;
+        background: #262626;
+        color: #A68932;
+        border: 2px dashed #A68932;
 }
 .edit-btn:hover {
-    background: linear-gradient(135deg, #228b22 60%, #32cd32 100%);
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(34,139,34,0.18);
+        background: #262626;
+        color: #A68932;
+        border: 2px solid #A68932;
+        box-shadow: 0 0 8px 0 #A68932;
 }
 .delete-btn {
     background: linear-gradient(135deg, #ff4d4d 60%, #ffb3b3 100%);
@@ -66,37 +132,31 @@
 }
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e8 50%, #ffffff 100%);
+    background: linear-gradient(135deg, #262626 0%, #0D0D0D 100%);
     min-height: 100vh;
     padding: 20px;
 }
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.95);
+    background: #262626;
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(34, 139, 34, 0.3);
+    box-shadow: 0 20px 40px rgba(166, 137, 50, 0.15);
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(34, 139, 34, 0.2);
+    border: 1px solid #A68932;
 }
 .header {
-    background: linear-gradient(135deg, #228b22, #32cd32, #006400);
-    color: white;
+    background: #262626;
+    color: #A68932;
     padding: 30px;
-    text-align: center;
+    text-align: left;
     position: relative;
     overflow: hidden;
+    border-bottom: 2px solid #A68932;
 }
 .header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-    animation: rotate 20s linear infinite;
+    display: none;
 }
 @keyframes rotate {
     0% { transform: rotate(0deg); }
@@ -121,13 +181,13 @@ body {
     padding: 30px;
 }
 .card {
-    background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    background: #262626;
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(34, 139, 34, 0.2);
+    box-shadow: 0 0 24px 0 #A68932;
     transition: all 0.3s ease;
-    border: 2px solid rgba(34, 139, 34, 0.3);
-    color: #333333;
+    border: 2px solid #A68932;
+    color: #A68932;
 }
 .card:hover {
     transform: translateY(-5px);
@@ -153,30 +213,30 @@ body {
 .card-title {
     font-size: 1.5em;
     font-weight: bold;
-    color: #228b22;
+    color: #d4af37;
 }
 .current-bill {
-    background: linear-gradient(135deg, #228b22, #32cd32);
+    background: linear-gradient(135deg, #d4af37, #f4d467);
 }
 .monthly-history {
-    background: linear-gradient(135deg, #228b22, #006400);
+    background: linear-gradient(135deg, #d4af37, #1a1a1a);
 }
 .user-info {
-    background: linear-gradient(135deg, #32cd32, #228b22);
+    background: linear-gradient(135deg, #d4af37, #1a1a1a);
 }
 .emergency-contact {
-    background: linear-gradient(135deg, #006400, #228b22);
+    background: linear-gradient(135deg, #d4af37, #1a1a1a);
 }
 .bill-amount {
     font-size: 3em;
     font-weight: bold;
-    color: #228b22;
+    color: #d4af37;
     text-align: center;
     margin: 20px 0;
-    text-shadow: 2px 2px 4px rgba(34, 139, 34, 0.3);
+    text-shadow: 2px 2px 4px rgba(212, 175, 55, 0.3);
 }
 .bill-details {
-    background: rgba(34, 139, 34, 0.1);
+    background: rgba(212, 175, 55, 0.07);
     border-radius: 10px;
     padding: 15px;
     margin-top: 15px;
@@ -188,12 +248,12 @@ body {
     margin-bottom: 10px;
     padding: 8px 0;
     border-bottom: 1px solid rgba(34, 139, 34, 0.2);
-    color: #333333;
+    color: #d4af37;
 }
 .bill-item:last-child {
     border-bottom: none;
     font-weight: bold;
-    color: #228b22;
+    color: #d4af37;
 }
 .month-selector {
     display: flex;
@@ -203,32 +263,32 @@ body {
 }
 .month-btn {
     padding: 8px 16px;
-    border: 2px solid #228b22;
-    background: rgba(34, 139, 34, 0.1);
-    color: #228b22;
+    border: 2px solid #d4af37;
+    background: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
 }
 .month-btn:hover, .month-btn.active {
-    background: #228b22;
-    color: white;
+    background: #d4af37;
+    color: #181818;
     transform: scale(1.05);
 }
 .history-chart {
     height: 200px;
-    background: linear-gradient(45deg, rgba(34, 139, 34, 0.1), rgba(0, 100, 0, 0.2));
+    background: linear-gradient(45deg, rgba(212, 175, 55, 0.07), rgba(20, 20, 20, 0.15));
     border-radius: 10px;
     display: flex;
     align-items: end;
     padding: 15px;
     gap: 8px;
-    border: 1px solid rgba(34, 139, 34, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.15);
 }
 .chart-bar {
     flex: 1;
-    background: linear-gradient(to top, #228b22, #32cd32);
+    background: linear-gradient(to top, #d4af37, #f4d467);
     border-radius: 4px 4px 0 0;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -260,20 +320,20 @@ body {
     justify-content: space-between;
     margin-bottom: 15px;
     padding: 10px;
-    background: rgba(34, 139, 34, 0.1);
+    background: rgba(212, 175, 55, 0.07);
     border-radius: 8px;
     transition: background 0.3s ease;
-    border: 1px solid rgba(34, 139, 34, 0.2);
+    border: 1px solid rgba(212, 175, 55, 0.15);
 }
 .info-row:hover {
-    background: rgba(34, 139, 34, 0.2);
+    background: rgba(212, 175, 55, 0.15);
 }
 .info-label {
     font-weight: bold;
-    color: #666666;
+    color: #d4af37;
 }
 .info-value {
-    color: #333333;
+    color: #d4af37;
 }
 .emergency-btn {
     background: linear-gradient(135deg, #228b22, #006400);
@@ -281,16 +341,17 @@ body {
     border: none;
     padding: 15px 30px;
     border-radius: 25px;
-    font-size: 1.1em;
-    font-weight: bold;
-    cursor: pointer;
+        background: #262626;
+        color: #A68932;
+    color: #A68932;
     transition: all 0.3s ease;
     width: 100%;
     margin-top: 15px;
 }
 .emergency-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(34, 139, 34, 0.4);
+        background: #262626;
+        color: #A68932;
+        border: 2px dashed #A68932;
 }
 .status-indicator {
     display: inline-block;

@@ -6,7 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario - Bar Galileo</title>
     <link rel="stylesheet" href="/static/css/panel_usuario_custom.css">
-</head>
+    <style>
+.form-error {
+  color: #BF452A;
+  background: #262626;
+  border: 1px solid #A68932;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: 6px;
+  font-size: 0.95em;
+  font-weight: bold;
+  box-shadow: 0 0 8px #A68932;
+}
+.alert-success {
+  background: #262626;
+  color: #A68932;
+  border: 2px solid #A68932;
+  border-radius: 12px;
+  font-size: 1.1em;
+  font-weight: bold;
+  box-shadow: 0 0 16px #A68932;
+  padding: 18px 32px;
+  margin-bottom: 10px;
+  opacity: 1;
+  animation: fadeInOut 3.5s forwards;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+</style>
 </head>
 <body>
     {% if messages %}
@@ -71,8 +102,10 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
     <div class="container">
       <div class="header">
-        <h1>🍺 Bar Galileo</h1>
-        <p>Panel de Usuario - Bienvenido, {{ datos.nombre }}</p>
+        <h1 style="display: flex; justify-content: center; align-items: center;">
+          <img src="/static/img/favicon/apple-touch-icon.png" alt="icono" style="height: 150px; width: 150px; object-fit: contain; vertical-align: middle;">
+        </h1>
+        <p> Bienvenido, {{ datos.nombre }}</p>
       </div>
       <div class="dashboard">
         <!-- Cuenta Actual -->
@@ -116,14 +149,24 @@ document.addEventListener('DOMContentLoaded', function() {
   <button class="month-btn" data-mes="dic">Dic</button>
 </div>
           <div class="history-chart">
-            <div class="chart-bar" style="height: 60%;" data-amount="$120k"></div>
-            <div class="chart-bar" style="height: 80%;" data-amount="$160k"></div>
-            <div class="chart-bar" style="height: 45%;" data-amount="$90k"></div>
-            <div class="chart-bar" style="height: 90%;" data-amount="$180k"></div>
-            <div class="chart-bar" style="height: 70%;" data-amount="$140k"></div>
+            {% with mes_seleccionado=request.GET.mes|default:'ene' %}
+              {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado %}
+                {% for valor in datos.historial_mensual.mes_seleccionado.barras %}
+                  <div class="chart-bar" style="height: {{ valor|floatformat:0 }}%;" data-amount="${{ valor|intcomma }}"></div>
+                {% endfor %}
+              {% else %}
+                <div style="color:red">No hay datos para este mes</div>
+              {% endif %}
+            {% endwith %}
           </div>
           <div style="text-align: center; margin-top: 15px;">
-              <span id="month-total">Total Julio 2025: $450.000</span>
+              {% with mes_seleccionado=request.GET.mes|default:'ene' %}
+                {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado and datos.historial_mensual.mes_seleccionado.total %}
+                  <span id="month-total">Total {{ datos.historial_mensual.mes_seleccionado.mes }} 2025: ${{ datos.historial_mensual.mes_seleccionado.total|intcomma }}</span>
+                {% else %}
+                  <span id="month-total">Sin datos</span>
+                {% endif %}
+              {% endwith %}
           </div>
         </div>
         <!-- Información Personal -->
@@ -133,57 +176,183 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-title">Mi Información</div>
           </div>
           <div id="info-display">
-            <div class="info-row"><span class="info-label">Nombre:</span><span class="info-value">{{ datos.nombre }}</span></div>
-            <div class="info-row"><span class="info-label">Cédula:</span><span class="info-value">{{ datos.cedula }}</span></div>
-            <div class="info-row"><span class="info-label">Teléfono:</span><span class="info-value">{{ datos.telefono }}</span></div>
-            <div class="info-row"><span class="info-label">Email:</span><span class="info-value">{{ datos.email }}</span></div>
-            <div class="info-row"><span class="info-label">Dirección:</span><span class="info-value">{{ datos.direccion }}</span></div>
-            <div class="info-row"><span class="info-label">Cliente desde:</span><span class="info-value">{{ datos.cliente_desde }}</span></div>
+            <div class="form-field-col">
+              <label class="form-label">Nombre:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.nombre }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Cédula:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.cedula }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Teléfono:</label>
+                  <div class="info-input" style="text-align:left;">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Email:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.email }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Dirección:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.direccion }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Cliente desde:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.cliente_desde }}</div>
+            </div>
             <button type="button" class="edit-btn" onclick="toggleInfoForm(true)">Editar</button>
           </div>
           <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form" style="display:none;">
             {% csrf_token %}
-            <div class="info-row"><span class="info-label">Nombre:</span><input type="text" name="nombre" value="{{ datos.nombre }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Cédula:</span><input type="number" name="cedula" value="{{ datos.cedula }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
-            <div class="info-row"><span class="info-label">Teléfono:</span><input type="number" name="telefono" value="{{ datos.telefono }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
-            <div class="info-row"><span class="info-label">Email:</span><input type="email" name="email" value="{{ datos.email }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Dirección:</span><input type="text" name="direccion" value="{{ datos.direccion }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Cliente desde:</span><input type="text" name="cliente_desde" value="{{ datos.cliente_desde }}" class="info-input"></div>
-            <button type="submit" class="edit-btn">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_info' %}" class="delete-btn" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
-            <button type="button" class="edit-btn" onclick="toggleInfoForm(false)">Cancelar</button>
+            <div class="form-field-col">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" class="info-input">{% if datos.info_errors.nombre %}<div class="form-error">{{ datos.info_errors.nombre }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="cedula" class="form-label">Cédula:</label>
+              <input type="number" id="cedula" name="cedula" value="{{ datos.cedula }}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.cedula %}<div class="form-error">{{ datos.info_errors.cedula }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="telefono" class="form-label">Teléfono:</label>
+              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:':3' == '+57' %}{{ datos.telefono|slice:'3:' }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" id="email" name="email" value="{{ datos.email }}" class="info-input">{% if datos.info_errors.email %}<div class="form-error">{{ datos.info_errors.email }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="direccion" class="form-label">Dirección:</label>
+              <input type="text" id="direccion" name="direccion" value="{{ datos.direccion }}" class="info-input">
+            </div>
+            <div class="form-field-col">
+              <label for="cliente_desde" class="form-label">Cliente desde:</label>
+              <input type="text" id="cliente_desde" name="cliente_desde" value="{{ datos.cliente_desde }}" class="info-input">
+            </div>
+            <button type="submit">Guardar Cambios</button>
+            <button type="submit" formaction="{% url 'users:borrar_info' %}" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
+            <button type="button" onclick="toggleInfoForm(false)">Cancelar</button>
           </form>
         </div>
         <!-- Contacto de Emergencia -->
         <div class="card">
           <div class="card-header">
             <div class="card-icon emergency-contact">🚨</div>
-            <div class="card-title">Contacto de Emergencia</div>
+            <div class="card-title">Contacto de Emergenciaa</div>
           </div>
           <div id="emergencia-display">
-            <div class="info-row"><span class="info-label">Nombre:</span><span class="info-value">{{ datos.emergencia.nombre }}</span></div>
-            <div class="info-row"><span class="info-label">Relación:</span><span class="info-value">{{ datos.emergencia.relacion }}</span></div>
-            <div class="info-row"><span class="info-label">Teléfono:</span><span class="info-value">{{ datos.emergencia.telefono }}</span></div>
-            <div class="info-row"><span class="info-label">Teléfono Alternativo:</span><span class="info-value">{{ datos.emergencia.telefono_alt }}</span></div>
-            <div class="info-row"><span class="info-label">Tipo de Sangre:</span><span class="info-value">{{ datos.emergencia.sangre }}</span></div>
-            <div class="info-row"><span class="info-label">Alergias:</span><span class="info-value">{{ datos.emergencia.alergias }}</span></div>
-            <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Editar</button>
+            {% if datos.emergencia.nombre or datos.emergencia.telefono %}
+              <div class="form-field-col">
+                <label class="form-label">Nombre:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.nombre }}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Relación:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.relacion }}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Teléfono:</label>
+                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono %}{% if datos.emergencia.telefono|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono }}{% endif %}{% else %}{{ datos.emergencia.telefono }}{% endif %}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Teléfono Alternativo:</label>
+                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono_alt %}{% if datos.emergencia.telefono_alt|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono_alt }}{% endif %}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Tipo de Sangre:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.sangre }}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Alergias:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.alergias }}</div>
+              </div>
+              <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Editar</button>
+            {% else %}
+              <div class="info-input" style="text-align:center; color:#A68932; margin-bottom:18px;">No hay contacto de emergencia registrado.</div>
+              <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Agregar Contacto</button>
+            {% endif %}
           </div>
           <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form" style="display:none;">
             {% csrf_token %}
-            <div class="info-row"><span class="info-label">Nombre:</span><input type="text" name="emergencia_nombre" value="{{ datos.emergencia.nombre }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Relación:</span><input type="text" name="emergencia_relacion" value="{{ datos.emergencia.relacion }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Teléfono:</span><input type="number" name="emergencia_telefono" value="{{ datos.emergencia.telefono }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
-            <div class="info-row"><span class="info-label">Teléfono Alternativo:</span><input type="number" name="emergencia_telefono_alt" value="{{ datos.emergencia.telefono_alt }}" class="info-input" pattern="\\d*" inputmode="numeric" title="Solo números" maxlength="20"></div>
-            <div class="info-row"><span class="info-label">Tipo de Sangre:</span><input type="text" name="emergencia_sangre" value="{{ datos.emergencia.sangre }}" class="info-input"></div>
-            <div class="info-row"><span class="info-label">Alergias:</span><input type="text" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input"></div>
-            <button type="submit" class="edit-btn">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" class="delete-btn" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
-            <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(false)">Cancelar</button>
+            <div class="form-field-col">
+              <label for="emergencia_nombre" class="form-label">Nombre:</label>
+              <input type="text" id="emergencia_nombre" name="emergencia_nombre" value="{{ datos.emergencia.nombre }}" class="info-input">{% if datos.emergencia_errors.nombre %}<div class="form-error">{{ datos.emergencia_errors.nombre }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_relacion" class="form-label">Relación:</label>
+              <input type="text" id="emergencia_relacion" name="emergencia_relacion" value="{{ datos.emergencia.relacion }}" class="info-input">
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_telefono" class="form-label">Teléfono:</label>
+              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:':3' == '+57' %}{{ datos.emergencia.telefono|slice:'3:' }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_telefono_alt" class="form-label">Teléfono Alternativo:</label>
+              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:':3' == '+57' %}{{ datos.emergencia.telefono_alt|slice:'3:' }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_sangre" class="form-label">Tipo de Sangre:</label>
+              <select id="emergencia_sangre" name="emergencia_sangre" class="info-input" required>
+                <option value="" disabled {% if not datos.emergencia.sangre %}selected{% endif %}>Selecciona el tipo</option>
+                <option value="A+" {% if datos.emergencia.sangre == 'A+' %}selected{% endif %}>A+</option>
+                <option value="A-" {% if datos.emergencia.sangre == 'A-' %}selected{% endif %}>A-</option>
+                <option value="B+" {% if datos.emergencia.sangre == 'B+' %}selected{% endif %}>B+</option>
+                <option value="B-" {% if datos.emergencia.sangre == 'B-' %}selected{% endif %}>B-</option>
+                <option value="AB+" {% if datos.emergencia.sangre == 'AB+' %}selected{% endif %}>AB+</option>
+                <option value="AB-" {% if datos.emergencia.sangre == 'AB-' %}selected{% endif %}>AB-</option>
+                <option value="O+" {% if datos.emergencia.sangre == 'O+' %}selected{% endif %}>O+</option>
+                <option value="O-" {% if datos.emergencia.sangre == 'O-' %}selected{% endif %}>O-</option>
+              </select>
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_alergias" class="form-label">Alergias:</label>
+              <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input">
+            </div>
+            <button type="submit">Guardar Cambios</button>
+            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
+            <button type="button" onclick="toggleEmergenciaForm(false)">Cancelar</button>
           </form>
         </div>
       </div>
     </div>
 
   <script>
-                    
+function validarInfoForm() {
+  let nombre = document.querySelector('input[name="nombre"]').value.trim();
+  let cedula = document.querySelector('input[name="cedula"]').value.trim();
+  let telefono = document.querySelector('input[name="telefono"]').value.trim();
+  let email = document.querySelector('input[name="email"]').value.trim();
+  let errores = [];
+  if (nombre.length < 3) errores.push('El nombre debe tener al menos 3 caracteres.');
+  if (!/^\d{6,}$/.test(cedula)) errores.push('La cédula debe ser numérica y tener al menos 6 dígitos.');
+  if (!/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
+  if (!email.includes('@')) errores.push('El email debe ser válido.');
+  if (errores.length) {
+    alert(errores.join('\n'));
+    return false;
+  }
+  return true;
+}
+function validarEmergenciaForm() {
+  let nombre = document.querySelector('input[name="emergencia_nombre"]').value.trim();
+  let telefono = document.querySelector('input[name="emergencia_telefono"]').value.trim();
+  let telefono_alt = document.querySelector('input[name="emergencia_telefono_alt"]').value.trim();
+  let errores = [];
+  if (nombre.length < 3) errores.push('El nombre de emergencia debe tener al menos 3 caracteres.');
+  if (telefono && !/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
+  if (telefono_alt && !/^\d{10}$/.test(telefono_alt)) errores.push('El teléfono alternativo debe ser numérico y tener exactamente 10 dígitos.');
+  if (errores.length) {
+    alert(errores.join('\n'));
+    return false;
+  }
+  return true;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var infoForm = document.getElementById('info-form');
+  if (infoForm) infoForm.onsubmit = validarInfoForm;
+  var emergenciaForm = document.getElementById('emergencia-form');
+  if (emergenciaForm) emergenciaForm.onsubmit = validarEmergenciaForm;
+});
+  </script>
+</body>
+</html>
+
