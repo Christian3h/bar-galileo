@@ -14,9 +14,16 @@ function toggleSidebar() {
       document.body.style.overflow = 'auto';
   }
 
+  const scrxd = sidebar.classList.contains('collapsed');
+  console.log(scrxd);
+  if (scrxd) {
+    document.body.style.overflow = 'scroll';
+  }
+
   if (window.innerWidth <= 768) {
     sidebar.classList.toggle('mobile-show');
   } else {
     sidebar.classList.toggle('collapsed');
+
   }
 }
