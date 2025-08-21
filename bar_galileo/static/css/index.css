@@ -452,7 +452,7 @@ body {
 
 /* Products Section */
 .products-section {
-  padding: 120px 0;
+  
   background: #0a0a0a;
   color: white;
 }
@@ -461,7 +461,7 @@ body {
   text-align: center;
   font-size: 48px;
   font-weight: 300;
-  margin-bottom: 80px;
+
   color: #d4af37;
 }
 
