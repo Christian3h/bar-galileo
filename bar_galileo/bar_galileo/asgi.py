@@ -8,7 +8,8 @@ import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
-import notifications.routing  # Cambia 'notificaciones' por tu app real
+import notifications.routing
+import tables.routing
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bar_galileo.settings")
 
@@ -16,7 +17,8 @@ application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            notifications.routing.websocket_urlpatterns
+            notifications.routing.websocket_urlpatterns + 
+            tables.routing.websocket_urlpatterns
         )
     ),
 })

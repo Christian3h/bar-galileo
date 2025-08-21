@@ -14,6 +14,8 @@ class RolListView(ListView):
     template_name = 'roles/rol_list.html'
     context_object_name = 'roles'
 
+from notifications.utils import notificar_usuario
+
 class RolCreateView(CreateView):
     model = Role
     form_class = RoleForm
@@ -21,6 +23,8 @@ class RolCreateView(CreateView):
 
     def form_valid(self, form):
         role = form.save()
+        mensaje = f"Se ha creado el nuevo rol: '{role.name}'."
+        notificar_usuario(self.request.user, mensaje)
         return redirect('roles:rol_permisos', role.id)
 
 
@@ -52,5 +56,6 @@ class RolPermisosView(View):
                 if request.POST.get(f"perm_{modulo.id}_{accion.id}"):
                     RolePermission.objects.create(rol=role, modulo=modulo, accion=accion)
 
-        messages.success(request, 'Permisos actualizados correctamente.')
+        mensaje = f"Los permisos para el rol '{role.nombre}' han sido actualizados."
+        notificar_usuario(request.user, mensaje)
         return redirect('roles:rol_list')

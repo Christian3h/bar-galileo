@@ -1,55 +1,252 @@
 /* =======================================
    RESET + VARIABLES + COMPONENTES
 ======================================= */
-@import '../../_resets/_resets.css';
-@import '../../_variables/_colors.css';
-@import '../../_components/_buttons.css';
+@import "../../_resets/_resets.css";
+@import "../../_variables/_colors.css";
+@import "../../_components/_buttons.css";
 
 /* =======================================
-   BASE
+   BASE - ESTILO GALILEO
 ======================================= */
-body {
-  background-color: var(--color-light);
-  display: grid;
-  place-items: center;
-  height: 100dvh;
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #0a0a0a;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
 /* =======================================
-   ALERTAS Y MENSAJES
+   MENÚ NAVEGACIÓN - ESTILO GALILEO
+======================================= */
+.container-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  transition: background 0.3s;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid #333;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  padding 10px;
+}
+
+.container-menu .logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: #d4af37;
+  letter-spacing: 3px;
+  margin-left: 40px;
+  text-decoration: none;
+}
+
+.container-menu ul {
+  display: flex;
+  list-style: none;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  margin-right: 40px;
+}
+
+.container-menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.container-menu a:hover {
+  color: #d4af37;
+}
+
+/* =======================================
+   CONTAINER LOGIN - ESTILO GALILEO
+======================================= */
+.container-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+  padding-top: 80px;
+  flex-direction: column;
+}
+
+.container-login::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
+  z-index: 1;
+}
+
+.container-login > * {
+  position: relative;
+  z-index: 2;
+}
+
+.container-login h1 {
+  font-size: 48px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  color: #d4af37;
+}
+
+.container-login p {
+  font-size: 16px;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  font-weight: 300;
+  letter-spacing: 1px;
+  color: #ccc;
+}
+
+/* =======================================
+   FORMULARIO - ESTILO GALILEO
+======================================= */
+.container-login form {
+  background: #1a1a1a;
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  border: 1px solid #333;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.container-login form input {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0a0a0a;
+  color: white;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  transition: all 0.3s;
+}
+
+.container-login form input:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+.container-login form input::placeholder {
+  color: #666;
+}
+
+.container-login form button {
+  background: linear-gradient(135deg, #d4af37, #f4d467);
+  color: #000;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  text-transform: uppercase;
+}
+
+.container-login form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+.container-login a {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+  display: block;
+  margin-top: 20px;
+}
+
+.container-login a:hover {
+  color: #f4d467;
+}
+
+/* =======================================
+   ELEMENTOS ADICIONALES
+======================================= */
+.container-login hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #333, transparent);
+  margin: 30px 0;
+}
+
+.container-login .button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.container-login .button-group button {
+  background: transparent;
+  border: 2px solid #d4af37;
+  color: #d4af37;
+  padding: 12px 25px;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-family: "Inter", sans-serif;
+}
+
+.container-login .button-group button:hover {
+  background: #d4af37;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* =======================================
+   MENSAJES Y ALERTAS
 ======================================= */
 .container-messages {
   position: fixed;
   top: 100px;
-  left: 10px;
-  width: auto;
-  max-width: 60%;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  z-index: 1000;
-}
-
-.container-messages ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.container-messages li {
-  margin-left: 10px;
+  left: 20px;
+  right: 20px;
+  z-index: 1001;
+  max-width: 500px;
 }
 
 .alert-message {
-  position: relative;
-  padding: 1rem 2rem 1rem 1rem;
-  background-color: #f0f4f8;
-  border-left: 4px solid var(--color-primary);
-  margin-bottom: 0.75rem;
+  background: #1a1a1a;
+  border-left: 4px solid #d4af37;
+  padding: 15px 20px;
+  margin-bottom: 15px;
   border-radius: 6px;
-  transition: opacity 0.3s ease;
+  color: #ccc;
+  border: 1px solid #333;
+  position: relative;
 }
 
 .close-btn {
@@ -58,198 +255,738 @@ body {
   right: 12px;
   background: transparent;
   border: none;
-  font-size: 1.25rem;
+  color: #d4af37;
   cursor: pointer;
-  color: #333;
-  line-height: 1;
-}
-
-/* =======================================
-   MENÚ NAVEGACIÓN RESPONSIVO
-======================================= */
-.container-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: var(--color-secondary);
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 8px var(--color-shadow);
-  z-index: 1000;
-}
-
-.container-menu .logo {
-  font-weight: bold;
-  color: var(--color-primary);
   font-size: 1.2rem;
 }
 
-.container-menu ul {
-  display: flex;
-  flex-wrap: wrap;
+/* =======================================
+   ERRORES Y VALIDACIÓN
+======================================= */
+.container-login .errorlist {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-top: 5px;
   list-style: none;
-  gap: 1.5rem;
-  margin: 0;
   padding: 0;
+  text-align: left;
 }
 
-.container-menu li {
+.container-login .helptext {
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+/* =======================================
+   MENSAJES DE CONFIRMACIÓN Y ERROR
+======================================= */
+.container-login .alert-message.error {
+  background: rgba(255, 107, 107, 0.1);
+  border-left-color: #ff6b6b;
+  color: #ff6b6b;
+}
+
+.container-login .alert-message.error h3 {
+  color: #ff6b6b;
+  margin-bottom: 10px;
+  font-size: 16px;
   font-weight: 600;
 }
 
-.container-menu a {
-  text-decoration: none;
-  color: var(--color-dark);
-  transition: color 0.2s;
+.container-login .alert-message.success {
+  background: rgba(74, 222, 128, 0.1);
+  border-left-color: #4ade80;
+  color: #4ade80;
 }
 
-.container-menu a:hover {
-  color: var(--color-primary);
+.container-login .alert-message.success h3 {
+  color: #4ade80;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.container-login .alert-message p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.container-login .alert-message a {
+  color: inherit;
   text-decoration: underline;
+  font-weight: 600;
 }
 
-/* Responsive para móviles */
-@media (max-width: 768px) {
-  .container-menu {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.container-login .alert-message a:hover {
+  opacity: 0.8;
+}
 
-  .container-menu ul {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    width: 100%;
-    margin-top: 1rem;
+/* Animación para mensajes */
+.container-login .alert-message {
+  animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mejoras para los iconos en títulos */
+.container-login .info-box h3,
+.container-login .alert-message h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Estados de loading para botones */
+.container-login button.loading {
+  position: relative;
+  color: transparent;
+}
+
+.container-login button.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid transparent;
+  border-top: 2px solid #000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
 /* =======================================
-   LOGIN FORM / CARD
+   RESPONSIVE
 ======================================= */
-.container-login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  padding-top: 5rem; /* espacio para que no se tape con el menú */
-}
-
-.container-login form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: var(--color-secondary);
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px var(--color-shadow);
-}
-
-.container-login form input {
+.menu-toggle {
+  background: transparent;
   border: none;
-  border-radius: 20px;
-  padding: 0.5rem;
-  box-shadow: 0 8px 24px var(--color-shadow);
+  font-size: 2rem;
+  cursor: pointer;
+  display: none;
+  color: white;
+  position: absolute;
+  right: 20px;
+  top: 15px;
 }
 
-.container-login form button {
-  max-width: 200px;
-  background-color: var(--color-primary);
-  color: var(--color-secondary);
+.menu-toggle:hover {
+  color: #d4af37;
+}
+
+@media (max-width: 768px) {
+  .container-menu {
+    padding: 15px 20px;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .container-menu .logo {
+    margin-left: 0;
+    font-size: 24px;
+  }
+
+  .container-menu ul {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    margin-top: 20px;
+    margin-right: 0;
+  }
+
+  .container-menu ul.show {
+    display: flex;
+  }
+
+  .container-login {
+    padding: 100px 20px 20px;
+  }
+
+  .container-login h1 {
+    font-size: 36px;
+    letter-spacing: 2px;
+  }
+
+  .container-login form {
+    max-width: 350px;
+    padding: 30px 25px;
+  }
+}
+
+/* =======================================
+   ESTILOS ESPECÍFICOS PARA ALLAUTH
+======================================= */
+/* Formularios de allauth */
+.container-login .form-group,
+.container-login .field-wrapper {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.container-login label {
+  display: block;
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Input fields específicos */
+.container-login input[type="text"],
+.container-login input[type="email"],
+.container-login input[type="password"] {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #333;
+  border-radius: 6px;
+  background: #0a0a0a;
+  color: white;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.container-login input[type="text"]:focus,
+.container-login input[type="email"]:focus,
+.container-login input[type="password"]:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Checkbox styles */
+.container-login input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+  accent-color: #d4af37;
+}
+
+/* Botones específicos para allauth */
+.container-login button[type="submit"],
+.container-login input[type="submit"] {
+  background: linear-gradient(135deg, #d4af37, #f4d467);
+  color: #000;
+  padding: 15px 40px;
   border: none;
-  border-radius: 20px;
-  padding: 6px;
-  box-shadow: 0 8px 24px var(--color-shadow);
-  font-family: var(--font-family);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  text-transform: uppercase;
+  font-family: "Inter", sans-serif;
 }
 
-.container-login form button:hover {
-  transform: translateY(-4px);
+.container-login button[type="submit"]:hover,
+.container-login input[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
 }
 
-.container-login a {
+/* Enlaces específicos */
+.container-login .form-group a,
+.container-login .field-wrapper a {
+  color: #d4af37;
   text-decoration: none;
-  color: var(--color-dark);
-  transition: color 0.2s;
+  font-size: 14px;
+  transition: color 0.3s;
 }
 
-.container-login a:hover {
-  color: var(--color-primary);
+.container-login .form-group a:hover,
+.container-login .field-wrapper a:hover {
+  color: #f4d467;
   text-decoration: underline;
 }
 
-.login-card {
-  background: var(--color-secondary);
-  border-radius: 20px;
-  padding: 2rem;
-  max-width: 400px;
+/* =======================================
+   MEJORAS VISUALES ADICIONALES
+======================================= */
+/* Contenedor principal centrado */
+.container-login > div {
+  background: #1a1a1a;
+  border-radius: 10px;
+  padding: 40px;
+  max-width: 450px;
   width: 100%;
-  box-shadow: 0 8px 24px var(--color-shadow);
-  transition: transform 0.3s ease;
+  border: 1px solid #333;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
 }
 
-.login-card:hover {
-  transform: translateY(-4px);
+/* Elementos de separación */
+.container-login .divider {
+  text-align: center;
+  margin: 30px 0;
+  position: relative;
+  color: #666;
 }
 
+.container-login .divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #333, transparent);
+}
 
-/* Estilos para el botón hamburguesa en móvil */
-.menu-toggle {
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    display: none;
-    color: var(--color-dark);
-  }
-  
-  /* Mostrar menú como columna en pantallas pequeñas */
-  @media (max-width: 950px) {
-    .menu-toggle {
-      display: block;
-    }
+.container-login .divider span {
+  background: #1a1a1a;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
 
-    .logo{
-        display: none;
-    }
-  
-    .container-menu {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 1rem;
-    }
-  
-    .container-menu ul {
-      display: none;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      margin-top: 1rem;
-      padding-left: 0;
-    }
-  
-    .container-menu ul.show {
-      display: flex;
-    }
-  
-    .container-menu li {
-      width: 100%;
-    }
-  
-    .container-menu a.logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-right: auto;
-    }
-  
-    .container-menu a.logo img {
-      max-width: 40px;
-      height: auto;
-    }
+/* =======================================
+   ESTILOS PARA PÁGINAS DE RESET
+======================================= */
+/* Botones de cancelar y secundarios */
+.container-login button[form="logout-from-stage"],
+.container-login .button-cancel,
+.container-login button[tags*="cancel"] {
+  background: transparent;
+  border: 2px solid #666;
+  color: #666;
+  padding: 12px 25px;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-family: "Inter", sans-serif;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.container-login button[form="logout-from-stage"]:hover,
+.container-login .button-cancel:hover,
+.container-login button[tags*="cancel"]:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+  transform: translateY(-2px);
+}
+
+/* Mensajes de estado */
+.container-login .status-message {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-left: 4px solid #d4af37;
+  padding: 20px;
+  border-radius: 6px;
+  margin-bottom: 30px;
+  color: #ccc;
+}
+
+.container-login .status-message.success {
+  border-left-color: #4ade80;
+}
+
+.container-login .status-message.error {
+  border-left-color: #ff6b6b;
+}
+
+/* Enlaces de navegación */
+.container-login .nav-links {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #333;
+}
+
+.container-login .nav-links a {
+  color: #d4af37;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.3s;
+  display: inline-block;
+  margin: 0 15px;
+}
+
+.container-login .nav-links a:hover {
+  color: #f4d467;
+  text-decoration: underline;
+}
+
+/* Campos de confirmación de contraseña */
+.container-login .password-field {
+  position: relative;
+}
+
+.container-login .password-strength {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+.container-login .password-strength.weak {
+  color: #ff6b6b;
+}
+
+.container-login .password-strength.medium {
+  color: #fbbf24;
+}
+
+.container-login .password-strength.strong {
+  color: #4ade80;
+}
+
+/* =======================================
+   ESTILOS PARA GESTIÓN DE EMAIL Y BADGES
+======================================= */
+/* Badges de estado */
+.container-login .badge,
+.container-login [class*="badge"] {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.container-login .badge[tags*="success"],
+.container-login .badge[tags*="verified"] {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+  border: 1px solid #4ade80;
+}
+
+.container-login .badge[tags*="warning"],
+.container-login .badge[tags*="unverified"] {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+}
+
+.container-login .badge[tags*="primary"] {
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
+  border: 1px solid #d4af37;
+}
+
+/* Radio buttons y checkboxes personalizados */
+.container-login input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-right: 12px;
+  accent-color: #d4af37;
+  cursor: pointer;
+}
+
+.container-login .field-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.container-login .field-wrapper:hover {
+  border-color: #d4af37;
+}
+
+.container-login .field-wrapper label {
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Botones secundarios y de peligro */
+.container-login button[tags*="secondary"] {
+  background: transparent;
+  border: 2px solid #666;
+  color: #666;
+  padding: 12px 25px;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-family: "Inter", sans-serif;
+  margin-left: 10px;
+}
+
+.container-login button[tags*="secondary"]:hover {
+  border-color: #d4af37;
+  color: #d4af37;
+  transform: translateY(-2px);
+}
+
+.container-login button[tags*="danger"] {
+  background: transparent;
+  border: 2px solid #ff6b6b;
+  color: #ff6b6b;
+  padding: 12px 25px;
+  border-radius: 6px;
+  transition: all 0.3s;
+  font-family: "Inter", sans-serif;
+  margin-left: 10px;
+}
+
+.container-login button[tags*="danger"]:hover {
+  background: #ff6b6b;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* Grupo de botones de acción */
+.container-login .form-actions,
+.container-login [slot="actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.container-login .form-actions button,
+.container-login [slot="actions"] button {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Secciones separadas */
+.container-login h2 {
+  font-size: 24px;
+  font-weight: 300;
+  color: #d4af37;
+  margin: 40px 0 20px;
+  padding-top: 30px;
+  border-top: 1px solid #333;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Mejoras para formularios múltiples */
+.container-login .form-section {
+  margin-bottom: 40px;
+  padding: 30px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+.container-login .form-section:last-child {
+  margin-bottom: 0;
+}
+
+/* =======================================
+   ESTILOS PARA PÁGINA DE CAMBIAR EMAIL
+======================================= */
+/* Información de email actual */
+.container-login .email-info-item {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.container-login .email-info-item:hover {
+  border-color: #d4af37;
+}
+
+.container-login .email-info-item label {
+  display: block;
+  color: #ccc;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.container-login .email-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Email pendiente de verificación */
+.container-login .pending-email {
+  border-left: 4px solid #fbbf24;
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.container-login .pending-actions {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #333;
+}
+
+.container-login .pending-actions .help-text {
+  color: #fbbf24;
+  font-size: 14px;
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.container-login .pending-actions .button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.container-login .pending-actions button {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 20px;
+  font-size: 13px;
+}
+
+/* Badges específicos para email */
+.container-login .badge-verified {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+  border: 1px solid #4ade80;
+}
+
+.container-login .badge-unverified {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+}
+
+.container-login .badge-pending {
+  background: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+  border: 1px solid #a855f7;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
   }
-  
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Mejoras para secciones de formulario */
+.container-login .form-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.container-login .form-section h2:before {
+  content: "✉️";
+  font-size: 20px;
+}
+
+.container-login .form-section:first-of-type h2:before {
+  content: "📧";
+}
+
+.container-login .form-section:last-of-type h2:before {
+  content: "📝";
+}
+
+/* Estilos para el formulario de cambio */
+.container-login .form-section form {
+  background: transparent;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.container-login .form-section .field-wrapper {
+  background: #0a0a0a;
+  margin-bottom: 20px;
+}
+
+/* Estados de validación */
+.container-login input:valid {
+  border-color: #4ade80;
+}
+
+.container-login input:invalid:not(:placeholder-shown) {
+  border-color: #ff6b6b;
+}
+
+/* Información adicional */
+.container-login .info-box {
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid #d4af37;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px 0;
+  color: #d4af37;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.container-login .info-box h3 {
+  color: #d4af37;
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.container-login .info-box ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.container-login .info-box li {
+  margin-bottom: 5px;
+}
+
+/* Responsive para email change */
+@media (max-width: 768px) {
+  .container-login .email-display {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .container-login .pending-actions .button-group {
+    flex-direction: column;
+  }
+
+  .container-login .pending-actions button {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .container-login .form-section {
+    padding: 20px 15px;
+  }
+}

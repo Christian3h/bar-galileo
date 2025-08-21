@@ -1,10 +1,10 @@
 {% extends 'base_admin.html' %}
 {% block content %}
 <h1>{% if object %}Editar{% else %}Crear{% endif %} Categoría</h1>
-<a href="{% url 'products:categories_admin' %}">Volver</a>
+<a href="{% url 'products:categories_admin' %}" class="btn btn-secondary" >Volver</a>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+    <button class="btn btn-secondary" type="submit">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
 </form>
 {% endblock %}

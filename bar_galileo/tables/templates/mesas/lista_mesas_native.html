@@ -1,560 +1,187 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Lista de Mesas</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body { 
-            font-family: Arial, sans-serif; 
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        h2 {
-            color: #333;
-            font-size: 2em;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: inline-block;
-        }
-        
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background-color: #1e7e34;
-        }
-        
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-        
-        .btn-warning {
-            background-color: #ffc107;
-            color: #212529;
-        }
-        
-        .btn-warning:hover {
-            background-color: #e0a800;
-        }
-        
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-        
-        .btn-sm {
-            padding: 5px 10px;
-            font-size: 0.9em;
-        }
-        
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-        
-        .alert-error {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
+{% extends 'base_admin.html' %}
 
-        .mesas-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-            padding: 20px 0;
-        }
+{% load static %}
 
-        .mesa-card {
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 15px;
-            color: #333;
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
-            transition: background-color 0.3s ease;
-            position: relative;
-        }
+{% load roles_tags %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/tables/tables.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/main/tables/modal.css' %}" />
+{% endblock %}
 
-        /* Colores por estado */
-        .disponible {
-            background-color: #d4edda; /* verde claro */
-            border-color: #c3e6cb;
-        }
+{% block content %}
+<div class="container">
+  {% csrf_token %}
 
-        .ocupada {
-            background-color: #f8d7da; /* rojo claro */
-            border-color: #f5c6cb;
-        }
+  <div class="header">
+    <h2>Mesas</h2>
+    <a href="{% url 'products:products_admin' %}" class="btn btn-primary">Productos</a>
+  </div>
 
-        .reservada {
-            background-color: #fff3cd; /* amarillo claro */
-            border-color: #ffeeba;
-        }
+  {% if request.user|has_perm:"tables,crear" %}
+  <a href="{% url 'tables:crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px">Crear Mesa</a>
+  {% endif %}
 
-        .fuera-de-servicio {
-            background-color: #d6d8db; /* gris claro */
-            border-color: #c6c8ca;
-        }
+  <!-- Tarjetas tipo grid -->
+  <div class="mesas-container">
+    {% for mesa in mesas %}
+    <div class="mesa-card {{ mesa.estado|slugify }}">
+      {% if mesa.pedidos.exists %}
+      <span class="pedido-activo">Pedido activo</span>
+      {% endif %}
 
-        .mesa-nombre {
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .mesa-desc {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-
-        .form-select {
-            flex: 1;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .acciones {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .mesa-form {
-            margin-top: 10px;
-        }
-
-        .pedido-activo {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ffc107;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 800px;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .close {
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close:hover {
-            color: #999;
-        }
-
-        .modal-body {
-            display: flex;
-            gap: 20px;
-        }
-
-        .productos-lista {
-            flex: 1;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            padding: 10px;
-        }
-
-        .producto-item {
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-            border-bottom: 1px solid #eee;
-        }
-
-        .producto-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .producto-item .precio {
-            font-weight: bold;
-            color: #0d6efd;
-        }
-
-        .pedido-items {
-            flex: 1;
-        }
-
-        .cantidad-badge {
-            background: #0d6efd;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-right: 5px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #ddd;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"], textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        {% csrf_token %}
-        
-        <div class="header">
-            <h2>Mesas</h2>
-            <a href="{% url 'products:productos' %}" class="btn btn-primary">Productos</a>
+      <!-- Nombre y Descripción -->
+      <div>
+        <div class="mesa-nombre" id="ver_nombre_{{ mesa.id }}">
+          {{ mesa.nombre }}
         </div>
+        <div class="mesa-desc" id="ver_desc_{{ mesa.id }}">
+          {{ mesa.descripcion }}
+        </div>
+      </div>
 
-        <!-- Mensajes -->
-        {% if messages %}
-            <div>
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
+      <!-- Estado -->
+      {% if request.user|has_perm:"tables,editar" %}
+      <form method="post" action="{% url 'tables:actualizar_estado' mesa.id %}">
+        {% csrf_token %}
+        <div class="input-group">
+          <select name="estado" class="form-select" onchange="this.form.submit()">
+            <option value="disponible" {% if mesa.estado == "disponible" %}selected{% endif %}>
+              Disponible
+            </option>
+            <option value="ocupada" {% if mesa.estado == "ocupada" %}selected{% endif %}>
+              Ocupada
+            </option>
+            <option value="reservada" {% if mesa.estado == "reservada" %}selected{% endif %}>
+              Reservada
+            </option>
+            <option value="fuera de servicio" {% if mesa.estado == "fuera de servicio" %}selected{% endif %}>
+              Fuera de servicio
+            </option>
+          </select>
+        </div>
+      </form>
+      {% else %}
+      <div class="input-group">
+        <select name="estado" class="form-select" disabled>
+            <option>{{ mesa.get_estado_display }}</option>
+        </select>
+      </div>
+      {% endif %}
+
+      <!-- Acciones -->
+      <div class="acciones">
+        <button class="btn btn-primary btn-sm" onclick="gestionarPedido('{{ mesa.id }}')">
+          Pedido
+        </button>
+        {% if request.user|has_perm:"tables,editar" %}
+        <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}"
+          onclick="habilitarEdicion('{{ mesa.id }}')">
+          Editar
+        </button>
+        {% endif %}
+        {% if request.user|has_perm:"tables,eliminar" %}
+        <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
+          Eliminar
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Formulario de edición -->
+      <form method="post" action="{% url 'tables:editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form"
+        style="{% if error_mesa_pk == mesa.pk %}display: block;{% else %}display: none;{% endif %}">
+        {% csrf_token %}
+        <input type="hidden" name="estado" value="{{ mesa.estado }}">
+
+        {% if error_mesa_pk == mesa.pk and edit_form %}
+            <div class="form-group">
+                <input type="text" name="nombre" class="form-control" value="{{ edit_form.nombre.value|default:'' }}" required>
+                {% for error in edit_form.nombre.errors %}
+                    <div class="invalid-feedback" style="display: block;">{{ error }}</div>
                 {% endfor %}
+            </div>
+            <div class="form-group">
+                <textarea name="descripcion" class="form-control" rows="2" required>{{ edit_form.descripcion.value|default:'' }}</textarea>
+                {% for error in edit_form.descripcion.errors %}
+                    <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="form-group">
+                <input type="text" name="nombre" class="form-control" value="{{ mesa.nombre }}" required />
+            </div>
+            <div class="form-group">
+                <textarea name="descripcion" class="form-control" rows="2" required>{{ mesa.descripcion }}</textarea>
             </div>
         {% endif %}
 
-        <a href="{% url 'tables:crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px;">Crear Mesa</a>
-
-        <!-- Tarjetas tipo grid -->
-        <div class="mesas-container">
-            {% for mesa in mesas %}
-                <div class="mesa-card {{ mesa.estado|slugify }}">
-                    {% if mesa.pedidos.exists %}
-                        <span class="pedido-activo">Pedido activo</span>
-                    {% endif %}
-                    
-                    <!-- Nombre y Descripción -->
-                    <div>
-                        <div class="mesa-nombre" id="ver_nombre_{{ mesa.id }}">{{ mesa.nombre }}</div>
-                        <div class="mesa-desc" id="ver_desc_{{ mesa.id }}">{{ mesa.descripcion }}</div>
-                    </div>
-
-                    <!-- Estado -->
-                    <form method="post" action="{% url 'tables:actualizar_estado' mesa.id %}">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <select name="estado" class="form-select">
-                                <option value="disponible" {% if mesa.estado == "disponible" %}selected{% endif %}>Disponible</option>
-                                <option value="ocupada" {% if mesa.estado == "ocupada" %}selected{% endif %}>Ocupada</option>
-                                <option value="reservada" {% if mesa.estado == "reservada" %}selected{% endif %}>Reservada</option>
-                                <option value="fuera de servicio" {% if mesa.estado == "fuera de servicio" %}selected{% endif %}>Fuera de servicio</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
-                        </div>
-                    </form>
-
-                    <!-- Acciones -->
-                    <div class="acciones">
-                        <button class="btn btn-primary btn-sm" onclick="gestionarPedido('{{ mesa.id }}')">
-                            Pedido
-                        </button>
-                        <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}" onclick="habilitarEdicion('{{ mesa.id }}')">
-                            Editar
-                        </button>
-                        <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
-                            Eliminar
-                        </a>
-                    </div>
-
-                    <!-- Formulario de edición -->
-                    <form method="post" action="{% url 'tables:editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form" style="display: none;">
-                        {% csrf_token %}
-                        <input type="text" name="nombre" value="{{ mesa.nombre }}" required>
-                        <textarea name="descripcion" rows="2" required>{{ mesa.descripcion }}</textarea>
-                        <div class="acciones">
-                            <button type="submit" class="btn btn-success btn-sm">Guardar</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="cancelarEdicion('{{ mesa.id }}')">Cancelar</button>
-                        </div>
-                    </form>
-                </div>
-            {% endfor %}
+        <div class="acciones">
+          <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="cancelarEdicion('{{ mesa.id }}')">
+            Cancelar
+          </button>
         </div>
-
-        <!-- Modal de Pedido -->
-        <div id="pedidoModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Gestionar Pedido - <span id="mesaNombre"></span></h3>
-                    <span class="close" onclick="cerrarModal()">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <!-- Lista de Productos -->
-                    <div>
-                        <h4>Productos</h4>
-                        <input type="text" class="form-control" id="buscarProducto" placeholder="Buscar producto...">
-                        <div class="productos-lista" id="productosLista"></div>
-                    </div>
-                    
-                    <!-- Pedido Actual -->
-                    <div class="pedido-items">
-                        <h4>Pedido Actual</h4>
-                        <div id="pedidoItems"></div>
-                        <div style="margin-top: 15px;">
-                            <h4>Total: $<span id="pedidoTotal">0.00</span></h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="cerrarModal()">Cerrar</button>
-                    <button type="button" class="btn btn-success" onclick="facturarPedido()">Facturar</button>
-                </div>
-            </div>
-        </div>
-
-        <script>
-            function habilitarEdicion(id) {
-                document.getElementById('ver_nombre_' + id).style.display = 'none';
-                document.getElementById('ver_desc_' + id).style.display = 'none';
-                document.getElementById('form_edit_' + id).style.display = 'block';
-                document.getElementById('editar_btn_' + id).style.display = 'none';
-            }
-
-            function cancelarEdicion(id) {
-                document.getElementById('ver_nombre_' + id).style.display = 'block';
-                document.getElementById('ver_desc_' + id).style.display = 'block';
-                document.getElementById('form_edit_' + id).style.display = 'none';
-                document.getElementById('editar_btn_' + id).style.display = 'inline-block';
-            }
-
-            let mesaActual = null;
-            let pedidoActual = null;
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
-
-            function gestionarPedido(mesaId) {
-                mesaActual = mesaId;
-                fetch(`/api/mesas/${mesaId}/pedido/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('mesaNombre').textContent = data.mesa.nombre;
-                        pedidoActual = data.pedido;
-                        actualizarListaProductos(data.productos);
-                        actualizarPedidoItems();
-                        document.getElementById('pedidoModal').style.display = 'block';
-                    });
-            }
-
-            function actualizarListaProductos(productos) {
-                const lista = document.getElementById('productosLista');
-                lista.innerHTML = productos.map(producto => `
-                    <div class="producto-item" onclick="agregarProducto(${producto.id_producto}, '${producto.nombre}', ${producto.precio_venta})">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong>${producto.nombre}</strong>
-                            <span class="precio">$${producto.precio_venta}</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            function agregarProducto(productoId, nombre, precio) {
-                const data = {
-                    mesa_id: mesaActual,
-                    producto_id: productoId,
-                    cantidad: 1
-                };
-
-                fetch('/api/pedidos/agregar-item/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    pedidoActual = data.pedido;
-                    actualizarPedidoItems();
-                });
-            }
-
-            function actualizarPedidoItems() {
-                const itemsContainer = document.getElementById('pedidoItems');
-                if (pedidoActual && pedidoActual.items) {
-                    itemsContainer.innerHTML = pedidoActual.items.map(item => `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div>
-                                <span class="cantidad-badge">${item.cantidad}</span>
-                                ${item.producto.nombre}
-                            </div>
-                            <div>
-                                $${item.subtotal}
-                                <button class="btn btn-sm btn-danger" onclick="eliminarItem(${item.id})" style="margin-left: 8px;">
-                                    Eliminar
-                                </button>
-                            </div>
-                        </div>
-                    `).join('');
-                    
-                    document.getElementById('pedidoTotal').textContent = pedidoActual.total.toFixed(2);
-                } else {
-                    itemsContainer.innerHTML = '<p style="color: #666;">No hay items en el pedido</p>';
-                    document.getElementById('pedidoTotal').textContent = '0.00';
-                }
-            }
-
-            function eliminarItem(itemId) {
-                fetch(`/api/pedidos/eliminar-item/${itemId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': csrfToken
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    pedidoActual = data.pedido;
-                    actualizarPedidoItems();
-                });
-            }
-
-            function facturarPedido() {
-                if (!pedidoActual || !pedidoActual.items || !pedidoActual.items.length) {
-                    alert('No hay items en el pedido');
-                    return;
-                }
-
-                if (confirm('¿Estás seguro de que deseas facturar este pedido?')) {
-                    fetch(`/api/pedidos/${pedidoActual.id}/facturar/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': csrfToken
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        cerrarModal();
-                        window.location.href = data.factura_url;
-                    });
-                }
-            }
-
-            function cerrarModal() {
-                document.getElementById('pedidoModal').style.display = 'none';
-            }
-
-            // Cerrar modal al hacer clic fuera de él
-            window.onclick = function(event) {
-                const modal = document.getElementById('pedidoModal');
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            }
-
-            // Búsqueda de productos
-            document.getElementById('buscarProducto').addEventListener('input', function(e) {
-                const busqueda = e.target.value.toLowerCase();
-                const productos = document.querySelectorAll('.producto-item');
-                productos.forEach(producto => {
-                    const nombre = producto.querySelector('strong').textContent.toLowerCase();
-                    producto.style.display = nombre.includes(busqueda) ? 'block' : 'none';
-                });
-            });
-        </script>
+      </form>
     </div>
-</body>
-</html>
+    {% endfor %}
+  </div>
+
+  <!-- Modal de Pedido -->
+  <div id="pedidoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Gestionar Pedido - <span id="mesaNombre"></span></h3>
+        <span class="close" onclick="cerrarModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- Lista de Productos -->
+        <div>
+          <h4>Productos</h4>
+          <input type="text" class="form-control" id="buscarProducto" placeholder="Buscar producto..." />
+          <div class="productos-lista" id="productosLista"></div>
+        </div>
+
+        <!-- Pedido Actual -->
+        <div class="pedido-items">
+          <h4>Pedido Actual</h4>
+          <div id="pedidoItems"></div>
+          <div style="margin-top: 15px">
+            <h4>Total: $<span id="pedidoTotal">0.00</span></h4>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="cerrarModal()">
+          Cerrar
+        </button>
+        <button type="button" class="btn btn-success" onclick="facturarPedido()">
+          Facturar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor para notificaciones toast -->
+  <div id="toast-container"></div>
+
+  <!-- Modal de Confirmación Genérico -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content-small">
+      <div class="modal-header">
+        <h3 id="confirmTitle"></h3>
+        <span class="close" id="confirmClose">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="confirmCancel">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmOk">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/tables/tables.js' %}"></script>
+
+</div>
+
+{% endblock %}

@@ -20,23 +20,13 @@
 </head>
 
 <body>
-    {% if messages %}
-        <div id="django-messages" style="display: none;">
-            {% for message in messages %}
-                <div class="{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
     {% include "components/notificaciones.html" %}
     {% include "components/nav-admin.html" %}
 
     <main class="main-content">
         <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
-        {% block content %}
-
-        {% endblock %}
         <div class="notification-icon" id="notification-icon">
-            <span>🔔</span>
+            <span id="icono-notification" >🔔</span>
             <span class="notification-badge" id="notification-badge">0</span>
             <div class="notifications-panel" id="notifications-panel">
                 <div class="notification-header">
@@ -49,12 +39,17 @@
                 </div>
             </div>
         </div>
-  
+        {% block content %}
+
+        {% endblock %}
+
+
     </main>
 
 
     <script src="{% static 'js/admin/nav_admin.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
+    <script src="{% static 'js/admin/notification_button.js' %}"></script>
 
 </body>
 
