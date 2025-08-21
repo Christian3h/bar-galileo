@@ -148,16 +148,16 @@ const initHeroButtons = () => {
     });
 };
 
-// Delegación de eventos para botones "Ver producto"
-const initProductButtons = () => {
-    document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-green') && e.target.dataset.productoId) {
-            const productoId = e.target.dataset.productoId;
-            alert(`Ver detalles del producto ID: ${productoId}`);
-            // Aquí puedes agregar la lógica para mostrar detalles del producto
+// Delegación de eventos para todos los botones "Ver producto"
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-green[data-producto-id]');
+    if (btn) {
+        const productoId = btn.getAttribute('data-producto-id');
+        if (productoId) {
+            window.location.href = `/producto/${productoId}/`;
         }
-    });
-};
+    }
+});
 
 // Efectos de click en botones
 const initButtonEffects = () => {
