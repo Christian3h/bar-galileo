@@ -8,6 +8,7 @@ from django.urls import path
 app_name = "products"
 from . import views
 from . import views_api
+from .views import ProductoDetailView
 
 
 
@@ -66,6 +67,7 @@ urlpatterns = [
     path('adminD/brands/create/', views.BrandCreateAdminView.as_view(), name='brands_create_admin'),
     path('adminD/brands/update/<int:pk>/', views.BrandUpdateAdminView.as_view(), name='brands_update_admin'),
     path('adminD/brands/delete/<int:pk>/', views.BrandDeleteAdminView.as_view(), name='brands_delete_admin'),
+    path('producto/<int:pk>/', ProductoDetailView.as_view(), name='producto_detalle'),
 ]
 
 
