@@ -622,7 +622,7 @@ class ProductoUpdateAdminView(UpdateView):
 class ProductoDeleteAdminView(DeleteView):
     model = Producto
     template_name = "admin/products/products_delete.html"
-    success_url = reverse_lazy("products:productos")
+    success_url = reverse_lazy("products:products_admin")
     pk_url_kwarg = "pk"
 
     def get_object(self, queryset=None):

@@ -4,6 +4,7 @@ Utiliza el modelo Producto y permite crear y editar productos desde el frontend.
 """
 
 from django import forms
+import re
 from .models import Producto, Categoria, Proveedor, Marca
 
 
@@ -62,6 +63,17 @@ class ProveedorForm(forms.ModelForm):
         if not direccion or not direccion.strip():
             raise forms.ValidationError('La dirección es obligatoria.')
         return direccion.strip()
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if telefono:
+            # Convert BigIntegerField to string for regex validation
+            telefono_str = str(telefono)
+            # Colombian phone number regex: starts with 3, 10 digits long
+            colombian_phone_regex = r'^3\d{9}$'
+            if not re.match(colombian_phone_regex, telefono_str):
+                raise forms.ValidationError('El número de teléfono debe ser colombiano (10 dígitos, empieza con 3).')
+        return telefono
 
 class MarcaForm(forms.ModelForm):
     class Meta:
