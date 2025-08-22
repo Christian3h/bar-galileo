@@ -16,6 +16,7 @@ header {
   max-width: 220px;
   transition: all 0.3s ease;
   overflow-y: auto;
+  border-right: 1px solid var(--color-gray);
 }
 
 .collapsed {

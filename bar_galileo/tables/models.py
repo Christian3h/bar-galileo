@@ -10,7 +10,7 @@ class Mesa(models.Model):
         ('fuera de servicio', 'Fuera de servicio'),
     ]
     
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=50)
     descripcion = models.TextField(blank=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='disponible')
 
@@ -40,7 +40,7 @@ class PedidoItem(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='items')
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
     cantidad = models.PositiveIntegerField(default=1)
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     def subtotal(self):
         return self.cantidad * self.precio_unitario
@@ -52,7 +52,7 @@ class Factura(models.Model):
     pedido = models.OneToOneField(Pedido, on_delete=models.PROTECT, related_name='factura')
     numero = models.CharField(max_length=20, unique=True)
     fecha = models.DateTimeField(default=timezone.now)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
     def __str__(self):
         return f'Factura #{self.numero}'
