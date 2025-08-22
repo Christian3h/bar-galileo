@@ -6,193 +6,353 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario - Bar Galileo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/panel_usuario_custom.css">
+    <style>
+.form-error {
+  color: #BF452A;
+  background: #262626;
+  border: 1px solid #A68932;
+  border-radius: 6px;
+  padding: 6px 12px;
+  margin-top: 6px;
+  font-size: 0.95em;
+  font-weight: bold;
+  box-shadow: 0 0 8px #A68932;
+}
+.alert-success {
+  background: #262626;
+  color: #A68932;
+  border: 2px solid #A68932;
+  border-radius: 12px;
+  font-size: 1.1em;
+  font-weight: bold;
+  box-shadow: 0 0 16px #A68932;
+  padding: 18px 32px;
+  margin-bottom: 10px;
+  opacity: 1;
+  animation: fadeInOut 3.5s forwards;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+</style>
 </head>
 <body>
-    <div class="container py-4">
-        <div class="bg-success text-white rounded-4 p-4 mb-4 text-center">
-            <h1 class="mb-2">🍺 Bar Galileo</h1>
-            <p class="mb-0">Panel de Usuario - Bienvenido, {{ datos.nombre }}</p>
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <script>
+// Mostrar/ocultar formularios de edición
+function toggleInfoForm(show) {
+  document.getElementById('info-display').style.display = show ? 'none' : '';
+  document.getElementById('info-form').style.display = show ? '' : 'none';
+}
+function toggleEmergenciaForm(show) {
+  document.getElementById('emergencia-display').style.display = show ? 'none' : '';
+  document.getElementById('emergencia-form').style.display = show ? '' : 'none';
+}
+// Datos de historial mensual desde Django
+const historialMensual = JSON.parse('{{ datos.historial_mensual|safe|escapejs }}');
+console.log('historialMensual:', historialMensual);
+
+function selectMonth(btn, mesKey) {
+  console.log('Botón clickeado:', mesKey);
+  document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const chart = document.querySelector('.history-chart');
+  chart.innerHTML = '';
+  if (historialMensual[mesKey] && historialMensual[mesKey].barras) {
+    historialMensual[mesKey].barras.forEach(valor => {
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+      bar.style.height = (valor / 500000 * 100) + '%';
+      bar.setAttribute('data-amount', '$' + valor.toLocaleString());
+      chart.appendChild(bar);
+    });
+    document.getElementById('month-total').textContent = `Total ${historialMensual[mesKey].mes} 2025: $${historialMensual[mesKey].total.toLocaleString()}`;
+  } else {
+    chart.innerHTML = '<div style="color:red">No hay datos para este mes</div>';
+    document.getElementById('month-total').textContent = 'Sin datos';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.month-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      selectMonth(btn, btn.getAttribute('data-mes'));
+    });
+  });
+  const activeBtn = document.querySelector('.month-btn.active');
+  if (activeBtn) {
+    selectMonth(activeBtn, activeBtn.getAttribute('data-mes'));
+  }
+});
+        setTimeout(function() {
+          document.querySelectorAll('.alert-success').forEach(function(el) {
+            el.style.display = 'none';
+          });
+        }, 3500);
+    </script>
+    <div class="container">
+      <div class="header">
+        <h1 style="display: flex; justify-content: center; align-items: center;">
+          <img src="/static/img/favicon/apple-touch-icon.png" alt="icono" style="height: 150px; width: 150px; object-fit: contain; vertical-align: middle;">
+        </h1>
+        <p> Bienvenido, {{ datos.nombre }}</p>
+      </div>
+      <div class="dashboard">
+        <!-- Cuenta Actual -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon current-bill">💰</div>
+            <div class="card-title">Cuenta Actual</div>
+          </div>
+          <div class="bill-amount">${{ datos.cuenta_actual.total|intcomma }}</div>
+          <div class="bill-details">
+            {% for item in datos.cuenta_actual.items %}
+            <div class="bill-item">
+              <span>{{ item.nombre }}</span>
+              <span>${{ item.precio|intcomma }}</span>
+            </div>
+            {% endfor %}
+            <div class="bill-item">
+              <span><span class="status-indicator"></span>Total a Pagar</span>
+              <span>${{ datos.cuenta_actual.total|intcomma }}</span>
+            </div>
+          </div>
         </div>
-
-        <div class="row g-4">
-            <!-- Cuenta Actual -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">💰</span>
-                        <span class="h5 mb-0">Cuenta Actual</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="display-5 fw-bold text-success text-center mb-3">{{ datos.cuenta_actual.total|format_price }}</div>
-                        <ul class="list-group mb-3">
-                            {% for item in datos.cuenta_actual.items %}
-                            <li class="list-group-item d-flex justify-content-between">{{ item.nombre }}<span>{{ item.precio|format_price }}</span></li>
-                            {% endfor %}
-                            <li class="list-group-item d-flex justify-content-between fw-bold text-success"><span><span class="badge bg-success rounded-circle me-2" style="width:12px;height:12px;"> </span>Total a Pagar</span><span>{{ datos.cuenta_actual.total|format_price }}</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Historial Mensual -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">📊</span>
-                        <span class="h5 mb-0">Historial Mensual</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3 d-flex flex-wrap gap-2 justify-content-center">
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'ene')">Ene</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'feb')">Feb</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'mar')">Mar</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'abr')">Abr</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'may')">May</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'jun')">Jun</button>
-                            <button class="btn btn-success btn-sm" onclick="selectMonth(this, 'jul')">Jul</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'ago')">Ago</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'sep')">Sep</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'oct')">Oct</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'nov')">Nov</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'dic')">Dic</button>
-                        </div>
-                        <div class="d-flex align-items-end gap-2" style="height:200px;">
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 60%;" data-amount="$120k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 80%;" data-amount="$160k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 45%;" data-amount="$90k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 90%;" data-amount="$180k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 70%;" data-amount="$140k"></div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <span id="month-total">Total Julio 2025: $450.000</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Información Personal -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">👤</span>
-                        <span class="h5 mb-0">Mi Información</span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between"><strong>Nombre:</strong><span>{{ datos.nombre }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Cédula:</strong><span>{{ datos.cedula }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Teléfono:</strong><span>{{ datos.telefono }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Email:</strong><span>{{ datos.email }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Dirección:</strong><span>{{ datos.direccion }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Cliente desde:</strong><span>{{ datos.cliente_desde }}</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contacto de Emergencia -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">🚨</span>
-                        <span class="h5 mb-0">Contacto de Emergencia</span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item d-flex justify-content-between"><strong>Nombre:</strong><span>{{ datos.emergencia.nombre }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Relación:</strong><span>{{ datos.emergencia.relacion }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Teléfono:</strong><span>{{ datos.emergencia.telefono }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Teléfono Alternativo:</strong><span>{{ datos.emergencia.telefono_alt }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Tipo de Sangre:</strong><span>{{ datos.emergencia.sangre }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Alergias:</strong><span>{{ datos.emergencia.alergias }}</span></li>
-                        </ul>
-                        <button class="btn btn-danger w-100" onclick="callEmergency()">📞 Llamar en Emergencia</button>
-                    </div>
-                </div>
-            </div>
+        <!-- Historial Mensual -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon monthly-history">📊</div>
+            <div class="card-title">Historial Mensual</div>
+          </div>
+          <div class="month-selector">
+  <button class="month-btn" data-mes="ene">Ene</button>
+  <button class="month-btn" data-mes="feb">Feb</button>
+  <button class="month-btn" data-mes="mar">Mar</button>
+  <button class="month-btn" data-mes="abr">Abr</button>
+  <button class="month-btn" data-mes="may">May</button>
+  <button class="month-btn" data-mes="jun">Jun</button>
+  <button class="month-btn active" data-mes="jul">Jul</button>
+  <button class="month-btn" data-mes="ago">Ago</button>
+  <button class="month-btn" data-mes="sep">Sep</button>
+  <button class="month-btn" data-mes="oct">Oct</button>
+  <button class="month-btn" data-mes="nov">Nov</button>
+  <button class="month-btn" data-mes="dic">Dic</button>
+</div>
+          <div class="history-chart">
+            {% with mes_seleccionado=request.GET.mes|default:'ene' %}
+              {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado %}
+                {% for valor in datos.historial_mensual.mes_seleccionado.barras %}
+                  <div class="chart-bar" style="height: {{ valor|floatformat:0 }}%;" data-amount="${{ valor|intcomma }}"></div>
+                {% endfor %}
+              {% else %}
+                <div style="color:red">No hay datos para este mes</div>
+              {% endif %}
+            {% endwith %}
+          </div>
+          <div style="text-align: center; margin-top: 15px;">
+              {% with mes_seleccionado=request.GET.mes|default:'ene' %}
+                {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado and datos.historial_mensual.mes_seleccionado.total %}
+                  <span id="month-total">Total {{ datos.historial_mensual.mes_seleccionado.mes }} 2025: ${{ datos.historial_mensual.mes_seleccionado.total|intcomma }}</span>
+                {% else %}
+                  <span id="month-total">Sin datos</span>
+                {% endif %}
+              {% endwith %}
+          </div>
         </div>
+        <!-- Información Personal -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon user-info">👤</div>
+            <div class="card-title">Mi Información</div>
+          </div>
+          <div id="info-display">
+            <div class="form-field-col">
+              <label class="form-label">Nombre:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.nombre }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Cédula:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.cedula }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Teléfono:</label>
+                  <div class="info-input" style="text-align:left;">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Email:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.email }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Dirección:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.direccion }}</div>
+            </div>
+            <div class="form-field-col">
+              <label class="form-label">Cliente desde:</label>
+              <div class="info-input" style="text-align:left;">{{ datos.cliente_desde }}</div>
+            </div>
+            <button type="button" class="edit-btn" onclick="toggleInfoForm(true)">Editar</button>
+          </div>
+          <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form" style="display:none;">
+            {% csrf_token %}
+            <div class="form-field-col">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" class="info-input">{% if datos.info_errors.nombre %}<div class="form-error">{{ datos.info_errors.nombre }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="cedula" class="form-label">Cédula:</label>
+              <input type="number" id="cedula" name="cedula" value="{{ datos.cedula }}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.cedula %}<div class="form-error">{{ datos.info_errors.cedula }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="telefono" class="form-label">Teléfono:</label>
+              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:':3' == '+57' %}{{ datos.telefono|slice:'3:' }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" id="email" name="email" value="{{ datos.email }}" class="info-input">{% if datos.info_errors.email %}<div class="form-error">{{ datos.info_errors.email }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="direccion" class="form-label">Dirección:</label>
+              <input type="text" id="direccion" name="direccion" value="{{ datos.direccion }}" class="info-input">
+            </div>
+            <div class="form-field-col">
+              <label for="cliente_desde" class="form-label">Cliente desde:</label>
+              <input type="text" id="cliente_desde" name="cliente_desde" value="{{ datos.cliente_desde }}" class="info-input">
+            </div>
+            <button type="submit">Guardar Cambios</button>
+            <button type="submit" formaction="{% url 'users:borrar_info' %}" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
+            <button type="button" onclick="toggleInfoForm(false)">Cancelar</button>
+          </form>
+        </div>
+        <!-- Contacto de Emergencia -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon emergency-contact">🚨</div>
+            <div class="card-title">Contacto de Emergenciaa</div>
+          </div>
+          <div id="emergencia-display">
+            {% if datos.emergencia.nombre or datos.emergencia.telefono %}
+              <div class="form-field-col">
+                <label class="form-label">Nombre:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.nombre }}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Relación:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.relacion }}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Teléfono:</label>
+                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono %}{% if datos.emergencia.telefono|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono }}{% endif %}{% else %}{{ datos.emergencia.telefono }}{% endif %}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Teléfono Alternativo:</label>
+                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono_alt %}{% if datos.emergencia.telefono_alt|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono_alt }}{% endif %}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Tipo de Sangre:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.sangre }}</div>
+              </div>
+              <div class="form-field-col">
+                <label class="form-label">Alergias:</label>
+                <div class="info-input" style="text-align:left;">{{ datos.emergencia.alergias }}</div>
+              </div>
+              <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Editar</button>
+            {% else %}
+              <div class="info-input" style="text-align:center; color:#A68932; margin-bottom:18px;">No hay contacto de emergencia registrado.</div>
+              <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Agregar Contacto</button>
+            {% endif %}
+          </div>
+          <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form" style="display:none;">
+            {% csrf_token %}
+            <div class="form-field-col">
+              <label for="emergencia_nombre" class="form-label">Nombre:</label>
+              <input type="text" id="emergencia_nombre" name="emergencia_nombre" value="{{ datos.emergencia.nombre }}" class="info-input">{% if datos.emergencia_errors.nombre %}<div class="form-error">{{ datos.emergencia_errors.nombre }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_relacion" class="form-label">Relación:</label>
+              <input type="text" id="emergencia_relacion" name="emergencia_relacion" value="{{ datos.emergencia.relacion }}" class="info-input">
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_telefono" class="form-label">Teléfono:</label>
+              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:':3' == '+57' %}{{ datos.emergencia.telefono|slice:'3:' }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_telefono_alt" class="form-label">Teléfono Alternativo:</label>
+              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:':3' == '+57' %}{{ datos.emergencia.telefono_alt|slice:'3:' }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_sangre" class="form-label">Tipo de Sangre:</label>
+              <select id="emergencia_sangre" name="emergencia_sangre" class="info-input" required>
+                <option value="" disabled {% if not datos.emergencia.sangre %}selected{% endif %}>Selecciona el tipo</option>
+                <option value="A+" {% if datos.emergencia.sangre == 'A+' %}selected{% endif %}>A+</option>
+                <option value="A-" {% if datos.emergencia.sangre == 'A-' %}selected{% endif %}>A-</option>
+                <option value="B+" {% if datos.emergencia.sangre == 'B+' %}selected{% endif %}>B+</option>
+                <option value="B-" {% if datos.emergencia.sangre == 'B-' %}selected{% endif %}>B-</option>
+                <option value="AB+" {% if datos.emergencia.sangre == 'AB+' %}selected{% endif %}>AB+</option>
+                <option value="AB-" {% if datos.emergencia.sangre == 'AB-' %}selected{% endif %}>AB-</option>
+                <option value="O+" {% if datos.emergencia.sangre == 'O+' %}selected{% endif %}>O+</option>
+                <option value="O-" {% if datos.emergencia.sangre == 'O-' %}selected{% endif %}>O-</option>
+              </select>
+            </div>
+            <div class="form-field-col">
+              <label for="emergencia_alergias" class="form-label">Alergias:</label>
+              <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input">
+            </div>
+            <button type="submit">Guardar Cambios</button>
+            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
+            <button type="button" onclick="toggleEmergenciaForm(false)">Cancelar</button>
+          </form>
+        </div>
+      </div>
     </div>
 
   <script>
-function selectMonth(button, month) {
-  document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('active'));
-  button.classList.add('active');
-
-  const bars = document.querySelectorAll('.chart-bar');
-
-  const monthData = {
-    'ene': [60, 40, 20, 70, 50],
-    'feb': [50, 75, 45, 85, 65],
-    'mar': [60, 80, 55, 90, 70],
-    'abr': [70, 85, 60, 95, 75],
-    'may': [55, 70, 45, 80, 65],
-    'jun': [60, 90, 50, 100, 75],
-    'jul': [65, 85, 50, 95, 75],
-    'ago': [0, 0, 0, 0, 0],
-    'sep': [0, 0, 0, 0, 0],
-    'oct': [0, 0, 0, 0, 0],
-    'nov': [0, 0, 0, 0, 0],
-    'dic': [0, 0, 0, 0, 0]
-  };
-
-  const monthAmounts = {
-    'ene': ['$40k', '$60k', '$30k', '$70k', '$50k'],
-    'feb': ['$50k', '$75k', '$45k', '$85k', '$65k'],
-    'mar': ['$60k', '$80k', '$55k', '$90k', '$70k'],
-    'abr': ['$70k', '$85k', '$60k', '$95k', '$75k'],
-    'may': ['$55k', '$70k', '$45k', '$80k', '$65k'],
-    'jun': ['$60k', '$90k', '$50k', '$100k', '$75k'],
-    'jul': ['$65k', '$85k', '$50k', '$95k', '$75k'],
-    'ago': ['$0k', '$0k', '$0k', '$0k', '$0k'],
-    'sep': ['$0k', '$0k', '$0k', '$0k', '$0k'],
-    'oct': ['$0k', '$0k', '$0k', '$0k', '$0k'],
-    'nov': ['$0k', '$0k', '$0k', '$0k', '$0k'],
-    'dic': ['$0k', '$0k', '$0k', '$0k', '$0k']
-  };
-
-  const monthNames = {
-    'ene': 'Enero', 'feb': 'Febrero', 'mar': 'Marzo', 'abr': 'Abril',
-    'may': 'Mayo', 'jun': 'Junio', 'jul': 'Julio', 'ago': 'Agosto',
-    'sep': 'Septiembre', 'oct': 'Octubre', 'nov': 'Noviembre', 'dic': 'Diciembre'
-  };
-
-  bars.forEach((bar, i) => {
-    bar.style.height = monthData[month][i] + '%';
-    bar.setAttribute('data-amount', monthAmounts[month][i]);
-  });
-
-  // Calcular el total sumando los montos (removiendo $ y k)
-  const total = monthAmounts[month]
-    .map(val => parseInt(val.replace(/[$k]/g, '')) * 1000)
-    .reduce((sum, num) => sum + num, 0);
-
-  document.getElementById('month-total').innerHTML =
-    `Total ${monthNames[month]} 2025: $${total.toLocaleString()}`;
+function validarInfoForm() {
+  let nombre = document.querySelector('input[name="nombre"]').value.trim();
+  let cedula = document.querySelector('input[name="cedula"]').value.trim();
+  let telefono = document.querySelector('input[name="telefono"]').value.trim();
+  let email = document.querySelector('input[name="email"]').value.trim();
+  let errores = [];
+  if (nombre.length < 3) errores.push('El nombre debe tener al menos 3 caracteres.');
+  if (!/^\d{6,}$/.test(cedula)) errores.push('La cédula debe ser numérica y tener al menos 6 dígitos.');
+  if (!/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
+  if (!email.includes('@')) errores.push('El email debe ser válido.');
+  if (errores.length) {
+    alert(errores.join('\n'));
+    return false;
+  }
+  return true;
 }
-
-
-
-    function callEmergency() {
-      if (confirm('¿Estás seguro de que deseas llamar al contacto de emergencia?')) {
-        alert('Llamando a María Elena Mendoza: +57 310 123 4567\n\n¡El personal del bar también ha sido notificado!');
-      }
-    }
-
-    // Animación de entrada para las tarjetas
-    window.addEventListener('load', () => {
-      const cards = document.querySelectorAll('.card');
-      cards.forEach((card, i) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          card.style.transition = 'all 0.6s ease';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, i * 200);
-      });
-    });
-
+function validarEmergenciaForm() {
+  let nombre = document.querySelector('input[name="emergencia_nombre"]').value.trim();
+  let telefono = document.querySelector('input[name="emergencia_telefono"]').value.trim();
+  let telefono_alt = document.querySelector('input[name="emergencia_telefono_alt"]').value.trim();
+  let errores = [];
+  if (nombre.length < 3) errores.push('El nombre de emergencia debe tener al menos 3 caracteres.');
+  if (telefono && !/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
+  if (telefono_alt && !/^\d{10}$/.test(telefono_alt)) errores.push('El teléfono alternativo debe ser numérico y tener exactamente 10 dígitos.');
+  if (errores.length) {
+    alert(errores.join('\n'));
+    return false;
+  }
+  return true;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  var infoForm = document.getElementById('info-form');
+  if (infoForm) infoForm.onsubmit = validarInfoForm;
+  var emergenciaForm = document.getElementById('emergencia-form');
+  if (emergenciaForm) emergenciaForm.onsubmit = validarEmergenciaForm;
+});
   </script>
 </body>
 </html>
