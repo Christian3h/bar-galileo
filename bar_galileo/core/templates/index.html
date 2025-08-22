@@ -1,4 +1,5 @@
 {% load static %}
+{% load format_tags %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -140,6 +141,13 @@
     </div>
   {% endif %}
 
+  <!-- ACCESO RÁPIDO -->
+  <div class="quick-access">  
+    <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn">Dashboard</a>
+    <a href="#login-section" class="quick-btn">Login</a>
+  </div>
+
+  <!-- Header -->
   <header class="header">
     <div class="container">
       <nav class="nav" style="position:relative;">
@@ -280,7 +288,7 @@
           </div>
           <div class="product-info">
             <h3 class="product-name">{{ producto.nombre }}</h3>
-            <p class="product-price">${{ producto.precio_venta }}</p>
+            <p class="product-price">{{ producto.precio_venta|format_price }}</p>
             <p class="product-description">{{ producto.descripcion|truncatewords:10 }}</p>
             <button class="btn-green" data-producto-id="{{ producto.id_producto }}">Ver producto</button>
           </div>

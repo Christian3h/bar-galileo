@@ -60,21 +60,23 @@
                 {
                     data: "precio_compra",
                     render: function(data, type, row) {
-                        // Formateamos el precio de compra con comas en miles
-                        return new Intl.NumberFormat('es-CO', {
+                        // Formateamos el precio de compra en formato colombiano
+                        const formatted = new Intl.NumberFormat('de-DE', {
                             style: 'decimal',
                             minimumFractionDigits: 0
                         }).format(data);
+                        return `$${formatted}`;
                     }
                 },
                 {
                     data: "precio_venta",
                     render: function(data, type, row) {
-                        // Formateamos el precio de venta con comas en miles
-                        return new Intl.NumberFormat('es-CO', {
+                        // Formateamos el precio de venta en formato colombiano
+                        const formatted = new Intl.NumberFormat('de-DE', {
                             style: 'decimal',
                             minimumFractionDigits: 0
                         }).format(data);
+                        return `$${formatted}`;
                     }
                 },
                 { "data": "stock" },

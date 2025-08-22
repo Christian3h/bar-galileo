@@ -52,7 +52,7 @@ const cargarMasProductos = () => {
                     </div>
                     <div class="product-info">
                         <h3 class="product-name">${producto.nombre}</h3>
-                        <p class="product-price">$${producto.precio}</p>
+                        <p class="product-price">${formatPrice(producto.precio)}</p>
                         <p class="product-description">${producto.descripcion ? producto.descripcion.substring(0, 60) + '...' : ''}</p>
                         <button class="btn-green" data-producto-id="${producto.id}">Ver producto</button>
                     </div>
@@ -352,6 +352,29 @@ const preloadHeroImages = () => {
         img.src = url;
     });
 };
+
+// Función para formatear precios en formato colombiano
+function formatPrice(price) {
+    if (price === null || price === undefined || price === '') {
+        return '$0';
+    }
+    
+    try {
+        // Convertir a número y luego a entero para eliminar decimales
+        const num = parseInt(price);
+        
+        // Usar Intl.NumberFormat para formatear con separador de miles (punto)
+        const formatted = new Intl.NumberFormat('de-DE', { 
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        }).format(num);
+        
+        // Retornar con símbolo de peso colombiano
+        return `$${formatted}`;
+    } catch (error) {
+        return '$0';
+    }
+}
 
 // Actualizar la función init para incluir el carrusel
 const init = () => {

@@ -3,6 +3,7 @@ from django.views.generic import ListView, CreateView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Role, RolePermission, Module, Action
 from .forms import RoleForm
@@ -16,7 +17,7 @@ class RolListView(ListView):
 
 from notifications.utils import notificar_usuario
 
-class RolCreateView(CreateView):
+class RolCreateView(LoginRequiredMixin, CreateView):
     model = Role
     form_class = RoleForm
     template_name = 'roles/rol_form.html'
@@ -28,7 +29,7 @@ class RolCreateView(CreateView):
         return redirect('roles:rol_permisos', role.id)
 
 
-class RolPermisosView(View):
+class RolPermisosView(LoginRequiredMixin, View):
     def get(self, request, role_id):
         role = get_object_or_404(Role, id=role_id)
         modulos = Module.objects.all()
