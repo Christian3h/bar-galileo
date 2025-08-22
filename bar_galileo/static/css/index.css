@@ -86,21 +86,7 @@ body {
   transform: translateY(-2px);
 }
 
-/* ACCESO RÁPIDO - Mejorado */
-.quick-access {
-  position: fixed;
-  top: 70px;
-  right: 18px;
-  z-index: 1200;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: rgba(20, 20, 20, 0.85);
-  border-radius: 18px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
-  padding: 10px 12px;
-  align-items: flex-end;
-}
+  
 
 .quick-btn {
   background: linear-gradient(135deg, #d4af37, #f4d467);
