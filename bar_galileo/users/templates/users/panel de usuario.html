@@ -129,7 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           </div>
         </div>
-<<<<<<< HEAD
         <!-- Historial Mensual -->
         <div class="card">
           <div class="card-header">
@@ -170,105 +169,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 {% endif %}
               {% endwith %}
           </div>
-=======
-
-        <div class="row g-4">
-            <!-- Cuenta Actual -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">💰</span>
-                        <span class="h5 mb-0">Cuenta Actual</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="display-5 fw-bold text-success text-center mb-3">{{ datos.cuenta_actual.total|format_price }}</div>
-                        <ul class="list-group mb-3">
-                            {% for item in datos.cuenta_actual.items %}
-                            <li class="list-group-item d-flex justify-content-between">{{ item.nombre }}<span>{{ item.precio|format_price }}</span></li>
-                            {% endfor %}
-                            <li class="list-group-item d-flex justify-content-between fw-bold text-success"><span><span class="badge bg-success rounded-circle me-2" style="width:12px;height:12px;"> </span>Total a Pagar</span><span>{{ datos.cuenta_actual.total|format_price }}</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Historial Mensual -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">📊</span>
-                        <span class="h5 mb-0">Historial Mensual</span>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3 d-flex flex-wrap gap-2 justify-content-center">
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'ene')">Ene</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'feb')">Feb</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'mar')">Mar</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'abr')">Abr</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'may')">May</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'jun')">Jun</button>
-                            <button class="btn btn-success btn-sm" onclick="selectMonth(this, 'jul')">Jul</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'ago')">Ago</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'sep')">Sep</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'oct')">Oct</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'nov')">Nov</button>
-                            <button class="btn btn-outline-success btn-sm" onclick="selectMonth(this, 'dic')">Dic</button>
-                        </div>
-                        <div class="d-flex align-items-end gap-2" style="height:200px;">
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 60%;" data-amount="$120k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 80%;" data-amount="$160k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 45%;" data-amount="$90k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 90%;" data-amount="$180k"></div>
-                            <div class="bg-success bg-gradient rounded-top w-100" style="height: 70%;" data-amount="$140k"></div>
-                        </div>
-                        <div class="text-center mt-3">
-                            <span id="month-total">Total Julio 2025: $450.000</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Información Personal -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">👤</span>
-                        <span class="h5 mb-0">Mi Información</span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between"><strong>Nombre:</strong><span>{{ datos.nombre }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Cédula:</strong><span>{{ datos.cedula }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Teléfono:</strong><span>{{ datos.telefono }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Email:</strong><span>{{ datos.email }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Dirección:</strong><span>{{ datos.direccion }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Cliente desde:</strong><span>{{ datos.cliente_desde }}</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contacto de Emergencia -->
-            <div class="col-12 col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header d-flex align-items-center bg-light">
-                        <span class="fs-2 me-3">🚨</span>
-                        <span class="h5 mb-0">Contacto de Emergencia</span>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-group mb-3">
-                            <li class="list-group-item d-flex justify-content-between"><strong>Nombre:</strong><span>{{ datos.emergencia.nombre }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Relación:</strong><span>{{ datos.emergencia.relacion }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Teléfono:</strong><span>{{ datos.emergencia.telefono }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Teléfono Alternativo:</strong><span>{{ datos.emergencia.telefono_alt }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Tipo de Sangre:</strong><span>{{ datos.emergencia.sangre }}</span></li>
-                            <li class="list-group-item d-flex justify-content-between"><strong>Alergias:</strong><span>{{ datos.emergencia.alergias }}</span></li>
-                        </ul>
-                        <button class="btn btn-danger w-100" onclick="callEmergency()">📞 Llamar en Emergencia</button>
-                    </div>
-                </div>
-            </div>
->>>>>>> origin/christian
         </div>
         <!-- Información Personal -->
         <div class="card">
@@ -456,7 +356,3 @@ document.addEventListener('DOMContentLoaded', function() {
   </script>
 </body>
 </html>
-<<<<<<< HEAD
-
-=======
->>>>>>> 2339d7021593a999d3c9c21742e4e414f95c4d1e
