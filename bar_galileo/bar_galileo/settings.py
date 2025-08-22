@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     #app para el manejo de las notificaciones 
     'channels',
     'notifications',
-]
+    ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -116,7 +116,7 @@ ASGI_APPLICATION = 'bar_galileo.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db .sqlite3',
     }
 }
 
