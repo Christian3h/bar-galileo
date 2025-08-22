@@ -1,0 +1,10 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+<h1>Crear marca</h1>
+<a href="{% url 'products:brands_admin' %}" class="btn btn-secondary">Volver</a>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Guardar</button>
+</form>
+{% endblock %}

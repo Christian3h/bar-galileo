@@ -1,9 +1,74 @@
 {% load i18n %}
+{% load static %}
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
+        <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
+        <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+        <style>
+        /* Avatar Gmail style */
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #d4af37;
+            background: #222;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .user-avatar-initials {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #d4af37;
+            color: #222;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #d4af37;
+            vertical-align: middle;
+        }
+        .user-avatar-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-avatar-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #1a1a1a;
+            min-width: 180px;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            z-index: 2000;
+            padding: 10px 0;
+        }
+        .user-avatar-dropdown:hover .user-avatar-dropdown-content,
+        .user-avatar-dropdown:focus-within .user-avatar-dropdown-content {
+            display: block;
+        }
+        .user-avatar-dropdown-content a {
+            color: #d4af37;
+            padding: 10px 20px;
+            display: block;
+            text-decoration: none;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+        .user-avatar-dropdown-content a:hover {
+            background: #222;
+        }
+        </style>
         <title>
             {% block head_title %}
             {% endblock head_title %}
@@ -13,74 +78,80 @@
     </head>
     <body>
         {% block body %}
-            {% if messages %}
-                <div>
-                    <strong>{% trans "Messages:" %}</strong>
-                    <ul>
-                        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-            <div>
-                <strong>{% trans "Menu:" %}</strong>
-                <ul>
+            {% include 'components/notificaciones.html' %}
+            
+            <!-- Header Navigation -->
+            <div class="container-menu">
+                <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+                <a href="/" class="logo">BAR GALILEO</a>
+                <ul id="menu-items">
                     {% if user.is_authenticated %}
+                        <li><a href="{% url 'core:index' %}">Inicio</a></li>
                         {% url 'account_email' as email_url_ %}
                         {% if email_url_ %}
-                            <li>
-                                <a href="{{ email_url_ }}">{% trans "Change Email" %}</a>
-                            </li>
+                            <li><a href="{{ email_url_ }}">Cambiar Email</a></li>
                         {% endif %}
                         {% url 'account_change_password' as change_password_url_ %}
                         {% if change_password_url_ %}
-                            <li>
-                                <a href="{{ change_password_url_ }}">{% trans "Change Password" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'socialaccount_connections' as connections_url_ %}
-                        {% if connections_url_ %}
-                            <li>
-                                <a href="{{ connections_url_ }}">{% trans "Account Connections" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'mfa_index' as mfa_url_ %}
-                        {% if mfa_url_ %}
-                            <li>
-                                <a href="{{ mfa_url_ }}">{% trans "Two-Factor Authentication" %}</a>
-                            </li>
-                        {% endif %}
-                        {% url 'usersessions_list' as usersessions_list_url_ %}
-                        {% if usersessions_list_url_ %}
-                            <li>
-                                <a href="{{ usersessions_list_url_ }}">{% trans "Sessions" %}</a>
-                            </li>
+                            <li><a href="{{ change_password_url_ }}">Cambiar Contraseña</a></li>
                         {% endif %}
                         {% url 'account_logout' as logout_url_ %}
                         {% if logout_url_ %}
-                            <li>
-                                <a href="{{ logout_url_ }}">{% trans "Sign Out" %}</a>
-                            </li>
+                            <li><a href="{{ logout_url_ }}">Cerrar Sesión</a></li>
+                        {% endif %}
+                        {% if user.is_staff or user.is_superuser %}
+                        <li>
+                            <div class="user-avatar-dropdown" tabindex="0">
+                                {% if user.userprofile.avatar %}
+                                    <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
+                                {% else %}
+                                    <span class="user-avatar-initials">
+                                        {{ user.first_name|default:user.username|slice:":1"|upper }}
+                                    </span>
+                                {% endif %}
+                                <div class="user-avatar-dropdown-content">
+                                    <div style="padding: 10px 20px; color: #fff; font-size: 15px;">
+                                        {{ user.get_full_name|default:user.username }}
+                                    </div>
+                                    <a href="{% url 'account_email' %}">Cambiar foto</a>
+                                    <a href="{% url 'account_email' %}?remove_avatar=1">Eliminar foto</a>
+                                </div>
+                            </div>
+                        </li>
                         {% endif %}
                     {% else %}
+                        <li><a href="{% url 'core:index' %}">Inicio</a></li>
                         {% url 'account_login' as login_url_ %}
                         {% if login_url_ %}
-                            <li>
-                                <a href="{{ login_url_ }}">{% trans "Sign In" %}</a>
-                            </li>
+                            <li><a href="{{ login_url_ }}">Iniciar Sesión</a></li>
                         {% endif %}
                         {% url 'account_signup' as signup_url_ %}
                         {% if signup_url_ %}
-                            <li>
-                                <a href="{{ signup_url_ }}">{% trans "Sign Up" %}</a>
-                            </li>
+                            <li><a href="{{ signup_url_ }}">Registrarse</a></li>
                         {% endif %}
                     {% endif %}
                 </ul>
             </div>
+
             {% block content %}
             {% endblock content %}
         {% endblock body %}
+        
         {% block extra_body %}
         {% endblock extra_body %}
+        
+        <script src="{% static 'js/admin/notification_history.js' %}"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const toggle = document.getElementById("menu-toggle");
+                const menu = document.getElementById("menu-items");
+            
+                if (toggle && menu) {
+                    toggle.addEventListener("click", function () {
+                        menu.classList.toggle("show");
+                    });
+                }
+            });
+        </script>
     </body>
 </html>

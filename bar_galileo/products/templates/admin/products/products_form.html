@@ -1,0 +1,37 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Producto</h1>
+
+<a href="{% url 'products:products_admin' %}" class="btn btn-secondary" >Volver</a>
+
+<!-- Formulario principal de creación/edición -->
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <label for="id_imagenes">Imágenes:</label>
+    <input type="file" name="imagenes" id="id_imagenes" multiple>
+
+    <button type="submit" class="btn btn-primary">
+        {% if object %}Actualizar{% else %}Crear{% endif %}
+    </button>
+</form>
+
+<!-- Imágenes actuales, con formularios separados para eliminar -->
+{% if imagenes %}
+    <h4>Imágenes actuales</h4>
+    <div class="row">
+        {% for imagen in imagenes %}
+            <div class="col-md-3 mb-3">
+                <img src="{% static imagen.imagen %}" class="img-thumbnail" style="max-width:120px;">
+                <form method="post" action="{% url 'products:producto_imagen_eliminar' imagen.id_imagen %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger mt-2">Eliminar</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

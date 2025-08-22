@@ -4,9 +4,12 @@ Define las URLs para vistas públicas, autenticación y CRUD de productos.
 """
 
 from django.urls import path
+
+app_name = "products"
 from . import views
-from . import views_api  
-from .views import EliminarImagenProductoView
+from . import views_api
+from .views import ProductoDetailView
+
 
 
 urlpatterns = [
@@ -19,23 +22,52 @@ urlpatterns = [
     # path("logout/", views.LogoutView.as_view(), name="logout"),  # Logout de usuario
     # path("signup/", views.SignupView.as_view(), name="signup"),  # Registro de usuario
     path('api/productos/', views.ProductosJsonView.as_view(), name='productos_json'),  # API productos (JSON)
-    path('api/proveedores/', views_api.proveedores_json, name='proveedores_json'),  # API proveedores (JSON)
-    path('api/marcas/', views_api.marcas_json, name='marcas_json'),  # API marcas (JSON)
-    path('api/categorias/', views_api.categorias_json, name='categorias_json'),  # API categorías (JSON)
-    path("productos/", views.ProductosView.as_view(), name="productos"),  # Listado y alta de productos
-    path("productos/editar/<int:pk>/", views.ProductoUpdateView.as_view(), name="producto_editar"),  # Editar producto
-    path("productos/eliminar/<int:pk>/", views.ProductoDeleteView.as_view(), name="producto_eliminar"),  # Eliminar producto
-    path("categorias/", views.CategoriasView.as_view(), name="categorias"),  # Listado y alta de categorías
-    path("categorias/editar/<int:pk>/", views.CategoriaUpdateView.as_view(), name="categoria_editar"),  # Editar categoría
-    path("categorias/eliminar/<int:pk>/", views.CategoriaDeleteView.as_view(), name="categoria_eliminar"),  # Eliminar categoría
-    path("proveedores/", views.ProveedoresView.as_view(), name="proveedores"),  # Listado y alta de proveedores
-    path("proveedores/editar/<int:pk>/", views.ProveedorUpdateView.as_view(), name="proveedor_editar"),  # Editar proveedor
-    path("proveedores/eliminar/<int:pk>/", views.ProveedorDeleteView.as_view(), name="proveedor_eliminar"),  # Eliminar proveedor
-    path("marcas/", views.MarcasView.as_view(), name="marcas"),  # Listado y alta de marcas
-    path("marcas/editar/<int:pk>/", views.MarcaUpdateView.as_view(), name="marca_editar"),  # Editar marca
-    path("marcas/eliminar/<int:pk>/", views.MarcaDeleteView.as_view(), name="marca_eliminar"),  # Eliminar marca
-    path("productos/imagen/eliminar/<int:pk>/", EliminarImagenProductoView.as_view(), name="producto_imagen_eliminar"),
+    # path('api/proveedores/', views_api.proveedores_json, name='proveedores_json'),  # API proveedores (JSON)
+    # path('api/marcas/', views_api.marcas_json, name='marcas_json'),  # API marcas (JSON)
+    # path('api/categorias/', views_api.categorias_json, name='categorias_json'),  # API categorías (JSON)
+    # path("productos/", views.ProductosView.as_view(), name="productos"),  # Listado y alta de productos
+    # path("productos/editar/<int:pk>/", views.ProductoUpdateView.as_view(), name="producto_editar"),  # Editar producto
+    # path("productos/eliminar/<int:pk>/", views.ProductoDeleteView.as_view(), name="producto_eliminar"),  # Eliminar producto
+    # path("categorias/", views.CategoriasView.as_view(), name="categorias"),  # Listado y alta de categorías
+    # path("categorias/editar/<int:pk>/", views.CategoriaUpdateView.as_view(), name="categoria_editar"),  # Editar categoría
+    # path("categorias/eliminar/<int:pk>/", views.CategoriaDeleteView.as_view(), name="categoria_eliminar"),  # Eliminar categoría
+    # path("proveedores/", views.ProveedoresView.as_view(), name="proveedores"),  # Listado y alta de proveedores
+    # path("proveedores/editar/<int:pk>/", views.ProveedorUpdateView.as_view(), name="proveedor_editar"),  # Editar proveedor
+    # path("proveedores/eliminar/<int:pk>/", views.ProveedorDeleteView.as_view(), name="proveedor_eliminar"),  # Eliminar proveedor
+    # path("marcas/", views.MarcasView.as_view(), name="marcas"),  # Listado y alta de marcas
+    # path("marcas/editar/<int:pk>/", views.MarcaUpdateView.as_view(), name="marca_editar"),  # Editar marca
+    # path("marcas/eliminar/<int:pk>/", views.MarcaDeleteView.as_view(), name="marca_eliminar"),  # Eliminar marca
+    # path("productos/imagen/eliminar/<int:pk>/", EliminarImagenProductoView.as_view(), name="producto_imagen_eliminar"),
+    # URLs para gestión de stock
+    # path("stock/", views.StockView.as_view(), name="stock"),  # Vista principal de stock
+    # path("stock/actualizar/", views.actualizar_stock, name="actualizar_stock"),  # Actualizar stock
+    # path('api/stock/', views.StockJsonView.as_view(), name='stock_json'),  # API stock (JSON)
 
+
+    #### rutas para el dashboard de los administradores
+    path('adminD/products/', views.ProductosAdminView.as_view(), name='products_admin'),
+    path('adminD/products/create/', views.ProductoCreateAdminView.as_view(), name='products_create_admin'),
+    path('adminD/products/update/<int:pk>/', views.ProductoUpdateAdminView.as_view(), name='products_edit_admin'),
+    path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),
+    path("adminD/products_img/delete/<int:pk>/", views.EliminarImagenProductoAdminView.as_view(), name="producto_imagen_eliminar"),
+
+    #### rutas para el dashboard de las categorías
+    path('adminD/categories/', views.CategoriasAdminView.as_view(), name='categories_admin'),
+    path('adminD/categories/create/', views.CategoriaCreateAdminView.as_view(), name='categories_create_admin'),
+    path('adminD/categories/update/<int:pk>/', views.CategoriaUpdateAdminView.as_view(), name='categories_edit_admin'),
+    path('adminD/categories/delete/<int:pk>/', views.CategoriaDeleteAdminView.as_view(), name='categories_delete_admin'),
+    #### rutas para el dashboard de los proveedores
+    path('adminD/proveedores/', views.ProveedoresAdminView.as_view(), name='proveedores_admin'),
+    path('adminD/proveedores/create/', views.ProveedorCreateAdminView.as_view(), name='proveedores_create_admin'),
+    path('adminD/proveedores/update/<int:pk>/', views.ProveedorUpdateAdminView.as_view(), name='proveedores_edit_admin'),
+    path('adminD/proveedores/delete/<int:pk>/', views.ProveedorDeleteAdminView.as_view(), name='proveedores_delete_admin'),
+
+    #### rutas para el dashboard de brands (marcas)
+    path('adminD/brands/', views.BrandsAdminView.as_view(), name='brands_admin'),
+    path('adminD/brands/create/', views.BrandCreateAdminView.as_view(), name='brands_create_admin'),
+    path('adminD/brands/update/<int:pk>/', views.BrandUpdateAdminView.as_view(), name='brands_update_admin'),
+    path('adminD/brands/delete/<int:pk>/', views.BrandDeleteAdminView.as_view(), name='brands_delete_admin'),
+    path('producto/<int:pk>/', ProductoDetailView.as_view(), name='producto_detalle'),
 ]
 
 

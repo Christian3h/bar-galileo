@@ -1,0 +1,187 @@
+{% extends 'base_admin.html' %}
+
+{% load static %}
+
+{% load roles_tags %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/tables/tables.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/main/tables/modal.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% csrf_token %}
+
+  <div class="header">
+    <h2>Mesas</h2>
+    <a href="{% url 'products:products_admin' %}" class="btn btn-primary">Productos</a>
+  </div>
+
+  {% if request.user|has_perm:"tables,crear" %}
+  <a href="{% url 'tables:crear_mesa' %}" class="btn btn-success" style="margin-bottom: 20px">Crear Mesa</a>
+  {% endif %}
+
+  <!-- Tarjetas tipo grid -->
+  <div class="mesas-container">
+    {% for mesa in mesas %}
+    <div class="mesa-card {{ mesa.estado|slugify }}">
+      {% if mesa.pedidos.exists %}
+      <span class="pedido-activo">Pedido activo</span>
+      {% endif %}
+
+      <!-- Nombre y Descripción -->
+      <div>
+        <div class="mesa-nombre" id="ver_nombre_{{ mesa.id }}">
+          {{ mesa.nombre }}
+        </div>
+        <div class="mesa-desc" id="ver_desc_{{ mesa.id }}">
+          {{ mesa.descripcion }}
+        </div>
+      </div>
+
+      <!-- Estado -->
+      {% if request.user|has_perm:"tables,editar" %}
+      <form method="post" action="{% url 'tables:actualizar_estado' mesa.id %}">
+        {% csrf_token %}
+        <div class="input-group">
+          <select name="estado" class="form-select" onchange="this.form.submit()">
+            <option value="disponible" {% if mesa.estado == "disponible" %}selected{% endif %}>
+              Disponible
+            </option>
+            <option value="ocupada" {% if mesa.estado == "ocupada" %}selected{% endif %}>
+              Ocupada
+            </option>
+            <option value="reservada" {% if mesa.estado == "reservada" %}selected{% endif %}>
+              Reservada
+            </option>
+            <option value="fuera de servicio" {% if mesa.estado == "fuera de servicio" %}selected{% endif %}>
+              Fuera de servicio
+            </option>
+          </select>
+        </div>
+      </form>
+      {% else %}
+      <div class="input-group">
+        <select name="estado" class="form-select" disabled>
+            <option>{{ mesa.get_estado_display }}</option>
+        </select>
+      </div>
+      {% endif %}
+
+      <!-- Acciones -->
+      <div class="acciones">
+        <button class="btn btn-primary btn-sm" onclick="gestionarPedido('{{ mesa.id }}')">
+          Pedido
+        </button>
+        {% if request.user|has_perm:"tables,editar" %}
+        <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}"
+          onclick="habilitarEdicion('{{ mesa.id }}')">
+          Editar
+        </button>
+        {% endif %}
+        {% if request.user|has_perm:"tables,eliminar" %}
+        <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
+          Eliminar
+        </a>
+        {% endif %}
+      </div>
+
+      <!-- Formulario de edición -->
+      <form method="post" action="{% url 'tables:editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form"
+        style="{% if error_mesa_pk == mesa.pk %}display: block;{% else %}display: none;{% endif %}">
+        {% csrf_token %}
+        <input type="hidden" name="estado" value="{{ mesa.estado }}">
+
+        {% if error_mesa_pk == mesa.pk and edit_form %}
+            <div class="form-group">
+                <input type="text" name="nombre" class="form-control" value="{{ edit_form.nombre.value|default:'' }}" required>
+                {% for error in edit_form.nombre.errors %}
+                    <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <textarea name="descripcion" class="form-control" rows="2" required>{{ edit_form.descripcion.value|default:'' }}</textarea>
+                {% for error in edit_form.descripcion.errors %}
+                    <div class="invalid-feedback" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="form-group">
+                <input type="text" name="nombre" class="form-control" value="{{ mesa.nombre }}" required />
+            </div>
+            <div class="form-group">
+                <textarea name="descripcion" class="form-control" rows="2" required>{{ mesa.descripcion }}</textarea>
+            </div>
+        {% endif %}
+
+        <div class="acciones">
+          <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+          <button type="button" class="btn btn-danger btn-sm" onclick="cancelarEdicion('{{ mesa.id }}')">
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Modal de Pedido -->
+  <div id="pedidoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Gestionar Pedido - <span id="mesaNombre"></span></h3>
+        <span class="close" onclick="cerrarModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- Lista de Productos -->
+        <div>
+          <h4>Productos</h4>
+          <input type="text" class="form-control" id="buscarProducto" placeholder="Buscar producto..." />
+          <div class="productos-lista" id="productosLista"></div>
+        </div>
+
+        <!-- Pedido Actual -->
+        <div class="pedido-items">
+          <h4>Pedido Actual</h4>
+          <div id="pedidoItems"></div>
+          <div style="margin-top: 15px">
+            <h4>Total: $<span id="pedidoTotal">0.00</span></h4>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" onclick="cerrarModal()">
+          Cerrar
+        </button>
+        <button type="button" class="btn btn-success" onclick="facturarPedido()">
+          Facturar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor para notificaciones toast -->
+  <div id="toast-container"></div>
+
+  <!-- Modal de Confirmación Genérico -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content-small">
+      <div class="modal-header">
+        <h3 id="confirmTitle"></h3>
+        <span class="close" id="confirmClose">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="confirmCancel">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmOk">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/tables/tables.js' %}"></script>
+
+</div>
+
+{% endblock %}
