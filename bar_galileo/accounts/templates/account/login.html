@@ -31,6 +31,9 @@
                     {% element button type="submit" tags="prominent,login"  %}
                         {% trans "Sign In" %}
                     {% endelement %}
+                    {% if SOCIALACCOUNT_ENABLED %}
+                        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+                    {% endif %}
                 {% endslot %}
             {% endelement %}
         {% endif %}
@@ -49,9 +52,6 @@
                     {% endelement %}
                 {% endif %}
             {% endelement %}
-        {% endif %}
-        {% if SOCIALACCOUNT_ENABLED %}
-            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
         {% endif %}
     </div>
     {% endblock content %}
