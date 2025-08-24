@@ -1,7 +1,7 @@
 {% load static %}
 {% load roles_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
     <script src="{% static 'js/DataTables/jquery-3.7.1.min.js' %}"></script>
     <link href="{% static 'js/DataTables/datatables.css' %}" rel="stylesheet">
- 
+
     <script src="{% static 'js/DataTables/datatables.js' %}"></script>
 
     {% block extra_css %}
@@ -117,7 +117,7 @@
                 <div class="notification-header">
                     <h4>Notificaciones</h4>
                     <button id="mark-all-as-read">Marcar todas como leídas</button>
-                    
+
                     <ul class="notification-list" id="notification-list">
                     <!-- Las notificaciones se cargarán aquí -->
                     </ul>

@@ -19,22 +19,21 @@
         {% block extra_head %}
         {% endblock extra_head %}
     </head>
-    <body>
+    <body class="{% if not user.is_authenticated %}auth-page{% endif %}">
         {% block body %}
             {% include 'components/notificaciones.html' %}
 
-            <!-- Header Navigation -->
-            <div class="container-menu">
-                <button class="menu-toggle" id="menu-toggle">&#9776;</button>
-                <a href="/" class="logo">BAR GALILEO</a>
-                <ul id="menu-items">
-                    {% if user.is_authenticated %}
+            {% if user.is_authenticated %}
+                <!-- Header Navigation for Authenticated Users -->
+                <div class="container-menu">
+                    <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+                    <ul id="menu-items">
                         <li><a href="{% url 'core:index' %}">Inicio</a></li>
                         <li><a href="{% url 'account_email' %}">Email</a></li>
                         <li><a href="{% url 'account_change_password' %}">Contraseña</a></li>
                         <li><a href="{% url 'socialaccount_connections' %}">Conexiones</a></li>
                         <li><a href="{% url 'account_logout' %}">Cerrar Sesión</a></li>
-                        
+
                         {% if user.is_staff or user.is_superuser %}
                         <li>
                             <div class="user-avatar-dropdown" tabindex="0">
@@ -55,13 +54,16 @@
                             </div>
                         </li>
                         {% endif %}
-                    {% else %}
-                        <li><a href="{% url 'core:index' %}">Inicio</a></li>
-                        <li><a href="{% url 'account_login' %}">Iniciar Sesión</a></li>
-                        <li><a href="{% url 'account_signup' %}">Registrarse</a></li>
-                    {% endif %}
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            {% else %}
+                <!-- Centered Logo for Unauthenticated Users -->
+                <div class="auth-logo-container">
+                    <a href="/">
+                        <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo" class="auth-logo">
+                    </a>
+                </div>
+            {% endif %}
 
             {% block content %}
             {% endblock content %}
