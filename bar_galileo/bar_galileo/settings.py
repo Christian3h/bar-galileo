@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = 'static/'
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    #apps propias 
+    #apps propias
     'core', # se encarga las paginas de inicio
     'products',
     'accounts.apps.AccountsConfig',
@@ -54,13 +54,13 @@ INSTALLED_APPS = [
     'admin_dashboard',
     #app para facturación
     'facturacion',
-    #apps necesarias para la libreria django-allauth 
+    #apps necesarias para la libreria django-allauth
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    #app para el manejo de las notificaciones 
+    #app para el manejo de las notificaciones
     'channels',
     'notifications',
     ]
@@ -89,11 +89,11 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
                 os.path.join(BASE_DIR, 'accounts', 'templates'),
-                os.path.join(BASE_DIR, 'products', 'templates'), 
-                os.path.join(BASE_DIR, 'core', 'templates'), 
-                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'), 
+                os.path.join(BASE_DIR, 'products', 'templates'),
+                os.path.join(BASE_DIR, 'core', 'templates'),
+                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'),
                 os.path.join(BASE_DIR, 'notifications', 'templates')
-                ],  
+                ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,7 +116,7 @@ ASGI_APPLICATION = 'bar_galileo.asgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db .sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -188,7 +188,7 @@ SOCIALACCOUNT_PROVIDERS = {
 LOGIN_URL = '/accounts/login/'  # link que redirige al login
 LOGIN_REDIRECT_URL = '/'
 
-#---------------------- credenciales para enviar correos 
+#---------------------- credenciales para enviar correos
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -200,7 +200,7 @@ EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
 
 #bar-galileo
 
-ALLOWED_HOSTS = ['*'] #permitir varios enlaces 
+ALLOWED_HOSTS = ['*'] #permitir varios enlaces
 
 
 

@@ -8,26 +8,29 @@
 
 {% block content %}
         <h1 class="my-4">Lista de Productos</h1>
-        <!-- Tabla con ID específico para ser utilizada con DataTables -->
-        <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
-            <thead>
-                <tr>
-                    <th class="imagenT" >Imagen</th>
-                    <th class="nombreT" >Nombre</th>
-                    <th class="precio-compraT" >Precio Compra</th>
-                    <th class="precio-ventaT" >Precio Venta</th>
-                    <th class="stockT" >Stock</th>
-                    <th class="descripcionT" >Descripción</th>
-                    <th class="categoriaT" >Categoría</th>
-                    <th class="proveedorT">Proveedor</th>
-                    <th class="marcaT" >Marca</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Las filas serán llenadas por AJAX -->
-            </tbody>
-        </table>
+        <div class="table-contenedor">
+            <div class="table-responsive">
+                <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="imagenT" >Imagen</th>
+                            <th class="nombreT" >Nombre</th>
+                            <th class="precio-compraT" >Precio Compra</th>
+                            <th class="precio-ventaT" >Precio Venta</th>
+                            <th class="stockT" >Stock</th>
+                            <th class="descripcionT" >Descripción</th>
+                            <th class="categoriaT" >Categoría</th>
+                            <th class="proveedorT">Proveedor</th>
+                            <th class="marcaT" >Marca</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas serán llenadas por AJAX -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     
 
     <script>
