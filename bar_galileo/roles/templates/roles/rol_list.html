@@ -1,29 +1,47 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-<h2>Roles</h2>
-<table id="roles-table" class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for rol in roles %}
-        <tr>
-            <td>{{ rol.nombre }}</td>
-            <td>{{ rol.descripcion }}</td>
-            <td>
-                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-primary">Editar permisos</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% load static %}
+{% load roles_tags %}
+<div class="container">
+    <h2 class="my-4">Roles</h2>
+    <div class="table-contenedor">
+        <div class="table-responsive">
+            <table id="roles-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rol in roles %}
+                    <tr>
+                        <td>{{ rol.nombre }}</td>
+                        <td>{{ rol.descripcion }}</td>
+                        <td>
+                            <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info">Permisos</a>
+                            {% if request.user|has_perm:"roles,editar" %}
+                                <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                            {% endif %}
+                            {% if request.user|has_perm:"roles,eliminar" %}
+                                <a href="{% url 'roles:rol_delete' rol.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <script>
-$(document).ready(function() {
-    $('#roles-table').DataTable();
-});
+    $(document).ready(function () {
+        $('#roles-table').DataTable({
+            "language": {
+                "url": "{% static 'js/DataTables/es-ES.json' %}"
+            }
+        });
+    });
 </script>
 {% endblock %}
