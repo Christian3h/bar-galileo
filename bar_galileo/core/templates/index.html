@@ -1,5 +1,7 @@
 {% load static %}
 {% load format_tags %}
+{% load roles_tags %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,14 +13,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <style>
-    .avatar-fixed-corner {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 1300;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .nav-avatar-item {
+      position: relative;
     }
     .user-avatar, .user-avatar-initials {
       width: 38px;
@@ -33,6 +29,7 @@
       font-weight: 700;
       font-size: 1.1rem;
       color: #222;
+      cursor: pointer;
     }
     .user-avatar-initials {
       background: #d4af37;
@@ -42,21 +39,21 @@
       display: none;
       position: absolute;
       right: 0;
-      top: 45px;
+      top: 50px;
       background: #1a1a1a;
-      min-width: 150px;
+      min-width: 180px;
       border-radius: 10px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.18);
       z-index: 2000;
       padding: 10px 0;
     }
-    .avatar-fixed-corner:focus-within .user-avatar-dropdown-content,
-    .avatar-fixed-corner:hover .user-avatar-dropdown-content {
+    .nav-avatar-item:focus-within .user-avatar-dropdown-content,
+    .nav-avatar-item:hover .user-avatar-dropdown-content {
       display: block;
     }
     .user-avatar-dropdown-content a {
       color: #d4af37;
-      padding: 10px 20px;
+      padding: 12px 20px;
       display: block;
       text-decoration: none;
       font-size: 15px;
@@ -65,14 +62,12 @@
     .user-avatar-dropdown-content a:hover {
       background: #222;
     }
-    /* Negrilla para Dashboard y LOGIN */
     .nav-menu .nav-strong {
       font-weight: 700;
       letter-spacing: 1px;
       color: #fff !important;
       text-transform: uppercase;
     }
-    /* Responsive hamburguesa */
     @media (max-width: 900px) {
       .menu-toggle {
         display: block;
@@ -102,6 +97,19 @@
       .nav-menu li {
         margin: 0 0 10px 0;
       }
+      .nav-avatar-item {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #333;
+      }
+      .user-avatar-dropdown-content {
+        position: relative;
+        top: 0;
+        background: transparent;
+        box-shadow: none;
+        padding: 10px 0 0;
+        min-width: auto;
+      }
     }
     @media (min-width: 901px) {
       .menu-toggle {
@@ -121,26 +129,6 @@
   </style>
 </head>
 <body>
-  <!-- Avatar fijo en la esquina superior derecha -->
-  {% if user.is_authenticated %}
-    <div class="avatar-fixed-corner" tabindex="0">
-      {% if user.userprofile.avatar %}
-        <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
-      {% else %}
-        <span class="user-avatar-initials">
-          {{ user.get_full_name|default:user.username|slice:":1"|upper }}
-        </span>
-      {% endif %}
-      <div class="user-avatar-dropdown-content">
-        <div style="padding: 10px 20px; color: #fff; font-size: 15px;">
-          {{ user.get_full_name|default:user.username }}
-        </div>
-        <a href="{% url 'account_email' %}">Perfil</a>
-        <a href="{% url 'account_logout' %}">Cerrar sesión</a>
-      </div>
-    </div>
-  {% endif %}
-
   <!-- Header -->
   <header class="header">
     <div class="container">
@@ -153,8 +141,28 @@
           <li><a href="#carta-section">CARTA</a></li>
           <li><a href="#reservas-section">RESERVAS</a></li>
           <li><a href="#contact">CONTACTO</a></li>
-          <li><a href="{% url 'admin_dashboard:dashboard' %}" class="nav-strong">Dashboard</a></li>
-          {% if not user.is_authenticated %}
+
+          {% if user.is_authenticated %}
+            <li class="nav-avatar-item" tabindex="0">
+              {% if user.perfilusuario.avatar %}
+                <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar" class="user-avatar">
+              {% else %}
+                <span class="user-avatar-initials">
+                  {{ user.get_full_name|default:user.username|slice:":1"|upper }}
+                </span>
+              {% endif %}
+              <div class="user-avatar-dropdown-content">
+                <div style="padding: 10px 20px; color: #fff; font-size: 15px; border-bottom: 1px solid #333; margin-bottom: 5px;">
+                  Hola, {{ user.get_full_name|default:user.username }}
+                </div>
+                <a href="{% url 'users:panel_usuario' %}">Mi Panel</a>
+                {% if request.user|has_perm:"dashboard,ver" %}
+                <a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a>
+                {% endif %}
+                <a href="{% url 'account_logout' %}">Cerrar sesión</a>
+              </div>
+            </li>
+          {% else %}
             <li><a href="/accounts/login/" class="nav-strong">LOGIN</a></li>
           {% endif %}
         </ul>

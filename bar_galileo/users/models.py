@@ -8,6 +8,7 @@ class PerfilUsuario(models.Model):
     telefono = models.CharField(max_length=20, blank=True)
     direccion = models.CharField(max_length=200, blank=True)
     cliente_desde = models.CharField(max_length=20, blank=True)
+    avatar = models.ImageField(upload_to='img/avatar/', null=True, blank=True)
 
 class Emergencia(models.Model):
     perfil = models.OneToOneField(PerfilUsuario, on_delete=models.CASCADE, related_name='emergencia')

@@ -8,6 +8,33 @@
     <title>Panel de Usuario - Bar Galileo</title>
     <link rel="stylesheet" href="/static/css/panel_usuario_custom.css">
     <style>
+.avatar-container {
+    margin-bottom: 15px;
+}
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #A68932;
+}
+.default-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    border: 3px solid #A68932;
+}
+.avatar-management {
+    padding: 15px;
+    text-align: center;
+}
 .form-error {
   color: #BF452A;
   background: #262626;
@@ -103,9 +130,13 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
     <div class="container">
       <div class="header">
-        <h1 style="display: flex; justify-content: center; align-items: center;">
-          <img src="/static/img/favicon/apple-touch-icon.png" alt="icono" style="height: 150px; width: 150px; object-fit: contain; vertical-align: middle;">
-        </h1>
+        <div class="avatar-container">
+            {% if datos.avatar_url %}
+                <img src="{{ datos.avatar_url }}" alt="Avatar" class="profile-avatar">
+            {% else %}
+                <div class="default-avatar">{{ request.user.username|slice:":1"|upper }}</div>
+            {% endif %}
+        </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
       </div>
       <div class="dashboard">
@@ -176,6 +207,16 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-icon user-info">👤</div>
             <div class="card-title">Mi Información</div>
           </div>
+          <div class="avatar-management">
+              <form method="post" enctype="multipart/form-data" action="{% url 'users:panel_usuario' %}">
+                  {% csrf_token %}
+                  <label for="avatar-upload" class="edit-btn">Subir/Cambiar Foto</label>
+                  <input id="avatar-upload" type="file" name="avatar" accept="image/*" style="display: none;" onchange="this.form.submit()">
+                  {% if datos.avatar_url %}
+                      <button type="submit" name="delete_avatar" value="1" class="edit-btn" onclick="return confirm('¿Seguro que quieres eliminar tu foto de perfil?');">Eliminar Foto</button>
+                  {% endif %}
+              </form>
+          </div>
           <div id="info-display">
             <div class="form-field-col">
               <label class="form-label">Nombre:</label>
@@ -215,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="form-field-col">
               <label for="telefono" class="form-label">Teléfono:</label>
-              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:':3' == '+57' %}{{ datos.telefono|slice:'3:' }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
+              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:":3" == '+57' %}{{ datos.telefono|slice:"3:" }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="email" class="form-label">Email:</label>
@@ -284,11 +325,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="form-field-col">
               <label for="emergencia_telefono" class="form-label">Teléfono:</label>
-              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:':3' == '+57' %}{{ datos.emergencia.telefono|slice:'3:' }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
+              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:":3" == '+57' %}{{ datos.emergencia.telefono|slice:"3:" }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_telefono_alt" class="form-label">Teléfono Alternativo:</label>
-              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:':3' == '+57' %}{{ datos.emergencia.telefono_alt|slice:'3:' }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
+              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:":3" == '+57' %}{{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_sangre" class="form-label">Tipo de Sangre:</label>
