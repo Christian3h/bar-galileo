@@ -1,3 +1,4 @@
+
 from allauth.account.signals import user_logged_in, user_signed_up, password_reset
 from django.dispatch import receiver
 from notifications.utils import notificar_usuario
@@ -24,6 +25,11 @@ def handle_user_logged_in(sender, request, user, **kwargs):
         print(f"[DEBUG][Signals] Social login via Google for user: {user.username}")
         try:
             perfil, created = PerfilUsuario.objects.get_or_create(user=user)
+            
+            if not perfil.nombre:
+                perfil.nombre = sociallogin.account.extra_data.get('name', user.get_full_name())
+                perfil.save()
+
             if perfil.avatar:
                 print(f"[DEBUG][Signals] User {user.username} already has an avatar. Skipping.")
                 return
@@ -59,7 +65,19 @@ def handle_user_logged_in(sender, request, user, **kwargs):
 @receiver(user_signed_up)
 def handle_user_signed_up(sender, request, user, **kwargs):
     print(f"[DEBUG][Signals] Signal user_signed_up received for user: {user.username}")
-    PerfilUsuario.objects.get_or_create(user=user)
+    perfil, created = PerfilUsuario.objects.get_or_create(user=user)
+    
+    if created:
+        sociallogin = kwargs.get('sociallogin')
+        if sociallogin:
+            if sociallogin.account.provider == 'google':
+                perfil.nombre = sociallogin.account.extra_data.get('name', user.get_full_name())
+        else:
+            perfil.nombre = user.get_full_name() or user.username
+        
+        perfil.save()
+        print(f"[DEBUG][Signals] Populated PerfilUsuario for new user {user.username}")
+
     mensaje = _("¡Gracias por registrarte! Tu cuenta ha sido creada.")
     notificar_usuario(user, str(mensaje))
 

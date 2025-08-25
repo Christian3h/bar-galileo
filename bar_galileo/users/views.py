@@ -25,7 +25,6 @@ def editar_info(request):
     cedula = request.POST.get('cedula', perfil.cedula)
     telefono = request.POST.get('telefono', perfil.telefono)
     direccion = request.POST.get('direccion', perfil.direccion)
-    cliente_desde = request.POST.get('cliente_desde', perfil.cliente_desde)
     email = request.POST.get('email', request.user.email)
     if not nombre:
         errors['nombre'] = 'El nombre es obligatorio.'
@@ -42,7 +41,6 @@ def editar_info(request):
             'telefono': telefono,
             'email': email,
             'direccion': direccion,
-            'cliente_desde': cliente_desde,
             'info_errors': errors,
         }
         return render(request, 'users/panel de usuario.html', {'datos': datos})
@@ -52,7 +50,6 @@ def editar_info(request):
         telefono = '+57' + telefono
     perfil.telefono = telefono
     perfil.direccion = direccion
-    perfil.cliente_desde = cliente_desde
     perfil.save()
     request.user.email = email
     request.user.save()
@@ -67,7 +64,6 @@ def borrar_info(request):
     perfil.cedula = ''
     perfil.telefono = ''
     perfil.direccion = ''
-    perfil.cliente_desde = ''
     perfil.save()
     if emergencia:
         emergencia.nombre = ''
@@ -192,7 +188,6 @@ def panel_usuario(request):
         'telefono': perfil.telefono,
         'email': request.user.email,
         'direccion': perfil.direccion,
-        'cliente_desde': perfil.cliente_desde,
         'avatar_url': perfil.avatar.url if perfil.avatar else None,
         'emergencia': {
             'nombre': emergencia.nombre if emergencia else '',

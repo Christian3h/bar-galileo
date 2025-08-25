@@ -238,10 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
               <label class="form-label">Dirección:</label>
               <div class="info-input" style="text-align:left;">{{ datos.direccion }}</div>
             </div>
-            <div class="form-field-col">
-              <label class="form-label">Cliente desde:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.cliente_desde }}</div>
-            </div>
+            
             <button type="button" class="edit-btn" onclick="toggleInfoForm(true)">Editar</button>
           </div>
           <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form" style="display:none;">
@@ -266,10 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
               <label for="direccion" class="form-label">Dirección:</label>
               <input type="text" id="direccion" name="direccion" value="{{ datos.direccion }}" class="info-input">
             </div>
-            <div class="form-field-col">
-              <label for="cliente_desde" class="form-label">Cliente desde:</label>
-              <input type="text" id="cliente_desde" name="cliente_desde" value="{{ datos.cliente_desde }}" class="info-input">
-            </div>
+            
             <button type="submit">Guardar Cambios</button>
             <button type="submit" formaction="{% url 'users:borrar_info' %}" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
             <button type="button" onclick="toggleInfoForm(false)">Cancelar</button>

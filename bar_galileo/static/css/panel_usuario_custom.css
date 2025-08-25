@@ -185,15 +185,15 @@ body {
     background: #262626;
     border-radius: 15px;
     padding: 25px;
-    box-shadow: 0 0 24px 0 #A68932;
+    box-shadow: 0 8px 16px rgba(166, 137, 50, 0.1);
     transition: all 0.3s ease;
     border: 2px solid #A68932;
     color: #A68932;
 }
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(34, 139, 34, 0.4);
-    border-color: #228b22;
+    box-shadow: 0 12px 24px rgba(166, 137, 50, 0.15);
+    border-color: #A68932;
 }
 .card-header {
     display: flex;
