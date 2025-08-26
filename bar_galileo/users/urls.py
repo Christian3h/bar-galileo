@@ -10,4 +10,5 @@ urlpatterns = [
     path('panel/borrar-info/', views.borrar_info, name='borrar_info'),
     path('panel/editar-emergencia/', views.editar_emergencia, name='editar_emergencia'),
     path('panel/borrar-emergencia/', views.borrar_emergencia, name='borrar_emergencia'),
+    path('api/usuarios/', views.user_list_api, name='api_user_list'),
 ]

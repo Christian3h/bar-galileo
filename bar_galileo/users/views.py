@@ -12,6 +12,7 @@ from .models import PerfilUsuario, Emergencia
 from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
+from tables.models import Pedido
 
 # Editar información personal
 def get_perfil(user):
@@ -182,6 +183,28 @@ def panel_usuario(request):
             'barras': obj.barras or []
         }
     
+    pedidos_facturados = Pedido.objects.filter(
+        usuarios=request.user,
+        estado='facturado'
+    ).select_related('mesa', 'factura').order_by('-fecha_actualizacion')
+
+    # Obtener la cuenta actual (pedido en proceso)
+    pedido_actual = Pedido.objects.filter(
+        usuarios=request.user,
+        estado='en_proceso'
+    ).select_related('mesa').prefetch_related('items__producto').first()
+
+    cuenta_actual_data = {
+        'total': 0,
+        'items': []
+    }
+    if pedido_actual:
+        cuenta_actual_data['total'] = pedido_actual.total()
+        cuenta_actual_data['items'] = [{
+            'nombre': item.producto.nombre,
+            'precio': item.subtotal()
+        } for item in pedido_actual.items.all()]
+
     datos = {
         'nombre': perfil.nombre,
         'cedula': perfil.cedula,
@@ -197,7 +220,9 @@ def panel_usuario(request):
             'sangre': emergencia.sangre if emergencia else '',
             'alergias': emergencia.alergias if emergencia else '',
         },
-        'historial_mensual': historial_mensual
+        'historial_mensual': historial_mensual,
+        'pedidos_facturados': pedidos_facturados,
+        'cuenta_actual': cuenta_actual_data
     }
     return render(request, 'users/panel de usuario.html', {'datos': datos})
 
@@ -225,3 +250,10 @@ def user_list(request):
 
         return redirect('users:user_list')
     return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
+
+from django.http import JsonResponse
+
+def user_list_api(request):
+    users = User.objects.all().order_by('username')
+    data = [{'id': user.id, 'username': user.username, 'nombre': user.get_full_name() or user.username} for user in users]
+    return JsonResponse(data, safe=False)
