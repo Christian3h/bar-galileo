@@ -59,6 +59,42 @@
   opacity: 1;
   animation: fadeInOut 3.5s forwards;
 }
+.history-table-container {
+    padding: 15px;
+}
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #ddd;
+}
+.history-table th, .history-table td {
+    border: 1px solid #444;
+    padding: 8px 12px;
+    text-align: left;
+}
+.history-table th {
+    background-color: #333;
+    color: #A68932;
+}
+.history-table tbody tr:nth-child(odd) {
+    background-color: #2c2c2c;
+}
+.btn-factura {
+    color: #A68932;
+    text-decoration: none;
+    font-weight: bold;
+}
+.btn-back {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: #A68932;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
 @keyframes fadeInOut {
   0% { opacity: 0; transform: translateY(-20px); }
   10% { opacity: 1; transform: translateY(0); }
@@ -86,42 +122,6 @@ function toggleEmergenciaForm(show) {
   document.getElementById('emergencia-display').style.display = show ? 'none' : '';
   document.getElementById('emergencia-form').style.display = show ? '' : 'none';
 }
-// Datos de historial mensual desde Django
-const historialMensual = JSON.parse('{{ datos.historial_mensual|safe|escapejs }}');
-console.log('historialMensual:', historialMensual);
-
-function selectMonth(btn, mesKey) {
-  console.log('Botón clickeado:', mesKey);
-  document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const chart = document.querySelector('.history-chart');
-  chart.innerHTML = '';
-  if (historialMensual[mesKey] && historialMensual[mesKey].barras) {
-    historialMensual[mesKey].barras.forEach(valor => {
-      const bar = document.createElement('div');
-      bar.className = 'chart-bar';
-      bar.style.height = (valor / 500000 * 100) + '%';
-      bar.setAttribute('data-amount', '$' + valor.toLocaleString());
-      chart.appendChild(bar);
-    });
-    document.getElementById('month-total').textContent = `Total ${historialMensual[mesKey].mes} 2025: $${historialMensual[mesKey].total.toLocaleString()}`;
-  } else {
-    chart.innerHTML = '<div style="color:red">No hay datos para este mes</div>';
-    document.getElementById('month-total').textContent = 'Sin datos';
-  }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.month-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      selectMonth(btn, btn.getAttribute('data-mes'));
-    });
-  });
-  const activeBtn = document.querySelector('.month-btn.active');
-  if (activeBtn) {
-    selectMonth(activeBtn, activeBtn.getAttribute('data-mes'));
-  }
-});
         setTimeout(function() {
           document.querySelectorAll('.alert-success').forEach(function(el) {
             el.style.display = 'none';
@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {% endif %}
         </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
+        <a href="{% url 'core:index' %}" class="btn-back">Volver al Inicio</a>
       </div>
       <div class="dashboard">
         <!-- Cuenta Actual -->
@@ -160,45 +161,43 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           </div>
         </div>
-        <!-- Historial Mensual -->
+        <!-- Historial de Consumo -->
         <div class="card">
           <div class="card-header">
             <div class="card-icon monthly-history">📊</div>
-            <div class="card-title">Historial Mensual</div>
+            <div class="card-title">Historial de Consumo</div>
           </div>
-          <div class="month-selector">
-  <button class="month-btn" data-mes="ene">Ene</button>
-  <button class="month-btn" data-mes="feb">Feb</button>
-  <button class="month-btn" data-mes="mar">Mar</button>
-  <button class="month-btn" data-mes="abr">Abr</button>
-  <button class="month-btn" data-mes="may">May</button>
-  <button class="month-btn" data-mes="jun">Jun</button>
-  <button class="month-btn active" data-mes="jul">Jul</button>
-  <button class="month-btn" data-mes="ago">Ago</button>
-  <button class="month-btn" data-mes="sep">Sep</button>
-  <button class="month-btn" data-mes="oct">Oct</button>
-  <button class="month-btn" data-mes="nov">Nov</button>
-  <button class="month-btn" data-mes="dic">Dic</button>
-</div>
-          <div class="history-chart">
-            {% with mes_seleccionado=request.GET.mes|default:'ene' %}
-              {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado %}
-                {% for valor in datos.historial_mensual.mes_seleccionado.barras %}
-                  <div class="chart-bar" style="height: {{ valor|floatformat:0 }}%;" data-amount="${{ valor|intcomma }}"></div>
+          <div class="history-table-container">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Mesa</th>
+                  <th>Total Pagado</th>
+                  <th>Factura</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pedido in datos.pedidos_facturados %}
+                <tr>
+                  <td>{{ pedido.fecha_actualizacion|date:"d/m/Y" }}</td>
+                  <td>{{ pedido.mesa.nombre|default:"N/A" }}</td>
+                  <td>${{ pedido.total|intcomma }}</td>
+                  <td>
+                    {% if pedido.factura %}
+                    <a href="{% url 'tables:ver_factura' pedido.factura.id %}" class="btn-factura">Ver</a>
+                    {% else %}
+                    <span>N/A</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" style="text-align: center;">No hay historial de consumo todavía.</td>
+                </tr>
                 {% endfor %}
-              {% else %}
-                <div style="color:red">No hay datos para este mes</div>
-              {% endif %}
-            {% endwith %}
-          </div>
-          <div style="text-align: center; margin-top: 15px;">
-              {% with mes_seleccionado=request.GET.mes|default:'ene' %}
-                {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado and datos.historial_mensual.mes_seleccionado.total %}
-                  <span id="month-total">Total {{ datos.historial_mensual.mes_seleccionado.mes }} 2025: ${{ datos.historial_mensual.mes_seleccionado.total|intcomma }}</span>
-                {% else %}
-                  <span id="month-total">Sin datos</span>
-                {% endif %}
-              {% endwith %}
+              </tbody>
+            </table>
           </div>
         </div>
         <!-- Información Personal -->
