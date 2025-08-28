@@ -106,7 +106,7 @@ body {
   border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
-  min-width: 300px;
+  min-width: 650px;
 }
 
 .chart-box h4 {
@@ -127,8 +127,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .dashboard-cards,
-  .dashboard-charts {
+  .dashboard-cards {
     flex-direction: column;
   }
 
@@ -136,8 +135,7 @@ body {
     padding: 1rem;
   }
 
-  .card,
-  .chart-box {
+  .card {
     width: 100%;
     min-width: unset;
   }

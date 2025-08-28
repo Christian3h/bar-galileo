@@ -388,5 +388,65 @@ document.addEventListener('DOMContentLoaded', function() {
   if (emergenciaForm) emergenciaForm.onsubmit = validarEmergenciaForm;
 });
   </script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const protocol = window.location.protocol === 'https' ? 'wss' : 'ws';
+    const ws = new WebSocket(`${protocol}://${window.location.host}/ws/panel/`);
+
+    ws.onopen = function() {
+        console.log("WebSocket connection for panel established.");
+    };
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.cuenta_actual) {
+            updateCuentaActual(data.cuenta_actual);
+        }
+    };
+
+    ws.onclose = function() {
+        console.log("WebSocket connection for panel closed.");
+    };
+
+    ws.onerror = function(error) {
+        console.error("WebSocket error:", error);
+    };
+
+    function formatPrice(number) {
+        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(number);
+    }
+
+    function updateCuentaActual(cuenta) {
+        const billAmount = document.querySelector('.bill-amount');
+        const billDetails = document.querySelector('.bill-details');
+
+        if (billAmount) {
+            billAmount.textContent = formatPrice(cuenta.total);
+        }
+
+        if (billDetails) {
+            let itemsHtml = '';
+            if (cuenta.items && cuenta.items.length > 0) {
+                cuenta.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="bill-item">
+                            <span>${item.nombre}</span>
+                            <span>${formatPrice(item.precio)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            itemsHtml += `
+                <div class="bill-item">
+                    <span><span class="status-indicator"></span>Total a Pagar</span>
+                    <span>${formatPrice(cuenta.total)}</span>
+                </div>
+            `;
+            billDetails.innerHTML = itemsHtml;
+        }
+    }
+});
+  </script>
 </body>
 </html>
