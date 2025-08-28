@@ -50,6 +50,30 @@ def _broadcast_stock_update(producto_id, delta):
         }
     )
 
+def _broadcast_panel_update(pedido):
+    """Broadcasts an update to the user panel."""
+    pedido.refresh_from_db()
+    # Prepare the data in the same format as the panel_usuario view
+    cuenta_actual_data = {
+        'total': float(pedido.total()),
+        'items': [{
+            'nombre': item.producto.nombre,
+            'precio': float(item.subtotal())
+        } for item in pedido.items.select_related('producto').all()]
+    }
+
+    channel_layer = get_channel_layer()
+    for user in pedido.usuarios.all():
+        async_to_sync(channel_layer.group_send)(
+            f"user_panel_{user.id}",
+            {
+                "type": "panel_update",
+                "data": {
+                    "cuenta_actual": cuenta_actual_data
+                },
+            },
+        )
+
 # --- API Views ---
 
 def mesa_pedido_api(request, mesa_id):
@@ -99,7 +123,8 @@ def agregar_item_api(request):
         item.cantidad = cantidad_a_agregar
     item.save()
 
-    _broadcast_stock_update(producto.id_producto, -cantidad_a_agregar)
+    transaction.on_commit(lambda: _broadcast_stock_update(producto.id_producto, -cantidad_a_agregar))
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
@@ -124,7 +149,8 @@ def actualizar_item_api(request, item_id):
         item.save()
 
     delta = nueva_cantidad - old_cantidad
-    _broadcast_stock_update(item.producto.id_producto, -delta)
+    transaction.on_commit(lambda: _broadcast_stock_update(item.producto.id_producto, -delta))
+    transaction.on_commit(lambda: _broadcast_panel_update(item.pedido))
     
     return JsonResponse({'pedido': _serialize_pedido(item.pedido)})
 
@@ -137,7 +163,8 @@ def eliminar_item_api(request, item_id):
 
     item.delete()
 
-    _broadcast_stock_update(producto_id, cantidad_eliminada)
+    transaction.on_commit(lambda: _broadcast_stock_update(producto_id, cantidad_eliminada))
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
@@ -165,6 +192,7 @@ def facturar_pedido_api(request, pedido_id):
             mensaje = f"El pedido de la mesa '{mesa.nombre}' fue facturado. La mesa está ahora disponible."
             notificar_usuario(request.user, mensaje)
     
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     return JsonResponse({
         'success': True,
         'factura_url': reverse('tables:ver_factura', args=[factura.id])
@@ -192,7 +220,8 @@ def pedido_manage_user_api(request, pedido_id):
         pedido.usuarios.add(user_obj)
     elif action == 'remove':
         pedido.usuarios.remove(user_obj)
-        
+    
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     return JsonResponse({'success': True})
 
 def get_all_users_api(request):

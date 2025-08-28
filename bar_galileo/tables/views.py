@@ -7,6 +7,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 from notifications.utils import notificar_usuario
+from django.contrib import messages
 
 from django.utils.decorators import method_decorator
 from roles.decorators import permission_required
@@ -103,6 +104,10 @@ def cambiar_estado(request, mesa_id):
 
     estados_validos = ['disponible', 'ocupada', 'reservada', 'fuera de servicio']
     if nuevo_estado in estados_validos:
+        if nuevo_estado in ['disponible', 'reservada'] and mesa.pedidos.filter(estado='en_proceso').exists():
+            messages.error(request, f"No se puede cambiar el estado de la mesa '{mesa.nombre}' a '{nuevo_estado}' porque tiene pedidos activos.")
+            return redirect('tables:mesas_lista')
+        
         mesa.estado = nuevo_estado
         mesa.save()
 
