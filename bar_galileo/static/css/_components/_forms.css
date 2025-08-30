@@ -1,3 +1,5 @@
+@import '_selects.css';
+
 /* Cuadro para mostrar info personal y emergencia */
 .info-row-box {
     display: flex;

@@ -50,6 +50,7 @@ urlpatterns = [
     path('adminD/products/update/<int:pk>/', views.ProductoUpdateAdminView.as_view(), name='products_edit_admin'),
     path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),
     path("adminD/products_img/delete/<int:pk>/", views.EliminarImagenProductoAdminView.as_view(), name="producto_imagen_eliminar"),
+    path('api/producto_imagen/<int:pk>/eliminar/', views_api.producto_imagen_eliminar_api, name='producto_imagen_eliminar_api'),
 
     #### rutas para el dashboard de las categorías
     path('adminD/categories/', views.CategoriasAdminView.as_view(), name='categories_admin'),

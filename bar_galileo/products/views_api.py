@@ -1,7 +1,17 @@
 from django.http import JsonResponse
-from .models import Proveedor, Marca, Categoria
+from .models import Proveedor, Marca, Categoria, ProductoImagen
+from django.views.decorators.http import require_POST
 
-
+@require_POST
+def producto_imagen_eliminar_api(request, pk):
+    try:
+        imagen = ProductoImagen.objects.get(pk=pk)
+        imagen.delete()
+        return JsonResponse({'success': True})
+    except ProductoImagen.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'La imagen no existe.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 def proveedores_json(request):
     proveedores = Proveedor.objects.all()
