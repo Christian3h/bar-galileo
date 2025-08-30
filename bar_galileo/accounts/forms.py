@@ -1,9 +1,9 @@
 from django import forms
 from allauth.account.forms import LoginForm
-from captcha.fields import CaptchaField
+from captcha.fields import CaptchaField, CaptchaTextInput
 
 class CustomLoginForm(LoginForm):
-    captcha = CaptchaField(label='Captcha')
+    captcha = CaptchaField()
 
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
