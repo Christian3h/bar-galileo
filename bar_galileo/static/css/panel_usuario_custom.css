@@ -1,3 +1,5 @@
+@import '_components/selects.css';
+
 /* Estilo para campos de formulario en columna, igual que tablas */
 .form-field-col {
     display: flex;
