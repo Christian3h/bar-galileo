@@ -39,6 +39,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # app para el captcha
+    'captcha',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -186,6 +188,10 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'OAUTH_PKCE_ENABLED': True,
     }
+}
+
+ACCOUNT_FORMS = {
+    'login': 'accounts.forms.CustomLoginForm',
 }
 
 LOGIN_URL = '/accounts/login/'  # link que redirige al login

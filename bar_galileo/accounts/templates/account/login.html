@@ -1,63 +1,178 @@
-{% extends "account/base_entrance.html" %}
+{% extends "base.html" %}
 {% load i18n %}
-{% load allauth account %}
-{% block head_title %}
-    {% trans "Sign In" %}
-{% endblock head_title %}
+{% load static %}
+
+{% block title %}{% trans "Sign In" %}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<style>
+  .login-container {
+    max-width: 450px;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    background-color: #181818;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+  }
+  .login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .login-header h1 {
+    color: #d4af37;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+  }
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  .form-label {
+    display: block;
+    margin-bottom: .5rem;
+    color: #ccc;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .form-control {
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+    border-radius: 8px;
+    padding: 12px 15px;
+    width: 100%;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .form-control::placeholder {
+    color: #888;
+  }
+  .form-control:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+  }
+  .captcha-field .captcha {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+  }
+  .captcha-field .form-control {
+      margin-top: 1rem;
+  }
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background-color: #d4af37;
+    border: none;
+    color: #111;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+  .btn-login:hover {
+    background-color: #c8a02a;
+    transform: translateY(-2px);
+  }
+  .login-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  .login-footer a {
+    color: #d4af37;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+  }
+  .login-footer a:hover {
+    text-decoration: underline;
+  }
+  .errorlist {
+    list-style: none;
+    padding: 10px;
+    margin: 1rem 0 0;
+    color: #ff4d4d;
+    background-color: rgba(255, 77, 77, 0.1);
+    border: 1px solid rgba(255, 77, 77, 0.3);
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+  .errorlist li {
+      margin-bottom: 5px;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-    <div class="container-login">
-        {% element h1 %}
-            {% trans "Sign In" %}
-        {% endelement %}
-        {% if not SOCIALACCOUNT_ONLY %}
-            {% setvar link %}
-                <a href="{{ signup_url }}">
-                {% endsetvar %}
-                {% setvar end_link %}
-                </a>
-            {% endsetvar %}
-            {% element p %}
-                {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
-            {% endelement %}
-            {% url 'account_login' as login_url %}
-            {% element form form=form method="post" action=login_url tags="entrance,login" %}
-                {% slot body %}
-                    {% csrf_token %}
-                    {% element fields form=form unlabeled=True %}
-                    {% endelement %}
-                    {{ redirect_field }}
-                {% endslot %}
-                {% slot actions %}
-                    {% element button type="submit" tags="prominent,login"  %}
-                        {% trans "Sign In" %}
-                    {% endelement %}
-                    {% if SOCIALACCOUNT_ENABLED %}
-                        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-                    {% endif %}
-                {% endslot %}
-            {% endelement %}
-        {% endif %}
-        {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
-            {% element hr %}
-            {% endelement %}
-            {% element button_group vertical=True   %}
-                {% if PASSKEY_LOGIN_ENABLED %}
-                    {% element button type="submit" form="mfa_login" id="passkey_login" tags="prominent,login,outline,primary"  %}
-                        {% trans "Sign in with a passkey" %}
-                    {% endelement %}
-                {% endif %}
-                {% if LOGIN_BY_CODE_ENABLED %}
-                    {% element button href=request_login_code_url tags="prominent,login,outline,primary"  %}
-                        {% trans "Send me a sign-in code" %}
-                    {% endelement %}
-                {% endif %}
-            {% endelement %}
-        {% endif %}
+<div class="login-container">
+  <div class="login-header">
+    <h1>{% trans "Sign In" %}</h1>
+  </div>
+
+  <form class="login" method="post" action="{% url 'account_login' %}">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="errorlist">
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="{{ form.login.id_for_label }}" class="form-label">{{ form.login.label }}</label>
+      {{ form.login }}
+      {% if form.login.errors %}
+        <div class="errorlist">
+          {% for error in form.login.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
-    {% endblock content %}
-    {% block extra_body %}
-        {{ block.super }}
-        {% if PASSKEY_LOGIN_ENABLED %}
-            {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
-        {% endif %}
+
+    <div class="form-group">
+      <label for="{{ form.password.id_for_label }}" class="form-label">{{ form.password.label }}</label>
+      {{ form.password }}
+       {% if form.password.errors %}
+        <div class="errorlist">
+          {% for error in form.password.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="form-group captcha-field">
+      <label for="{{ form.captcha.id_for_label }}" class="form-label">{{ form.captcha.label }}</label>
+      {{ form.captcha }}
+      {% if form.captcha.errors %}
+        <div class="errorlist">
+          {% for error in form.captcha.errors %}
+            <li>{{ error }}</li>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+
+    <button class="btn-login" type="submit">{% trans "Sign In" %}</button>
+  </form>
+
+  <div class="login-footer">
+    <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+  </div>
+</div>
 {% endblock %}
