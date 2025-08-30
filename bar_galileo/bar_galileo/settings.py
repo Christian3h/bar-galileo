@@ -223,3 +223,9 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
     },
 }
+
+# Captcha settings
+CAPTCHA_LENGTH = 6
+CAPTCHA_IMAGE_SIZE = (225, 75)
+CAPTCHA_FONT_SIZE = 40
+CAPTCHA_FLITE_PATH = '/usr/bin/flite'
