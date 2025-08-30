@@ -70,25 +70,85 @@
     {% endblock content %}
     {% block extra_body %}
         {{ block.super }}
-        {% if PASSKEY_LOGIN_ENABLED %}
-            {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
-        {% endif %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Find the captcha field container, which might have different IDs/classes
-    const captchaField = document.querySelector('#div_id_captcha');
-    if (captchaField) {
-        const toggleLink = captchaField.querySelector('.toggle-audio');
-        const audioContainer = captchaField.querySelector('.audio-player-container');
+    const captchaContainer = document.querySelector('#div_id_captcha');
 
-        if (toggleLink && audioContainer) {
-            toggleLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                const isHidden = audioContainer.style.display === 'none';
-                audioContainer.style.display = isHidden ? 'block' : 'none';
-                this.textContent = isHidden ? 'Ocultar audio' : 'Escuchar audio';
-            });
+    if (captchaContainer) {
+        // Get original elements
+        const captchaLabel = captchaContainer.querySelector('label[for="id_captcha_1"]');
+        const captchaImage = captchaContainer.querySelector('img.captcha');
+        const captchaHiddenInput = captchaContainer.querySelector('input[name="captcha_0"]');
+        const captchaTextInput = captchaContainer.querySelector('input[name="captcha_1"]');
+        const captchaAudioLink = captchaContainer.querySelector('a[href*="/captcha/audio/"]'); // The default audio link
+        const captchaErrors = captchaContainer.querySelector('.errorlist'); // Get errors if any
+
+        // Clear the original container content
+        captchaContainer.innerHTML = '';
+
+        // Rebuild the layout
+        if (captchaLabel) {
+            captchaContainer.appendChild(captchaLabel);
         }
+
+        if (captchaImage) {
+            captchaImage.style.pointerEvents = 'none'; // Prevent right-click
+            captchaImage.style.borderRadius = '8px';
+            captchaImage.style.marginBottom = '1rem';
+            captchaImage.style.border = '1px solid #444';
+            captchaContainer.appendChild(captchaImage);
+        }
+
+        if (captchaHiddenInput) {
+            captchaContainer.appendChild(captchaHiddenInput);
+        }
+
+        // Create the toggle link and audio player container
+        const toggleLink = document.createElement('a');
+        toggleLink.href = '#';
+        toggleLink.className = 'toggle-audio';
+        toggleLink.style.display = 'block';
+        toggleLink.style.marginTop = '10px';
+        toggleLink.style.fontSize = '0.9rem';
+        toggleLink.style.color = '#d4af37';
+        toggleLink.style.textDecoration = 'none';
+        toggleLink.textContent = 'Escuchar audio';
+
+        const audioPlayerContainer = document.createElement('div');
+        audioPlayerContainer.className = 'audio-player-container';
+        audioPlayerContainer.style.display = 'none';
+        audioPlayerContainer.style.marginTop = '10px';
+
+        const audioPlayer = document.createElement('audio');
+        audioPlayer.controls = true;
+        audioPlayer.preload = 'none';
+        audioPlayer.style.width = '100%';
+        audioPlayer.innerHTML = 'Tu navegador no soporta el elemento de audio.';
+
+        if (captchaAudioLink && captchaAudioLink.href) {
+            audioPlayer.src = captchaAudioLink.href;
+        }
+
+        audioPlayerContainer.appendChild(audioPlayer);
+
+        // Append elements to the main container
+        if (captchaTextInput) {
+            captchaContainer.appendChild(captchaTextInput);
+        }
+        captchaContainer.appendChild(toggleLink);
+        captchaContainer.appendChild(audioPlayerContainer);
+
+        if (captchaErrors) {
+            captchaContainer.appendChild(captchaErrors);
+        }
+
+        // Add event listener to toggle link
+        toggleLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const isHidden = audioPlayerContainer.style.display === 'none';
+            audioPlayerContainer.style.display = isHidden ? 'block' : 'none';
+            this.textContent = isHidden ? 'Ocultar audio' : 'Escuchar audio';
+        });
     }
 });
 </script>
