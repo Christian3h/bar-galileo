@@ -836,3 +836,17 @@ class ProductoDetailView(DetailView):
     def get_object(self, queryset=None):
         return get_object_or_404(Producto, id_producto=self.kwargs.get("pk"))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        producto_actual = self.object
+        
+        # Obtener productos relacionados (misma marca, excluyendo el producto actual)
+        productos_relacionados = Producto.objects.filter(
+            id_marca=producto_actual.id_marca
+        ).exclude(
+            id_producto=producto_actual.id_producto
+        )[:4] # Limitar a 4 productos relacionados
+        
+        context['productos_relacionados'] = productos_relacionados
+        return context
+
