@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from products.models import Producto, Categoria
 from tables.models import Mesa, Pedido, PedidoItem, Factura
+from expenses.models import Expense
 from roles.decorators import permission_required
 from django.utils.decorators import method_decorator
 from notifications.utils import notificar_usuario
@@ -45,6 +46,8 @@ class DashboardView(TemplateView):
             )
         ).aggregate(total=Sum('ganancia_item'))['total'] or 0
         context['ganancia_total'] = ganancia_total
+
+        context['gastos_totales'] = Expense.objects.aggregate(total=Sum('amount'))['total'] or 0
 
         # Enviar notificación al usuario actual
         if self.request.user.is_authenticated:

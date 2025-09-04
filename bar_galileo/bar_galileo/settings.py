@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'tables',
     'roles',
     'users',
+    'expenses',
     #app para el dashboard
     'admin_dashboard',
     #app para facturación

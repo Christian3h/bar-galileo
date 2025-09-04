@@ -100,6 +100,18 @@
                 </li>
                 {% endif %}
 
+                {% if request.user|has_perm:"expenses,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('gastos-submenu')">Gastos</button>
+                    <ul id="gastos-submenu" class="submenu hidden">
+                        <li><a href="{% url 'expenses:expense_list' %}">Lista de Gastos</a></li>
+                        {% if request.user|has_perm:"expenses,crear" %}
+                        <li><a href="{% url 'expenses:expense_create' %}">Crear Gasto</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
 
                 <!-- {% if request.user|has_perm:"dashboard,ver" %}
             <li>
