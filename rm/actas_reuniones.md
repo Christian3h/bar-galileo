@@ -1,5 +1,3 @@
-
-
 # PT-AR-01. Formato Acta de Reunión - Estructura Base
 
 
@@ -142,5 +140,105 @@ Christian integró el sistema de notificaciones y mejoró la estética y UX del 
 | Mejora de estética y UX en el módulo de mesas y flujo de pedidos | Jorge Arismendy    | 15/08/2025        | Terminado                                            |
 | Mejora de estética y UX en el panel de usuario              | Sebastián Chaparro     | 15/08/2025        | Terminado                                            |
 | Mejora de estética y UX de la página de inicio              | Felipe Caceres          | 15/08/2025        | Terminado                                            |
+
+---
+
+
+# PT-AR-01. Formato Acta de Reunión - Implementaciones Recientes (19/08/2025)
+
+| **LUGAR** | sena cede centro  |
+| --- | --- |
+| **MOTIVO DE LA REUNION** | revisión de avances y nuevas implementaciones |
+
+**PARTICIPANTES:**
+| **NOMBRE**                   | **ROL**                   |
+|------------------------------|---------------------------|
+| Sebastian Chaparro Martinez  | Desarrollador Backend     |
+| Jorge Alfredo Arismendy      | Desarrollador Backend     |
+| Christian Martinez           | Desarrollador Backend     |
+| Felipe Caceres               | Desarrollador Fronted     |
+
+**ORDEN DEL DÍA:**
+- Implementación de CAPTCHA local
+- Inicio del módulo de gastos
+- Mejoras visuales en la tienda
+- Revisión de panel de usuario
+
+**DESARROLLO DE LA REUNIÓN:**
+Christian presentó la implementación del sistema CAPTCHA local para mejorar la seguridad. Jorge inició el desarrollo del módulo de gastos. Felipe realizó mejoras visuales en la tienda y Sebastián revisó el panel de usuario.
+
+**COMPROMISOS:**
+| **Actividad**                                 | **Responsable**         | **Fecha Entrega** | **Estado (Asignado/En Proceso/Terminado/Detenido)** |
+|-----------------------------------------------|-------------------------|-------------------|-----------------------------------------------------|
+| Implementación de CAPTCHA local               | Christian Martínez      | 19/08/2025        | Terminado                                            |
+| Inicio del módulo de gastos                   | Jorge Arismendy         | 19/08/2025        | En Proceso                                           |
+| Mejoras visuales en la tienda                 | Felipe Caceres          | 19/08/2025        | Terminado                                            |
+| Revisión de panel de usuario                  | Sebastián Chaparro      | 19/08/2025        | Terminado                                            |
+
+---
+
+# PT-AR-01. Formato Acta de Reunión - Filtros y Acceso Remoto (26/08/2025)
+
+| **LUGAR** | sena cede centro  |
+| --- | --- |
+| **MOTIVO DE LA REUNION** | seguimiento de avances y nuevas funcionalidades |
+
+**PARTICIPANTES:**
+| **NOMBRE**                   | **ROL**                   |
+|------------------------------|---------------------------|
+| Sebastian Chaparro Martinez  | Desarrollador Backend     |
+| Jorge Alfredo Arismendy      | Desarrollador Backend     |
+| Christian Martinez           | Desarrollador Backend     |
+| Felipe Caceres               | Desarrollador Fronted     |
+
+**ORDEN DEL DÍA:**
+- Filtros por productos y categorías en la tienda
+- Avance en módulo de gastos
+- Pruebas de acceso al servidor local desde dispositivos móviles
+- Optimización de notificaciones
+
+**DESARROLLO DE LA REUNIÓN:**
+Felipe implementó los filtros por productos y categorías en la tienda. Jorge avanzó en el módulo de gastos. Christian realizó pruebas de acceso remoto al servidor local y Sebastián optimizó el sistema de notificaciones.
+
+**COMPROMISOS:**
+| **Actividad**                                 | **Responsable**         | **Fecha Entrega** | **Estado (Asignado/En Proceso/Terminado/Detenido)** |
+|-----------------------------------------------|-------------------------|-------------------|-----------------------------------------------------|
+| Filtros por productos y categorías en tienda  | Felipe Caceres          | 26/08/2025        | Terminado                                            |
+| Avance en módulo de gastos                    | Jorge Arismendy         | 26/08/2025        | En Proceso                                           |
+| Pruebas de acceso remoto al servidor local    | Christian Martínez      | 26/08/2025        | Terminado                                            |
+| Optimización de notificaciones                | Sebastián Chaparro      | 26/08/2025        | Terminado                                            |
+
+---
+
+# PT-AR-01. Formato Acta de Reunión - Finalización y Validaciones (02/09/2025)
+
+| **LUGAR** | sena cede centro  |
+| --- | --- |
+| **MOTIVO DE LA REUNION** | cierre de ciclo de implementaciones recientes |
+
+**PARTICIPANTES:**
+| **NOMBRE**                   | **ROL**                   |
+|------------------------------|---------------------------|
+| Sebastian Chaparro Martinez  | Desarrollador Backend     |
+| Jorge Alfredo Arismendy      | Desarrollador Backend     |
+| Christian Martinez           | Desarrollador Backend     |
+| Felipe Caceres               | Desarrollador Fronted     |
+
+**ORDEN DEL DÍA:**
+- Finalización de módulo de gastos
+- Mejoras UX en tienda y panel de usuario
+- Documentación y pruebas de CAPTCHA local
+- Validación de acceso remoto al servidor
+
+**DESARROLLO DE LA REUNIÓN:**
+Jorge finalizó el módulo de gastos. Felipe y Sebastián realizaron mejoras de UX en la tienda y el panel de usuario. Christian documentó y probó el sistema CAPTCHA local y validó el acceso remoto al servidor.
+
+**COMPROMISOS:**
+| **Actividad**                                 | **Responsable**         | **Fecha Entrega** | **Estado (Asignado/En Proceso/Terminado/Detenido)** |
+|-----------------------------------------------|-------------------------|-------------------|-----------------------------------------------------|
+| Finalización de módulo de gastos              | Jorge Arismendy         | 02/09/2025        | Terminado                                            |
+| Mejoras UX en tienda y panel de usuario       | Felipe Caceres / Sebastián Chaparro | 02/09/2025 | Terminado                                            |
+| Documentación y pruebas de CAPTCHA local      | Christian Martínez      | 02/09/2025        | Terminado                                            |
+| Validación de acceso remoto al servidor       | Christian Martínez      | 02/09/2025        | Terminado                                            |
 
 ---

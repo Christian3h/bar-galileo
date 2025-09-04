@@ -33,6 +33,7 @@ urlpatterns = [
     path('facturacion/', include(('facturacion.urls', 'facturacion'), namespace='facturacion')),
     path('', include(('users.urls', 'users'), namespace='users')),
     path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
+    path('expenses/', include(('expenses.urls', 'expenses'), namespace='expenses')),
 ]
 
 if settings.DEBUG:
