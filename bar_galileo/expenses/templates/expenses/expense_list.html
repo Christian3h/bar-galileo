@@ -44,10 +44,10 @@
                         <td>{{ expense.user.username }}</td>
                         <td>
                             {% if request.user|has_perm:"expenses,editar" %}
-                                <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary">Editar</a>
+                                <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                             {% endif %}
                             {% if request.user|has_perm:"expenses,eliminar" %}
-                                <a href="{% url 'expenses:expense_delete' expense.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                                <a href="{% url 'expenses:expense_delete' expense.pk %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
                             {% endif %}
                         </td>
                     </tr>

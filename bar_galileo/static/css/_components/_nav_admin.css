@@ -163,6 +163,9 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 /* === Responsivo === */

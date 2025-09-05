@@ -106,7 +106,7 @@ body {
   border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
-  min-width: 650px;
+  min-width: 600px;
 }
 
 .chart-box h4 {
@@ -183,4 +183,15 @@ body {
 .table-contenedor {
   display: flex;
   justify-content: center;
+}
+
+
+@media (max-width: 700px) {
+  .dashboard-charts {
+    flex-direction: column;
+  }
+  .chart-box{
+    min-width: 100%;
+
+  }
 }

@@ -31,12 +31,14 @@
                 </table>
             </div>
         </div>
-    
+
 
     <script>
     // Permisos del usuario
     const canEdit = {% if request.user|has_perm:"products,editar" %}true{% else %}false{% endif %};
     const canDelete = {% if request.user|has_perm:"products,eliminar" %}true{% else %}false{% endif %};
+    const editIconUrl = "{% static 'img/icons/edit.svg' %}";
+    const deleteIconUrl = "{% static 'img/icons/delete.svg' %}";
 
     $(document).ready(function() {
         // Inicializar DataTables con la opción de responsividad
@@ -93,10 +95,10 @@
                         // Botones de acción (Editar y Eliminar)
                         let buttons = '';
                         if (canEdit) {
-                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> `;
+                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning"><img src="${editIconUrl}" alt="Editar"></a> `;
                         }
                         if (canDelete) {
-                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger"><img src="${deleteIconUrl}" alt="Eliminar"></a>`;
                         }
                         return buttons;
                     },
@@ -106,7 +108,7 @@
                         "createdRow": function (row, data, dataIndex) {
                 // Aquí puedes agregar clases a las celdas en la fila (row)
                 $(row).find('td').eq(0).addClass('imagenT');
-                $(row).find('td').eq(1).addClass('nombreT');
+                $(row).find('td').eq(1).addClass('nombreT, nombreTP');
                 $(row).find('td').eq(2).addClass('precio-compraT');
                 $(row).find('td').eq(3).addClass('precio-ventaT');
                 $(row).find('td').eq(4).addClass('stockT');
@@ -116,7 +118,7 @@
                 $(row).find('td').eq(8).addClass('marcaT');
             },
             language: {
-                url: "{% static 'js/DataTables/es-ES.json' %}"  
+                url: "{% static 'js/DataTables/es-ES.json' %}"
             }
         });
     });
