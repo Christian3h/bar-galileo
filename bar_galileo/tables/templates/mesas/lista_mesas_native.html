@@ -76,12 +76,12 @@
         {% if request.user|has_perm:"tables,editar" %}
         <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}"
           onclick="habilitarEdicion('{{ mesa.id }}')">
-          Editar
+          <img src="{% static 'img/icons/edit.svg' %}" alt="Editar">
         </button>
         {% endif %}
         {% if request.user|has_perm:"tables,eliminar" %}
         <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
-          Eliminar
+          <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
         </a>
         {% endif %}
       </div>
