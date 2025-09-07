@@ -402,6 +402,31 @@ async function facturarPedido() {
   }
 }
 
+function liberarMesa(mesaId, tienePedidos) {
+    const submitForm = () => {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/mesas/${mesaId}/liberar/`;
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').cloneNode(true);
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    if (tienePedidos) {
+        showConfirm(
+            'Liberar Mesa',
+            'Esta mesa tiene pedidos sin facturar. ¿Estás seguro de que deseas liberarla? Los pedidos serán eliminados.'
+        ).then(confirmed => {
+            if (confirmed) {
+                submitForm();
+            }
+        });
+    } else {
+        submitForm();
+    }
+}
+
 // ===== INICIALIZACIÓN Y EVENTOS =====
 
 document.addEventListener('DOMContentLoaded', () => {

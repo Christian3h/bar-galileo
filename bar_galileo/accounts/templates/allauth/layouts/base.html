@@ -16,6 +16,10 @@
             {% block head_title %}
             {% endblock head_title %}
         </title>
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+        <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
+        <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
+        <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
         {% block extra_head %}
         {% endblock extra_head %}
     </head>
