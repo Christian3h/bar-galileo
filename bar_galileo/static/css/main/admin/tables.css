@@ -1,12 +1,12 @@
 /* Centrar solo la tabla */
-#tabla-productos {
+#tabla-productos, #tabla-proveedores, #tabla-categorias {
   margin: 0 auto !important;
 }
 
 /* Media queries corregidas - Solo max-width */
 /* Pantallas muy pequeñas (Móvil) - Solo columnas esenciales */
 
-@media (max-width: 400px) {
+@media (max-width: 450px) {
 
   .precio-compraT,
   .precio-ventaT,

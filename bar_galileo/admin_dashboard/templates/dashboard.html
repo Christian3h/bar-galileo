@@ -4,7 +4,16 @@
 {% block content %}
 
 <div class="dashboard-container">
-  <h2 class="dashboard-title">Estadísticas Generales</h2>
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">Estadísticas Generales</h2>
+    <form method="get" action="{% url 'admin_dashboard:dashboard' %}" class="period-filter-form">
+      <select name="period" onchange="this.form.submit()" class="form-select">
+        <option value="month" {% if selected_period == 'month' %}selected{% endif %}>Este Mes</option>
+        <option value="quarter" {% if selected_period == 'quarter' %}selected{% endif %}>Este Trimestre</option>
+        <option value="all" {% if selected_period == 'all' %}selected{% endif %}>Todo el Historial</option>
+      </select>
+    </form>
+  </div>
 
   <section class="dashboard-cards">
     <div class="card">
@@ -43,7 +52,7 @@
     </article>
 
     <article class="chart-box">
-      <h4>Ventas del Mes</h4>
+      <h4>Ventas del Periodo</h4>
       <div style="overflow-x: auto;">
         <div id="ventas-mes-chart" style="width: 100%; height: 400px;"></div>
       </div>
@@ -98,14 +107,14 @@
     };
     topProductosChart.setOption(topProductosOption);
 
-    // Gráfico de ventas del mes
+    // Gráfico de ventas del periodo
     var ventasMesChart = echarts.init(document.getElementById('ventas-mes-chart'), 'dark');
     var ventasMesOption = {
       color: colors,
       tooltip: { ...tooltipStyle, trigger: 'axis' },
-      xAxis: { type: 'category', data: [{% for venta in ventas_mensuales %}'{{ venta.dia|date:"d" }}',{% endfor %}] },
+      xAxis: { type: 'category', data: [{% for venta in ventas_periodo %}'{{ venta.dia|date:"d/m" }}',{% endfor %}] },
       yAxis: { type: 'value' },
-      series: [{ data: [{% for venta in ventas_mensuales %}{{ venta.total_dia }},{% endfor %}], type: 'line', smooth: true }]
+      series: [{ data: [{% for venta in ventas_periodo %}{{ venta.total_dia }},{% endfor %}], type: 'line', smooth: true }]
     };
     ventasMesChart.setOption(ventasMesOption);
 
@@ -120,6 +129,12 @@
     };
     masStockChart.setOption(masStockOption);
 
+    window.addEventListener('resize', function() {
+        mesasChart.resize();
+        topProductosChart.resize();
+        ventasMesChart.resize();
+        masStockChart.resize();
+    });
   });
 </script>
 
