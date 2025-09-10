@@ -37,8 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(e => console.error('[DEBUG] Error cargando pop-ups pendientes:', e));
 
   const updateBadge = count => {
-    badge.textContent = count;
-    badge.style.display = count ? 'block' : 'none';
+    if (badge) {
+      badge.textContent = count;
+      badge.style.display = count ? 'block' : 'none';
+    }
   };
 
   const updatePanel = notifications => {
