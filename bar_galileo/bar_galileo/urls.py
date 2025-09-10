@@ -19,10 +19,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+from accounts.views import CustomEmailView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/email/', CustomEmailView.as_view(), name="account_email"), # Vista de depuración
     path('accounts/', include('allauth.urls')),
     path('captcha/', include('captcha.urls')),
     path('', include(('products.urls', 'products'), namespace='products')),

@@ -66,20 +66,20 @@ body {
 }
 
 .card {
-  background: transparent;
+  background: rgba(166, 137, 50, 0.1);
   border-radius: 12px;
-  border: 2px solid var(--color-primary);
-  box-shadow: 0 4px 8px var(--color-primary);
+  border: 2px solid var(--color-secondary);
+  box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
   padding: 1.5rem;
   flex: 1;
   min-width: 250px;
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 30px var(--color-primary);
+  box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
 }
 
 .card h3 {
@@ -139,6 +139,12 @@ body {
     width: 100%;
     min-width: unset;
   }
+
+  #tabla-permisos_wrapper{
+    max-width: 95dvw;
+    overflow: scroll;
+  }
+
 }
 
 @media (max-width: 480px) {

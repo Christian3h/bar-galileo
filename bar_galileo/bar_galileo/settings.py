@@ -193,6 +193,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 ACCOUNT_FORMS = {
     'login': 'accounts.forms.CustomLoginForm',
+    'add_email': 'accounts.forms.CustomAddEmailForm',
 }
 
 LOGIN_URL = '/accounts/login/'  # link que redirige al login
@@ -226,7 +227,7 @@ CHANNEL_LAYERS = {
 }
 
 # Captcha settings
-CAPTCHA_LENGTH = 6
+CAPTCHA_LENGTH = 1
 CAPTCHA_IMAGE_SIZE = (225, 75)
 CAPTCHA_FONT_SIZE = 40
 CAPTCHA_FLITE_PATH = '/usr/bin/flite'
