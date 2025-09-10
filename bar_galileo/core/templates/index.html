@@ -1,45 +1,10 @@
+{% extends 'base.html' %}
 {% load static %}
 {% load format_tags %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bar Galileo - Experiencia Premium en Coctelería</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/index.css' %}">
-</head>
-<body>
 
-  <!-- ACCESO RÁPIDO -->
-  <div class="quick-access">  
-    <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn">Dashboard</a>
-    <a href="#login-section" class="quick-btn">Login</a>
-  </div>
+{% block title %}Inicio - {{ block.super }}{% endblock %}
 
-  <!-- Header -->
-  
-  <header class="header">
-    <div class="container">
-      <nav class="nav">
-        <div class="logo">BAR GALILEO</div>
-        <ul class="nav-menu">
-          <li><a href="#cocktails-section">COCKTAILS</a></li>
-          <li><a href="#about">EXPERIENCIA</a></li>
-          <li><a href="#carta-section">CARTA</a></li>
-          <li><a href="#reservas-section">RESERVAS</a></li>
-          <li><a href="#contact">CONTACTO</a></li>
-        </ul>
-        <div class="nav-buttons">
-          <a href="#login-section" class="nav-button">LOGIN</a>
-          <a href="#reservas-section" class="nav-button">RESERVAR MESA</a>
-        </div>
-      </nav>
-    </div>
-  </header>
-
+{% block content %}
   <!-- Hero Section -->
   <section class="hero" id="experiencia-section">
     <div class="hero-carousel">
@@ -181,7 +146,6 @@
           Mostrar menos productos
         </button>
         <div id="loading-productos" style="display: none;">
-
         </div>
       </div>
       {% endif %}
@@ -196,112 +160,7 @@
       <p style="font-size: 18px; margin-bottom: 40px; color: #ccc;">
         ¡Reserva tu mesa y asegura tu lugar en Bar Galileo!
       </p>
-      <a href="https://wa.me/XXXXXXXXXXX" class="nav-button">Reservar por WhatsApp</a>
+       <a href="https://wa.me/573044029343" class="nav-button">Reservar por WhatsApp</a>
     </div>
   </section>
-
-  <!-- SECCIÓN LOGIN -->
-  <span class="section-anchor" id="login-section"></span>
-  <section class="login-section">
-    <div class="container">
-      <h2 class="products-title">Iniciar Sesión</h2>
-      <p style="font-size: 18px; margin-bottom: 40px; color: #ccc;">
-        Accede a tu cuenta para disfrutar de beneficios exclusivos
-      </p>
-      <a href="/accounts/email" class="nav-button">Ir a Login</a>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer" id="contact">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <h3>BAR GALILEO</h3>
-          <p>Creamos experiencias únicas en coctelería premium y ofrecemos un ambiente sofisticado para momentos especiales. Descubre el arte de la mixología con nosotros.</p>
-
-          <div class="social-icons">
-            <a href="https://facebook.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
-              <span>f</span>
-            </a>
-            <a href="https://instagram.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
-              <span>📷</span>
-            </a>
-            <a href="https://twitter.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
-              <span>🐦</span>
-            </a>
-            <a href="https://wa.me/525512345678" class="social-icon" target="_blank" rel="noopener">
-              <span>📱</span>
-            </a>
-          </div>
-        </div>
-
-        <div class="footer-section">
-          <h4>Servicios</h4>
-          <ul>
-            <li><a href="#carta-section">Carta de Cocteles</a></li>
-            <li><a href="#reservas-section">Reservas</a></li>
-            <li><a href="#cocktails-section">Eventos Privados</a></li>
-            <li><a href="#about">Cenas Maridaje</a></li>
-            <li><a href="#about">Masterclasses</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-section">
-          <h4>Especialidades</h4>
-          <ul>
-            <li><a href="#cocktails-section">Cocteles Clásicos</a></li>
-            <li><a href="#cocktails-section">Creaciones Propias</a></li>
-            <li><a href="#carta-section">Destilados Premium</a></li>
-            <li><a href="#carta-section">Vinos Selectos</a></li>
-            <li><a href="#carta-section">Licores Artesanales</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-section">
-          <h4>Contacto</h4>
-          <div class="contact-info">
-            <div class="contact-item">
-              <i>📞</i>
-              <a href="tel:+525512345678">+52 (55) 1234-5678</a>
-            </div>
-            <div class="contact-item">
-              <i>✉️</i>
-              <a href="mailto:reservas@bargalileo.mx">reservas@bargalileo.mx</a>
-            </div>
-            <div class="contact-item">
-              <i>📍</i>
-              <span>Roma Norte, Ciudad de México</span>
-            </div>
-            <div class="contact-item">
-              <i>🕒</i>
-              <span>Mar-Dom: 6:00 PM - 2:00 AM</span>
-            </div>
-          </div>
-
-          <div class="newsletter">
-            <p style="color: #ccc; font-size: 14px; margin-bottom: 10px;">Suscríbete a nuestro newsletter</p>
-            <form class="newsletter-form" id="newsletter-form">
-              <input type="email" class="newsletter-input" placeholder="Tu email" required>
-              <button type="submit" class="newsletter-button">Suscribir</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <div class="footer-bottom-left">
-          <p>&copy; 2024 Bar Galileo. Todos los derechos reservados.</p>
-        </div>
-        <div class="footer-bottom-right">
-          <a href="#privacy">Política de Privacidad</a>
-          <a href="#terms">Términos y Condiciones</a>
-          <a href="#cookies">Política de Cookies</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <script src="{% static 'js/index.js' %}"></script>
-</body>
-</html>
+{% endblock %}

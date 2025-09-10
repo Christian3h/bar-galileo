@@ -7,7 +7,7 @@
 #
 # Cada clase y método está documentado para facilitar el mantenimiento y la extensión del sistema.
 
-from django.views.generic import TemplateView, View, UpdateView, DeleteView, CreateView
+from django.views.generic import TemplateView, View, UpdateView, DeleteView, CreateView, DetailView
 from django.http import JsonResponse
 from django.contrib import messages
 from django.conf import settings
@@ -657,7 +657,7 @@ class EliminarImagenProductoAdminView(View):
         # Redirige a la lista o edición del producto
         return redirect('products:products_edit_admin', pk=producto_id)
 
-# desde este comendario hacia abajo es el codigo que se utlisa en el dashboard, estas son las vistas que se tienen que proteger las otras seran desactivadas
+# desde este comendario hacia abajo es el codigo que se utliza en el dashboard, estas son las vistas que se tienen que proteger las otras seran desactivadas
 # vistas para el dashboard de administración de cateegorías
 
 @method_decorator(permission_required('brands', 'ver'), name='dispatch')
@@ -827,4 +827,26 @@ class CategoriaDeleteAdminView(DeleteView):
         response = super().delete(request, *args, **kwargs)
         notificar_usuario(request.user, mensaje)
         return response
+
+class ProductoDetailView(DetailView):
+    model = Producto
+    template_name = "products/producto_detalle.html"
+    context_object_name = "producto"
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Producto, id_producto=self.kwargs.get("pk"))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        producto_actual = self.object
+        
+        # Obtener productos relacionados (misma marca, excluyendo el producto actual)
+        productos_relacionados = Producto.objects.filter(
+            id_marca=producto_actual.id_marca
+        ).exclude(
+            id_producto=producto_actual.id_producto
+        )[:4] # Limitar a 4 productos relacionados
+        
+        context['productos_relacionados'] = productos_relacionados
+        return context
 

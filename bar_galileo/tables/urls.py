@@ -21,6 +21,8 @@ urlpatterns = [
     path('api/pedidos/actualizar-item/<int:item_id>/', views_api.actualizar_item_api, name='api_actualizar_item'),
     path('api/pedidos/eliminar-item/<int:item_id>/', views_api.eliminar_item_api, name='api_eliminar_item'),
     path('api/pedidos/<int:pedido_id>/facturar/', views_api.facturar_pedido_api, name='api_facturar_pedido'),
+    path('api/pedidos/<int:pedido_id>/usuarios/', views_api.pedido_manage_user_api, name='api_pedido_manage_user'),
+    path('api/users/', views_api.get_all_users_api, name='api_get_all_users'),
     
     # Ruta para ver la factura
     path('facturas/<int:factura_id>/', views.ver_factura, name='ver_factura'),

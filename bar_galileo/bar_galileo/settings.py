@@ -14,12 +14,15 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'static'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -36,6 +39,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # app para el captcha
+    'captcha',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,27 +48,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    #apps propias 
+    #apps propias
     'core', # se encarga las paginas de inicio
     'products',
     'accounts.apps.AccountsConfig',
     'tables',
     'roles',
     'users',
+    'expenses',
     #app para el dashboard
     'admin_dashboard',
     #app para facturación
     'facturacion',
-    #apps necesarias para la libreria django-allauth 
+    #apps necesarias para la libreria django-allauth
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    #app para el manejo de las notificaciones 
+    #app para el manejo de las notificaciones
     'channels',
     'notifications',
-]
+    ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -89,11 +95,11 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
                 os.path.join(BASE_DIR, 'accounts', 'templates'),
-                os.path.join(BASE_DIR, 'products', 'templates'), 
-                os.path.join(BASE_DIR, 'core', 'templates'), 
-                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'), 
+                os.path.join(BASE_DIR, 'products', 'templates'),
+                os.path.join(BASE_DIR, 'core', 'templates'),
+                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'),
                 os.path.join(BASE_DIR, 'notifications', 'templates')
-                ],  
+                ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -185,10 +191,14 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+ACCOUNT_FORMS = {
+    'login': 'accounts.forms.CustomLoginForm',
+}
+
 LOGIN_URL = '/accounts/login/'  # link que redirige al login
 LOGIN_REDIRECT_URL = '/'
 
-#---------------------- credenciales para enviar correos 
+#---------------------- credenciales para enviar correos
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -200,7 +210,7 @@ EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
 
 #bar-galileo
 
-ALLOWED_HOSTS = ['*'] #permitir varios enlaces 
+ALLOWED_HOSTS = ['*'] #permitir varios enlaces
 
 
 
@@ -214,3 +224,9 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
     },
 }
+
+# Captcha settings
+CAPTCHA_LENGTH = 6
+CAPTCHA_IMAGE_SIZE = (225, 75)
+CAPTCHA_FONT_SIZE = 40
+CAPTCHA_FLITE_PATH = '/usr/bin/flite'

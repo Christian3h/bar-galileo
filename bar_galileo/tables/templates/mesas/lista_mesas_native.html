@@ -76,12 +76,12 @@
         {% if request.user|has_perm:"tables,editar" %}
         <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}"
           onclick="habilitarEdicion('{{ mesa.id }}')">
-          Editar
+          <img src="{% static 'img/icons/edit.svg' %}" alt="Editar">
         </button>
         {% endif %}
         {% if request.user|has_perm:"tables,eliminar" %}
         <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
-          Eliminar
+          <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
         </a>
         {% endif %}
       </div>
@@ -145,9 +145,10 @@
           <h4>Pedido Actual</h4>
           <div id="pedidoItems"></div>
           <div style="margin-top: 15px">
-            <h4>Total: $<span id="pedidoTotal">0.00</span></h4>
+            <h4>Total:<span id="pedidoTotal">0.00</span></h4>
           </div>
         </div>
+        {% include 'order_modal_user_management.html' %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" onclick="cerrarModal()">

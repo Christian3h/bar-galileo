@@ -61,9 +61,11 @@
             <button class="btn btn-primary" onclick="window.print()">
                 🖨️ Imprimir
             </button>
-            <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary">
-                ← Volver a Mesas
-            </a>
+            <a href="{% url 'users:panel_usuario' %}" class="btn btn-secondary"> ← Panel de Usuario</a>
+
+            {% if request.user|has_perm:"categories,editar" %}
+                <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary"> ← Volver a Mesas </a>
+            {% endif %}
         </div>
     </div>
 </div>

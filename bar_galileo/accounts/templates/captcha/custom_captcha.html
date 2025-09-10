@@ -1,0 +1,11 @@
+<img src="{{ image }}" alt="captcha" class="captcha" style="pointer-events: none; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #444;">
+<input type="hidden" name="captcha_0" value="{{ key }}">
+<input type="text" name="captcha_1" required class="form-control" id="id_captcha_1" placeholder="Ingresa el captcha">
+
+<a href="#" class="toggle-audio" style="display: block; margin-top: 10px; font-size: 0.9rem; color: #d4af37; text-decoration: none;">Escuchar audio</a>
+
+<div class="audio-player-container" style="display: none; margin-top: 10px;">
+    <audio src="{{ audio }}" controls preload="none" style="width: 100%;">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+</div>

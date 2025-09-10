@@ -106,7 +106,7 @@ body {
   border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
-  min-width: 300px;
+  min-width: 600px;
 }
 
 .chart-box h4 {
@@ -127,8 +127,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .dashboard-cards,
-  .dashboard-charts {
+  .dashboard-cards {
     flex-direction: column;
   }
 
@@ -136,8 +135,7 @@ body {
     padding: 1rem;
   }
 
-  .card,
-  .chart-box {
+  .card {
     width: 100%;
     min-width: unset;
   }
@@ -170,7 +168,7 @@ body {
 /*estilos para las tablas */
 
 .table {
-  width: 50% !important;
+  width: 100%;
 }
 
 .dt-paging-button {
@@ -180,4 +178,20 @@ body {
 .table th,
 .table td {
   border: 1px solid var(--color-secondary) !important;
+}
+
+.table-contenedor {
+  display: flex;
+  justify-content: center;
+}
+
+
+@media (max-width: 700px) {
+  .dashboard-charts {
+    flex-direction: column;
+  }
+  .chart-box{
+    min-width: 100%;
+
+  }
 }
