@@ -20,8 +20,8 @@
                         <td>{{ rol.nombre }}</td>
                         <td>{{ rol.descripcion }}</td>
                         <td>
-                            <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info">Permisos</a>
                             {% if request.user|has_perm:"roles,editar" %}
+                                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info">Permisos</a>
                                 <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                             {% endif %}
                             {% if request.user|has_perm:"roles,eliminar" %}

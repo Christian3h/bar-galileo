@@ -8,10 +8,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}Bar Galileo{% endblock %}</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
+  <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
+  <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
   {% block extra_css %}{% endblock %}
   <style>
     .nav-avatar-item {
@@ -130,6 +135,7 @@
   </style>
 </head>
 <body>
+  {% include 'components/notificaciones.html' %}
   <!-- Header -->
   <header class="header">
     <div class="container">

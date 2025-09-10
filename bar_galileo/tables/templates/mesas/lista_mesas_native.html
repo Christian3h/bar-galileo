@@ -83,6 +83,11 @@
         <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">
           <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
         </a>
+        {% if request.user|has_perm:"tables,eliminar" %}
+        <button class="btn btn-info btn-sm" onclick="liberarMesa('{{ mesa.id }}', {{ mesa.tiene_pedidos_en_proceso|yesno:'true,false' }})">
+          Liberar
+        </button>
+        {% endif %}
         {% endif %}
       </div>
 

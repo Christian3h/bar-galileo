@@ -382,3 +382,85 @@ body {
   font-weight: bold;
   box-shadow: 0 0 8px #A68932;
 }
+
+/* =======================================
+ * RESPONSIVE DESIGN
+ * ======================================= */
+
+@media (max-width: 992px) {
+    .dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .btn-back {
+        position: static;
+        margin-top: 15px;
+        display: inline-block;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .header {
+        padding: 20px 15px;
+    }
+
+    .header h1 {
+        font-size: 2em;
+    }
+
+    .dashboard {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .bill-amount {
+        font-size: 2.5em;
+    }
+
+    .history-table th, .history-table td {
+        padding: 6px 8px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .header p {
+        font-size: 1em;
+    }
+
+    .card-title {
+        font-size: 1.2em;
+    }
+
+    .bill-amount {
+        font-size: 2em;
+    }
+
+    .edit-form button, .edit-btn {
+        padding: 8px 20px;
+        font-size: 1em;
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .history-table-container {
+        overflow-x: auto;
+    }
+}

@@ -1,5 +1,6 @@
 {% load humanize %}
 {% load format_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -101,6 +102,29 @@
   90% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-20px); }
 }
+
+/* Styles for menu-btn */
+.menu-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  text-align: left;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.menu-btn:hover {
+  background-color: var(--color-accent);
+  color: var(--color-secondary);
+}
+
 </style>
 </head>
 <body>
@@ -138,7 +162,7 @@ function toggleEmergenciaForm(show) {
             {% endif %}
         </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
-        <a href="{% url 'core:index' %}" class="btn-back">Volver al Inicio</a>
+        <a href="{% url 'core:index' %}" class="menu-btn"><img src="{% static 'img/icons/home.svg' %}" alt="Inicio">Volver al Inicio</a>
       </div>
       <div class="dashboard">
         <!-- Cuenta Actual -->

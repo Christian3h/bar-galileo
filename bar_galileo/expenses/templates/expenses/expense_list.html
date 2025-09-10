@@ -18,30 +18,30 @@
             <table id="expenses-table" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Fecha</th>
-                        <th>Monto</th>
-                        <th>Categoría</th>
-                        <th>Descripción</th>
-                        <th>Recibo</th>
-                        <th>Usuario</th>
+                        <th class="col-1">Fecha</th>
+                        <th class="col-2">Monto</th>
+                        <th class="col-3">Categoría</th>
+                        <th class="col-4">Descripción</th>
+                        <th class="col-5">Recibo</th>
+                        <th class="col-6">Usuario</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for expense in expenses %}
                     <tr>
-                        <td>{{ expense.date }}</td>
-                        <td>{{ expense.amount|format_price }}</td>
-                        <td>{{ expense.category }}</td>
-                        <td>{{ expense.description }}</td>
-                        <td>
+                        <td class="col-1">{{ expense.date }}</td>
+                        <td class="col-2">{{ expense.amount|format_price }}</td>
+                        <td class="col-3">{{ expense.category }}</td>
+                        <td class="col-4">{{ expense.description }}</td>
+                        <td class="col-5">
                             {% if expense.receipt %}
                                 <a href="{{ expense.receipt.url }}" target="_blank">Ver Recibo</a>
                             {% else %}
                                 No adjunto
                             {% endif %}
                         </td>
-                        <td>{{ expense.user.username }}</td>
+                        <td class="col-6">{{ expense.user.username }}</td>
                         <td>
                             {% if request.user|has_perm:"expenses,editar" %}
                                 <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
@@ -62,7 +62,8 @@
         $('#expenses-table').DataTable({
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"
-            }
+            },
+            responsive: true
         });
     });
 </script>
