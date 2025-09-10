@@ -8,32 +8,37 @@
 
 {% block content %}
         <h1 class="my-4">Lista de Productos</h1>
-        <!-- Tabla con ID específico para ser utilizada con DataTables -->
-        <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
-            <thead>
-                <tr>
-                    <th class="imagenT" >Imagen</th>
-                    <th class="nombreT" >Nombre</th>
-                    <th class="precio-compraT" >Precio Compra</th>
-                    <th class="precio-ventaT" >Precio Venta</th>
-                    <th class="stockT" >Stock</th>
-                    <th class="descripcionT" >Descripción</th>
-                    <th class="categoriaT" >Categoría</th>
-                    <th class="proveedorT">Proveedor</th>
-                    <th class="marcaT" >Marca</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Las filas serán llenadas por AJAX -->
-            </tbody>
-        </table>
-    
+        <div class="table-contenedor">
+            <div class="table-responsive">
+                <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="imagenT" >Imagen</th>
+                            <th class="nombreT" >Nombre</th>
+                            <th class="precio-compraT" >Precio Compra</th>
+                            <th class="precio-ventaT" >Precio Venta</th>
+                            <th class="stockT" >Stock</th>
+                            <th class="descripcionT" >Descripción</th>
+                            <th class="categoriaT" >Categoría</th>
+                            <th class="proveedorT">Proveedor</th>
+                            <th class="marcaT" >Marca</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas serán llenadas por AJAX -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
 
     <script>
     // Permisos del usuario
     const canEdit = {% if request.user|has_perm:"products,editar" %}true{% else %}false{% endif %};
     const canDelete = {% if request.user|has_perm:"products,eliminar" %}true{% else %}false{% endif %};
+    const editIconUrl = "{% static 'img/icons/edit.svg' %}";
+    const deleteIconUrl = "{% static 'img/icons/delete.svg' %}";
 
     $(document).ready(function() {
         // Inicializar DataTables con la opción de responsividad
@@ -90,10 +95,10 @@
                         // Botones de acción (Editar y Eliminar)
                         let buttons = '';
                         if (canEdit) {
-                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning">Editar</a> `;
+                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning"><img src="${editIconUrl}" alt="Editar"></a> `;
                         }
                         if (canDelete) {
-                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger">Eliminar</a>`;
+                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger"><img src="${deleteIconUrl}" alt="Eliminar"></a>`;
                         }
                         return buttons;
                     },
@@ -103,7 +108,7 @@
                         "createdRow": function (row, data, dataIndex) {
                 // Aquí puedes agregar clases a las celdas en la fila (row)
                 $(row).find('td').eq(0).addClass('imagenT');
-                $(row).find('td').eq(1).addClass('nombreT');
+                $(row).find('td').eq(1).addClass('nombreT, nombreTP');
                 $(row).find('td').eq(2).addClass('precio-compraT');
                 $(row).find('td').eq(3).addClass('precio-ventaT');
                 $(row).find('td').eq(4).addClass('stockT');
@@ -113,7 +118,7 @@
                 $(row).find('td').eq(8).addClass('marcaT');
             },
             language: {
-                url: "{% static 'js/DataTables/es-ES.json' %}"  
+                url: "{% static 'js/DataTables/es-ES.json' %}"
             }
         });
     });

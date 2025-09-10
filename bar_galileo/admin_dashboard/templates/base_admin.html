@@ -1,7 +1,7 @@
 {% load static %}
 {% load roles_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -9,14 +9,16 @@
     <title>Admin-bar galileo</title>
     <link rel="stylesheet" href="{% static 'css/main/admin/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/simple_modal.css' %}">
     <script src="{% static 'js/DataTables/jquery-3.7.1.min.js' %}"></script>
     <link href="{% static 'js/DataTables/datatables.css' %}" rel="stylesheet">
- 
+
     <script src="{% static 'js/DataTables/datatables.js' %}"></script>
 
     {% block extra_css %}
 
     {% endblock %}
+
 </head>
 
 <body>
@@ -24,7 +26,11 @@
     {% include "components/nav-admin.html" %}
 
     <main class="main-content">
-        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="notification-icon" id="notification-icon">
             <span id="icono-notification" >🔔</span>
             <span class="notification-badge" id="notification-badge">0</span>
@@ -32,7 +38,7 @@
                 <div class="notification-header">
                     <h4>Notificaciones</h4>
                     <button id="mark-all-as-read">Marcar todas como leídas</button>
-                    
+
                     <ul class="notification-list" id="notification-list">
                     <!-- Las notificaciones se cargarán aquí -->
                     </ul>
@@ -50,7 +56,7 @@
     <script src="{% static 'js/admin/nav_admin.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
     <script src="{% static 'js/admin/notification_button.js' %}"></script>
-
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>

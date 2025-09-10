@@ -1,63 +1,121 @@
-# Entorno virtual
-.venv/
-
-# Archivos de Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Archivos de log
-*.log
+# C extensions
+*.so
 
-# Archivos temporales del sistema
-*.swp
-*.swo
-*.bak
-*.tmp
-.DS_Store
-Thumbs.db
-
-# Archivos de configuración de IDE
-.vscode/
-.idea/
-
-# Archivos de base de datos SQLite
-*.sqlite3
-db.sqlite3
-
-# Archivos de migraciones de Django (opcional ignorarlos si los generas en equipo)
-# Puedes dejar estos si deseas compartir las migraciones
-# **/migrations/*.py
-**/migrations/__pycache__/
-
-# Archivos estáticos recopilados
-staticfiles/
-collected_static/
-
-# Archivos de compilación
+# Distribution / packaging
+.Python
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
 *.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Archivos de media (si se generan localmente)
-media/
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
 
-# Archivos de configuración local
-local_settings.py
-#.env
-#Lw
-#.env.*
 
-# Archivos de cobertura y pruebas
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
 htmlcov/
-.coverage
 .tox/
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.hypothesis/
+pytestdebug.log
 
-# Archivos de node/npm si usas frontend con Django
-node_modules/
+# Translations
+*.mo
+*.pot
 
-secret-google.json
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Scrapy stuff
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# VSCode
+.vscode/

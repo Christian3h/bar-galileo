@@ -5,7 +5,35 @@
 
 /* Media queries corregidas - Solo max-width */
 /* Pantallas muy pequeñas (Móvil) - Solo columnas esenciales */
-@media screen and (max-width: 499px) {
+
+@media (max-width: 400px) {
+
+  .precio-compraT,
+  .precio-ventaT,
+  .marcaT,
+  .proveedorT,
+  .categoriaT,
+  .descripcionT,
+  .imagenT,
+  .stockT {
+    display: none;
+  }
+
+  .nombreTP {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30px;
+    vertical-align: top;
+  }
+
+  #tabla-productos{
+    width: 0 !important;
+  }
+}
+
+
+@media screen and (max-width: 600px) {
   .precio-compraT,
   .precio-ventaT,
   .marcaT,
@@ -17,7 +45,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 850px) {
   .precio-ventaT,
   .marcaT,
   .categoriaT,
@@ -28,7 +56,7 @@
   }
 }
 
-@media screen and (max-width: 770px) {
+@media screen and (max-width: 900px) {
   .marcaT,
   .proveedorT,
   .categoriaT,

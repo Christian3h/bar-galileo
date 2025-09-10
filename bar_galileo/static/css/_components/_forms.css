@@ -1,3 +1,51 @@
+@import '_selects.css';
+
+/* Cuadro para mostrar info personal y emergencia */
+.info-row-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #262626;
+    border: 2px solid #A68932;
+    border-radius: 12px;
+    padding: 10px 24px;
+    margin-bottom: 16px;
+    color: #A68932;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+.info-row-box .info-label {
+    font-weight: bold;
+    color: #A68932;
+}
+.info-row-box .info-value {
+    color: #A68932;
+    text-align: right;
+}
+/* Label destacado en cuadro amarillo y campo en fondo gris oscuro */
+.form-label-box {
+    background: #A68932;
+    color: #181818;
+    font-weight: bold;
+    padding: 8px 18px;
+    border-radius: 6px 6px 0 0;
+    font-size: 1em;
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+}
+.form-input-box {
+    background: #262626;
+    color: #A68932;
+    border: 2px solid #A68932;
+    border-radius: 0 0 6px 6px;
+    padding: 10px 16px;
+    font-size: 1.1em;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 18px;
+}
 /* =======================================
    ESTILOS PARA FORMULARIOS
 ======================================= */

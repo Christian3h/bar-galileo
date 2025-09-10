@@ -1,3 +1,5 @@
+@import '../../_components/selects.css';
+
 /* =======================================
  * ESTILOS REFACTORIZADOS - SISTEMA DE MESAS
  * ======================================= */
@@ -15,7 +17,6 @@
   margin: 0 auto;
   background: transparent;
   padding: 2rem 3rem;
-  border-radius: 12px;
   box-sizing: border-box;
 }
 
@@ -392,4 +393,72 @@ textarea:focus {
     flex-direction: column;
   }
 
+}
+
+/* New styles for user management in modal */
+.clientes-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--color-primary);
+}
+
+.clientes-section h3 {
+    color: var(--color-light);
+    margin-bottom: 1rem;
+}
+
+.add-cliente {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.add-cliente select,
+.add-cliente input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--color-primary);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-secondary);
+}
+
+.add-cliente button {
+    padding: 8px 15px;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.current-clientes h4 {
+    color: var(--color-light);
+    margin-bottom: 0.8rem;
+}
+
+#usuarios-en-pedido-list {
+    list-style: none;
+    padding: 0;
+}
+
+.usuario-tag {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(98, 115, 61, 0.1);
+    border: 1px solid var(--color-primary);
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    color: var(--color-secondary);
+}
+
+.usuario-tag button {
+    background: transparent;
+    border: none;
+    color: var(--color-dark);
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.2rem;
 }
