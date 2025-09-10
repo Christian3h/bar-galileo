@@ -10,7 +10,6 @@
         <table id="brands-table" class="table display">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Acciones</th>
                 </tr>
@@ -18,7 +17,6 @@
             <tbody>
                 {% for brand in brands %}
                 <tr>
-                    <td>{{ brand.id_marca }}</td>
                     <td>{{ brand.marca }}</td>
                     <td>
                         {% if request.user|has_perm:"brands,editar" %}

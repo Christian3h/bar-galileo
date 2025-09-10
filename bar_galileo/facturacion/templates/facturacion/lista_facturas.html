@@ -68,26 +68,26 @@
         <table id="tabla-facturas" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
-                    <th>Número</th>
-                    <th class="hide-mobile">Mesa</th>
-                    <th>Fecha</th>
-                    <th>Total</th>
+                    <th class="col-1">Número</th>
+                    <th class="col-2">Mesa</th>
+                    <th class="col-3">Fecha</th>
+                    <th class="col-4">Total</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for factura in page_obj %}
                 <tr>
-                    <td class="factura-numero">#{{ factura.numero }}</td>
-                    <td class="hide-mobile">
+                    <td class="col-1">#{{ factura.numero }}</td>
+                    <td class="col-2">
                         {% if factura.mesa_nombre %}
                             {{ factura.mesa_nombre }}
                         {% else %}
                             <span class="text-muted">Sin mesa</span>
                         {% endif %}
                     </td>
-                    <td class="fecha-cell">{{ factura.fecha|date:"d/m/Y H:i" }}</td>
-                    <td class="total-cell">{{ factura.total|format_price }}</td>
+                    <td class="col-3">{{ factura.fecha|date:"d/m/Y H:i" }}</td>
+                    <td class="col-4">{{ factura.total|format_price }}</td>
                     <td class="actions-cell">
                                 <a href="{% url 'facturacion:detalle_factura' factura.id %}"
                                     class="btn btn-sm btn-primary btn-view"
