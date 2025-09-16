@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from roles.models import Role, Module, Action
+from roles.models import Role, Module, Action, RolePermission
 
 class Command(BaseCommand):
     help = 'Agregar permisos de nóminas al rol Administrador'
@@ -7,7 +7,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             # Obtener el rol de administrador
-            admin_role = Role.objects.get(nombre='Administrador')
+            admin_role = Role.objects.get(nombre='admin')
             
             # Obtener el módulo de nóminas
             try:
@@ -21,13 +21,14 @@ class Command(BaseCommand):
             
             # Asignar todas las acciones del módulo de nóminas al rol administrador
             for action in actions:
-                admin_role.permissions.get_or_create(
-                    module=nominas_module,
-                    action=action
+                RolePermission.objects.get_or_create(
+                    rol=admin_role,
+                    modulo=nominas_module,
+                    accion=action
                 )
             
-            self.stdout.write(self.style.SUCCESS(f'Permisos de nóminas asignados correctamente al rol Administrador'))
+            self.stdout.write(self.style.SUCCESS(f'Permisos de nóminas asignados correctamente al rol admin'))
         except Role.DoesNotExist:
-            self.stdout.write(self.style.ERROR(f'El rol Administrador no existe'))
+            self.stdout.write(self.style.ERROR(f'El rol admin no existe'))
         except Exception as e:
             self.stdout.write(self.style.ERROR(f'Error: {e}'))
