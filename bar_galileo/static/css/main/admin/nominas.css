@@ -1,0 +1,90 @@
+/* Estilos específicos para el módulo de nóminas */
+
+/* Contenedor principal */
+.nominas-container {
+  max-width: 100%;
+  padding: 0 15px;
+}
+
+/* Dashboard de estadísticas */
+.nominas-stats {
+  margin-bottom: 1.5rem;
+}
+
+.nominas-stats .card {
+  transition: transform 0.3s;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nominas-stats .card:hover {
+  transform: translateY(-5px);
+}
+
+/* Tablas */
+.table-contenedor {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Mejora de la responsividad de las tablas */
+@media screen and (max-width: 576px) {
+  .descripcionCol,
+  .comprobanteCol {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .tipoContratoCol,
+  .fechaContratacionCol {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .estadoCol {
+    display: none;
+  }
+}
+
+/* Perfiles de empleados */
+.empleado-perfil .card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.empleado-perfil .card-header {
+  border-radius: 10px 10px 0 0;
+}
+
+/* Botones de acción */
+.btn-action-group {
+  display: flex;
+  gap: 5px;
+}
+
+/* Estilos para formularios */
+.nominas-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.nominas-form .card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejora visual para DataTables */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+  margin-bottom: 15px;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  margin-top: 15px;
+}
