@@ -1,0 +1,39 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="my-2">Confirmar Eliminación</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fa fa-exclamation-triangle"></i> Esta acción no se puede deshacer.
+                    </div>
+                    
+                    <p class="mb-4">
+                        ¿Estás seguro que deseas eliminar al empleado <strong>{{ object.nombre }}</strong>?
+                    </p>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <p><strong>Cargo:</strong> {{ object.cargo }}</p>
+                            <p><strong>Fecha de contratación:</strong> {{ object.fecha_contratacion }}</p>
+                            <p><strong>Estado actual:</strong> {{ object.get_estado_display }}</p>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+                            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
