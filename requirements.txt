@@ -41,4 +41,4 @@ uvicorn==0.23.2
 watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
-django-simple-captcha==0.6.2
+django-simple-captcha==0.6.2django-simple-captcha==0.6.2
