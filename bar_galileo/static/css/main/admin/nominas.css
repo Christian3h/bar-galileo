@@ -1,0 +1,174 @@
+/* Estilos específicos para el módulo de nóminas */
+
+/* Contenedor principal */
+.nominas-container {
+  max-width: 1200px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+/* Dashboard de estadísticas */
+.nominas-stats {
+  margin-bottom: 1.5rem;
+}
+
+.nominas-stats {
+  max-width: 90%;
+  margin: 0 auto 1.5rem auto;
+}
+
+.nominas-stats .card {
+  transition: transform 0.3s;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffc107;
+}
+
+.nominas-stats .card:hover {
+  transform: translateY(-5px);
+}
+
+/* Tablas */
+.table-contenedor {
+  background-color: #222;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  margin: 0 auto 1.5rem auto;
+  max-width: 90%;
+  border: 2px solid #ffc107;
+}
+
+/* Mejora de la responsividad de las tablas */
+@media screen and (max-width: 576px) {
+  .descripcionCol,
+  .comprobanteCol {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .tipoContratoCol,
+  .fechaContratacionCol {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .estadoCol {
+    display: none;
+  }
+}
+
+/* Perfiles de empleados */
+.empleado-perfil .card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
+}
+
+.empleado-perfil .card-header {
+  border-radius: 10px 10px 0 0;
+}
+
+/* Botones de acción */
+.btn-action-group {
+  display: flex;
+  gap: 5px;
+}
+
+/* Estilos para formularios */
+.nominas-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.nominas-form .card {
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejora visual para DataTables */
+.dataTables_wrapper .dataTables_length, 
+.dataTables_wrapper .dataTables_filter {
+  margin-bottom: 15px;
+  color: #ffc107;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  margin-top: 15px;
+  color: #ffc107;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  color: #ffc107 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: #ffc107 !important;
+  color: #222 !important;
+  border: 1px solid #ffc107 !important;
+}
+
+/* Estilos para formularios centrados */
+.container .card {
+  max-width: 800px;
+  margin: 20px auto;
+  border: 2px solid #ffc107;
+  background-color: #222;
+  border-radius: 10px;
+}
+
+.container .card-header {
+  background-color: #ffc107;
+  color: #222;
+  font-weight: bold;
+}
+
+.container .card-body {
+  background-color: #222;
+  color: #fff;
+}
+
+/* Mejorar apariencia de labels y campos */
+.form-label {
+  color: #ffc107;
+  font-weight: 500;
+}
+
+.form-control, .form-select {
+  background-color: #333;
+  border: 1px solid #ffc107;
+  color: #fff;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: #333;
+  color: #fff;
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.btn-primary, .btn-success {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #222;
+}
+
+.btn-primary:hover, .btn-success:hover {
+  background-color: #e5ac00;
+  border-color: #e5ac00;
+  color: #222;
+}
+
+.btn-secondary {
+  background-color: #444;
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.btn-secondary:hover {
+  background-color: #555;
+  border-color: #ffc107;
+  color: #ffc107;
+}
