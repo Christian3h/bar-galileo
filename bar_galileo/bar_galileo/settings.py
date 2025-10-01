@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'roles',
     'users',
     'expenses',
+    'nominas',
     #app para el dashboard
     'admin_dashboard',
     #app para facturación
@@ -83,6 +84,7 @@ MIDDLEWARE = [
     'roles.middleware.PermissionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'accounts.middleware.AdminRedirectMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware'

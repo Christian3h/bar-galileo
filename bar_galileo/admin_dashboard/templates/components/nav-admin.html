@@ -120,6 +120,22 @@
                 </li>
                 {% endif %}
 
+                {% if request.user|has_perm:"nominas,ver" %}
+                <li>
+                                        <button class="menu-btn" onclick="toggleMenu('nominas-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Nóminas"> Nóminas</button>
+                    <ul id="nominas-submenu" class="submenu hidden">
+                        <li><a href="{% url 'nominas:empleado_list' %}">Lista de Empleados</a></li>
+                        {% if request.user|has_perm:"nominas,crear" %}
+                        <li><a href="{% url 'nominas:empleado_crear' %}">Registrar Empleado</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'nominas:pago_list' %}">Lista de Pagos</a></li>
+                        {% if request.user|has_perm:"nominas,crear" %}
+                        <li><a href="{% url 'nominas:pago_crear' %}">Registrar Pago</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
 
                 <!-- {% if request.user|has_perm:"dashboard,ver" %}
             <li>

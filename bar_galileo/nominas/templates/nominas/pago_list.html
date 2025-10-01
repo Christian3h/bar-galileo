@@ -1,0 +1,83 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container nominas-container">
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <h2>Historial de Pagos</h2>
+        <a href="{% url 'nominas:pago_crear' %}" class="btn btn-success">
+            <i class="fa fa-plus"></i> Registrar Nuevo Pago
+        </a>
+    </div>
+
+    <div class="table-contenedor">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Registro de Pagos</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="pagos-table" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Empleado</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                            <th class="descripcionCol">Descripción</th>
+                            <th class="comprobanteCol">Comprobante</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in pagos %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'nominas:empleado_detail' pago.empleado.pk %}">
+                                    {{ pago.empleado.nombre }}
+                                </a>
+                            </td>
+                            <td>{{ pago.fecha_pago }}</td>
+                            <td>{{ pago.get_tipo_display }}</td>
+                            <td>${{ pago.monto }}</td>
+                            <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
+                            <td class="comprobanteCol">
+                                {% if pago.comprobante %}
+                                    <a href="{{ pago.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary">
+                                        <i class="fa fa-download"></i>
+                                    </a>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No hay pagos registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% load static %}
+<script>
+    $(document).ready(function() {
+        $('#pagos-table').DataTable({
+            "language": {
+                "url": "{% static 'js/DataTables/es-ES.json' %}"
+            },
+            "order": [[1, "desc"]], // Ordenar por fecha (descendente)
+            "pageLength": 10,
+            "columnDefs": [
+                { "targets": [3, 4, 5], "orderable": false } // Desactivar ordenación en columnas específicas
+            ]
+        });
+    });
+</script>
+{% endblock %}

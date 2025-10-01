@@ -78,10 +78,20 @@ header {
   transition: all 0.3s ease;
 }
 
+  #sidebar {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+
+#sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+
 /* === Toggle Button === */
 .toggle-sidebar-btn {
   color: var(--color-secondary);
-  background: transparent;
+  background-color: var(--color-light);
   border: none;
   font-size: 3rem;
   padding: 0.5rem 1rem;
