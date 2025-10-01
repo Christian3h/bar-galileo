@@ -44,6 +44,16 @@
                     {% element button type="submit" tags="prominent,login"  %}
                         {% trans "Sign In" %}
                     {% endelement %}
+
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="{% url 'account_reset_password' %}"
+                           style="color: #6c757d; text-decoration: none; font-size: 0.9rem; font-weight: normal; transition: color 0.3s ease;"
+                           onmouseover="this.style.color='#d4af37';"
+                           onmouseout="this.style.color='#6c757d';">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+
                     {% if SOCIALACCOUNT_ENABLED %}
                         {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
                     {% endif %}
