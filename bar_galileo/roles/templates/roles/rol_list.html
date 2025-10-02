@@ -37,7 +37,15 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#roles-table').DataTable({
+        var sel = '#roles-table';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"
             }

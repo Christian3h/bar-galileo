@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from .models import Proveedor, Marca, Categoria, ProductoImagen
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
+from roles.decorators import permission_required
 
 @require_POST
 def producto_imagen_eliminar_api(request, pk):
@@ -13,19 +15,22 @@ def producto_imagen_eliminar_api(request, pk):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
+@never_cache
+@permission_required('providers', 'ver')
 def proveedores_json(request):
-    proveedores = Proveedor.objects.all()
+    proveedores = Proveedor.objects.all().order_by('-id_proveedor')
     data = []
     for proveedor in proveedores:
         data.append({
             'id': proveedor.id_proveedor,
-            'proveedor': proveedor.nombre,  # Cambiado de 'nombre' a 'proveedor' para que coincida con la plantilla
+            'proveedor': proveedor.nombre,  # nombre del proveedor
             'direccion': proveedor.direccion,
             'telefono': proveedor.telefono,
-            'email': proveedor.contacto,  # Usando contacto como email para la plantilla
+            'email': proveedor.contacto,  # contacto como email
         })
     return JsonResponse({'data': data})
 
+@never_cache
 def marcas_json(request):
     marcas = Marca.objects.all()
     data = []
@@ -37,6 +42,7 @@ def marcas_json(request):
         })
     return JsonResponse({'data': data})
 
+@never_cache
 def categorias_json(request):
     categorias = Categoria.objects.all()
     data = []

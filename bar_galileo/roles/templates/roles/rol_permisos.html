@@ -40,8 +40,16 @@
 
 <script>
 $(document).ready(function() {
-    $('#tabla-permisos').DataTable({
+    var sel = '#tabla-permisos';
+    if (!$(sel).length) return;
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+    $(sel).DataTable({
         paging: false,
+        columnDefs: [
+            { targets: '_all', defaultContent: '' }
+        ],
         "language": {
             "url": "{% static 'js/DataTables/es-ES.json' %}"
         }
