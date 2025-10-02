@@ -6,186 +6,175 @@
 {% endblock %}
 
 {% block content %}
-<div class="container nominas-container">
-    <div class="d-flex justify-content-between align-items-center my-4">
-        <h2>Perfil del Empleado</h2>
-        <div>
-            <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
-                <i class="fa fa-arrow-left"></i> Volver
-            </a>
-            <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-primary">
-                <i class="fa fa-edit"></i> Editar
-            </a>
-        </div>
+<div class="dashboard-container empleado-perfil-page">
+    <h2 class="dashboard-title">Perfil del Empleado</h2>
+    <div class="buttons-group" style="margin-bottom: 1rem;">
+        <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+            <i class="fa fa-arrow-left"></i> Volver
+        </a>
+        <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-primary">
+            <i class="fa fa-edit"></i> Editar
+        </a>
     </div>
 
-    <div class="row empleado-perfil">
-        <!-- Información del Empleado -->
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Datos Personales</h5>
+    <div class="perfil-grid">
+        <!-- Columna izquierda: Datos + Contacto -->
+        <div class="perfil-col">
+            <section class="perfil-panel">
+                <h3>Datos Personales</h3>
+                <div class="perfil-identidad">
+                    <div class="perfil-nombre">{{ empleado.nombre }}</div>
+                    <div class="perfil-cargo badge">{{ empleado.cargo }}</div>
                 </div>
-                <div class="card-body">
-                    <h3>{{ empleado.nombre }}</h3>
-                    <p class="badge bg-secondary">{{ empleado.cargo }}</p>
-                    
-                    <hr>
-                    
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Estado:
-                            <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
-                                {{ empleado.get_estado_display }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Tipo de Contrato:
-                            <span>{{ empleado.get_tipo_contrato_display }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Salario Base:
-                            <strong>${{ empleado.salario }}</strong>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Fecha de Contratación:
-                            <span>{{ empleado.fecha_contratacion }}</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Antigüedad:
-                            <span>{{ empleado.antiguedad }} años</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                <ul class="perfil-datos">
+                    <li>
+                        <span class="label">Estado:</span>
+                        <span class="value badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ empleado.get_estado_display }}
+                        </span>
+                    </li>
+                    <li>
+                        <span class="label">Tipo de Contrato:</span>
+                        <span class="value">{{ empleado.get_tipo_contrato_display }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Salario Base:</span>
+                        <strong class="value">${{ empleado.salario }}</strong>
+                    </li>
+                    <li>
+                        <span class="label">Fecha de Contratación:</span>
+                        <span class="value">{{ empleado.fecha_contratacion }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Antigüedad:</span>
+                        <span class="value">{{ empleado.antiguedad }} años</span>
+                    </li>
+                </ul>
+            </section>
 
             {% if empleado.email or empleado.telefono or empleado.direccion %}
-            <div class="card mt-4">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Información de Contacto</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        {% if empleado.email %}
-                        <li class="list-group-item">
-                            <strong>Email:</strong> {{ empleado.email }}
-                        </li>
-                        {% endif %}
-                        
-                        {% if empleado.telefono %}
-                        <li class="list-group-item">
-                            <strong>Teléfono:</strong> {{ empleado.telefono }}
-                        </li>
-                        {% endif %}
-                        
-                        {% if empleado.direccion %}
-                        <li class="list-group-item">
-                            <strong>Dirección:</strong> {{ empleado.direccion }}
-                        </li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
+            <section class="perfil-panel">
+                <h3>Información de Contacto</h3>
+                <ul class="perfil-datos">
+                    {% if empleado.email %}
+                    <li>
+                        <span class="label">Email:</span>
+                        <span class="value">{{ empleado.email }}</span>
+                    </li>
+                    {% endif %}
+                    {% if empleado.telefono %}
+                    <li>
+                        <span class="label">Teléfono:</span>
+                        <span class="value">{{ empleado.telefono }}</span>
+                    </li>
+                    {% endif %}
+                    {% if empleado.direccion %}
+                    <li>
+                        <span class="label">Dirección:</span>
+                        <span class="value">{{ empleado.direccion }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </section>
             {% endif %}
         </div>
 
-        <!-- Historial de Pagos y Bonificaciones -->
-        <div class="col-md-8">
-            <div class="card mb-4">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Historial de Pagos</h5>
-                    <a href="{% url 'nominas:agregar_pago' empleado.id %}" class="btn btn-sm btn-light">
-                        <i class="fa fa-plus"></i> Registrar Nuevo Pago
+        <!-- Columna derecha: Pagos + Bonificaciones -->
+        <div class="perfil-col">
+            <section class="perfil-panel">
+                <div class="panel-header">
+                    <h3>Historial de Pagos</h3>
+                    <a href="{% url 'nominas:agregar_pago' empleado.id %}" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus"></i> Registrar Pago
                     </a>
                 </div>
-                <div class="card-body">
-                    <div class="alert alert-info">
-                        <strong>Total Pagado:</strong> ${{ total_pagado }}
-                    </div>
-                    
-                    <div class="table-responsive">
-                        <table class="table table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Tipo</th>
-                                    <th>Monto</th>
-                                    <th>Descripción</th>
-                                    <th>Comprobante</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for pago in pagos %}
-                                <tr>
-                                    <td>{{ pago.fecha_pago }}</td>
-                                    <td>{{ pago.get_tipo_display }}</td>
-                                    <td>${{ pago.monto }}</td>
-                                    <td>{{ pago.descripcion|default:"-" }}</td>
-                                    <td>
-                                        {% if pago.comprobante %}
-                                            <a href="{{ pago.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary">
-                                                <i class="fa fa-download"></i>
-                                            </a>
-                                        {% else %}
-                                            -
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center">No hay pagos registrados</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Bonificaciones</h5>
-                    <a href="{% url 'nominas:agregar_bonificacion' empleado.id %}" class="btn btn-sm btn-light">
+                <div class="info-row-box">
+                    <span class="info-label">Total Pagado</span>
+                    <span class="info-value">${{ total_pagado }}</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th class="descripcionCol">Descripción</th>
+                                <th class="comprobanteCol">Comprobante</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pago in pagos %}
+                            <tr>
+                                <td>{{ pago.fecha_pago }}</td>
+                                <td>{{ pago.get_tipo_display }}</td>
+                                <td>${{ pago.monto }}</td>
+                                <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
+                                <td class="comprobanteCol">
+                                    {% if pago.comprobante %}
+                                        <a href="{{ pago.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary">
+                                            <i class="fa fa-download"></i>
+                                        </a>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No hay pagos registrados</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="perfil-panel">
+                <div class="panel-header">
+                    <h3>Bonificaciones</h3>
+                    <a href="{% url 'nominas:agregar_bonificacion' empleado.id %}" class="btn btn-primary btn-sm">
                         <i class="fa fa-plus"></i> Agregar Bonificación
                     </a>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-sm">
-                            <thead>
-                                <tr>
-                                    <th>Nombre</th>
-                                    <th>Monto</th>
-                                    <th>Recurrente</th>
-                                    <th>Fecha Inicio</th>
-                                    <th>Fecha Fin</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for bonificacion in bonificaciones %}
-                                <tr>
-                                    <td>{{ bonificacion.nombre }}</td>
-                                    <td>${{ bonificacion.monto }}</td>
-                                    <td>
-                                        {% if bonificacion.recurrente %}
-                                            <span class="badge bg-success">Sí</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary">No</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ bonificacion.fecha_inicio }}</td>
-                                    <td>{{ bonificacion.fecha_fin|default:"-" }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center">No hay bonificaciones registradas</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Monto</th>
+                                <th>Recurrente</th>
+                                <th>Inicio</th>
+                                <th>Fin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bonificacion in bonificaciones %}
+                            <tr>
+                                <td>{{ bonificacion.nombre }}</td>
+                                <td>${{ bonificacion.monto }}</td>
+                                <td>
+                                    {% if bonificacion.recurrente %}
+                                        <span class="badge bg-success">Sí</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">No</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ bonificacion.fecha_inicio }}</td>
+                                <td>{{ bonificacion.fecha_fin|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No hay bonificaciones registradas</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 </div>
