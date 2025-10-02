@@ -161,10 +161,6 @@
                                 </div>
                             </td>
                         </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="text-center">No hay empleados registrados</td>
-                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -175,14 +171,33 @@
 
 {% load static %}
 <script>
-    $(document).ready(function () {
-        $('#empleados-table').DataTable({
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
-            },
-            "order": [[0, "asc"]],
-            "pageLength": 10
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar solo si existe la tabla en el DOM
+        if (!document.querySelector('#empleados-table')) return;
+
+        // Destruir instancia previa si existe
+        if ($.fn.dataTable.isDataTable('#empleados-table')) {
+            $('#empleados-table').DataTable().destroy();
+        }
+        
+        // Inicialización mínima + idioma (manejo correcto cuando no hay datos)
+        var tabla = $('#empleados-table').DataTable({
+            language: {
+                emptyTable: 'No hay empleados registrados',
+                zeroRecords: 'No se encontraron resultados',
+                search: 'Buscar:',
+                lengthMenu: 'Mostrar _MENU_ registros',
+                info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                infoEmpty: 'Mostrando 0 a 0 de 0 registros',
+                paginate: {
+                    first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior'
+                }
+            }
         });
+        
+        if (tabla) {
+            tabla.order([0, 'asc']).draw();
+        }
     });
 </script>
 {% endblock %}

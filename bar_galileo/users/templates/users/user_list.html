@@ -1,4 +1,5 @@
 {% extends 'base_admin.html' %}
+{% load static %}
 {% block content %}
 <h2>Usuarios</h2>
     <div class="table-contenedor">
@@ -43,7 +44,19 @@
     </div>
 <script>
 $(document).ready(function() {
-    $('#users-table').DataTable();
+    var sel = '#users-table';
+    if (!$(sel).length) return;
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+    $(sel).DataTable({
+        columnDefs: [
+            { targets: '_all', defaultContent: '' }
+        ],
+        language: {
+            url: "{% static 'js/DataTables/es-ES.json' %}"
+        }
+    });
 });
 </script>
 {% endblock %}
