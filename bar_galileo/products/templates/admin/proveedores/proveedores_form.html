@@ -1,10 +1,32 @@
 {% extends 'base_admin.html' %}
+{% load static %}
 {% block content %}
-<h1>{% if object %}Editar{% else %}Crear{% endif %} Proveedor</h1>
-<a href="{% url 'products:proveedores_admin' %}" class="btn btn-secondary">Volver</a>
-<form method="post">
+<h1 class="my-3">{% if object %}Editar{% else %}Crear{% endif %} Proveedor</h1>
+<a href="{% url 'products:proveedores_admin' %}" class="btn btn-secondary mb-3">Volver</a>
+<form method="post" novalidate>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-secondary" type="submit">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="id_nombre" class="form-label">Proveedor</label>
+            {{ form.nombre }}
+        </div>
+        <div class="col-md-6">
+            <label for="id_contacto" class="form-label">Email/Contacto</label>
+            {{ form.contacto }}
+        </div>
+        <div class="col-md-6">
+            <label for="id_telefono" class="form-label">Teléfono</label>
+            {{ form.telefono }}
+            <div class="form-text">Teléfono colombiano (10 dígitos, inicia con 3).</div>
+        </div>
+        <div class="col-md-12">
+            <label for="id_direccion" class="form-label">Dirección</label>
+            {{ form.direccion }}
+        </div>
+    </div>
+    <div class="mt-4">
+        <button class="btn btn-primary" type="submit">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+        <a class="btn btn-outline-secondary" href="{% url 'products:proveedores_admin' %}">Cancelar</a>
+    </div>
 </form>
 {% endblock %}

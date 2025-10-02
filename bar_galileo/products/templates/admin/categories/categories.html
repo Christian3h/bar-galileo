@@ -40,14 +40,22 @@
     <!-- Activación de DataTable -->
     <script>
     $(document).ready(function() {
-        $('#tabla-categorias').DataTable({
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
+        var sel = '#tabla-categorias';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
             },
-            responsive: true,  // Activar el modo responsivo de DataTables
-            "pageLength": 10,  // Definir el número de filas por página
-            "lengthChange": true,  // Permite cambiar el número de filas por página
-            "ordering": true  // Permite ordenar las columnas
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
+            responsive: true,
+            pageLength: 10,
+            lengthChange: true,
+            ordering: true
         });
     });
     </script>

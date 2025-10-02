@@ -41,9 +41,17 @@
     const deleteIconUrl = "{% static 'img/icons/delete.svg' %}";
 
     $(document).ready(function() {
+        var sel = '#tabla-productos';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
         // Inicializar DataTables con la opción de responsividad
-        $('#tabla-productos').DataTable({
+        $(sel).DataTable({
             responsive: true,
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
             "ajax": {
                 "url": "/api/productos/",
                 "dataSrc": "data"

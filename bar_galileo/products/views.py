@@ -20,6 +20,7 @@ import logging
 from django.utils.decorators import method_decorator
 from roles.decorators import permission_required
 from notifications.utils import notificar_usuario
+from django.views.decorators.cache import never_cache
 
 
 class ProductosJsonView(View):
@@ -717,12 +718,14 @@ class BrandDeleteAdminView(DeleteView):
         return response
 
 @method_decorator(permission_required('providers', 'ver'), name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class ProveedoresAdminView(TemplateView):
     template_name = "admin/proveedores/proveedores.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["proveedores"] = Proveedor.objects.all()
+        # Mostrar primero los más recientes para que el recién creado sea visible de inmediato
+        context["proveedores"] = Proveedor.objects.all().order_by('-id_proveedor')
         return context
 
 @method_decorator(permission_required('providers', 'crear'), name='dispatch')

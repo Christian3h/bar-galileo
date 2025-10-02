@@ -59,7 +59,15 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#expenses-table').DataTable({
+        var sel = '#expenses-table';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"
             },
