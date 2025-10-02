@@ -38,7 +38,6 @@ cd bar_galileo
 
 # Ejecutar uvicorn con vigilancia extendida de archivos
 ../.venv/bin/python -m uvicorn bar_galileo.asgi:application \
-    --reload \
     --host 0.0.0.0 \
     --port 8000 \
     --reload-include="*.py" \

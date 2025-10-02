@@ -35,11 +35,19 @@
 
 <script>
 $(document).ready(function() {
-    $('#brands-table').DataTable({
+    var sel = '#brands-table';
+    if (!$(sel).length) return;
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+    $(sel).DataTable({
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
-        responsive: true // Activar el modo responsive de DataTables
+        columnDefs: [
+            { targets: '_all', defaultContent: '' }
+        ],
+        responsive: true
     });
 });
 </script>
