@@ -134,6 +134,13 @@
     justify-content: center;
     margin-top: 1rem;
     gap: 1rem;
+    align-items: center;
+}
+
+.buttons-group .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* =======================================
@@ -565,6 +572,145 @@
 
 @media (max-width: 768px) {
     .comprobanteCol { display: none; }
+}
+
+/* =======================================
+   PERFIL DE EMPLEADO (LAYOUT SIMÉTRICO)
+======================================= */
+.empleado-perfil-page .perfil-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+}
+
+.empleado-perfil-page .perfil-panel {
+    background: rgba(166, 137, 50, 0.1);
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    padding: 1.25rem;
+}
+
+.empleado-perfil-page .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.empleado-perfil-page h3 {
+    color: var(--color-secondary);
+    margin: 0 0 .75rem 0;
+    font-size: 1.2rem;
+}
+
+.empleado-perfil-page .perfil-identidad {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: .5rem;
+}
+
+.empleado-perfil-page .perfil-nombre {
+    font-size: 1.3rem;
+    color: var(--color-secondary);
+    font-weight: 700;
+}
+
+.empleado-perfil-page .perfil-cargo {
+    border: 2px dashed var(--color-secondary);
+    color: var(--color-secondary);
+    background: transparent;
+}
+
+.empleado-perfil-page .perfil-datos {
+    list-style: none;
+    padding: 0;
+    margin: .5rem 0 0 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: .5rem;
+}
+.empleado-perfil-page .perfil-datos li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px dashed rgba(166,137,50,.35);
+    padding-bottom: .5rem;
+}
+.empleado-perfil-page .perfil-datos .label {
+    color: var(--color-secondary);
+    font-weight: 600;
+}
+.empleado-perfil-page .perfil-datos .value {
+    color: var(--color-secondary);
+}
+
+/* Tablas internas coherentes con el estilo de nominas */
+.empleado-perfil-page .table-responsive {
+    background: #2c2c2c;
+    border: none;
+    padding: 0;
+}
+.empleado-perfil-page table.table {
+    background: #2c2c2c;
+}
+.empleado-perfil-page .table th,
+.empleado-perfil-page .table td {
+    border: 1px solid var(--color-secondary) !important;
+    color: var(--color-secondary);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .empleado-perfil-page .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Cabecera lista (título + botones) */
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 1rem 0;
+}
+.page-title {
+    margin: 0;
+    color: var(--color-secondary);
+}
+.list-header .buttons-group {
+    display: flex;
+    gap: 0.75rem;
+}
+
+@media (max-width: 576px) {
+    .list-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+    .list-header .buttons-group a.btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Confirmación de eliminación: alineación de botones */
+.empleado-confirm .buttons-group {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+.empleado-confirm .buttons-group .btn {
+    margin: 0; /* evitar desplazamientos verticales por margen */
+    height: 42px;
+    line-height: 42px; /* asegura altura uniforme en el texto */
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
 }
 /* Estilos específicos para el módulo de nóminas */
 

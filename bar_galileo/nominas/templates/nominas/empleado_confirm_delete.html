@@ -1,39 +1,39 @@
 {% extends 'base_admin.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-danger text-white">
-                    <h3 class="my-2">Confirmar Eliminación</h3>
-                </div>
-                <div class="card-body">
-                    <div class="alert alert-warning">
-                        <i class="fa fa-exclamation-triangle"></i> Esta acción no se puede deshacer.
-                    </div>
-                    
-                    <p class="mb-4">
-                        ¿Estás seguro que deseas eliminar al empleado <strong>{{ object.nombre }}</strong>?
-                    </p>
-                    
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <p><strong>Cargo:</strong> {{ object.cargo }}</p>
-                            <p><strong>Fecha de contratación:</strong> {{ object.fecha_contratacion }}</p>
-                            <p><strong>Estado actual:</strong> {{ object.get_estado_display }}</p>
-                        </div>
-                    </div>
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
-                            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<div class="dashboard-container empleado-confirm">
+    <h2 class="dashboard-title">Confirmar Eliminación</h2>
+
+    <p class="mb-3" style="color: var(--color-secondary);">
+        Esta acción no se puede deshacer. ¿Deseas eliminar al empleado <strong>{{ object.nombre }}</strong>?
+    </p>
+
+    <section class="perfil-panel" style="margin-bottom: 1rem;">
+        <ul class="perfil-datos">
+            <li>
+                <span class="label">Cargo:</span>
+                <span class="value">{{ object.cargo }}</span>
+            </li>
+            <li>
+                <span class="label">Fecha de contratación:</span>
+                <span class="value">{{ object.fecha_contratacion }}</span>
+            </li>
+            <li>
+                <span class="label">Estado actual:</span>
+                <span class="value">{{ object.get_estado_display }}</span>
+            </li>
+        </ul>
+    </section>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="buttons-group right">
+            <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
         </div>
-    </div>
+    </form>
 </div>
 {% endblock %}

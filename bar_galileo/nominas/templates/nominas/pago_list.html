@@ -7,10 +7,14 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">Historial de Pagos</h2>
-    <a href="{% url 'nominas:pago_crear' %}" class="btn btn-primary mb-3">
-        <i class="fa fa-plus"></i> Registrar Pago
-    </a>
+    <div class="list-header">
+        <h2 class="page-title">Historial de Pagos</h2>
+        <div class="buttons-group">
+            <a href="{% url 'nominas:pago_crear' %}" class="btn btn-primary">
+                <i class="fa fa-plus"></i> Registrar Pago
+            </a>
+        </div>
+    </div>
 
     <div class="table-contenedor">
         <div class="table-responsive">
