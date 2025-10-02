@@ -3,11 +3,17 @@ from .models import Proveedor, Marca, Categoria, ProductoImagen
 from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
 from roles.decorators import permission_required
+import os
+from django.conf import settings
 
 @require_POST
 def producto_imagen_eliminar_api(request, pk):
     try:
         imagen = ProductoImagen.objects.get(pk=pk)
+        # Borrar archivo físico si existe
+        path = os.path.join(settings.BASE_DIR, 'static', str(imagen.imagen))
+        if os.path.isfile(path):
+            os.remove(path)
         imagen.delete()
         return JsonResponse({'success': True})
     except ProductoImagen.DoesNotExist:
