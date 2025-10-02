@@ -109,30 +109,6 @@ class Producto(models.Model):
     class Meta:
         db_table = 'producto'
 
-    def save(self, *args, **kwargs):
-        # Verificar si es una actualización y si el stock cambió
-        if self.pk:
-            try:
-                old_instance = Producto.objects.get(pk=self.pk)
-                stock_cambio = old_instance.stock != self.stock
-            except Producto.DoesNotExist:
-                stock_cambio = True
-        else:
-            # Es un nuevo producto
-            stock_cambio = self.stock is not None
-        
-        # Guardar el producto
-        super().save(*args, **kwargs)
-        
-        # Si el stock cambió, crear un registro en la tabla Stock
-        if stock_cambio:
-            # Importar aquí para evitar importación circular
-            from .models import Stock
-            Stock.objects.create(
-                id_producto=self,
-                cantidad=self.stock or 0
-            )
-
     def stock_actual(self):
         """Obtiene el stock actual desde la tabla Stock"""
         ultimo_stock = self.stocks.order_by('-fecha_hora').first()
@@ -159,8 +135,29 @@ class Producto(models.Model):
             raise ValidationError({'stock': 'El stock no puede ser negativo.'})
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # Ejecuta las validaciones antes de guardar
+        # Validaciones previas
+        self.full_clean()
+
+        # Determinar si cambió el stock respecto a la instancia previa
+        stock_cambio = False
+        if self.pk:
+            try:
+                old_instance = Producto.objects.get(pk=self.pk)
+                stock_cambio = old_instance.stock != self.stock
+            except Producto.DoesNotExist:
+                stock_cambio = True
+        else:
+            stock_cambio = self.stock is not None
+
+        # Guardar instancia
         super().save(*args, **kwargs)
+
+        # Registrar movimiento de stock si aplica
+        if stock_cambio:
+            Stock.objects.create(
+                id_producto=self,
+                cantidad=self.stock or 0
+            )
 
 # MODELO PARA IMÁGENES
 class ProductoImagen(models.Model):

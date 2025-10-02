@@ -52,33 +52,6 @@ class ProductosJsonView(View):
 
 
 
-@method_decorator(permission_required('products', 'crear'), name='dispatch')
-class ProductoCreateAdminView(CreateView):
-    model = Producto
-    form_class = ProductoForm
-    template_name = "admin/products/products_form.html"
-    success_url = reverse_lazy("products:products_admin")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["productos"] = Producto.objects.all()
-        context["imagenes"] = []
-        return context
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        producto = self.object
-
-        for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
-            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
-            ProductoImagen.objects.create(producto=producto, imagen=ruta)
-
-        mensaje = f"Se ha creado el nuevo producto: '{producto.nombre}'."
-        notificar_usuario(self.request.user, mensaje)
-        return response
-
-
-
 # class ProductosView(TemplateView):
 #     template_name = "productos.html"
 
@@ -566,12 +539,15 @@ class ProductoCreateAdminView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)  # Guarda el producto
-        producto = self.object  # Ahora sí existe self.object
+        producto = self.object
 
         for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
             ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
             ProductoImagen.objects.create(producto=producto, imagen=ruta)
 
+        # Notificar y mostrar mensaje de éxito
+        mensaje = f"Se ha creado el nuevo producto: '{producto.nombre}'."
+        notificar_usuario(self.request.user, mensaje)
         messages.success(self.request, "Producto creado correctamente.")
         return response
 
