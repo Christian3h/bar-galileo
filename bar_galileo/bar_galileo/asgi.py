@@ -10,6 +10,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 import notifications.routing
 import tables.routing
+import users.routing
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bar_galileo.settings")
 
@@ -18,7 +19,8 @@ application = ProtocolTypeRouter({
     "websocket": AuthMiddlewareStack(
         URLRouter(
             notifications.routing.websocket_urlpatterns + 
-            tables.routing.websocket_urlpatterns
+            tables.routing.websocket_urlpatterns +
+            users.routing.websocket_urlpatterns
         )
     ),
 })

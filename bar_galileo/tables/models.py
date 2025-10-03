@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from products.models import Producto
+from django.contrib.auth.models import User
 
 class Mesa(models.Model):
     ESTADO_CHOICES = [
@@ -25,6 +26,7 @@ class Pedido(models.Model):
     ]
 
     mesa = models.ForeignKey(Mesa, on_delete=models.SET_NULL, related_name='pedidos', null=True, blank=True)
+    usuarios = models.ManyToManyField(User, related_name='pedidos_asociados', blank=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='en_proceso')

@@ -37,8 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(e => console.error('[DEBUG] Error cargando pop-ups pendientes:', e));
 
   const updateBadge = count => {
-    badge.textContent = count;
-    badge.style.display = count ? 'block' : 'none';
+    if (badge) {
+      badge.textContent = count;
+      badge.style.display = count ? 'block' : 'none';
+    }
   };
 
   const updatePanel = notifications => {
@@ -127,29 +129,35 @@ document.addEventListener('DOMContentLoaded', () => {
   ws.onclose = () => console.log('[DEBUG][WS] Cerrado');
 
   /* -----------  Eventos UI ----------- */
-  icon.addEventListener('click', () => {
-    panel.classList.toggle('show');
-    if (panel.classList.contains('show')) fetchNotifications();
-  });
+  if (icon) {
+    icon.addEventListener('click', () => {
+      panel.classList.toggle('show');
+      if (panel.classList.contains('show')) fetchNotifications();
+    });
+  }
 
-  markAllBtn.addEventListener('click', () =>
-    fetch('/api/notifications/mark-as-read/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-      body: JSON.stringify({ ids: [] })
-    }).then(fetchNotifications)
-  );
+  if (markAllBtn) {
+    markAllBtn.addEventListener('click', () =>
+      fetch('/api/notifications/mark-as-read/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ ids: [] })
+      }).then(fetchNotifications)
+    );
+  }
 
-  list.addEventListener('click', e => {
-    e.preventDefault();
-    const id = e.target.closest('a')?.dataset.id;
-    if (!id) return;
-    fetch('/api/notifications/mark-as-read/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-      body: JSON.stringify({ ids: [id] })
-    }).then(fetchNotifications);
-  });
+  if (list) {
+    list.addEventListener('click', e => {
+      e.preventDefault();
+      const id = e.target.closest('a')?.dataset.id;
+      if (!id) return;
+      fetch('/api/notifications/mark-as-read/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ ids: [id] })
+      }).then(fetchNotifications);
+    });
+  }
 
   function getCookie(name) {
     return document.cookie.split('; ')

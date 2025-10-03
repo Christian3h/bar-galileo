@@ -2,7 +2,6 @@ import json
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from django.urls import reverse
 from django.db import transaction
 from products.models import Producto
 from .models import Mesa, Pedido, PedidoItem, Factura
@@ -30,7 +29,11 @@ def _serialize_pedido(pedido):
             }
             for item in pedido.items.select_related('producto').order_by('id')
         ],
-        'total': float(pedido.total())
+        'total': float(pedido.total()),
+        'usuarios': [
+            {'id': user.id, 'username': user.username, 'nombre': user.get_full_name() or user.username}
+            for user in pedido.usuarios.all()
+        ]
     }
 
 def _broadcast_stock_update(producto_id, delta):
@@ -47,6 +50,30 @@ def _broadcast_stock_update(producto_id, delta):
         }
     )
 
+def _broadcast_panel_update(pedido):
+    """Broadcasts an update to the user panel."""
+    pedido.refresh_from_db()
+    # Prepare the data in the same format as the panel_usuario view
+    cuenta_actual_data = {
+        'total': float(pedido.total()),
+        'items': [{
+            'nombre': item.producto.nombre,
+            'precio': float(item.subtotal())
+        } for item in pedido.items.select_related('producto').all()]
+    }
+
+    channel_layer = get_channel_layer()
+    for user in pedido.usuarios.all():
+        async_to_sync(channel_layer.group_send)(
+            f"user_panel_{user.id}",
+            {
+                "type": "panel_update",
+                "data": {
+                    "cuenta_actual": cuenta_actual_data
+                },
+            },
+        )
+
 # --- API Views ---
 
 def mesa_pedido_api(request, mesa_id):
@@ -61,11 +88,10 @@ def mesa_pedido_api(request, mesa_id):
             'id_producto': p.id_producto,
             'nombre': p.nombre,
             'precio_venta': p.precio_venta,
-            'stock': p.stock, # Stock real
+            'stock': p.stock,
             'imagen': imagen_url
         })
 
-    # Calcula todo el stock reservado en pedidos activos
     reservas_stock = { 
         item['producto_id']: item['cantidad_total'] 
         for item in PedidoItem.objects.filter(pedido__estado='en_proceso').values('producto_id').annotate(cantidad_total=Sum('cantidad'))
@@ -84,17 +110,9 @@ def agregar_item_api(request):
     producto = get_object_or_404(Producto, id_producto=data['producto_id'])
     cantidad_a_agregar = data.get('cantidad', 1)
 
-    # Lógica de negocio... (código existente)
-    # ... (validación de stock, creación/actualización de item)
-    # ...
-    # Después de guardar el item exitosamente:
-    _broadcast_stock_update(producto.id_producto, -cantidad_a_agregar)
-    
-    # ... (código existente para devolver la respuesta)
     pedido, _ = Pedido.objects.get_or_create(mesa_id=data['mesa_id'], estado='en_proceso')
     item, created = PedidoItem.objects.get_or_create(pedido=pedido, producto=producto, defaults={'precio_unitario': producto.precio_venta})
     
-    # Validar stock antes de modificar
     cantidad_total_requerida = (item.cantidad if not created else 0) + cantidad_a_agregar
     if producto.stock < cantidad_total_requerida:
         return JsonResponse({'error': f'Stock insuficiente para {producto.nombre}. Disponible: {producto.stock}'}, status=400)
@@ -105,6 +123,9 @@ def agregar_item_api(request):
         item.cantidad = cantidad_a_agregar
     item.save()
 
+    transaction.on_commit(lambda: _broadcast_stock_update(producto.id_producto, -cantidad_a_agregar))
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
+    
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
 @transaction.atomic
@@ -118,7 +139,6 @@ def actualizar_item_api(request, item_id):
     if nueva_cantidad is None or not isinstance(nueva_cantidad, int) or nueva_cantidad < 0:
         return JsonResponse({'error': 'Cantidad no válida'}, status=400)
 
-    # Validar stock
     if item.producto.stock < nueva_cantidad:
         return JsonResponse({'error': f'Stock insuficiente para {item.producto.nombre}. Disponible: {item.producto.stock}'}, status=400)
 
@@ -129,7 +149,8 @@ def actualizar_item_api(request, item_id):
         item.save()
 
     delta = nueva_cantidad - old_cantidad
-    _broadcast_stock_update(item.producto.id_producto, -delta)
+    transaction.on_commit(lambda: _broadcast_stock_update(item.producto.id_producto, -delta))
+    transaction.on_commit(lambda: _broadcast_panel_update(item.pedido))
     
     return JsonResponse({'pedido': _serialize_pedido(item.pedido)})
 
@@ -142,12 +163,14 @@ def eliminar_item_api(request, item_id):
 
     item.delete()
 
-    _broadcast_stock_update(producto_id, cantidad_eliminada)
+    transaction.on_commit(lambda: _broadcast_stock_update(producto_id, cantidad_eliminada))
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
 @transaction.atomic
 def facturar_pedido_api(request, pedido_id):
+    from django.urls import reverse
     pedido = get_object_or_404(Pedido, id=pedido_id)
     
     with transaction.atomic():
@@ -158,8 +181,6 @@ def facturar_pedido_api(request, pedido_id):
             
             producto.stock -= item.cantidad
             producto.save(update_fields=['stock'])
-            # No se necesita broadcast aquí porque el stock real se actualiza
-            # y los items ya no estarán en un pedido 'en_proceso'
 
         factura = Factura.objects.create(pedido=pedido, total=pedido.total())
         pedido.estado = 'facturado'
@@ -168,11 +189,42 @@ def facturar_pedido_api(request, pedido_id):
         if pedido.mesa:
             mesa = pedido.mesa
             mesa.estado = 'disponible'
-            mesa.save()
             mensaje = f"El pedido de la mesa '{mesa.nombre}' fue facturado. La mesa está ahora disponible."
             notificar_usuario(request.user, mensaje)
     
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     return JsonResponse({
         'success': True,
         'factura_url': reverse('tables:ver_factura', args=[factura.id])
     })
+
+def pedido_manage_user_api(request, pedido_id):
+    """API para añadir o quitar un usuario de un pedido."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+    pedido = get_object_or_404(Pedido, id=pedido_id)
+    data = json.loads(request.body)
+    user_id = data.get('user_id')
+    action = data.get('action')
+
+    if not user_id or action not in ['add', 'remove']:
+        return JsonResponse({'error': 'Datos inválidos'}, status=400)
+
+    user_obj = get_object_or_404(User, id=user_id)
+
+    if action == 'add':
+        # Verificar si el usuario ya está en otro pedido activo
+        if Pedido.objects.filter(usuarios=user_obj, estado='en_proceso').exclude(id=pedido.id).exists():
+            return JsonResponse({'error': f'El cliente {user_obj.username} ya está en otra mesa.'}, status=400)
+        pedido.usuarios.add(user_obj)
+    elif action == 'remove':
+        pedido.usuarios.remove(user_obj)
+    
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
+    return JsonResponse({'success': True})
+
+def get_all_users_api(request):
+    """API para obtener todos los usuarios."""
+    users = User.objects.filter(is_active=True).values('id', 'username')
+    return JsonResponse({'users': list(users)})

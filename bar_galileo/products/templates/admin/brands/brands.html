@@ -5,33 +5,32 @@
 
 <h1>Lista de marcas</h1>
 
-<!-- Contenedor responsivo -->
-<div class="table-responsive">
-    <table id="brands-table" class="table display">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for brand in brands %}
-            <tr>
-                <td>{{ brand.id_marca }}</td>
-                <td>{{ brand.marca }}</td>
-                <td>
-                    {% if request.user|has_perm:"brands,editar" %}
-                    <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning">Editar</a>
-                    {% endif %}
-                    {% if request.user|has_perm:"brands,eliminar" %}
-                    <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger">Eliminar</a>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="table-contenedor">
+    <div class="table-responsive">
+        <table id="brands-table" class="table display">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for brand in brands %}
+                <tr>
+                    <td>{{ brand.marca }}</td>
+                    <td>
+                        {% if request.user|has_perm:"brands,editar" %}
+                        <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                        {% endif %}
+                        {% if request.user|has_perm:"brands,eliminar" %}
+                        <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>

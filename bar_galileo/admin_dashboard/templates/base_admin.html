@@ -1,119 +1,48 @@
 {% load static %}
 {% load roles_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin-bar galileo</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
+    <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'css/main/admin/dashboard.css' %}">
     <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/simple_modal.css' %}">
     <script src="{% static 'js/DataTables/jquery-3.7.1.min.js' %}"></script>
     <link href="{% static 'js/DataTables/datatables.css' %}" rel="stylesheet">
- 
+
     <script src="{% static 'js/DataTables/datatables.js' %}"></script>
 
     {% block extra_css %}
 
     {% endblock %}
-    <style>
-      .avatar-fixed-corner {
-        position: fixed;
-        top: 18px;
-        right: 18px;
-        z-index: 1300;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .user-avatar, .user-avatar-initials {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid #d4af37;
-        background: #222;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: #222;
-      }
-      .user-avatar-initials {
-        background: #d4af37;
-        color: #222;
-      }
-      .user-avatar-dropdown-content {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 45px;
-        background: #1a1a1a;
-        min-width: 150px;
-        border-radius: 10px;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-        z-index: 2000;
-        padding: 10px 0;
-      }
-      .avatar-fixed-corner:focus-within .user-avatar-dropdown-content,
-      .avatar-fixed-corner:hover .user-avatar-dropdown-content {
-        display: block;
-      }
-      .user-avatar-dropdown-content a {
-        color: #d4af37;
-        padding: 10px 20px;
-        display: block;
-        text-decoration: none;
-        font-size: 15px;
-        transition: background 0.2s;
-      }
-      .user-avatar-dropdown-content a:hover {
-        background: #222;
-      }
-      @media (max-width: 600px) {
-        .avatar-fixed-corner {
-          top: 8px;
-          right: 8px;
-        }
-      }
-    </style>
+
 </head>
 
 <body>
     {% include "components/notificaciones.html" %}
     {% include "components/nav-admin.html" %}
 
-    {% if user.is_authenticated %}
-      <div class="avatar-fixed-corner" tabindex="0">
-        {% if user.userprofile.avatar %}
-          <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
-        {% else %}
-          <span class="user-avatar-initials">
-            {{ user.get_full_name|default:user.username|slice:":1"|upper }}
-          </span>
-        {% endif %}
-        <div class="user-avatar-dropdown-content">
-          <div style="padding: 10px 20px; color: #fff; font-size: 15px;">
-            {{ user.get_full_name|default:user.username }}
-          </div>
-          <a href="{% url 'account_email' %}">Perfil</a>
-          <a href="{% url 'account_logout' %}">Cerrar sesión</a>
-        </div>
-      </div>
-    {% endif %}
-
     <main class="main-content">
-        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
         <div class="notification-icon" id="notification-icon">
-            <span id="icono-notification" >🔔</span>
+          <span id="icono-notification" > <img width="50px" src=" {% static 'img/icons/notifications.svg' %} " alt=""> </span>
             <span class="notification-badge" id="notification-badge">0</span>
             <div class="notifications-panel" id="notifications-panel">
                 <div class="notification-header">
                     <h4>Notificaciones</h4>
                     <button id="mark-all-as-read">Marcar todas como leídas</button>
-                    
+
                     <ul class="notification-list" id="notification-list">
                     <!-- Las notificaciones se cargarán aquí -->
                     </ul>
@@ -131,7 +60,7 @@
     <script src="{% static 'js/admin/nav_admin.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
     <script src="{% static 'js/admin/notification_button.js' %}"></script>
-
+    {% block extra_js %}{% endblock %}
 </body>
 
 </html>

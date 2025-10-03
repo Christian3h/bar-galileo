@@ -39,7 +39,7 @@ body {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  padding 10px;
+  padding: 10px;
 }
 
 .container-menu .logo {
@@ -118,7 +118,6 @@ body {
 .container-login p {
   font-size: 16px;
   max-width: 600px;
-  margin: 0 auto 40px;
   font-weight: 300;
   letter-spacing: 1px;
   color: #ccc;
@@ -135,6 +134,7 @@ body {
   width: 100%;
   border: 1px solid #333;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  margin-top: 30px;
 }
 
 .container-login form input {
@@ -185,7 +185,6 @@ body {
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;
-  display: block;
   margin-top: 20px;
 }
 
@@ -777,14 +776,67 @@ body {
 
 /* Secciones separadas */
 .container-login h2 {
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 300;
   color: #d4af37;
-  margin: 40px 0 20px;
-  padding-top: 30px;
-  border-top: 1px solid #333;
   text-align: center;
   letter-spacing: 1px;
+}
+
+form p:has(input#id_remember) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+form p:has(input#id_remember) input{
+  margin: 0;
+  padding: 0;
+}
+
+form p:has(input#id_remember) label{
+  margin: 0;
+  padding: 0;
+}
+
+ul{
+  list-style: none;
+}
+
+.login-container {
+  width: 100%;
+  display: grid;
+  place-content: center;
+}
+
+.container-menu-login{
+  background: transparent;
+}
+
+.menu-toggle-login{
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.menu-items-login{
+  display: none;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+}
+
+.menu-items-login.show{
+  display: block;
 }
 
 /* Mejoras para formularios múltiples */
@@ -989,4 +1041,33 @@ body {
   .container-login .form-section {
     padding: 20px 15px;
   }
+}
+
+/* =======================================
+   AUTH PAGE LAYOUT ADJUSTMENTS
+======================================= */
+
+/* Center the logo */
+.auth-logo-container {
+  padding: 40px 20px 20px;
+  text-align: center;
+}
+
+.auth-logo {
+  max-width: 100px;
+  height: auto;
+}
+
+/* Adjust container-login for the new layout */
+body.auth-page .container-login {
+  min-height: auto;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  /* Make it transparent to show the body background */
+  background: transparent;
+}
+
+/* Hide the gradient overlay on auth pages for a uniform background */
+body.auth-page .container-login::before {
+  display: none;
 }

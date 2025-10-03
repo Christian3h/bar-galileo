@@ -1,37 +1,141 @@
 {% extends 'base_admin.html' %}
-
+{% load static %}
+{% load format_tags %}
 {% block content %}
 
 <div class="dashboard-container">
-  <h2 class="dashboard-title">Estadísticas</h2>
+  <div class="dashboard-header">
+    <h2 class="dashboard-title">Estadísticas Generales</h2>
+    <form method="get" action="{% url 'admin_dashboard:dashboard' %}" class="period-filter-form">
+      <select name="period" onchange="this.form.submit()" class="form-select">
+        <option value="month" {% if selected_period == 'month' %}selected{% endif %}>Este Mes</option>
+        <option value="quarter" {% if selected_period == 'quarter' %}selected{% endif %}>Este Trimestre</option>
+        <option value="all" {% if selected_period == 'all' %}selected{% endif %}>Todo el Historial</option>
+      </select>
+    </form>
+  </div>
 
   <section class="dashboard-cards">
     <div class="card">
-      <h3>Productos</h3>
-      <p>{{ productos }}</p>
+      <h3>Ingresos Totales</h3>
+      <p>{{ ingresos_totales|format_price }}</p>
     </div>
     <div class="card">
-      <h3>Categorías</h3>
-      <p>{{ categorias }}</p>
+      <h3>Ganancia Total</h3>
+      <p>{{ ganancia_total|format_price }}</p>
     </div>
     <div class="card">
-      <h3>Mesas</h3>
-      <p>{{ mesas }}</p>
+      <h3>Valor Total del Stock</h3>
+      <p>{{ valor_total_stock|format_price }}</p>
+    </div>
+    <div class="card">
+      <h3>Gastos Totales</h3>
+      <p>{{ gastos_totales|format_price }}</p>
     </div>
   </section>
+
+  <h2 class="dashboard-title">Gráficos</h2>
 
   <section class="dashboard-charts">
     <article class="chart-box">
-      <h4>Ventas mensuales</h4>
-      <div class="dummy-chart">[Gráfico aquí]</div>
+      <h4>Estado de las Mesas</h4>
+      <div style="overflow-x: auto;">
+        <div id="mesas-chart" style="width: 100%; height: 400px;"></div>
+      </div>
     </article>
 
     <article class="chart-box">
-      <h4>Popularidad</h4>
-      <div class="dummy-chart">[Gráfico aquí]</div>
+      <h4>Top 5 Productos Más Vendidos</h4>
+      <div style="overflow-x: auto;">
+        <div id="top-productos-chart" style="width: 100%; height: 400px;"></div>
+      </div>
+    </article>
+
+    <article class="chart-box">
+      <h4>Ventas del Periodo</h4>
+      <div style="overflow-x: auto;">
+        <div id="ventas-mes-chart" style="width: 100%; height: 400px;"></div>
+      </div>
+    </article>
+
+    <article class="chart-box">
+      <h4>Productos con Más Stock</h4>
+      <div style="overflow-x: auto;">
+        <div id="mas-stock-chart" style="width: 100%; height: 400px;"></div>
+      </div>
     </article>
   </section>
 </div>
-  
+
+<script src="{% static 'js/echarts.min.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const colors = ['#62733d', '#a68932', '#bf452a', '#262626', '#0d0d0d'];
+    const tooltipStyle = {
+      borderColor: 'transparent',
+      textStyle: { color: '#a68932' }
+    };
+
+    // Gráfico de estado de mesas
+    var mesasChart = echarts.init(document.getElementById('mesas-chart'), 'dark');
+    var mesasOption = {
+      color: colors,
+      tooltip: { ...tooltipStyle, trigger: 'item' },
+      legend: { top: '5%', left: 'center' },
+      series: [{
+        name: 'Estado de Mesas',
+        type: 'pie',
+        radius: ['40%', '70%'],
+        data: [
+          { value: {{ total_mesas_disponibles }}, name: 'Disponibles' },
+          { value: {{ total_mesas_ocupadas }}, name: 'Ocupadas' },
+          { value: {{ total_mesas_reservadas }}, name: 'Reservadas' },
+          { value: {{ total_mesas_fuera_de_servicio }}, name: 'Fuera de Servicio' }
+        ]
+      }]
+    };
+    mesasChart.setOption(mesasOption);
+
+    // Gráfico de top 5 productos
+    var topProductosChart = echarts.init(document.getElementById('top-productos-chart'), 'dark');
+    var topProductosOption = {
+      color: colors,
+      tooltip: { ...tooltipStyle, trigger: 'axis' },
+      xAxis: { type: 'category', data: [{% for item in top_5_productos_mas_vendidos %}'{{ item.producto__nombre }}',{% endfor %}] },
+      yAxis: { type: 'value' },
+      series: [{ data: [{% for item in top_5_productos_mas_vendidos %}{{ item.total_vendido }},{% endfor %}], type: 'bar' }]
+    };
+    topProductosChart.setOption(topProductosOption);
+
+    // Gráfico de ventas del periodo
+    var ventasMesChart = echarts.init(document.getElementById('ventas-mes-chart'), 'dark');
+    var ventasMesOption = {
+      color: colors,
+      tooltip: { ...tooltipStyle, trigger: 'axis' },
+      xAxis: { type: 'category', data: [{% for venta in ventas_periodo %}'{{ venta.dia|date:"d/m" }}',{% endfor %}] },
+      yAxis: { type: 'value' },
+      series: [{ data: [{% for venta in ventas_periodo %}{{ venta.total_dia }},{% endfor %}], type: 'line', smooth: true }]
+    };
+    ventasMesChart.setOption(ventasMesOption);
+
+    // Gráfico de productos con más stock
+    var masStockChart = echarts.init(document.getElementById('mas-stock-chart'), 'dark');
+    var masStockOption = {
+      color: colors,
+      tooltip: { ...tooltipStyle, trigger: 'axis' },
+      xAxis: { type: 'category', data: [{% for producto in productos_mas_stock %}'{{ producto.nombre }}',{% endfor %}] },
+      yAxis: { type: 'value' },
+      series: [{ data: [{% for producto in productos_mas_stock %}{{ producto.stock }},{% endfor %}], type: 'bar' }]
+    };
+    masStockChart.setOption(masStockOption);
+
+    window.addEventListener('resize', function() {
+        mesasChart.resize();
+        topProductosChart.resize();
+        ventasMesChart.resize();
+        masStockChart.resize();
+    });
+  });
+</script>
 
 {% endblock %}

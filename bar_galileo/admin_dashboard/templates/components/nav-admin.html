@@ -3,13 +3,22 @@
 <header class="layout">
     <div class="header-content">
         <nav id="sidebar" class="sidebar expanded">
+
             <ul class="menu">
                 <a href="{% url 'admin_dashboard:dashboard' %}">
                     <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo">
                 </a>
+                <li>
+                    <button class="menu-btn" onclick="window.location.href='/'" >
+                        <a href="{% url 'core:index' %}"><img src="{% static 'img/icons/home.svg' %}" alt="Página Principal"></a>
+                         Página Principal
+
+                    </button>
+                </li>
+
                 {% if request.user|has_perm:"products,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('productos-submenu')">Productos</button>
+                                        <button class="menu-btn" onclick="toggleMenu('productos-submenu')"><img src="{% static 'img/icons/shopping_basket.svg' %}" alt="Productos"> Productos</button>
                     <ul id="productos-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:products_admin' %}">Lista de productos</a></li>
                         {% if request.user|has_perm:"products,crear" %}
@@ -21,7 +30,7 @@
 
                 {% if request.user|has_perm:"categories,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('categorias-submenu')">Categorías</button>
+                                        <button class="menu-btn" onclick="toggleMenu('categorias-submenu')"><img src="{% static 'img/icons/bar_chart.svg' %}" alt="Categorías"> Categorías</button>
                     <ul id="categorias-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:categories_admin' %}">Lista de categorías</a></li>
                         {% if request.user|has_perm:"categories,crear" %}
@@ -33,7 +42,7 @@
 
                 {% if request.user|has_perm:"brands,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('brands-submenu')">Marcas</button>
+                                        <button class="menu-btn" onclick="toggleMenu('brands-submenu')"><img src="{% static 'img/icons/shopping_basket.svg' %}" alt="Marcas"> Marcas</button>
                     <ul id="brands-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:brands_admin' %}">Lista de Marcas</a></li>
                         {% if request.user|has_perm:"brands,crear" %}
@@ -45,7 +54,7 @@
 
                 {% if request.user|has_perm:"providers,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
+                                        <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Proveedores"> Proveedores</button>
                     <ul id="Proveedores-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                         {% if request.user|has_perm:"providers,crear" %}
@@ -58,7 +67,7 @@
                 {% if request.user|has_perm:"tables,ver" %}
                 {% if request.user|has_perm:"tables,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
+                                        <button class="menu-btn" onclick="toggleMenu('mesas-submenu')"><img src="{% static 'img/icons/table.svg' %}" alt="Mesas"> Mesas</button>
                     <ul id="mesas-submenu" class="submenu hidden">
                         <li><a href="{% url 'tables:mesas_lista' %}">Lista de Mesas</a></li>
                         {% if request.user|has_perm:"tables,crear" %}
@@ -71,7 +80,7 @@
 
                 {% if request.user|has_perm:"users,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('usuarios-submenu')">Usuarios</button>
+                                        <button class="menu-btn" onclick="toggleMenu('usuarios-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Usuarios"> Usuarios</button>
                     <ul id="usuarios-submenu" class="submenu hidden">
                         <li><a href="{% url 'users:user_list' %}">Lista de usuarios</a></li>
                     </ul>
@@ -80,7 +89,7 @@
 
                 {% if request.user|has_perm:"roles,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('roles-submenu')">Roles y Permisos</button>
+                                        <button class="menu-btn" onclick="toggleMenu('roles-submenu')"><img src="{% static 'img/icons/group_add.svg' %}" alt="Roles y Permisos"> Roles y Permisos</button>
                     <ul id="roles-submenu" class="submenu hidden">
                         <li><a href="{% url 'roles:rol_list' %}">Lista de roles</a></li>
                         {% if request.user|has_perm:"roles,crear" %}
@@ -92,9 +101,37 @@
 
                 {% if request.user|has_perm:"facturacion,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('facturacion-submenu')">Facturación</button>
+                                        <button class="menu-btn" onclick="toggleMenu('facturacion-submenu')"><img src="{% static 'img/icons/attach_money.svg' %}" alt="Facturación"> Facturación</button>
                     <ul id="facturacion-submenu" class="submenu hidden">
                         <li><a href="{% url 'facturacion:lista_facturas' %}">Lista de facturas</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_perm:"expenses,ver" %}
+                <li>
+                                        <button class="menu-btn" onclick="toggleMenu('gastos-submenu')"><img src="{% static 'img/icons/payments.svg' %}" alt="Gastos"> Gastos</button>
+                    <ul id="gastos-submenu" class="submenu hidden">
+                        <li><a href="{% url 'expenses:expense_list' %}">Lista de Gastos</a></li>
+                        {% if request.user|has_perm:"expenses,crear" %}
+                        <li><a href="{% url 'expenses:expense_create' %}">Crear Gasto</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_perm:"nominas,ver" %}
+                <li>
+                                        <button class="menu-btn" onclick="toggleMenu('nominas-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Nóminas"> Nóminas</button>
+                    <ul id="nominas-submenu" class="submenu hidden">
+                        <li><a href="{% url 'nominas:empleado_list' %}">Lista de Empleados</a></li>
+                        {% if request.user|has_perm:"nominas,crear" %}
+                        <li><a href="{% url 'nominas:empleado_crear' %}">Registrar Empleado</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'nominas:pago_list' %}">Lista de Pagos</a></li>
+                        {% if request.user|has_perm:"nominas,crear" %}
+                        <li><a href="{% url 'nominas:pago_crear' %}">Registrar Pago</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endif %}

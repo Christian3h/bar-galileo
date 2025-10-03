@@ -1,0 +1,70 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% load roles_tags %}
+{% load format_tags %}
+
+{% block extra_css%}
+  <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Lista de Gastos</h2>
+    {% if request.user|has_perm:"expenses,crear" %}
+    <a href="{% url 'expenses:expense_create' %}" class="btn btn-primary mb-3">Registrar Gasto</a>
+    {% endif %}
+    <div class="table-contenedor">
+        <div class="table-responsive">
+            <table id="expenses-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="col-1">Fecha</th>
+                        <th class="col-2">Monto</th>
+                        <th class="col-3">Categoría</th>
+                        <th class="col-4">Descripción</th>
+                        <th class="col-5">Recibo</th>
+                        <th class="col-6">Usuario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td class="col-1">{{ expense.date }}</td>
+                        <td class="col-2">{{ expense.amount|format_price }}</td>
+                        <td class="col-3">{{ expense.category }}</td>
+                        <td class="col-4">{{ expense.description }}</td>
+                        <td class="col-5">
+                            {% if expense.receipt %}
+                                <a href="{{ expense.receipt.url }}" target="_blank">Ver Recibo</a>
+                            {% else %}
+                                No adjunto
+                            {% endif %}
+                        </td>
+                        <td class="col-6">{{ expense.user.username }}</td>
+                        <td>
+                            {% if request.user|has_perm:"expenses,editar" %}
+                                <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                            {% endif %}
+                            {% if request.user|has_perm:"expenses,eliminar" %}
+                                <a href="{% url 'expenses:expense_delete' expense.pk %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#expenses-table').DataTable({
+            "language": {
+                "url": "{% static 'js/DataTables/es-ES.json' %}"
+            },
+            responsive: true
+        });
+    });
+</script>
+{% endblock %}

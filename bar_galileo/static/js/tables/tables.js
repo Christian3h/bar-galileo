@@ -10,16 +10,11 @@ function formatNumberForPrice(number) {
   }
   
   try {
-    // Convertir a número y luego a entero para eliminar decimales
     const num = parseInt(number);
-    
-    // Usar Intl.NumberFormat para formatear con separador de miles (punto)
     const formatted = new Intl.NumberFormat('de-DE', { 
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(num);
-    
-    // Retornar con símbolo de peso colombiano
     return `$${formatted}`;
   } catch (error) {
     return '$0';
@@ -31,6 +26,7 @@ function formatNumberForPrice(number) {
 let mesaActualId = null;
 let pedidoActual = {};
 let listaCompletaProductos = [];
+let listaCompletaUsuarios = [];
 let virtualStock = {};
 const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]")?.value || "";
 
@@ -111,18 +107,27 @@ function actualizarVisibilidadBotonPedido(mesaCard) {
 async function gestionarPedido(mesaId) {
   mesaActualId = mesaId;
   try {
-    const data = await apiFetch(`/api/mesas/${mesaId}/pedido/`);
-    document.getElementById("mesaNombre").textContent = data.mesa.nombre;
-    pedidoActual = data.pedido;
-    listaCompletaProductos = data.productos;
+    const [pedidoData, usuariosData] = await Promise.all([
+        apiFetch(`/api/mesas/${mesaId}/pedido/`),
+        apiFetch(`/api/users/`)
+    ]);
+
+    document.getElementById("mesaNombre").textContent = pedidoData.mesa.nombre;
+    pedidoActual = pedidoData.pedido;
+    listaCompletaProductos = pedidoData.productos;
+    listaCompletaUsuarios = usuariosData.users;
+
     listaCompletaProductos.forEach(p => {
-      virtualStock[p.id_producto] = p.stock - (data.reservas_stock[p.id_producto] || 0);
+      virtualStock[p.id_producto] = p.stock - (pedidoData.reservas_stock[p.id_producto] || 0);
     });
+
     actualizarListaProductosUI();
     actualizarPedidoItemsUI();
+    actualizarUsuariosUI();
+
     document.getElementById("pedidoModal").style.display = "block";
   } catch (error) {
-    console.error("Error al obtener datos del pedido:", error);
+    console.error("Error al obtener datos del pedido o usuarios:", error);
     showToast(error.message);
   }
 }
@@ -175,6 +180,68 @@ function actualizarPedidoItemsUI() {
   }
 }
 
+// ===== GESTIÓN DE USUARIOS EN PEDIDO =====
+
+function actualizarUsuariosUI() {
+    const assignedUsersList = document.getElementById('assignedUsersList');
+    if (pedidoActual.usuarios && pedidoActual.usuarios.length > 0) {
+        assignedUsersList.innerHTML = pedidoActual.usuarios.map(user => `
+            <div class="assigned-user">
+                <span>${user.username}</span>
+                <button class="btn btn-sm btn-danger" onclick="gestionarUsuarioEnPedido(${user.id}, 'remove')">×</button>
+            </div>
+        `).join('');
+    } else {
+        assignedUsersList.innerHTML = '<p class="text-muted">No hay clientes en este pedido.</p>';
+    }
+}
+
+function renderizarResultadosBusquedaUsuarios(terminoBusqueda) {
+    const resultsContainer = document.getElementById('userSearchResults');
+    if (!terminoBusqueda) {
+        resultsContainer.innerHTML = '';
+        return;
+    }
+
+    const idsUsuariosAsignados = new Set(pedidoActual.usuarios.map(u => u.id));
+    const resultados = listaCompletaUsuarios.filter(user => 
+        user.username.toLowerCase().includes(terminoBusqueda.toLowerCase()) && !idsUsuariosAsignados.has(user.id)
+    );
+
+    if (resultados.length > 0) {
+        resultsContainer.innerHTML = resultados.map(user => `
+            <div class="user-search-result" onclick="gestionarUsuarioEnPedido(${user.id}, 'add')">
+                ${user.username}
+            </div>
+        `).join('');
+    } else {
+        resultsContainer.innerHTML = '<p class="text-muted">No se encontraron clientes.</p>';
+    }
+}
+
+async function gestionarUsuarioEnPedido(userId, action) {
+    try {
+        await apiFetch(`/api/pedidos/${pedidoActual.id}/usuarios/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+            body: JSON.stringify({ user_id: userId, action: action }),
+        });
+
+        const data = await apiFetch(`/api/mesas/${mesaActualId}/pedido/`);
+        pedidoActual = data.pedido;
+        
+        actualizarUsuariosUI();
+        
+        const searchInput = document.getElementById('userSearchInput');
+        searchInput.value = '';
+        renderizarResultadosBusquedaUsuarios('');
+
+    } catch (error) {
+        console.error(`Error al ${action === 'add' ? 'agregar' : 'eliminar'} usuario:`, error);
+        showToast(error.message);
+    }
+}
+
 // ===== MODAL DE CANTIDAD =====
 
 function mostrarControlCantidad(productoId) {
@@ -185,7 +252,7 @@ function mostrarControlCantidad(productoId) {
     return;
   }
 
-  cerrarModalCantidad(); // Cerrar si ya hay uno abierto
+  cerrarModalCantidad();
   const modal = document.createElement('div');
   modal.id = 'modalCantidad';
   modal.className = 'modal-overlay';
@@ -243,7 +310,6 @@ async function confirmarAgregarProducto(productoId) {
       headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
       body: JSON.stringify({ mesa_id: mesaActualId, producto_id: productoId, cantidad: cantidad }),
     });
-    // Actualización local inmediata para el cliente actual
     virtualStock[productoId] -= cantidad;
     pedidoActual = data.pedido;
     actualizarPedidoItemsUI();
@@ -261,7 +327,7 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
 
   if (nuevaCantidad < 1) { return await eliminarItem(itemId); }
 
-  const stock = virtualStock[item.producto.id] + old_cantidad; // Stock total disponible
+  const stock = virtualStock[item.producto.id] + old_cantidad;
   if (stock < nuevaCantidad) {
     showToast(`Stock insuficiente. Disponible: ${stock}`);
     return;
@@ -289,7 +355,12 @@ async function eliminarItem(itemId) {
   if (!confirmado) return;
 
   const item = pedidoActual.items.find(i => i.id === itemId);
-  const { id: productoId, cantidad } = item.producto;
+  if (!item) {
+    console.error("Intentando eliminar un item que no se encontró en el pedido actual.");
+    return;
+  }
+  const productoId = item.producto.id;
+  const cantidad = item.cantidad;
 
   try {
     const data = await apiFetch(`/api/pedidos/eliminar-item/${itemId}/`, {
@@ -331,11 +402,40 @@ async function facturarPedido() {
   }
 }
 
+function liberarMesa(mesaId, tienePedidos) {
+    const submitForm = () => {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/mesas/${mesaId}/liberar/`;
+        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').cloneNode(true);
+        form.appendChild(csrf);
+        document.body.appendChild(form);
+        form.submit();
+    };
+
+    if (tienePedidos) {
+        showConfirm(
+            'Liberar Mesa',
+            'Esta mesa tiene pedidos sin facturar. ¿Estás seguro de que deseas liberarla? Los pedidos serán eliminados.'
+        ).then(confirmed => {
+            if (confirmed) {
+                submitForm();
+            }
+        });
+    } else {
+        submitForm();
+    }
+}
+
 // ===== INICIALIZACIÓN Y EVENTOS =====
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.mesa-card').forEach(actualizarVisibilidadBotonPedido);
     setupWebSocket();
+
+    document.getElementById('userSearchInput').addEventListener('input', (e) => {
+        renderizarResultadosBusquedaUsuarios(e.target.value);
+    });
 });
 
 document.addEventListener('change', (event) => {

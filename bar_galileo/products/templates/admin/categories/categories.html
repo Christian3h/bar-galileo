@@ -6,35 +6,34 @@
     <div class="container">
         <h1 class="my-4">Lista de Categorías</h1>
 
-        <!-- Contenedor responsivo para la tabla -->
-        <div class="table-responsive">
-            <table id="tabla-categorias" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for categoria in categorias %}
-                    <tr>
-                        <td>{{ categoria.id_categoria }}</td>
-                        <td>{{ categoria.nombre_categoria }}</td>
-                        <td>{{ categoria.descripcion }}</td>
-                        <td>
-                            {% if request.user|has_perm:"categories,editar" %}
-                                <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning">Editar</a>
-                            {% endif %}
-                            {% if request.user|has_perm:"categories,eliminar" %}
-                                <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger">Eliminar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="table-contenedor">
+            <div class="table-responsive">
+                <table id="tabla-categorias" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-1">Nombre</th>
+                            <th class="col-2">Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr>
+                            <td class="col-1">{{ categoria.nombre_categoria }}</td>
+                            <td class="col-2">{{ categoria.descripcion }}</td>
+                            <td>
+                                {% if request.user|has_perm:"categories,editar" %}
+                                    <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                {% endif %}
+                                {% if request.user|has_perm:"categories,eliminar" %}
+                                    <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

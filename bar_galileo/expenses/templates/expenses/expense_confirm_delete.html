@@ -1,0 +1,19 @@
+
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Eliminar Gasto</h6>
+    </div>
+    <div class="card-body">
+        <p>¿Estás seguro de que quieres eliminar el gasto "{{ expense }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+            <a href="{% url 'expenses:expense_list' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -17,12 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+from accounts.views import CustomEmailView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/email/', CustomEmailView.as_view(), name="account_email"), # Vista de depuración
     path('accounts/', include('allauth.urls')),
+    path('captcha/', include('captcha.urls')),
     path('', include(('products.urls', 'products'), namespace='products')),
     path('', include(('core.urls', 'core'), namespace='core')),
     path('', include(('tables.urls', 'tables'), namespace='tables')),
@@ -31,7 +35,10 @@ urlpatterns = [
     path('facturacion/', include(('facturacion.urls', 'facturacion'), namespace='facturacion')),
     path('', include(('users.urls', 'users'), namespace='users')),
     path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
+    path('expenses/', include(('expenses.urls', 'expenses'), namespace='expenses')),
+    path('nominas/', include(('nominas.urls', 'nominas'), namespace='nominas')),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
