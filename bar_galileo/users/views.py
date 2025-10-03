@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
@@ -228,6 +229,17 @@ def panel_usuario(request):
 
 def user_list(request):
     users = User.objects.all().select_related('userprofile')
+=======
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from roles.models import UserProfile, Role
+from roles.forms import UserProfileForm
+from django.db.models import Case, When, Value, IntegerField
+
+def user_list(request):
+    users = User.objects.all().select_related('userprofile')
+    # Ordenar: usuarios con rol al final
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     users = users.annotate(
         is_user_role=Case(
             When(userprofile__rol__nombre='usuario', then=Value(1)),
@@ -243,6 +255,7 @@ def user_list(request):
         profile, _ = UserProfile.objects.get_or_create(user=user)
         profile.rol_id = rol_id
         profile.save()
+<<<<<<< HEAD
         
         rol = Role.objects.get(id=rol_id)
         mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.name}'."
@@ -257,3 +270,47 @@ def user_list_api(request):
     users = User.objects.all().order_by('username')
     data = [{'id': user.id, 'username': user.username, 'nombre': user.get_full_name() or user.username} for user in users]
     return JsonResponse(data, safe=False)
+=======
+        return redirect('users:user_list')
+    return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
+
+
+# Vista para el panel de usuario
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def panel_usuario(request):
+    # Aquí puedes obtener datos reales del usuario
+    user = request.user
+    # Ejemplo de datos, reemplaza por datos reales de tu modelo
+    datos = {
+        'nombre': user.get_full_name() or user.username,
+        'cedula': getattr(user, 'cedula', '1.234.567.890'),
+        'telefono': getattr(user, 'telefono', '+57 312 456 7890'),
+        'email': user.email,
+        'direccion': getattr(user, 'direccion', 'Cra 15 #85-23, Bogotá'),
+        'cliente_desde': 'Enero 2023',
+        'emergencia': {
+            'nombre': 'María Elena Mendoza',
+            'relacion': 'Esposa',
+            'telefono': '+57 314 396 2770',
+            'telefono_alt': '+57 314 396 2770',
+            'sangre': 'O+ Positivo',
+            'alergias': 'Mariscos, Cacahuetes',
+        },
+        'cuenta_actual': {
+            'total': 45750,
+            'items': [
+                {'nombre': 'Cervezas (3)', 'precio': 18000},
+                {'nombre': 'Alitas BBQ', 'precio': 15500},
+                {'nombre': 'Nachos Supreme', 'precio': 12250},
+            ]
+        },
+        'historial_mensual': {
+            'mes': 'Julio',
+            'total': 450000,
+            'barras': [120000, 160000, 90000, 180000, 140000],
+        }
+    }
+    return render(request, 'users/panel de usuario.html', {'datos': datos})
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

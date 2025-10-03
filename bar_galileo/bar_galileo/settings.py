@@ -14,16 +14,23 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
+<<<<<<< HEAD
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
+=======
+load_dotenv()
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+<<<<<<< HEAD
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'static'
 
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -39,8 +46,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+<<<<<<< HEAD
     # app para el captcha
     'captcha',
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,13 +58,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+<<<<<<< HEAD
     #apps propias
+=======
+    #apps propias 
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     'core', # se encarga las paginas de inicio
     'products',
     'accounts.apps.AccountsConfig',
     'tables',
     'roles',
     'users',
+<<<<<<< HEAD
     'expenses',
     'nominas',
     #app para el dashboard
@@ -62,15 +77,27 @@ INSTALLED_APPS = [
     #app para facturación
     'facturacion',
     #apps necesarias para la libreria django-allauth
+=======
+    #app para el dashboard
+    'admin_dashboard',
+    #apps necesarias para la libreria django-allauth 
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     'django.contrib.sites',                # ¡MUY IMPORTANTE!
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+<<<<<<< HEAD
     #app para el manejo de las notificaciones
     'channels',
     'notifications',
     ]
+=======
+    #app para el manejo de las notificaciones 
+    'channels',
+    'notifications',
+]
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -84,7 +111,10 @@ MIDDLEWARE = [
     'roles.middleware.PermissionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+<<<<<<< HEAD
     'accounts.middleware.AdminRedirectMiddleware',
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware'
@@ -97,11 +127,19 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'templates'),
                 os.path.join(BASE_DIR, 'accounts', 'templates'),
+<<<<<<< HEAD
                 os.path.join(BASE_DIR, 'products', 'templates'),
                 os.path.join(BASE_DIR, 'core', 'templates'),
                 os.path.join(BASE_DIR, 'admin_dashboard', 'templates'),
                 os.path.join(BASE_DIR, 'notifications', 'templates')
                 ],
+=======
+                os.path.join(BASE_DIR, 'products', 'templates'), 
+                os.path.join(BASE_DIR, 'core', 'templates'), 
+                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'), 
+                os.path.join(BASE_DIR, 'notifications', 'templates')
+                ],  
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -193,6 +231,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+<<<<<<< HEAD
 ACCOUNT_FORMS = {
     'login': 'accounts.forms.CustomLoginForm',
     'add_email': 'accounts.forms.CustomAddEmailForm',
@@ -202,6 +241,12 @@ LOGIN_URL = '/accounts/login/'  # link que redirige al login
 LOGIN_REDIRECT_URL = '/'
 
 #---------------------- credenciales para enviar correos
+=======
+LOGIN_URL = '/accounts/login/'  # link que redirige al login
+LOGIN_REDIRECT_URL = '/'
+
+#---------------------- credenciales para enviar correos 
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -213,7 +258,11 @@ EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
 
 #bar-galileo
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['*'] #permitir varios enlaces
+=======
+ALLOWED_HOSTS = ['*'] #permitir varios enlaces 
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 
 
@@ -227,9 +276,12 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
     },
 }
+<<<<<<< HEAD
 
 # Captcha settings
 CAPTCHA_LENGTH = 1
 CAPTCHA_IMAGE_SIZE = (225, 75)
 CAPTCHA_FONT_SIZE = 40
 CAPTCHA_FLITE_PATH = '/usr/bin/flite'
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

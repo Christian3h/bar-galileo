@@ -5,7 +5,10 @@
 @import "../../_variables/_colors.css";
 @import "../../_components/_buttons.css";
 @import "../../_components/_nav_admin.css";
+<<<<<<< HEAD
 @import "../../_components/_forms.css";
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 /* =======================================
    BASE
@@ -66,20 +69,35 @@ body {
 }
 
 .card {
+<<<<<<< HEAD
   background: rgba(166, 137, 50, 0.1);
   border-radius: 12px;
   border: 2px solid var(--color-secondary);
   box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
+=======
+  background: transparent;
+  border-radius: 12px;
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 4px 8px var(--color-primary);
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
   padding: 1.5rem;
   flex: 1;
   min-width: 250px;
   text-align: center;
+<<<<<<< HEAD
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+=======
+  transition: transform 0.2s ease;
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 .card:hover {
   transform: translateY(-4px);
+<<<<<<< HEAD
   box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
+=======
+  box-shadow: 0 4px 30px var(--color-primary);
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 .card h3 {
@@ -106,7 +124,11 @@ body {
   border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
+<<<<<<< HEAD
   min-width: 600px;
+=======
+  min-width: 300px;
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 .chart-box h4 {
@@ -127,7 +149,12 @@ body {
 }
 
 @media (max-width: 768px) {
+<<<<<<< HEAD
   .dashboard-cards {
+=======
+  .dashboard-cards,
+  .dashboard-charts {
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     flex-direction: column;
   }
 
@@ -135,6 +162,7 @@ body {
     padding: 1rem;
   }
 
+<<<<<<< HEAD
   .card {
     width: 100%;
     min-width: unset;
@@ -145,6 +173,13 @@ body {
     overflow: scroll;
   }
 
+=======
+  .card,
+  .chart-box {
+    width: 100%;
+    min-width: unset;
+  }
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 @media (max-width: 480px) {
@@ -174,7 +209,11 @@ body {
 /*estilos para las tablas */
 
 .table {
+<<<<<<< HEAD
   width: 100%;
+=======
+  width: 50% !important;
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 .dt-paging-button {
@@ -185,6 +224,7 @@ body {
 .table td {
   border: 1px solid var(--color-secondary) !important;
 }
+<<<<<<< HEAD
 
 .table-contenedor {
   display: flex;
@@ -201,3 +241,5 @@ body {
 
   }
 }
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

@@ -5,6 +5,7 @@
 
 <h1>Lista de marcas</h1>
 
+<<<<<<< HEAD
 <div class="table-contenedor">
     <div class="table-responsive">
         <table id="brands-table" class="table display">
@@ -31,6 +32,35 @@
             </tbody>
         </table>
     </div>
+=======
+<!-- Contenedor responsivo -->
+<div class="table-responsive">
+    <table id="brands-table" class="table display">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for brand in brands %}
+            <tr>
+                <td>{{ brand.id_marca }}</td>
+                <td>{{ brand.marca }}</td>
+                <td>
+                    {% if request.user|has_perm:"brands,editar" %}
+                    <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning">Editar</a>
+                    {% endif %}
+                    {% if request.user|has_perm:"brands,eliminar" %}
+                    <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 </div>
 
 <script>

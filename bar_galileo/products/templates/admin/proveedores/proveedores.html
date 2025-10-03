@@ -9,6 +9,7 @@
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Proveedores</h1>
+<<<<<<< HEAD
         <div class="table-contenedor">
             <div class="table-responsive">
                 <table id="tabla-proveedores" class="table table-striped">
@@ -45,6 +46,45 @@
                     </tbody>
                 </table>
             </div>
+=======
+        <!-- Contenedor responsivo para la tabla -->
+        <div class="table-responsive">
+            <table id="tabla-proveedores" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="idT">ID</th>
+                        <th class="nombreT">Nombre</th>
+                        <th class="contactoT">Contacto</th>
+                        <th class="telefonoT">Teléfono</th>
+                        <th class="direccionT">Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for proveedor in proveedores %}
+                    <tr>
+                        <td class="idT">{{ proveedor.id_proveedor }}</td>
+                        <td class="nombreT">{{ proveedor.nombre }}</td>
+                        <td class="contactoT">{{ proveedor.contacto }}</td>
+                        <td class="telefonoT">{{ proveedor.telefono }}</td>
+                        <td class="direccionT">{{ proveedor.direccion }}</td>
+                        <td>
+                            {% if request.user|has_perm:"providers,editar" %}
+                                <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-warning">Editar</a>
+                            {% endif %}
+                            {% if request.user|has_perm:"providers,eliminar" %}
+                                <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-danger">Eliminar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">No hay proveedores disponibles.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
         </div>
     </div>
     <!-- Inicialización de DataTables -->
@@ -54,10 +94,25 @@
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"
             },
+<<<<<<< HEAD
             responsive: true,
             "pageLength": 10,
             "lengthChange": true,
             "ordering": true
+=======
+            responsive: true,  // Habilita el modo responsivo
+            "pageLength": 10,  // Establece el número de filas por página
+            "lengthChange": true,  // Permite cambiar el número de filas por página
+            "ordering": true,  // Habilita la ordenación de las columnas
+            "createdRow": function (row, data, dataIndex) {
+                // Añadir clases a las celdas para responsive
+                $(row).find('td').eq(0).addClass('idT');
+                $(row).find('td').eq(1).addClass('nombreT');
+                $(row).find('td').eq(2).addClass('contactoT');
+                $(row).find('td').eq(3).addClass('telefonoT');
+                $(row).find('td').eq(4).addClass('direccionT');
+            }
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
         });
     });
     </script>

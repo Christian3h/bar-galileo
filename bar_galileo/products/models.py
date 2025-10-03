@@ -44,7 +44,11 @@ class Categoria(models.Model):
     - descripcion: descripción opcional.
     """
     id_categoria = models.AutoField(primary_key=True)
+<<<<<<< HEAD
     nombre_categoria = models.CharField(max_length=50, null=True, blank=True)
+=======
+    nombre_categoria = models.CharField(max_length=100, null=True, blank=True)
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     descripcion = models.TextField(null=True, blank=True)
     
     class Meta:
@@ -62,7 +66,11 @@ class Marca(models.Model):
     - descripcion: descripción opcional.
     """
     id_marca = models.AutoField(primary_key=True)
+<<<<<<< HEAD
     marca = models.CharField(max_length=50)
+=======
+    marca = models.CharField(max_length=100)
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     descripcion = models.TextField(null=True, blank=True)
     
     class Meta:
@@ -82,8 +90,13 @@ class Proveedor(models.Model):
     - direccion: dirección del proveedor.
     """
     id_proveedor = models.AutoField(primary_key=True)
+<<<<<<< HEAD
     nombre = models.CharField(max_length=50)
     contacto = models.CharField(max_length=50)
+=======
+    nombre = models.CharField(max_length=100)
+    contacto = models.CharField(max_length=100)
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     telefono = models.BigIntegerField(null=True, blank=True)
     direccion = models.TextField()
     
@@ -97,7 +110,11 @@ class Proveedor(models.Model):
 
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
+<<<<<<< HEAD
     nombre = models.CharField(max_length=50, unique=True)
+=======
+    nombre = models.CharField(max_length=100, unique=True)
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     precio_compra = models.DecimalField(max_digits=10, decimal_places=2)
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(default=0)

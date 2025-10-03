@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Mesas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        .mesas-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            padding: 20px 0;
+        }
+
+        .mesa-card {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            color: #333;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Colores por estado */
+        .disponible {
+            background-color: #d4edda; /* verde claro */
+            border-color: #c3e6cb;
+        }
+
+        .ocupada {
+            background-color: #f8d7da; /* rojo claro */
+            border-color: #f5c6cb;
+        }
+
+        .reservada {
+            background-color: #fff3cd; /* amarillo claro */
+            border-color: #ffeeba;
+        }
+
+        .fuera-de-servicio {
+            background-color: #d6d8db; /* gris claro */
+            border-color: #c6c8ca;
+        }
+
+        .mesa-nombre {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .mesa-desc {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .mesa-form {
+            margin-top: 10px;
+        }
+    </style>
+
+    <script>
+        function habilitarEdicion(id) {
+            document.getElementById('ver_nombre_' + id).style.display = 'none';
+            document.getElementById('ver_desc_' + id).style.display = 'none';
+            document.getElementById('form_edit_' + id).style.display = 'block';
+            document.getElementById('editar_btn_' + id).style.display = 'none';
+        }
+
+        function cancelarEdicion(id) {
+            document.getElementById('ver_nombre_' + id).style.display = 'block';
+            document.getElementById('ver_desc_' + id).style.display = 'block';
+            document.getElementById('form_edit_' + id).style.display = 'none';
+            document.getElementById('editar_btn_' + id).style.display = 'inline-block';
+        }
+    </script>
+</head>
+<body class="container mt-4">
+
+
+    <h2>Mesas</h2>
+
+    <!-- Barra de búsqueda -->
+    <div class="mb-3">
+        <input type="text" id="busquedaMesas" class="form-control" placeholder="Buscar por nombre, descripción o estado..." onkeyup="filtrarMesas()">
+    </div>
+
+    <!-- Mensajes -->
+    {% if messages %}
+        <div class="mt-2">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <a href="{% url 'crear_mesa' %}" class="btn btn-success mb-3">Crear Mesa</a>
+
+    <!-- Tarjetas tipo grid -->
+    <div class="mesas-container">
+        {% for mesa in mesas %}
+            <div class="mesa-card {{ mesa.estado|slugify }}" data-nombre="{{ mesa.nombre|lower }}" data-descripcion="{{ mesa.descripcion|lower }}" data-estado="{{ mesa.estado|lower }}">
+                <!-- Nombre y Descripción -->
+                <div>
+                    <div class="mesa-nombre" id="ver_nombre_{{ mesa.id }}">{{ mesa.nombre }}</div>
+                    <div class="mesa-desc" id="ver_desc_{{ mesa.id }}">{{ mesa.descripcion }}</div>
+                </div>
+
+                <!-- Estado -->
+                <form method="post" action="{% url 'actualizar_estado' mesa.id %}">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <select name="estado" class="form-select form-select-sm">
+                            <option value="disponible" {% if mesa.estado == "disponible" %}selected{% endif %}>Disponible</option>
+                            <option value="ocupada" {% if mesa.estado == "ocupada" %}selected{% endif %}>Ocupada</option>
+                            <option value="reservada" {% if mesa.estado == "reservada" %}selected{% endif %}>Reservada</option>
+                            <option value="fuera de servicio" {% if mesa.estado == "fuera de servicio" %}selected{% endif %}>Fuera de servicio</option>
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Guardar</button>
+                    </div>
+                </form>
+
+                <!-- Acciones -->
+                <div class="acciones">
+                    <button class="btn btn-warning btn-sm" id="editar_btn_{{ mesa.id }}" onclick="habilitarEdicion('{{ mesa.id }}')">Editar</button>
+                    <a href="{% url 'eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                </div>
+
+                <!-- Formulario de edición -->
+                <form method="post" action="{% url 'editar_mesa' mesa.id %}" id="form_edit_{{ mesa.id }}" class="mesa-form" style="display: none;">
+                    {% csrf_token %}
+                    <input type="text" name="nombre" class="form-control mb-1" value="{{ mesa.nombre }}" required>
+                    <textarea name="descripcion" class="form-control mb-2" rows="2" required>{{ mesa.descripcion }}</textarea>
+                    <div class="acciones">
+                        <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="cancelarEdicion('{{ mesa.id }}')">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+<script>
+    function filtrarMesas() {
+        var input = document.getElementById('busquedaMesas');
+        var filtro = input.value.toLowerCase();
+        var tarjetas = document.getElementsByClassName('mesa-card');
+        for (var i = 0; i < tarjetas.length; i++) {
+            var nombre = tarjetas[i].getAttribute('data-nombre');
+            var descripcion = tarjetas[i].getAttribute('data-descripcion');
+            var estado = tarjetas[i].getAttribute('data-estado');
+            if (
+                nombre.includes(filtro) ||
+                descripcion.includes(filtro) ||
+                estado.includes(filtro)
+            ) {
+                tarjetas[i].style.display = '';
+            } else {
+                tarjetas[i].style.display = 'none';
+            }
+        }
+    }
+</script>
+</body>
+</html>

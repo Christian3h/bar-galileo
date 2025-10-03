@@ -4,7 +4,10 @@ Utiliza el modelo Producto y permite crear y editar productos desde el frontend.
 """
 
 from django import forms
+<<<<<<< HEAD
 import re
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 from .models import Producto, Categoria, Proveedor, Marca
 
 
@@ -64,6 +67,7 @@ class ProveedorForm(forms.ModelForm):
             raise forms.ValidationError('La dirección es obligatoria.')
         return direccion.strip()
 
+<<<<<<< HEAD
     def clean_telefono(self):
         telefono = self.cleaned_data.get('telefono')
         if telefono:
@@ -75,6 +79,8 @@ class ProveedorForm(forms.ModelForm):
                 raise forms.ValidationError('El número de teléfono debe ser colombiano (10 dígitos, empieza con 3).')
         return telefono
 
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 class MarcaForm(forms.ModelForm):
     class Meta:
         model = Marca
@@ -88,4 +94,8 @@ class MarcaForm(forms.ModelForm):
         marca = self.cleaned_data.get('marca')
         if not marca or not marca.strip():
             raise forms.ValidationError('El nombre de la marca es obligatorio.')
+<<<<<<< HEAD
         return marca.strip()
+=======
+        return marca.strip()
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

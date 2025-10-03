@@ -8,7 +8,10 @@ from django.urls import path
 app_name = "products"
 from . import views
 from . import views_api
+<<<<<<< HEAD
 from .views import ProductoDetailView
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 
 
@@ -50,7 +53,10 @@ urlpatterns = [
     path('adminD/products/update/<int:pk>/', views.ProductoUpdateAdminView.as_view(), name='products_edit_admin'),
     path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),
     path("adminD/products_img/delete/<int:pk>/", views.EliminarImagenProductoAdminView.as_view(), name="producto_imagen_eliminar"),
+<<<<<<< HEAD
     path('api/producto_imagen/<int:pk>/eliminar/', views_api.producto_imagen_eliminar_api, name='producto_imagen_eliminar_api'),
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
     #### rutas para el dashboard de las categorías
     path('adminD/categories/', views.CategoriasAdminView.as_view(), name='categories_admin'),
@@ -68,7 +74,10 @@ urlpatterns = [
     path('adminD/brands/create/', views.BrandCreateAdminView.as_view(), name='brands_create_admin'),
     path('adminD/brands/update/<int:pk>/', views.BrandUpdateAdminView.as_view(), name='brands_update_admin'),
     path('adminD/brands/delete/<int:pk>/', views.BrandDeleteAdminView.as_view(), name='brands_delete_admin'),
+<<<<<<< HEAD
     path('producto/<int:pk>/', ProductoDetailView.as_view(), name='producto_detalle'),
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 ]
 
 
