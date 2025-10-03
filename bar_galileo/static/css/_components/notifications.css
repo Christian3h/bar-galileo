@@ -1,0 +1,220 @@
+/* =======================================
+   NOTIFICACIONES
+======================================= */
+
+.notification-icon {
+  position: absolute;
+}
+
+.container-messages {
+  position: fixed;
+  top: 100px;
+  right: 20px; /* Cambiado a la derecha */
+  width: auto;
+  max-width: 400px;
+  z-index: 2000;
+}
+
+.alert-message {
+  position: relative;
+  padding: 1rem 2rem 1rem 1.5rem;
+  background-color: #323232; /* Color oscuro como base */
+  color:var(--color-secondary) !important;
+  border-left: 4px solid var(--color-primary); /* Verde para éxito */
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards;
+}
+
+.alert-message.error {
+  border-left-color: var(--color-dark); /* Rojo para error */
+}
+
+.alert-message.info {
+  border-left-color: var(--color-secondary); /* Azul para info */
+}
+
+.message-text {
+  font-size: 1rem;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-secondary) !important;
+  line-height: 1;
+  padding-left: 1rem;
+}
+
+.close-btn:hover {
+  color: var(--color-dark) !important;
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateX(110%);
+  }
+}
+
+.alert-message.fade-out {
+  animation: slideOut 0.5s forwards;
+}
+
+/* estilso para el boton de notificaciones  */
+
+#icono-notification {
+  font-size: 3rem;
+}
+
+.notifications-panel a{
+  color: var(--color-secondary);
+  text-decoration: none;
+}
+
+.notification-icon {
+  position: absolute;
+  cursor: pointer;
+  display: inline-block;
+  right: 20px;
+  top: 14px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #e74c3c;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  transform: scale(0);
+  transition: transform 0.3s ease;
+}
+
+.notification-badge.show {
+  transform: scale(1);
+}
+
+.notifications-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-height: 400px;
+  background: var(--color-light);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+  border: 1px solid var(--color-secondary);
+  margin-top: 10px;
+}
+
+.notifications-panel.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.notification-header {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3px;
+}
+
+.notification-header h4 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#mark-all-as-read {
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+#mark-all-as-read:hover {
+  background: var(--color-accent);
+  color: var(--color-secondary);
+}
+
+.notification-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.notification-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 2px;
+}
+
+.notification-item {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--color-primary);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.notification-item:hover {
+  background: var(--color-accent);
+  border-radius: 5px;
+}
+
+.notification-item.unread {
+  background: var(--color-light);
+  border-left: 3px solid var(--color-primary);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.empty-notifications {
+  text-align: center;
+  padding: 30px;
+  color: #999;
+  font-size: 14px;
+}

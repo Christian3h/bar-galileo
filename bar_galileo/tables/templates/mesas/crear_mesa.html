@@ -1,0 +1,16 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Crear Mesa</h1>
+<a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary">Volver</a>
+
+<form method="post" class="form-style">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="button-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>
+
+{% endblock %}

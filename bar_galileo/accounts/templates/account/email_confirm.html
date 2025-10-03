@@ -1,0 +1,54 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load account %}
+{% load allauth %}
+{% block head_title %}
+    {% trans "Confirm Email Address" %}
+{% endblock head_title %}
+{% block content %}
+    <div class="container-login">
+        {% element h1 %}
+            {% trans "Confirmar Correo Electrónico" %}
+        {% endelement %}
+        
+        {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            {% if can_confirm %}
+                <div class="info-box">
+                    <h3>📧 Verificación de Correo</h3>
+                    <p>{% blocktrans with confirmation.email_address.email as email %}Por favor confirma que <strong>{{ email }}</strong> es una dirección de correo válida para el usuario {{ user_display }}.{% endblocktrans %}</p>
+                </div>
+                
+                <div class="form-section">
+                    {% url 'account_confirm_email' confirmation.key as action_url %}
+                    {% element form method="post" action=action_url %}
+                        {% slot actions %}
+                            {% csrf_token %}
+                            {{ redirect_field }}
+                            {% element button type="submit" tags="prominent,login" %}
+                                {% trans 'Confirmar Correo' %}
+                            {% endelement %}
+                        {% endslot %}
+                    {% endelement %}
+                </div>
+            {% else %}
+                <div class="alert-message error">
+                    <h3>❌ Error de Confirmación</h3>
+                    <p>{% blocktrans %}No se puede confirmar {{ email }} porque ya está confirmado por una cuenta diferente.{% endblocktrans %}</p>
+                </div>
+            {% endif %}
+        {% else %}
+            {% url 'account_email' as email_url %}
+            <div class="alert-message error">
+                <h3>⏰ Enlace Expirado</h3>
+                <p>{% blocktrans %}Este enlace de confirmación de correo ha expirado o no es válido. Por favor <a href="{{ email_url }}">solicita una nueva confirmación de correo</a>.{% endblocktrans %}</p>
+            </div>
+        {% endif %}
+        
+        <div class="nav-links">
+            <a href="{% url 'account_email' %}">Gestionar correos</a>
+            <a href="{% url 'account_login' %}">Iniciar sesión</a>
+            <a href="{% url 'core:index' %}">Volver al inicio</a>
+        </div>
+    </div>
+{% endblock content %}

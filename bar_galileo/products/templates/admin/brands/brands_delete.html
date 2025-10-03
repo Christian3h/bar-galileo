@@ -1,0 +1,18 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/admin/delete_confirmation.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="delete-confirmation-container">
+    <h2>¿Estás seguro de que deseas eliminar esta marca?</h2>
+    <form method="post">
+        {% csrf_token %}
+        <p><strong>{{ object.marca }}</strong></p>
+        <button type="submit" class="btn-danger">Eliminar</button>
+        <a href="{% url 'products:brands_admin' %}" class="btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,203 @@
+/* =======================================
+   RESET + VARIABLES + COMPONENTES
+======================================= */
+@import "../../_resets/_resets.css";
+@import "../../_variables/_colors.css";
+@import "../../_components/_buttons.css";
+@import "../../_components/_nav_admin.css";
+@import "../../_components/_forms.css";
+
+/* =======================================
+   BASE
+======================================= */
+/* Este aplica a toda la página */
+
+body {
+  display: flex;
+  margin: 0;
+  font-family: sans-serif;
+  height: 100vh;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(*) {
+  animation-duration: 0.5s;
+}
+
+/* ::view-transition-old(root) {
+  animation: slide-up-fast .3s ease-out forwards;
+}
+
+@keyframes slide-up-fast {
+  from {
+    transform: translateY(100%);
+
+  }
+  to {
+    transform: translateY(0);
+
+  }
+} */
+
+.container {
+  max-width: 100%;
+}
+
+.dashboard-container {
+  width: 100%;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--color-secondary);
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.card {
+  background: rgba(166, 137, 50, 0.1);
+  border-radius: 12px;
+  border: 2px solid var(--color-secondary);
+  box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 250px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
+}
+
+.card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-secondary);
+}
+
+.card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--color-accent);
+}
+
+.dashboard-charts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.chart-box {
+  background: transparent;
+  border-radius: 12px;
+  border: 2px solid var(--color-primary);
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 600px;
+}
+
+.chart-box h4 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--color-secondary);
+}
+
+.dummy-chart {
+  height: 200px;
+  border-radius: 8px;
+  display: flex;
+  border: 2px solid var(--color-primary);
+  justify-content: center;
+  align-items: center;
+  color: var(--color-gray);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .dashboard-cards {
+    flex-direction: column;
+  }
+
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .card {
+    width: 100%;
+    min-width: unset;
+  }
+
+  #tabla-permisos_wrapper{
+    max-width: 95dvw;
+    overflow: scroll;
+  }
+
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 1.5rem;
+  }
+
+  .card h3,
+  .chart-box h4 {
+    font-size: 1rem;
+  }
+
+  .card p {
+    font-size: 1.5rem;
+  }
+}
+
+.dataTables_wrapper {
+  text-align: center;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+  text-align: left;
+}
+
+/*estilos para las tablas */
+
+.table {
+  width: 100%;
+}
+
+.dt-paging-button {
+  color: var(--color-secondary) !important;
+}
+
+.table th,
+.table td {
+  border: 1px solid var(--color-secondary) !important;
+}
+
+.table-contenedor {
+  display: flex;
+  justify-content: center;
+}
+
+
+@media (max-width: 700px) {
+  .dashboard-charts {
+    flex-direction: column;
+  }
+  .chart-box{
+    min-width: 100%;
+
+  }
+}
