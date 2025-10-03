@@ -119,3 +119,9 @@ cython_debug/
 
 # VSCode
 .vscode/
+
+# macOS Finder
+.DS_Store
+
+# Collected static files (Django collectstatic output)
+**/staticfiles/
