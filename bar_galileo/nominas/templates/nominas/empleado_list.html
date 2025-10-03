@@ -1,171 +1,104 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load format_tags %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
 <link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
-<style>
-    .table-contenedor {
-        max-width: 900px;
-        margin: 0 auto;
-        background: #222;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        padding: 1.5rem;
-    }
-    .btn-action-group a {
-        margin-right: 8px;
-        border: 2px dashed #ffc107;
-        color: #ffc107;
-        background: transparent;
-        font-weight: bold;
-        transition: background 0.2s, color 0.2s;
-    }
-    .btn-action-group a:hover {
-        background: #ffc107;
-        color: #222;
-    }
-    .table thead th {
-        color: #ffc107;
-        border-bottom: 2px solid #ffc107;
-    }
-    .table tbody td {
-        color: #fff;
-        border-color: #ffc107;
-    }
-    .card-header {
-        background: #222;
-        color: #ffc107;
-        border-bottom: 2px solid #ffc107;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
-<div class="container nominas-container">
-    <h2 class="my-4" style="color:#ffc107;text-align:center;">Gestión de Nóminas</h2>
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Gestión de Nóminas</h2>
 
-    <!-- Dashboard de estadísticas -->
-    <div class="row mb-4 nominas-stats">
-        <div class="col-md-3 col-sm-6">
-            <div class="card bg-primary text-white mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Total Empleados</h5>
-                    <h2>{{ total_empleados }}</h2>
-                </div>
-            </div>
+    <!-- Estadísticas -->
+    <section class="dashboard-cards">
+        <div class="card">
+            <h3>Total Empleados</h3>
+            <p>{{ total_empleados }}</p>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card bg-success text-white mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Empleados Activos</h5>
-                    <h2>{{ total_activos }}</h2>
-                </div>
-            </div>
+        <div class="card">
+            <h3>Empleados Activos</h3>
+            <p>{{ total_activos }}</p>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card bg-info text-white mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Empleados Inactivos</h5>
-                    <h2>{{ total_inactivos }}</h2>
-                </div>
-            </div>
+        <div class="card">
+            <h3>Empleados Inactivos</h3>
+            <p>{{ total_inactivos }}</p>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card bg-warning text-dark mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Salarios (Mensual)</h5>
-                    <h2>${{ total_salarios }}</h2>
-                </div>
-            </div>
+        <div class="card">
+            <h3>Salarios (Mensual)</h3>
+            <p>${{ total_salarios }}</p>
         </div>
-    </div>
+    </section>
 
-    <!-- Filtros y búsqueda -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5>Filtros y Búsqueda</h5>
-        </div>
-        <div class="card-body">
-            <form method="get" class="row">
-                <div class="col-md-3 mb-3">
-                    <label for="estado">Estado:</label>
+    <!-- Filtros de búsqueda -->
+    <div class="search-container">
+        <form method="GET" class="search-form">
+            <div class="search-fields">
+                <div class="field-group">
+                    <label>Estado:</label>
                     {{ filter_form.estado }}
                 </div>
-                <div class="col-md-3 mb-3">
-                    <label for="tipo_contrato">Tipo de Contrato:</label>
+                <div class="field-group">
+                    <label>Tipo de Contrato:</label>
                     {{ filter_form.tipo_contrato }}
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="busqueda">Buscar:</label>
+                <div class="field-group">
+                    <label>Buscar:</label>
                     {{ filter_form.busqueda }}
                 </div>
-                <div class="col-md-2 d-flex align-items-end mb-3">
-                    <button type="submit" class="btn btn-primary">Filtrar</button>
-                    <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary ms-2">Limpiar</a>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Acciones principales -->
-    <div class="mb-3">
-        <!-- Se eliminó la opción de Nuevo Empleado ya que se detecta automáticamente según el rol -->
-        <a href="{% url 'nominas:pago_list' %}" class="btn btn-info mb-3">
-            <i class="fa fa-money-bill"></i> Ver Todos los Pagos
-        </a>
-    </div>
-
-    <!-- Tabla de empleados -->
-    <div class="table-contenedor">
-        <div class="card-header bg-primary text-white">
-            <h5>Lista de Empleados</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="empleados-table" class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Cargo</th>
-                            <th>Salario Base</th>
-                            <th class="estadoCol">Estado</th>
-                            <th class="tipoContratoCol">Tipo Contrato</th>
-                            <th class="fechaContratacionCol">Fecha Contratación</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for empleado in empleados %}
-                        <tr>
-                            <td>{{ empleado.nombre }}</td>
-                            <td>{{ empleado.cargo }}</td>
-                            <td>${{ empleado.salario }}</td>
-                            <td class="estadoCol">
-                                <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
-                                    {{ empleado.get_estado_display }}
-                                </span>
-                            </td>
-                            <td class="tipoContratoCol">{{ empleado.get_tipo_contrato_display }}</td>
-                            <td class="fechaContratacionCol">{{ empleado.fecha_contratacion }}</td>
-                            <td>
-                                <div class="btn-action-group">
-                                    <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info">
-                                        <i class="fa fa-eye"></i>
-                                    </a>
-                                    <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary">
-                                        <i class="fa fa-edit"></i>
-                                    </a>
-                                    <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger">
-                                        <i class="fa fa-trash"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
             </div>
-        </div>
+            <div class="field-group buttons-group">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de empleados -->
+    <div class="table-responsive">
+        <table id="tabla-empleados" class="table nowrap">
+            <thead>
+                <tr>
+                    <th class="col-1">Nombre</th>
+                    <th class="col-2">Cargo</th>
+                    <th class="col-3">Salario Base</th>
+                    <th class="estadoCol">Estado</th>
+                    <th class="tipoContratoCol">Tipo Contrato</th>
+                    <th class="fechaContratacionCol">Fecha Contratación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empleado in empleados %}
+                <tr>
+                    <td class="col-1">{{ empleado.nombre }}</td>
+                    <td class="col-2">{{ empleado.cargo }}</td>
+                    <td class="col-3">${{ empleado.salario }}</td>
+                    <td class="estadoCol">
+                        <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ empleado.get_estado_display }}
+                        </span>
+                    </td>
+                    <td class="tipoContratoCol">{{ empleado.get_tipo_contrato_display }}</td>
+                    <td class="fechaContratacionCol">{{ empleado.fecha_contratacion }}</td>
+                    <td>
+                        <div class="actions-cell">
+                            <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -173,15 +106,15 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Inicializar solo si existe la tabla en el DOM
-        if (!document.querySelector('#empleados-table')) return;
+        if (!document.querySelector('#tabla-empleados')) return;
 
         // Destruir instancia previa si existe
-        if ($.fn.dataTable.isDataTable('#empleados-table')) {
-            $('#empleados-table').DataTable().destroy();
+        if ($.fn.dataTable.isDataTable('#tabla-empleados')) {
+            $('#tabla-empleados').DataTable().destroy();
         }
         
         // Inicialización mínima + idioma (manejo correcto cuando no hay datos)
-        var tabla = $('#empleados-table').DataTable({
+        var tabla = $('#tabla-empleados').DataTable({
             language: {
                 emptyTable: 'No hay empleados registrados',
                 zeroRecords: 'No se encontraron resultados',
