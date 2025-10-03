@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
+=======
+# Entorno virtual
+.venv/
+
+# Archivos de Python
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 __pycache__/
 *.py[cod]
 *$py.class
 
+<<<<<<< HEAD
 # C extensions
 *.so
 
@@ -119,3 +127,60 @@ cython_debug/
 
 # VSCode
 .vscode/
+=======
+# Archivos de log
+*.log
+
+# Archivos temporales del sistema
+*.swp
+*.swo
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+
+# Archivos de base de datos SQLite
+*.sqlite3
+db.sqlite3
+
+# Archivos de migraciones de Django (opcional ignorarlos si los generas en equipo)
+# Puedes dejar estos si deseas compartir las migraciones
+# **/migrations/*.py
+**/migrations/__pycache__/
+
+# Archivos estáticos recopilados
+staticfiles/
+collected_static/
+
+# Archivos de compilación
+build/
+dist/
+*.egg-info/
+
+# Archivos de media (si se generan localmente)
+media/
+
+# Archivos de configuración local
+local_settings.py
+#.env
+#Lw
+#.env.*
+
+# Archivos de cobertura y pruebas
+htmlcov/
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Archivos de node/npm si usas frontend con Django
+node_modules/
+
+secret-google.json
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

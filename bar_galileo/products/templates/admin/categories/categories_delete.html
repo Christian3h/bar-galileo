@@ -1,4 +1,5 @@
 {% extends 'base_admin.html' %}
+<<<<<<< HEAD
 {% load static %}
 
 {% block extra_css %}
@@ -15,4 +16,14 @@
         <a href="{% url 'products:categories_admin' %}" class="btn-secondary">Cancelar</a>
     </form>
 </div>
+=======
+{% block content %}
+<h1>Eliminar Categoría</h1>
+<p>¿Estás seguro de que deseas eliminar la categoría "{{ object.nombre_categoria }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Eliminar</button>
+        <a href="{% url 'products:categories_admin' %}">Cancelar</a>
+</form>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 {% endblock %}

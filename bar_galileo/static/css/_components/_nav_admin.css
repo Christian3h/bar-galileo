@@ -16,7 +16,10 @@ header {
   max-width: 220px;
   transition: all 0.3s ease;
   overflow-y: auto;
+<<<<<<< HEAD
   border-right: 1px solid var(--color-gray);
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 .collapsed {
@@ -30,7 +33,10 @@ header {
 
 /* === Sidebar Menú === */
 .menu {
+<<<<<<< HEAD
   margin-top: 50px !important;
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
   list-style: none;
   padding: 0;
   margin: 0;
@@ -78,6 +84,7 @@ header {
   transition: all 0.3s ease;
 }
 
+<<<<<<< HEAD
   #sidebar {
   overflow-y: scroll;
   scrollbar-width: none; /* Firefox */
@@ -92,11 +99,18 @@ header {
 .toggle-sidebar-btn {
   color: var(--color-secondary);
   background-color: var(--color-light);
+=======
+/* === Toggle Button === */
+.toggle-sidebar-btn {
+  color: var(--color-secondary);
+  background: transparent;
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
   border: none;
   font-size: 3rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
   display: none;
+<<<<<<< HEAD
   z-index: 1000; /* Ensure it's above the sidebar */
   position: relative; /* Needed for span positioning */
   width: 40px;
@@ -144,6 +158,10 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
 }
 
 
+=======
+}
+
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 /* === Efectos hover para los botones y los enlaces === */
 .menu li:hover,
 .menu li:hover > .menu-btn,
@@ -173,9 +191,12 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+<<<<<<< HEAD
   display: flex;
   align-items: center;
   flex-direction: column;
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 }
 
 /* === Responsivo === */
@@ -205,4 +226,8 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
   .toggle-sidebar-btn {
     display: inline-block;
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

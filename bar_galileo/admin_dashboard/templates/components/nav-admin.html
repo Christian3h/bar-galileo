@@ -3,11 +3,15 @@
 <header class="layout">
     <div class="header-content">
         <nav id="sidebar" class="sidebar expanded">
+<<<<<<< HEAD
 
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
             <ul class="menu">
                 <a href="{% url 'admin_dashboard:dashboard' %}">
                     <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo">
                 </a>
+<<<<<<< HEAD
                 <li>
                     <button class="menu-btn" onclick="window.location.href='/'" >
                         <a href="{% url 'core:index' %}"><img src="{% static 'img/icons/home.svg' %}" alt="Página Principal"></a>
@@ -19,6 +23,11 @@
                 {% if request.user|has_perm:"products,ver" %}
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('productos-submenu')"><img src="{% static 'img/icons/shopping_basket.svg' %}" alt="Productos"> Productos</button>
+=======
+                {% if request.user|has_perm:"products,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('productos-submenu')">Productos</button>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul id="productos-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:products_admin' %}">Lista de productos</a></li>
                         {% if request.user|has_perm:"products,crear" %}
@@ -30,7 +39,11 @@
 
                 {% if request.user|has_perm:"categories,ver" %}
                 <li>
+<<<<<<< HEAD
                                         <button class="menu-btn" onclick="toggleMenu('categorias-submenu')"><img src="{% static 'img/icons/bar_chart.svg' %}" alt="Categorías"> Categorías</button>
+=======
+                    <button class="menu-btn" onclick="toggleMenu('categorias-submenu')">Categorías</button>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul id="categorias-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:categories_admin' %}">Lista de categorías</a></li>
                         {% if request.user|has_perm:"categories,crear" %}
@@ -42,7 +55,11 @@
 
                 {% if request.user|has_perm:"brands,ver" %}
                 <li>
+<<<<<<< HEAD
                                         <button class="menu-btn" onclick="toggleMenu('brands-submenu')"><img src="{% static 'img/icons/shopping_basket.svg' %}" alt="Marcas"> Marcas</button>
+=======
+                    <button class="menu-btn" onclick="toggleMenu('brands-submenu')">Marcas</button>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul id="brands-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:brands_admin' %}">Lista de Marcas</a></li>
                         {% if request.user|has_perm:"brands,crear" %}
@@ -54,7 +71,11 @@
 
                 {% if request.user|has_perm:"providers,ver" %}
                 <li>
+<<<<<<< HEAD
                                         <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Proveedores"> Proveedores</button>
+=======
+                    <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')">Proveedores</button>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul id="Proveedores-submenu" class="submenu hidden">
                         <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
                         {% if request.user|has_perm:"providers,crear" %}
@@ -65,6 +86,7 @@
                 {% endif %}
 
                 {% if request.user|has_perm:"tables,ver" %}
+<<<<<<< HEAD
                 {% if request.user|has_perm:"tables,ver" %}
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('mesas-submenu')"><img src="{% static 'img/icons/table.svg' %}" alt="Mesas"> Mesas</button>
@@ -81,6 +103,19 @@
                 {% if request.user|has_perm:"users,ver" %}
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('usuarios-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Usuarios"> Usuarios</button>
+=======
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('mesas-submenu')">Mesas</button>
+                    <ul id="mesas-submenu" class="submenu hidden">
+                        <li>Esto está pendiente por implementar</li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_perm:"users,ver" %}
+                <li>
+                    <button class="menu-btn" onclick="toggleMenu('usuarios-submenu')">Usuarios</button>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul id="usuarios-submenu" class="submenu hidden">
                         <li><a href="{% url 'users:user_list' %}">Lista de usuarios</a></li>
                     </ul>
@@ -89,7 +124,11 @@
 
                 {% if request.user|has_perm:"roles,ver" %}
                 <li>
+<<<<<<< HEAD
                                         <button class="menu-btn" onclick="toggleMenu('roles-submenu')"><img src="{% static 'img/icons/group_add.svg' %}" alt="Roles y Permisos"> Roles y Permisos</button>
+=======
+                    <button class="menu-btn" onclick="toggleMenu('roles-submenu')">Roles y Permisos</button>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul id="roles-submenu" class="submenu hidden">
                         <li><a href="{% url 'roles:rol_list' %}">Lista de roles</a></li>
                         {% if request.user|has_perm:"roles,crear" %}
@@ -99,6 +138,7 @@
                 </li>
                 {% endif %}
 
+<<<<<<< HEAD
                 {% if request.user|has_perm:"facturacion,ver" %}
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('facturacion-submenu')"><img src="{% static 'img/icons/attach_money.svg' %}" alt="Facturación"> Facturación</button>
@@ -136,6 +176,8 @@
                 </li>
                 {% endif %}
 
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
                 <!-- {% if request.user|has_perm:"dashboard,ver" %}
             <li>
@@ -148,4 +190,8 @@
             {% endif %} -->
             </ul>
         </nav>
+<<<<<<< HEAD
 </header>
+=======
+</header>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

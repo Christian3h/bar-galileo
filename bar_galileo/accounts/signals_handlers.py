@@ -4,15 +4,19 @@ from django.dispatch import receiver
 from notifications.utils import notificar_usuario
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+<<<<<<< HEAD
 from users.models import PerfilUsuario
 import requests
 from django.core.files.base import ContentFile
 from PIL import Image
 from io import BytesIO
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 @receiver(user_logged_in)
 def handle_user_logged_in(sender, request, user, **kwargs):
     print(f"[DEBUG][Signals] Signal user_logged_in received for user: {user.username}")
+<<<<<<< HEAD
     mensaje = _("¡Bienvenido de nuevo! Has iniciado sesión correctamente.")
     notificar_usuario(user, str(mensaje))
 
@@ -78,11 +82,31 @@ def handle_user_signed_up(sender, request, user, **kwargs):
         perfil.save()
         print(f"[DEBUG][Signals] Populated PerfilUsuario for new user {user.username}")
 
+=======
+    """
+    Notifica al usuario cuando inicia sesión.
+    """
+    mensaje = _("¡Bienvenido de nuevo! Has iniciado sesión correctamente.")
+    notificar_usuario(user, str(mensaje))
+
+@receiver(user_signed_up)
+def handle_user_signed_up(sender, request, user, **kwargs):
+    print(f"[DEBUG][Signals] Signal user_signed_up received for user: {user.username}")
+    """
+    Notifica al usuario cuando se registra.
+    """
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     mensaje = _("¡Gracias por registrarte! Tu cuenta ha sido creada.")
     notificar_usuario(user, str(mensaje))
 
 @receiver(password_reset)
 def handle_password_reset(sender, request, user, **kwargs):
     print(f"[DEBUG][Signals] Signal password_reset received for user: {user.username}")
+<<<<<<< HEAD
+=======
+    """
+    Notifica al usuario cuando su contraseña ha sido reseteada.
+    """
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     mensaje = _("Tu contraseña ha sido cambiada correctamente.")
     notificar_usuario(user, str(mensaje))

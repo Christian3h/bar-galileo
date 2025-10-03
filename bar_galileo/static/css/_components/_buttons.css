@@ -29,7 +29,11 @@
 /* Hover base para todos los botones */
 .btn:hover {
   background-color: var(--color-secondary);
+<<<<<<< HEAD
   color: white !important;
+=======
+  color: white;
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }

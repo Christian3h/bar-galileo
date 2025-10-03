@@ -1,12 +1,17 @@
 {% load static %}
 {% load roles_tags %}
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="es">
+=======
+<html lang="en">
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin-bar galileo</title>
+<<<<<<< HEAD
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
     <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
@@ -17,19 +22,40 @@
     <script src="{% static 'js/DataTables/jquery-3.7.1.min.js' %}"></script>
     <link href="{% static 'js/DataTables/datatables.css' %}" rel="stylesheet">
 
+=======
+    <link rel="stylesheet" href="{% static 'css/main/admin/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+    <script src="{% static 'js/DataTables/jquery-3.7.1.min.js' %}"></script>
+    <link href="{% static 'js/DataTables/datatables.css' %}" rel="stylesheet">
+ 
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     <script src="{% static 'js/DataTables/datatables.js' %}"></script>
 
     {% block extra_css %}
 
     {% endblock %}
+<<<<<<< HEAD
 
 </head>
 
 <body>
+=======
+</head>
+
+<body>
+    {% if messages %}
+        <div id="django-messages" style="display: none;">
+            {% for message in messages %}
+                <div class="{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     {% include "components/notificaciones.html" %}
     {% include "components/nav-admin.html" %}
 
     <main class="main-content">
+<<<<<<< HEAD
         <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
             <span></span>
             <span></span>
@@ -37,12 +63,21 @@
         </button>
         <div class="notification-icon" id="notification-icon">
           <span id="icono-notification" > <img width="50px" src=" {% static 'img/icons/notifications.svg' %} " alt=""> </span>
+=======
+        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">☰</button>
+        <div class="notification-icon" id="notification-icon">
+            <span id="icono-notification" >🔔</span>
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
             <span class="notification-badge" id="notification-badge">0</span>
             <div class="notifications-panel" id="notifications-panel">
                 <div class="notification-header">
                     <h4>Notificaciones</h4>
                     <button id="mark-all-as-read">Marcar todas como leídas</button>
+<<<<<<< HEAD
 
+=======
+                    
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     <ul class="notification-list" id="notification-list">
                     <!-- Las notificaciones se cargarán aquí -->
                     </ul>
@@ -60,7 +95,11 @@
     <script src="{% static 'js/admin/nav_admin.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
     <script src="{% static 'js/admin/notification_button.js' %}"></script>
+<<<<<<< HEAD
     {% block extra_js %}{% endblock %}
+=======
+
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 </body>
 
 </html>
