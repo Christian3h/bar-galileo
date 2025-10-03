@@ -1,0 +1,45 @@
+/* Centrar todas las tablas de administración */
+#tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas {
+  margin: 0 auto !important;
+}
+
+/* =======================================
+ * ESTILOS DE TABLA RESPONSIVOS UNIVERSALES
+ * ======================================= */
+
+/* Pantallas grandes (a partir de 1200px) */
+@media (max-width: 1200px) {
+  .col-7, .col-8, .col-9, .col-10 {
+    display: none !important;
+  }
+}
+
+/* Pantallas medianas (a partir de 992px) */
+@media (max-width: 992px) {
+  .col-5, .col-6 {
+    display: none !important;
+  }
+}
+
+/* Tablets (a partir de 768px) */
+@media (max-width: 768px) {
+  .col-4, .col-image {
+    display: none !important;
+  }
+}
+
+/* Móviles grandes (a partir de 576px) */
+@media (max-width: 576px) {
+  .col-3 {
+    display: none !important;
+    width: 0 !important;
+  }
+}
+
+/* Móviles pequeños (a partir de 480px) */
+@media (max-width: 480px) {
+  .col-2 {
+    display: none !important;
+    width: 0 !important;
+  }
+}

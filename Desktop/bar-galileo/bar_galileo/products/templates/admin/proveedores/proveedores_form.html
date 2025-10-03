@@ -1,0 +1,10 @@
+{% extends 'base_admin.html' %}
+{% block content %}
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Proveedor</h1>
+<a href="{% url 'products:proveedores_admin' %}" class="btn btn-secondary">Volver</a>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-secondary" type="submit">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+</form>
+{% endblock %}

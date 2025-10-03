@@ -1,0 +1,286 @@
+{% load static %}
+{% load format_tags %}
+{% load roles_tags %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Bar Galileo{% endblock %}</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+  <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
+  <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
+  <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+  {% block extra_css %}{% endblock %}
+  <style>
+    .nav-avatar-item {
+      position: relative;
+    }
+    .user-avatar, .user-avatar-initials {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #d4af37;
+      background: #222;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #222;
+      cursor: pointer;
+    }
+    .user-avatar-initials {
+      background: #d4af37;
+      color: #222;
+    }
+    .user-avatar-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 50px;
+      background: #1a1a1a;
+      min-width: 180px;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      z-index: 2000;
+      padding: 10px 0;
+    }
+    .nav-avatar-item:focus-within .user-avatar-dropdown-content,
+    .nav-avatar-item:hover .user-avatar-dropdown-content {
+      display: block;
+    }
+    .user-avatar-dropdown-content a {
+      color: #d4af37;
+      padding: 12px 20px;
+      display: block;
+      text-decoration: none;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
+    .user-avatar-dropdown-content a:hover {
+      background: #222;
+    }
+    .nav-menu .nav-strong {
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff !important;
+      text-transform: uppercase;
+    }
+    @media (max-width: 900px) {
+      .menu-toggle {
+        display: block;
+        position: absolute;
+        right: 18px;
+        top: 18px;
+        z-index: 1201;
+      }
+      .nav-menu {
+        display: none;
+        flex-direction: column;
+        gap: 0;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: #111;
+        z-index: 1002;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        padding: 20px 0 10px 0;
+        text-align: center;
+      }
+      .nav-menu.show {
+        display: flex;
+      }
+      .nav-menu li {
+        margin: 0 0 10px 0;
+      }
+      .nav-avatar-item {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #333;
+      }
+      .user-avatar-dropdown-content {
+        position: relative;
+        top: 0;
+        background: transparent;
+        box-shadow: none;
+        padding: 10px 0 0;
+        min-width: auto;
+      }
+    }
+    @media (min-width: 901px) {
+      .menu-toggle {
+        display: none !important;
+      }
+      .nav-menu {
+        display: flex !important;
+        position: static;
+        background: none;
+        box-shadow: none;
+        flex-direction: row;
+        align-items: center;
+        gap: 40px;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  {% include 'components/notificaciones.html' %}
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav" style="position:relative;">
+        <a href="{% url 'core:index' %}" class="logo">BAR GALILEO</a>
+        <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="{% url 'core:index' %}#about">EXPERIENCIA</a></li>
+          <li><a href="{% url 'core:store' %}">Carta</a></li>
+          <li><a href="{% url 'core:index' %}#reservas-section">RESERVAS</a></li>
+          <li><a href="{% url 'core:index' %}#contact">CONTACTO</a></li>
+
+          {% if user.is_authenticated %}
+            <li class="nav-avatar-item" tabindex="0">
+              {% if user.perfilusuario.avatar %}
+                <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar" class="user-avatar">
+              {% else %}
+                <span class="user-avatar-initials">
+                  {{ user.get_full_name|default:user.username|slice:":1"|upper }}
+                </span>
+              {% endif %}
+              <div class="user-avatar-dropdown-content">
+                <div style="padding: 10px 20px; color: #fff; font-size: 15px; border-bottom: 1px solid #333; margin-bottom: 5px;">
+                  Hola, {{ user.get_full_name|default:user.username }}
+                </div>
+                <a href="{% url 'users:panel_usuario' %}">Mi Panel</a>
+                {% if request.user|has_perm:"dashboard,ver" %}
+                <a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a>
+                {% endif %}
+                <a href="{% url 'account_logout' %}">Cerrar sesión</a>
+              </div>
+            </li>
+          {% else %}
+            <li><a href="/accounts/login/" class="nav-strong">LOGIN</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <h3>BAR GALILEO</h3>
+          <p>Creamos experiencias únicas en coctelería premium y ofrecemos un ambiente sofisticado para momentos especiales. Descubre el arte de la mixología con nosotros.</p>
+
+          <div class="social-icons">
+            <a href="https://facebook.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+              <span>f</span>
+            </a>
+            <a href="https://instagram.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+              <span>📷</span>
+            </a>
+            <a href="https://twitter.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+              <span>🐦</span>
+            </a>
+            <a href="https://wa.me/525512345678" class="social-icon" target="_blank" rel="noopener">
+              <span>📱</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h4>Servicios</h4>
+          <ul>
+            <li><a href="{% url 'core:store' %}">Tienda</a></li>
+            <li><a href="{% url 'core:index' %}#reservas-section">Reservas</a></li>
+            <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
+            <li><a href="{% url 'core:index' %}#about">Cenas Maridaje</a></li>
+            <li><a href="{% url 'core:index' %}#about">Masterclasses</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Especialidades</h4>
+          <ul>
+            <li><a href="{% url 'core:index' %}#cocktails-section">Cocteles Clásicos</a></li>
+            <li><a href="{% url 'core:index' %}#cocktails-section">Creaciones Propias</a></li>
+            <li><a href="{% url 'core:index' %}#carta-section">Destilados Premium</a></li>
+            <li><a href="{% url 'core:index' %}#carta-section">Vinos Selectos</a></li>
+            <li><a href="{% url 'core:index' %}#carta-section">Licores Artesanales</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h4>Contacto</h4>
+          <div class="contact-info">
+            <div class="contact-item">
+              <i>📞</i>
+              <a href="tel:+322-227-1308">+57 322-227-1308</a>
+            </div>
+            <div class="contact-item">
+              <i>✉️</i>
+              <a href="mailto:bargalileo07@gmail.com">bargalileo07@gmail.com</a>
+            </div>
+            <div class="contact-item">
+              <i>📍</i>
+              <span>Sogamoso,Boyaca</span>
+            </div>
+            <div class="contact-item">
+              <i>🕒</i>
+              <span>Mar-Dom: 6:00 PM - 2:00 AM</span>
+            </div>
+          </div>
+
+      <div class="footer-bottom">
+        <div class="footer-bottom-left">
+          <p>&copy; 2025 Bar Galileo. Todos los derechos reservados.</p>
+        </div>
+        <div class="footer-bottom-right">
+          <a href="#privacy">Política de Privacidad</a>
+          <a href="#terms">Términos y Condiciones</a>
+          <a href="#cookies">Política de Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/index.js' %}"></script>
+  <script>
+    // Menú hamburguesa funcional y profesional
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggle = document.getElementById("menu-toggle");
+      const menu = document.getElementById("nav-menu");
+      if (toggle && menu) {
+        toggle.addEventListener("click", function () {
+          menu.classList.toggle("show");
+        });
+      }
+      document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          if (menu.classList.contains('show')) {
+            menu.classList.remove('show');
+          }
+        });
+      });
+    });
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

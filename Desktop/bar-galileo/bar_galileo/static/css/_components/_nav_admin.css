@@ -1,0 +1,208 @@
+header {
+  background-color: var(--color-light);
+}
+
+/* === Layout Base === */
+.layout {
+  display: flex;
+  /* min-height: 100dvh; */
+}
+
+/* === Sidebar === */
+.sidebar {
+  background-color: var(--color-light);
+  color: var(--color-secondary);
+  min-width: 220px;
+  max-width: 220px;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  border-right: 1px solid var(--color-gray);
+}
+
+.collapsed {
+  left: 0 !important;
+}
+
+.sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* === Sidebar Menú === */
+.menu {
+  margin-top: 50px !important;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu > * {
+  margin: 10px 10px;
+}
+
+.menu-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--color-secondary);
+  text-align: left;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* === Submenu Animado === */
+.submenu {
+  list-style: none;
+  padding-left: 1rem;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.submenu.show {
+  max-height: 200px;
+}
+
+.submenu li a {
+  display: block;
+  color: var(--color-secondary);
+  padding: 0.3rem 0;
+  text-decoration: none;
+}
+
+/* === Main Content === */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  transition: all 0.3s ease;
+}
+
+  #sidebar {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+
+#sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+
+/* === Toggle Button === */
+.toggle-sidebar-btn {
+  color: var(--color-secondary);
+  background-color: var(--color-light);
+  border: none;
+  font-size: 3rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: none;
+  z-index: 1000; /* Ensure it's above the sidebar */
+  position: relative; /* Needed for span positioning */
+  width: 40px;
+  height: 40px;
+}
+
+.toggle-sidebar-btn span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--color-secondary);
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+}
+
+.toggle-sidebar-btn span:nth-child(1) {
+  top: 10px;
+}
+
+.toggle-sidebar-btn span:nth-child(2) {
+  top: 20px;
+}
+
+.toggle-sidebar-btn span:nth-child(3) {
+  top: 30px;
+}
+
+body.sidebar-is-open .toggle-sidebar-btn span:nth-child(1) {
+  top: 20px;
+  transform: rotate(135deg);
+}
+
+body.sidebar-is-open .toggle-sidebar-btn span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
+  top: 20px;
+  transform: rotate(-135deg);
+}
+
+
+/* === Efectos hover para los botones y los enlaces === */
+.menu li:hover,
+.menu li:hover > .menu-btn,
+.submenu li:hover a {
+  background-color: var(--color-accent); /* Verde más vivo */
+  color: var(--color-secondary);
+}
+
+/* === Submenús desplegados: diferenciar visualmente los <li> === */
+.submenu.show li {
+  margin: 5px 0 5px 0;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.08); /* Fondo más claro al abrir */
+  border-left: 3px solid var(--color-secondary);
+  padding-left: 3px;
+}
+
+
+
+/* === Transiciones suaves === */
+.menu li,
+.menu-btn,
+.submenu li a {
+
+  border-radius: 5px;
+  padding: 3px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* === Responsivo === */
+@media (max-width: 12000px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: -220px;
+    height: 100%;
+    z-index: 999;
+    min-width: 220px;
+    max-width: 220px;
+  }
+
+  .sidebar.mobile-show {
+    left: 0;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+
+  .toggle-sidebar-btn {
+    display: inline-block;
+  }
+}

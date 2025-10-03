@@ -1,0 +1,72 @@
+{% extends 'base_admin.html' %}
+
+{% load static %}
+{% load format_tags %}
+
+{% load roles_tags %}
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/pedidos/factura_layout.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="factura-container">
+    <div class="factura-header">
+        <h2>Factura #{{ factura.numero }}</h2>
+    </div>
+
+    <div class="factura-body">
+        <!-- Información del Local -->
+        <div class="empresa-info">
+            <h3>Bar Galileo</h3>
+            <p><strong>Mesa:</strong> {{ factura.pedido.mesa.nombre }}</p>
+            <p><strong>Fecha:</strong> {{ factura.fecha|date:"d/m/Y H:i" }}</p>
+        </div>
+
+        <!-- Detalles del Pedido -->
+        <table class="factura-table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th class="text-center">Cantidad</th>
+                    <th class="text-end">Precio Unit.</th>
+                    <th class="text-end">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in factura.pedido.items.all %}
+                <tr>
+                    <td>{{ item.producto.nombre }}</td>
+                    <td class="text-center">{{ item.cantidad }}</td>
+                    <td class="text-end">{{ item.precio_unitario|format_price }}</td>
+                    <td class="text-end">{{ item.subtotal|format_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                    <td class="text-end"><strong>{{ factura.total|format_price }}</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Estado y Pie de Página -->
+        <div class="estado-pago">
+            <h4>✅ PAGADO</h4>
+            <p>¡Gracias por su preferencia!</p>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="botones-accion">
+            <button class="btn btn-primary" onclick="window.print()">
+                🖨️ Imprimir
+            </button>
+            <a href="{% url 'users:panel_usuario' %}" class="btn btn-secondary"> ← Panel de Usuario</a>
+
+            {% if request.user|has_perm:"categories,editar" %}
+                <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary"> ← Volver a Mesas </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

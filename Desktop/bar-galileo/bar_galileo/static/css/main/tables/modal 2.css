@@ -1,0 +1,246 @@
+/* ===== Tarjeta de item del pedido ===== */
+.pedido-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+}
+
+.pedido-info { flex: 1; }
+
+.pedido-controles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cantidad {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cantidad-valor {
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
+  color: var(--color-secondary);
+}
+
+.btn-cantidad {
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--color-primary);
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-primary);
+}
+
+.btn-cantidad[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.subtotal {
+  min-width: 60px;
+  text-align: right;
+  font-weight: bold;
+  color: var(--color-secondary);
+}
+
+.btn-eliminar {
+  margin-left: 8px;
+  padding: 4px 8px;
+}
+
+/* ===== Lista de productos ===== */
+.producto-item { padding: 6px 0; cursor: pointer; }
+.producto-item:hover { background: rgba(0,0,0,0.03); }
+
+.producto-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.producto-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.producto-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.thumb-placeholder {
+  width: 40px;
+  height: 40px;
+  background: var(--color-gray);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+}
+
+.precio {
+  font-weight: 600;
+  color: var(--color-secondary);
+}
+
+/* ===== Modal de cantidad ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.modal-box {
+  max-width: 700px;
+  background: var(--color-light);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.modal-box input{
+  max-width: 200px
+}
+
+.modal-title {
+  margin-bottom: 15px;
+  color: var(--color-secondary);
+}
+
+.modal-price {
+  color: var(--color-gray);
+  margin-bottom: 15px;
+}
+
+.modal-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.btn-cantidad--lg {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--color-primary);
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.input-cantidad {
+  width: 60px;
+  text-align: center;
+  padding: 8px;
+  border: 2px solid var(--color-primary);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* ===== Estado vacío ===== */
+.pedido-vacio {
+  color: var(--color-gray);
+  text-align: center;
+  padding: 20px;
+}
+
+/* ===== RESPONSIVE: cambia fila -> columna en móvil ===== */
+@media (max-width: 768px) {
+  .pedido-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pedido-controles {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .subtotal {
+    text-align: left;
+  }
+}
+
+/* ===== Toast Notifications ===== */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  padding: 15px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  opacity: 0;
+  transform: translateX(100%);
+  animation: slideIn 0.5s forwards, fadeOut 0.5s 4.5s forwards;
+}
+
+.toast.error {
+  background-color: var(--color-danger);
+}
+
+.toast.success {
+  background-color: var(--color-success);
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* ===== Confirm Modal ===== */
+.modal-content-small {
+  background-color: var(--color-light);
+  margin: auto;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
