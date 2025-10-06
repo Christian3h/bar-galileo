@@ -134,13 +134,6 @@
     justify-content: center;
     margin-top: 1rem;
     gap: 1rem;
-    align-items: center;
-}
-
-.buttons-group .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* =======================================
@@ -694,21 +687,4 @@
         width: 100%;
         text-align: center;
     }
-}
-
-/* Confirmación de eliminación: alineación de botones */
-.empleado-confirm .buttons-group {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    justify-content: flex-end;
-    margin-top: 1rem;
-}
-.empleado-confirm .buttons-group .btn {
-    margin: 0; /* evitar desplazamientos verticales por margen */
-    height: 42px;
-    line-height: 42px; /* asegura altura uniforme en el texto */
-    padding: 0 16px;
-    display: inline-flex;
-    align-items: center;
 }
