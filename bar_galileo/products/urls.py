@@ -46,6 +46,8 @@ urlpatterns = [
 
     #### rutas para el dashboard de los administradores
     path('adminD/products/', views.ProductosAdminView.as_view(), name='products_admin'),
+    path('adminD/products/archived/', views.ProductosArchivadosAdminView.as_view(), name='products_archived_admin'),
+    path('adminD/products/reactivate/<int:pk>/', views.ProductoReactivarAdminView.as_view(), name='products_reactivate_admin'),
     path('adminD/products/create/', views.ProductoCreateAdminView.as_view(), name='products_create_admin'),
     path('adminD/products/update/<int:pk>/', views.ProductoUpdateAdminView.as_view(), name='products_edit_admin'),
     path("adminD/products/delete/<int:pk>/", views.ProductoDeleteAdminView.as_view(), name="producto_eliminar"),

@@ -20,6 +20,8 @@ from django.conf import settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from accounts.views import CustomEmailView
+from django.views.generic import RedirectView
+from django.templatetags.static import static as staticfiles_static
 
 
 urlpatterns = [
@@ -37,6 +39,11 @@ urlpatterns = [
     path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
     path('expenses/', include(('expenses.urls', 'expenses'), namespace='expenses')),
     path('nominas/', include(('nominas.urls', 'nominas'), namespace='nominas')),
+
+    # Evitar 404 para iconos solicitados en la raíz por navegadores
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_static('img/favicon/favicon.ico'), permanent=True)),
+    path('apple-touch-icon.png', RedirectView.as_view(url=staticfiles_static('img/favicon/apple-touch-icon.png'), permanent=True)),
+    path('apple-touch-icon-precomposed.png', RedirectView.as_view(url=staticfiles_static('img/favicon/apple-touch-icon.png'), permanent=True)),
 ]
 
 if settings.DEBUG:
