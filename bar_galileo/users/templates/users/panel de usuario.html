@@ -104,25 +104,44 @@
 }
 
 /* Styles for menu-btn */
+.user-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
 .menu-btn {
-  width: 100%;
   background: none;
-  border: none;
-  color: var(--color-secondary);
-  text-align: left;
-  padding: 0.5rem;
-  font-size: 1rem;
+  border: 1px solid #A68932;
+  color: #A68932;
+  text-align: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.2s ease, color 0.2s ease;
   display: flex;
   align-items: center;
-  flex-direction: column;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.menu-btn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) saturate(100%) invert(61%) sepia(48%) saturate(476%) hue-rotate(4deg) brightness(92%) contrast(88%);
 }
 
 .menu-btn:hover {
-  background-color: var(--color-accent);
-  color: var(--color-secondary);
+  background-color: #A68932;
+  color: #262626;
+}
+
+.menu-btn:hover img {
+  filter: brightness(0) saturate(100%) invert(13%) sepia(9%) saturate(422%) hue-rotate(314deg) brightness(95%) contrast(91%);
 }
 
 </style>
@@ -162,7 +181,15 @@ function toggleEmergenciaForm(show) {
             {% endif %}
         </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
-        <a href="{% url 'core:index' %}" class="menu-btn"><img src="{% static 'img/icons/home.svg' %}" alt="Inicio">Volver al Inicio</a>
+        
+        <!-- Menú de navegación -->
+        <nav class="user-navigation">
+          <a href="{% url 'core:index' %}" class="menu-btn"><img src="{% static 'img/icons/home.svg' %}" alt="">Inicio</a>
+          <a href="{% url 'account_email' %}" class="menu-btn"><img src="{% static 'img/icons/mail.svg' %}" alt="">Email</a>
+          <a href="{% url 'account_change_password' %}" class="menu-btn"><img src="{% static 'img/icons/lock.svg' %}" alt="">Cambiar Contraseña</a>
+          <a href="{% url 'socialaccount_connections' %}" class="menu-btn"><img src="{% static 'img/icons/link.svg' %}" alt="">Conexiones</a>
+          <a href="{% url 'account_logout' %}" class="menu-btn"><img src="{% static 'img/icons/logout.svg' %}" alt="">Cerrar Sesión</a>
+        </nav>
       </div>
       <div class="dashboard">
         <!-- Cuenta Actual -->
