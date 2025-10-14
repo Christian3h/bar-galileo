@@ -102,6 +102,7 @@ class Producto(models.Model):
     precio_venta = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(default=0)
     descripcion = models.TextField(blank=True)
+    activo = models.BooleanField(default=True)
     id_categoria = models.ForeignKey('Categoria', on_delete=models.SET_NULL, null=True, blank=True)
     id_proveedor = models.ForeignKey('Proveedor', on_delete=models.SET_NULL, null=True, blank=True)
     id_marca = models.ForeignKey('Marca', on_delete=models.SET_NULL, null=True, blank=True)

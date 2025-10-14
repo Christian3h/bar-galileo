@@ -1,0 +1,45 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% load roles_tags %}
+
+{% block extra_css%}
+  <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="my-4">Productos archivados</h1>
+<p><a href="{% url 'products:products_admin' %}" class="btn-secondary">Volver a productos</a></p>
+<div class="table-contenedor">
+  <div class="table-responsive">
+    <table class="table table-striped table-bordered nowrap" style="width:100%">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Precio Venta</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in products %}
+        <tr>
+          <td>{{ p.nombre }}</td>
+          <td>{{ p.precio_venta }}</td>
+          <td>{{ p.stock }}</td>
+          <td>
+            {% if request.user|has_perm:"products,editar" %}
+            <form method="post" action="{% url 'products:products_reactivate_admin' p.id_producto %}" style="display:inline">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-success">Reactivar</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">No hay productos archivados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

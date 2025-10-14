@@ -25,7 +25,7 @@ from django.views.decorators.cache import never_cache
 
 class ProductosJsonView(View):
     def get(self, request):
-        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes', 'stocks').all()
+        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes', 'stocks').filter(activo=True)
         data = []
         for producto in productos:
             primera_imagen = producto.imagenes.first()
@@ -202,7 +202,7 @@ class ProductosJsonView(View):
 #                 form.save()
 #                 messages.success(request, "Categoría agregada correctamente.")
 #                 return redirect("products:categorias")
-#             context = self.get_context_data(**kwargs)
+#             context = self.get_context_data()
 #             context["form"] = form
 #             return self.render_to_response(context)
 
@@ -521,6 +521,7 @@ class ProductosAdminView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # En admin, mostrar todos para poder reactivar/archivar
         context["products"] = Producto.objects.all()
         return context
 
@@ -605,18 +606,20 @@ class ProductoDeleteAdminView(DeleteView):
     def get_object(self, queryset=None):
         return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
 
-    def delete(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        # Manejar confirmación (POST) como archivado lógico
         producto = self.get_object()
-        imagenes = ProductoImagen.objects.filter(producto=producto)
-        for imagen in imagenes:
-            path = os.path.join(settings.BASE_DIR, 'static', imagen.imagen)
-            if os.path.exists(path):
-                os.remove(path)
-        imagenes.delete()
-        producto.delete()
-        mensaje = f"El producto '{producto.nombre}' ha sido eliminado."
+        if producto.activo:
+            producto.activo = False
+            producto.save(update_fields=['activo'])
+        mensaje = f"El producto '{producto.nombre}' ha sido archivado."
         notificar_usuario(request.user, mensaje)
+        messages.success(request, mensaje)
         return redirect(self.success_url)
+
+    def delete(self, request, *args, **kwargs):
+        # Si llegara una petición DELETE real, tratar igual que POST
+        return self.post(request, *args, **kwargs)
 
 @method_decorator(permission_required('products', 'editar'), name='dispatch')
 class EliminarImagenProductoAdminView(View):
@@ -813,19 +816,38 @@ class ProductoDetailView(DetailView):
     context_object_name = "producto"
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Producto, id_producto=self.kwargs.get("pk"))
+        # Solo permitir ver productos activos públicamente
+        return get_object_or_404(Producto, id_producto=self.kwargs.get("pk"), activo=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         producto_actual = self.object
         
-        # Obtener productos relacionados (misma marca, excluyendo el producto actual)
+        # Obtener productos relacionados (misma marca, excluyendo el producto actual) y solo activos
         productos_relacionados = Producto.objects.filter(
-            id_marca=producto_actual.id_marca
+            id_marca=producto_actual.id_marca, activo=True
         ).exclude(
             id_producto=producto_actual.id_producto
-        )[:4] # Limitar a 4 productos relacionados
+        )[:4]
         
         context['productos_relacionados'] = productos_relacionados
         return context
+
+@method_decorator(permission_required('products', 'ver'), name='dispatch')
+class ProductosArchivadosAdminView(TemplateView):
+    template_name = "admin/products/products_archived.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["products"] = Producto.objects.filter(activo=False)
+        return context
+
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
+class ProductoReactivarAdminView(View):
+    def post(self, request, pk):
+        producto = get_object_or_404(Producto, id_producto=pk)
+        producto.activo = True
+        producto.save(update_fields=['activo'])
+        messages.success(request, f"Producto '{producto.nombre}' reactivado.")
+        return redirect('products:products_archived_admin')
 

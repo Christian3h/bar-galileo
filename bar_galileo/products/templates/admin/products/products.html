@@ -8,6 +8,7 @@
 
 {% block content %}
         <h1 class="my-4">Lista de Productos</h1>
+        <p><a href="{% url 'products:products_archived_admin' %}" class="btn-secondary">Ver archivados</a></p>
         <div class="table-contenedor">
             <div class="table-responsive">
                 <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
