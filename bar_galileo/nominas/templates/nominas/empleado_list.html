@@ -1,6 +1,7 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 {% load format_tags %}
+{% load roles_tags %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
@@ -115,7 +116,7 @@
         if ($.fn.dataTable.isDataTable('#tabla-empleados')) {
             $('#tabla-empleados').DataTable().destroy();
         }
-        
+
         // Inicialización mínima + idioma (manejo correcto cuando no hay datos)
         var tabla = $('#tabla-empleados').DataTable({
             language: {
@@ -130,7 +131,7 @@
                 }
             }
         });
-        
+
         if (tabla) {
             tabla.order([0, 'asc']).draw();
         }

@@ -35,17 +35,17 @@
                             <td>
                                 {% if request.user|has_perm:"providers,editar" %}
                                     <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}"
-                                       class="btn btn-sm btn-warning"
-                                       title="Editar {{ proveedor.nombre }}"
-                                       aria-label="Editar proveedor {{ proveedor.nombre }}">
+                                        class="btn btn-sm btn-warning"
+                                        title="Editar {{ proveedor.nombre }}"
+                                        aria-label="Editar proveedor {{ proveedor.nombre }}">
                                         <img src="{% static 'img/icons/edit.svg' %}" alt="Editar">
                                     </a>
                                 {% endif %}
                                 {% if request.user|has_perm:"providers,eliminar" %}
                                     <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}"
-                                       class="btn btn-sm btn-danger"
-                                       title="Eliminar {{ proveedor.nombre }}"
-                                       aria-label="Eliminar proveedor {{ proveedor.nombre }}">
+                                        class="btn btn-sm btn-danger"
+                                        title="Eliminar {{ proveedor.nombre }}"
+                                        aria-label="Eliminar proveedor {{ proveedor.nombre }}">
                                         <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
                                     </a>
                                 {% endif %}
@@ -106,11 +106,11 @@
                             let buttons = '';
                             {% if request.user|has_perm:"providers,editar" %}
                             buttons += `<a href="${editUrl}" class="btn btn-sm btn-warning" title="Editar ${row.proveedor}" aria-label="Editar proveedor ${row.proveedor}">` +
-                                       `<img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a> `;
+                                        `<img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a> `;
                             {% endif %}
                             {% if request.user|has_perm:"providers,eliminar" %}
                             buttons += `<a href="${deleteUrl}" class="btn btn-sm btn-danger" title="Eliminar ${row.proveedor}" aria-label="Eliminar proveedor ${row.proveedor}">` +
-                                       `<img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>`;
+                                        `<img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>`;
                             {% endif %}
                             return buttons || '';
                         }
