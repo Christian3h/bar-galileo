@@ -9,6 +9,9 @@
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Proveedores</h1>
+        {% if request.user|has_perm:"providers,crear" %}
+            <a href="{% url 'products:proveedores_create_admin' %}" class="btn btn-success mb-3">Crear Proveedor</a>
+        {% endif %}
         <div class="table-contenedor">
             <div class="table-responsive">
                 <table id="tabla-proveedores" class="table table-striped">

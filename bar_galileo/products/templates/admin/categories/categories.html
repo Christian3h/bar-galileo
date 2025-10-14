@@ -5,6 +5,9 @@
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Categorías</h1>
+        {% if request.user|has_perm:"categories,crear" %}
+            <a href="{% url 'products:categories_create_admin' %}" class="btn btn-success mb-3">Crear Categoría</a>
+        {% endif %}
 
         <div class="table-contenedor">
             <div class="table-responsive">

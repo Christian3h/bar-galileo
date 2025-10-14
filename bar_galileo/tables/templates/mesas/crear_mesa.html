@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<h1>Crear Mesa</h1>
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Mesa</h1>
 <a href="{% url 'tables:mesas_lista' %}" class="btn btn-secondary">Volver</a>
 
 <form method="post" class="form-style">
