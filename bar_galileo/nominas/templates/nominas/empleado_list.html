@@ -10,6 +10,9 @@
 {% block content %}
 <div class="dashboard-container">
     <h2 class="dashboard-title">Gestión de Nóminas</h2>
+    {% if request.user|has_perm:"nominas,crear" %}
+        <a href="{% url 'nominas:empleado_crear' %}" class="btn btn-success mb-3">Crear Empleado</a>
+    {% endif %}
 
     <!-- Estadísticas -->
     <section class="dashboard-cards">

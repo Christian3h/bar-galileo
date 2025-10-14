@@ -4,6 +4,9 @@
 {% load roles_tags %}
 <div class="container">
     <h2 class="my-4">Roles</h2>
+    {% if request.user|has_perm:"roles,crear" %}
+        <a href="{% url 'roles:rol_create' %}" class="btn btn-success mb-3">Crear Rol</a>
+    {% endif %}
     <div class="table-contenedor">
         <div class="table-responsive">
             <table id="roles-table" class="table table-striped">

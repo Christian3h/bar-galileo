@@ -5,7 +5,7 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header bg-warning text-dark">
-                    <h3 class="my-2">Agregar Bonificación</h3>
+                    <h3 class="my-2">{% if object %}Editar{% else %}Agregar{% endif %} Bonificación</h3>
                 </div>
                 <div class="card-body">
                     <form method="post" class="needs-validation" novalidate>
@@ -84,7 +84,7 @@
                             {% else %}
                                 <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
                             {% endif %}
-                            <button type="submit" class="btn btn-warning">Agregar Bonificación</button>
+                            <button type="submit" class="btn btn-warning">{% if object %}Actualizar{% else %}Agregar{% endif %} Bonificación</button>
                         </div>
                     </form>
                 </div>
