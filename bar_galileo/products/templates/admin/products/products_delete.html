@@ -7,11 +7,12 @@
 
 {% block content %}
 <div class="delete-confirmation-container">
-    <h2>¿Estás seguro de que deseas eliminar este producto?</h2>
+    <h2>¿Archivar producto?</h2>
+    <p>El producto no se eliminará; se marcará como inactivo y se ocultará del catálogo.</p>
     <form method="post">
         {% csrf_token %}
         <p><strong>{{ object.nombre }}</strong></p>
-        <button type="submit" class="btn-danger">Eliminar</button>
+        <button type="submit" class="btn-danger">Archivar</button>
         <a href="{% url 'products:products_admin' %}" class="btn-secondary">Cancelar</a>
     </form>
 </div>

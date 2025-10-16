@@ -13,11 +13,13 @@ class indexView(ListView):
     template_name = 'index.html'
     context_object_name = 'productos'
     
+    def get_queryset(self):
+        return Producto.objects.filter(activo=True)
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Obtener solo los primeros 3 productos para mostrar inicialmente
-        context['productos_iniciales'] = Producto.objects.all()[:3]
-        context['total_productos'] = Producto.objects.count()
+        context['productos_iniciales'] = Producto.objects.filter(activo=True)[:3]
+        context['total_productos'] = Producto.objects.filter(activo=True).count()
         return context
 
 class ProductosAjaxView(View):
@@ -25,12 +27,12 @@ class ProductosAjaxView(View):
         offset = int(request.GET.get('offset', 0))
         limit = int(request.GET.get('limit', 6))
         
-        productos = Producto.objects.all()[offset:offset + limit]
-        total_productos = Producto.objects.count()
+        qs = Producto.objects.filter(activo=True)
+        productos = qs.order_by('nombre')[offset:offset + limit]
+        total_productos = qs.count()
         
         productos_data = []
         for producto in productos:
-            # Obtener la primera imagen del producto
             imagen_url = None
             if producto.imagenes.exists():
                 primera_imagen = producto.imagenes.first()
@@ -57,7 +59,7 @@ class StoreView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        queryset = super().get_queryset().order_by('nombre')
+        queryset = Producto.objects.filter(activo=True).order_by('nombre')
         categoria = self.request.GET.get('categoria')
         marca = self.request.GET.get('marca')
         min_precio = self.request.GET.get('min_precio')

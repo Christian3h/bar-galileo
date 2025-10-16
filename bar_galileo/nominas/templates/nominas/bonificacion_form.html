@@ -5,12 +5,20 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header bg-warning text-dark">
+<<<<<<< HEAD
                     <h3 class="my-2">{% if object %}Editar{% else %}Agregar{% endif %} Bonificación</h3>
+=======
+                    <h3 class="my-2">Agregar Bonificación</h3>
+>>>>>>> Jorge
                 </div>
                 <div class="card-body">
                     <form method="post" class="needs-validation" novalidate>
                         {% csrf_token %}
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> Jorge
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="{{ form.empleado.id_for_label }}" class="form-label">Empleado</label>
@@ -31,7 +39,11 @@
                                 {% endif %}
                             </div>
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> Jorge
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="{{ form.monto.id_for_label }}" class="form-label">Monto ($)</label>
@@ -56,7 +68,11 @@
                                 </div>
                             </div>
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> Jorge
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label">Fecha de inicio</label>
@@ -77,14 +93,22 @@
                                 {% endif %}
                             </div>
                         </div>
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> Jorge
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                             {% if empleado %}
                                 <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary me-md-2">Cancelar</a>
                             {% else %}
                                 <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
                             {% endif %}
+<<<<<<< HEAD
                             <button type="submit" class="btn btn-warning">{% if object %}Actualizar{% else %}Agregar{% endif %} Bonificación</button>
+=======
+                            <button type="submit" class="btn btn-warning">Agregar Bonificación</button>
+>>>>>>> Jorge
                         </div>
                     </form>
                 </div>

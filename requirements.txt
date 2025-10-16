@@ -55,7 +55,4 @@ uvloop==0.21.0
 watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
-<<<<<<< HEAD
-=======
 django-simple-captcha==0.6.2
->>>>>>> 75dd046 (Añadir django-simple-captcha a requirements.txt)
