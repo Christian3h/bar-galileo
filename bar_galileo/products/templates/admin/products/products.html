@@ -106,10 +106,10 @@
                     render: function (data, type, row) {
                         let buttons = '';
                         if (canEdit) {
-                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning"><img src="${editIconUrl}" alt="Editar"></a> `;
+                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning" title="Editar producto"><img src="${editIconUrl}" alt="Editar"></a> `;
                         }
                         if (canDelete) {
-                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger"><img src="${deleteIconUrl}" alt="Eliminar"></a>`;
+                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger" title="Eliminar producto"><img src="${deleteIconUrl}" alt="Eliminar"></a>`;
                         }
                         return buttons;
                     },
