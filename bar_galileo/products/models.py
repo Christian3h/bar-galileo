@@ -46,12 +46,12 @@ class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
     nombre_categoria = models.CharField(max_length=50, null=True, blank=True)
     descripcion = models.TextField(null=True, blank=True)
-    
+
     class Meta:
         db_table = 'categoria'
         verbose_name = 'Categoría'
         verbose_name_plural = 'Categorías'
-    
+
     def __str__(self):
         return self.nombre_categoria or f"Categoría {self.id_categoria}"
 
@@ -64,12 +64,12 @@ class Marca(models.Model):
     id_marca = models.AutoField(primary_key=True)
     marca = models.CharField(max_length=50)
     descripcion = models.TextField(null=True, blank=True)
-    
+
     class Meta:
         db_table = 'marca'
         verbose_name = 'Marca'
         verbose_name_plural = 'Marcas'
-    
+
     def __str__(self):
         return self.marca
 
@@ -86,12 +86,12 @@ class Proveedor(models.Model):
     contacto = models.CharField(max_length=50)
     telefono = models.BigIntegerField(null=True, blank=True)
     direccion = models.TextField()
-    
+
     class Meta:
         db_table = 'proveedor'
         verbose_name = 'Proveedor'
         verbose_name_plural = 'Proveedores'
-    
+
     def __str__(self):
         return self.nombre
 
@@ -197,11 +197,11 @@ class Stock(models.Model):
     id_producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True, blank=True, db_column='id_producto', related_name='stocks')
     cantidad = models.IntegerField(null=True, blank=True)
     fecha_hora = models.DateTimeField(auto_now_add=True)
-    
+
     class Meta:
         db_table = 'stock'
         verbose_name = 'Stock'
         verbose_name_plural = 'Stocks'
-    
+
     def __str__(self):
         return f"Stock {self.id_producto} - {self.cantidad}"

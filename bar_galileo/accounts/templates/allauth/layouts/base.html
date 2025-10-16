@@ -76,6 +76,10 @@
         {% block extra_body %}
         {% endblock extra_body %}
 
+
+        <script src="{% static 'accessibility/sienna.js' %}"></script>
+        <script src="{% static 'accessibility/custom.js' %}"></script>
+
         <script src="{% static 'js/admin/notification_history.js' %}"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -89,5 +93,7 @@
                 }
             });
         </script>
+
+
     </body>
 </html>
