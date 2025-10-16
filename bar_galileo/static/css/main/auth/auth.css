@@ -1,7 +1,6 @@
 /* =======================================
    RESET + VARIABLES + COMPONENTES
 ======================================= */
-<<<<<<< HEAD
 @import "../../_resets/_resets.css";
 @import "../../_variables/_colors.css";
 @import "../../_components/_buttons.css";
@@ -1139,7 +1138,6 @@ ul{
     align-items: flex-start;
   }
 
-<<<<<<< HEAD
   .container-login .pending-actions .button-group {
     flex-direction: column;
   }
@@ -1163,7 +1161,6 @@ ul{
 }
 
 /* =======================================
-<<<<<<< HEAD
    AUTH PAGE LAYOUT ADJUSTMENTS
 ======================================= */
 
@@ -1191,130 +1188,3 @@ body.auth-page .container-login {
 body.auth-page .container-login::before {
   display: none;
 }
-=======
-   LOGIN FORM / CARD
-======================================= */
-.container-login {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100dvh;
-  padding-top: 5rem; /* espacio para que no se tape con el menú */
-}
-
-.container-login form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: var(--color-secondary);
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 8px 24px var(--color-shadow);
-}
-
-.container-login form input {
-  border: none;
-  border-radius: 20px;
-  padding: 0.5rem;
-  box-shadow: 0 8px 24px var(--color-shadow);
-}
-
-.container-login form button {
-  max-width: 200px;
-  background-color: var(--color-primary);
-  color: var(--color-secondary);
-  border: none;
-  border-radius: 20px;
-  padding: 6px;
-  box-shadow: 0 8px 24px var(--color-shadow);
-  font-family: var(--font-family);
-}
-
-.container-login form button:hover {
-  transform: translateY(-4px);
-}
-
-.container-login a {
-  text-decoration: none;
-  color: var(--color-dark);
-  transition: color 0.2s;
-}
-
-.container-login a:hover {
-  color: var(--color-primary);
-  text-decoration: underline;
-}
-
-.login-card {
-  background: var(--color-secondary);
-  border-radius: 20px;
-  padding: 2rem;
-  max-width: 400px;
-  width: 100%;
-  box-shadow: 0 8px 24px var(--color-shadow);
-  transition: transform 0.3s ease;
-}
-
-.login-card:hover {
-  transform: translateY(-4px);
-}
-
-
-/* Estilos para el botón hamburguesa en móvil */
-.menu-toggle {
-    background: transparent;
-    border: none;
-    font-size: 2rem;
-    cursor: pointer;
-    display: none;
-    color: var(--color-dark);
-  }
-  
-  /* Mostrar menú como columna en pantallas pequeñas */
-  @media (max-width: 950px) {
-    .menu-toggle {
-      display: block;
-    }
-
-    .logo{
-        display: none;
-    }
-  
-    .container-menu {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 1rem;
-    }
-  
-    .container-menu ul {
-      display: none;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
-      margin-top: 1rem;
-      padding-left: 0;
-    }
-  
-    .container-menu ul.show {
-      display: flex;
-    }
-  
-    .container-menu li {
-      width: 100%;
-    }
-  
-    .container-menu a.logo {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-right: auto;
-    }
-  
-    .container-menu a.logo img {
-      max-width: 40px;
-      height: auto;
-    }
-  }
-  
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

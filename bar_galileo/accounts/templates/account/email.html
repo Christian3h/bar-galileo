@@ -105,7 +105,6 @@
             {% element form form=form method="post" action=action_url tags="email,add" %}
                 {% slot body %}
                     {% csrf_token %}
-<<<<<<< HEAD
                                                             {% if form.errors %}
                         <div class="alert alert-danger" style="color: red; margin-bottom: 10px;">
                             {% for field, error_list in form.errors.items %}
@@ -115,8 +114,6 @@
                             {% endfor %}
                         </div>
                     {% endif %}
-=======
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     {% element fields form=form %}
                     {% endelement %}
                 {% endslot %}

@@ -37,15 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(e => console.error('[DEBUG] Error cargando pop-ups pendientes:', e));
 
   const updateBadge = count => {
-<<<<<<< HEAD
     if (badge) {
       badge.textContent = count;
       badge.style.display = count ? 'block' : 'none';
     }
-=======
-    badge.textContent = count;
-    badge.style.display = count ? 'block' : 'none';
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
   };
 
   const updatePanel = notifications => {
@@ -134,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
   ws.onclose = () => console.log('[DEBUG][WS] Cerrado');
 
   /* -----------  Eventos UI ----------- */
-<<<<<<< HEAD
   if (icon) {
     icon.addEventListener('click', () => {
       panel.classList.toggle('show');
@@ -164,31 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }).then(fetchNotifications);
     });
   }
-=======
-  icon.addEventListener('click', () => {
-    panel.classList.toggle('show');
-    if (panel.classList.contains('show')) fetchNotifications();
-  });
-
-  markAllBtn.addEventListener('click', () =>
-    fetch('/api/notifications/mark-as-read/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-      body: JSON.stringify({ ids: [] })
-    }).then(fetchNotifications)
-  );
-
-  list.addEventListener('click', e => {
-    e.preventDefault();
-    const id = e.target.closest('a')?.dataset.id;
-    if (!id) return;
-    fetch('/api/notifications/mark-as-read/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
-      body: JSON.stringify({ ids: [id] })
-    }).then(fetchNotifications);
-  });
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
   function getCookie(name) {
     return document.cookie.split('; ')

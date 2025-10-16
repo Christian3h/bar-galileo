@@ -98,12 +98,6 @@
                                     ><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
                     </td>
                 </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center text-muted">
-                        No se encontraron facturas con los criterios especificados.
-                    </td>
-                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -112,14 +106,20 @@
 
 <script>
 $(document).ready(function() {
-    $('#tabla-facturas').DataTable({
-        "language": {
-            "url": "{% static 'js/DataTables/es-ES.json' %}"
-        },
+    var sel = '#tabla-facturas';
+    if (!document.querySelector(sel)) return;
+
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+
+    $(sel).DataTable({
+        language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
         responsive: true,
-        "pageLength": 10,
-        "lengthChange": true,
-        "ordering": true
+        pageLength: 10,
+        lengthChange: true,
+        ordering: true,
+        columnDefs: [ { targets: '_all', defaultContent: '' } ]
     });
 });
 </script>

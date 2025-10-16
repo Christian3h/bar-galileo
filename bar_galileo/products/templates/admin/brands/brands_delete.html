@@ -1,5 +1,4 @@
 {% extends 'base_admin.html' %}
-<<<<<<< HEAD
 {% load static %}
 
 {% block extra_css %}
@@ -16,14 +15,4 @@
         <a href="{% url 'products:brands_admin' %}" class="btn-secondary">Cancelar</a>
     </form>
 </div>
-=======
-{% block content %}
-<h1>Eliminar marca</h1>
-<p>¿Estás seguro de que deseas eliminar la marca: <strong>{{ object.marca }}</strong>?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a href="{% url 'products:brands_admin' %}" class="btn btn-secondary">Cancelar</a>
-</form>
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 {% endblock %}

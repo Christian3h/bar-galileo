@@ -1,10 +1,12 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-<<<<<<< HEAD
 {% load static %}
 {% load roles_tags %}
 <div class="container">
     <h2 class="my-4">Roles</h2>
+    {% if request.user|has_perm:"roles,crear" %}
+        <a href="{% url 'roles:rol_create' %}" class="btn btn-success mb-3">Crear Rol</a>
+    {% endif %}
     <div class="table-contenedor">
         <div class="table-responsive">
             <table id="roles-table" class="table table-striped">
@@ -38,7 +40,15 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#roles-table').DataTable({
+        var sel = '#roles-table';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"
             }
@@ -46,32 +56,3 @@
     });
 </script>
 {% endblock %}
-=======
-<h2>Roles</h2>
-<table id="roles-table" class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for rol in roles %}
-        <tr>
-            <td>{{ rol.nombre }}</td>
-            <td>{{ rol.descripcion }}</td>
-            <td>
-                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-primary">Editar permisos</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<script>
-$(document).ready(function() {
-    $('#roles-table').DataTable();
-});
-</script>
-{% endblock %}
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

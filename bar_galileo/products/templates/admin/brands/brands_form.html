@@ -1,6 +1,6 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-<h1>Crear marca</h1>
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Marca</h1>
 <a href="{% url 'products:brands_admin' %}" class="btn btn-secondary">Volver</a>
 <form method="post">
     {% csrf_token %}

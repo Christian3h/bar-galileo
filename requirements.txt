@@ -50,8 +50,9 @@ Twisted==25.5.0
 txaio==25.6.1
 typing_extensions==4.14.1
 urllib3==2.5.0
-uvicorn==0.35.0
+uvicorn==0.23.2
 uvloop==0.21.0
 watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
+django-simple-captcha==0.6.2

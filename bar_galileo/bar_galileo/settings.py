@@ -12,27 +12,28 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+from django.core.management.utils import get_random_secret_key
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'static'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('secret_key')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+# Configuración sensible a entorno
+DEBUG = str(os.getenv('DEBUG', 'True')).lower() in ('1', 'true', 'yes')
+SECRET_KEY = os.getenv('secret_key') or get_random_secret_key()
+raw_hosts = os.getenv('ALLOWED_HOSTS', '*' if DEBUG else '')
+ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(',') if h.strip()]
 
 
 # Application definition
@@ -69,7 +70,7 @@ INSTALLED_APPS = [
     #app para el manejo de las notificaciones
     'channels',
     'notifications',
-]
+    ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -154,8 +155,6 @@ LANGUAGE_CODE = 'es-co'
 USE_I18N = True
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
-
 USE_TZ = True
 
 
@@ -172,12 +171,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 SITE_ID = 1
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',         # Permite login normal
-    'allauth.account.auth_backends.AuthenticationBackend',  # Permite login social
-]
-
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -209,16 +202,23 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('emailHost')
 EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
 
+# Endpoints de seguridad para producción
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 #bar-galileo
 
-ALLOWED_HOSTS = ['*'] #permitir varios enlaces
-
+# ALLOWED_HOSTS se lee desde entorno arriba
 
 
 # configuracion para el backend de las nofifaciones channels
-WSGI_APPLICATION = 'bar_galileo.asgi.application'
-
+# Mantener solo la configuración correcta de WSGI/ASGI definida arriba
 
 
 CHANNEL_LAYERS = {
@@ -226,6 +226,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
     },
 }
+
 # Captcha settings
 CAPTCHA_LENGTH = 1
 CAPTCHA_IMAGE_SIZE = (225, 75)
