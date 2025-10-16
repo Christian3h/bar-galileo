@@ -23,10 +23,10 @@
                     <td>{{ brand.marca }}</td>
                     <td>
                         {% if request.user|has_perm:"brands,editar" %}
-                        <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                        <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning" title="Editar marca"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                         {% endif %}
                         {% if request.user|has_perm:"brands,eliminar" %}
-                        <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                        <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger" title="Eliminar marca"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
                         {% endif %}
                     </td>
                 </tr>
