@@ -1,0 +1,50 @@
+/* ------------- ADMIN FOOTER ------------- */
+.admin-footer {
+  background-color: var(--color-light);
+  color: var(--color-gray);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: .875rem;
+  border-top: 1px solid var(--color-accent);
+  margin-top: auto;
+}
+
+.admin-footer p {
+  font-weight: 500;
+  margin-bottom: 0;
+  margin-top: 1rem;
+  color: var(--color-secondary);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: .5rem;
+}
+
+.footer-links a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--color-primary);
+  background-color: var(--color-accent);
+}
+
+/* === Responsivo === */
+@media (max-width: 768px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .admin-footer {
+    padding: 1rem;
+  }
+}

@@ -13,6 +13,15 @@ from django import template
 register = template.Library()
 
 @method_decorator(permission_required('roles', 'ver'), name='dispatch')
+class RolListView(ListView):
+    model = Role
+    template_name = 'roles/rol_list.html'
+    context_object_name = 'roles'
+
+from notifications.utils import notificar_usuario
+
+@method_decorator(permission_required('roles', 'crear'), name='dispatch')
+class RolCreateView(LoginRequiredMixin, CreateView):
     model = Role
     form_class = RoleForm
     template_name = 'roles/rol_form.html'

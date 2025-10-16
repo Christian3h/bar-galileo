@@ -23,7 +23,6 @@
             {% element form form=form method="post" action=login_url tags="entrance,login" %}
                 {% slot body %}
                     {% csrf_token %}
-<<<<<<< HEAD
                     <div class="form-group">
                         {{ form.login.label_tag }}
                         {{ form.login }}
@@ -39,17 +38,12 @@
                         {{ form.captcha }}
                         {{ form.captcha.errors }}
                     </div>
-=======
-                    {% element fields form=form unlabeled=True %}
-                    {% endelement %}
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                     {{ redirect_field }}
                 {% endslot %}
                 {% slot actions %}
                     {% element button type="submit" tags="prominent,login"  %}
                         {% trans "Sign In" %}
                     {% endelement %}
-<<<<<<< HEAD
 
                     <div style="text-align: center; margin-top: 15px;">
                         <a href="{% url 'account_reset_password' %}"
@@ -63,8 +57,6 @@
                     {% if SOCIALACCOUNT_ENABLED %}
                         {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
                     {% endif %}
-=======
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                 {% endslot %}
             {% endelement %}
         {% endif %}
@@ -84,17 +76,10 @@
                 {% endif %}
             {% endelement %}
         {% endif %}
-<<<<<<< HEAD
-=======
-        {% if SOCIALACCOUNT_ENABLED %}
-            {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
-        {% endif %}
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     </div>
     {% endblock content %}
     {% block extra_body %}
         {{ block.super }}
-<<<<<<< HEAD
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const captchaContainer = document.querySelector('#div_id_captcha');
@@ -177,9 +162,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-=======
-        {% if PASSKEY_LOGIN_ENABLED %}
-            {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
-        {% endif %}
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 {% endblock %}

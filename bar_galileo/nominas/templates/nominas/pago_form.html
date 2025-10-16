@@ -1,94 +1,19 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h3 class="my-2">Registrar Nuevo Pago</h3>
-                </div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                        {% csrf_token %}
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.empleado.id_for_label }}" class="form-label">Empleado</label>
-                                {{ form.empleado }}
-                                {% if form.empleado.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.empleado.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.fecha_pago.id_for_label }}" class="form-label">Fecha de Pago</label>
-                                {{ form.fecha_pago }}
-                                {% if form.fecha_pago.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.fecha_pago.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.monto.id_for_label }}" class="form-label">Monto ($)</label>
-                                {{ form.monto }}
-                                {% if form.monto.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.monto.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.tipo.id_for_label }}" class="form-label">Tipo de Pago</label>
-                                {{ form.tipo }}
-                                {% if form.tipo.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.tipo.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="{{ form.descripcion.id_for_label }}" class="form-label">Descripción</label>
-                                {{ form.descripcion }}
-                                {% if form.descripcion.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.descripcion.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="row mb-3">
-                            <div class="col-md-12">
-                                <label for="{{ form.comprobante.id_for_label }}" class="form-label">Comprobante</label>
-                                {{ form.comprobante }}
-                                {% if form.comprobante.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.comprobante.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            {% if empleado %}
-                                <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary me-md-2">Cancelar</a>
-                            {% else %}
-                                <a href="{% url 'nominas:pago_list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
-                            {% endif %}
-                            <button type="submit" class="btn btn-success">Registrar Pago</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<h1>{% if object %}Editar{% else %}Registrar{% endif %} Pago</h1>
+
+{% if empleado %}
+  <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary">Volver</a>
+{% else %}
+  <a href="{% url 'nominas:pago_list' %}" class="btn btn-secondary">Volver</a>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="form-actions mt-3">
+        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Registrar{% endif %} Pago</button>
     </div>
-</div>
+</form>
 {% endblock %}

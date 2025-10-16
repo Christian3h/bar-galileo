@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 .month-btn {
   background: #f6fff7;
   color: #43e97b;
@@ -39,8 +38,6 @@
   color: #43e97b;
   font-size: 1.1rem;
 }
-=======
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 /* Estilos generales */
 :root {
   --primary-color: #1a1a1a;
@@ -331,7 +328,6 @@ body {
     gap: 0.5rem;
   }
 }
-<<<<<<< HEAD
 
 /* Panel de Usuario - Estilos personalizados */
 .container {
@@ -465,5 +461,3 @@ body {
 .g-4 {
   gap: 2rem !important;
 }
-=======
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

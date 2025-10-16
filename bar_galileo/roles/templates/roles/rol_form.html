@@ -1,6 +1,6 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-<h2>Crear Rol</h2>
+<h2>{% if object %}Editar{% else %}Crear{% endif %} Rol</h2>
 <a href="{% url 'roles:rol_list' %}" class="btn btn-secondary">Volver</a>
 <form method="post">
     {% csrf_token %}

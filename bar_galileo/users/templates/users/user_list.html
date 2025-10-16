@@ -1,7 +1,7 @@
 {% extends 'base_admin.html' %}
+{% load static %}
 {% block content %}
 <h2>Usuarios</h2>
-<<<<<<< HEAD
     <div class="table-contenedor">
         <div class="table-responsive">
             <table id="users-table" class="table table-striped">
@@ -42,47 +42,21 @@
             </table>
         </div>
     </div>
-=======
-<table id="users-table" class="table table-striped">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Rol</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.username }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-                <form method="post" style="margin:0;">
-                    {% csrf_token %}
-                    <select name="rol_id">
-                        {% for rol in roles %}
-                            <option value="{{ rol.id }}"
-                                {% if user.userprofile and user.userprofile.rol and user.userprofile.rol.id == rol.id %}
-                                    selected
-                                {% elif not user.userprofile.rol and rol.nombre|lower == 'usuario' %}
-                                    selected
-                                {% endif %}>
-                                {{ rol.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <input type="hidden" name="user_id" value="{{ user.id }}">
-                    <button type="submit" class="btn btn-sm btn-primary">Cambiar rol</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 <script>
 $(document).ready(function() {
-    $('#users-table').DataTable();
+    var sel = '#users-table';
+    if (!$(sel).length) return;
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+    $(sel).DataTable({
+        columnDefs: [
+            { targets: '_all', defaultContent: '' }
+        ],
+        language: {
+            url: "{% static 'js/DataTables/es-ES.json' %}"
+        }
+    });
 });
 </script>
 {% endblock %}

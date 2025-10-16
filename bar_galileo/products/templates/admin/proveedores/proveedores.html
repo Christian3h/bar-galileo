@@ -9,17 +9,20 @@
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Proveedores</h1>
-<<<<<<< HEAD
+        {% if request.user|has_perm:"providers,crear" %}
+            <a href="{% url 'products:proveedores_create_admin' %}" class="btn btn-success mb-3">Crear Proveedor</a>
+        {% endif %}
         <div class="table-contenedor">
             <div class="table-responsive">
                 <table id="tabla-proveedores" class="table table-striped">
+                    <caption class="sr-only visually-hidden">Tabla con la lista de proveedores</caption>
                     <thead>
                         <tr>
-                            <th class="col-1">Nombre</th>
-                            <th class="col-2">Contacto</th>
-                            <th class="col-3">Teléfono</th>
-                            <th class="col-4">Dirección</th>
-                            <th>Acciones</th>
+                            <th scope="col" class="col-1">Nombre</th>
+                            <th scope="col" class="col-2">Contacto</th>
+                            <th scope="col" class="col-3">Teléfono</th>
+                            <th scope="col" class="col-4">Dirección</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,89 +34,99 @@
                             <td class="col-4">{{ proveedor.direccion }}</td>
                             <td>
                                 {% if request.user|has_perm:"providers,editar" %}
-                                    <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-warning"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                    <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}"
+                                       class="btn btn-sm btn-warning"
+                                       title="Editar {{ proveedor.nombre }}"
+                                       aria-label="Editar proveedor {{ proveedor.nombre }}">
+                                        <img src="{% static 'img/icons/edit.svg' %}" alt="Editar">
+                                    </a>
                                 {% endif %}
                                 {% if request.user|has_perm:"providers,eliminar" %}
-                                    <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}"
+                                       class="btn btn-sm btn-danger"
+                                       title="Eliminar {{ proveedor.nombre }}"
+                                       aria-label="Eliminar proveedor {{ proveedor.nombre }}">
+                                        <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
+                                    </a>
                                 {% endif %}
                             </td>
                         </tr>
                         {% empty %}
-                            <tr>
-                                <td colspan="5">No hay proveedores disponibles.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No hay proveedores registrados.</td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-=======
-        <!-- Contenedor responsivo para la tabla -->
-        <div class="table-responsive">
-            <table id="tabla-proveedores" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class="idT">ID</th>
-                        <th class="nombreT">Nombre</th>
-                        <th class="contactoT">Contacto</th>
-                        <th class="telefonoT">Teléfono</th>
-                        <th class="direccionT">Dirección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for proveedor in proveedores %}
-                    <tr>
-                        <td class="idT">{{ proveedor.id_proveedor }}</td>
-                        <td class="nombreT">{{ proveedor.nombre }}</td>
-                        <td class="contactoT">{{ proveedor.contacto }}</td>
-                        <td class="telefonoT">{{ proveedor.telefono }}</td>
-                        <td class="direccionT">{{ proveedor.direccion }}</td>
-                        <td>
-                            {% if request.user|has_perm:"providers,editar" %}
-                                <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-warning">Editar</a>
-                            {% endif %}
-                            {% if request.user|has_perm:"providers,eliminar" %}
-                                <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-danger">Eliminar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="6">No hay proveedores disponibles.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
         </div>
     </div>
-    <!-- Inicialización de DataTables -->
+    <!-- Inicialización de DataTables con AJAX -->
     <script>
-    $(document).ready(function() {
-        $('#tabla-proveedores').DataTable({
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
-            },
-<<<<<<< HEAD
-            responsive: true,
-            "pageLength": 10,
-            "lengthChange": true,
-            "ordering": true
-=======
-            responsive: true,  // Habilita el modo responsivo
-            "pageLength": 10,  // Establece el número de filas por página
-            "lengthChange": true,  // Permite cambiar el número de filas por página
-            "ordering": true,  // Habilita la ordenación de las columnas
-            "createdRow": function (row, data, dataIndex) {
-                // Añadir clases a las celdas para responsive
-                $(row).find('td').eq(0).addClass('idT');
-                $(row).find('td').eq(1).addClass('nombreT');
-                $(row).find('td').eq(2).addClass('contactoT');
-                $(row).find('td').eq(3).addClass('telefonoT');
-                $(row).find('td').eq(4).addClass('direccionT');
+    (function() {
+        'use strict';
+        document.addEventListener('DOMContentLoaded', function() {
+            const sel = '#tabla-proveedores';
+            const tableEl = document.querySelector(sel);
+            if (!tableEl) return;
+
+            const hasJQ = typeof window.jQuery !== 'undefined';
+            const hasDT = hasJQ && !!jQuery.fn && !!jQuery.fn.dataTable;
+            if (!hasDT) {
+                console.warn('DataTables o jQuery no están cargados. La tabla se mostrará sin mejoras.');
+                return;
             }
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
+
+            if (jQuery.fn.dataTable.isDataTable(sel)) {
+                jQuery(sel).DataTable().clear().destroy(true);
+            }
+
+            const options = {
+                language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
+                responsive: true,
+                pageLength: 10,
+                lengthChange: true,
+                ordering: true,
+                order: [],
+                ajax: {
+                    url: "{% url 'products:proveedores_json' %}",
+                    dataSrc: 'data'
+                },
+                columns: [
+                    { data: 'proveedor' },
+                    { data: 'email' },
+                    { data: 'telefono' },
+                    { data: 'direccion' },
+                    {
+                        data: null,
+                        orderable: false,
+                        render: function(data, type, row) {
+                            const editUrl = `{% url 'products:proveedores_edit_admin' 0 %}`.replace('/0/', `/${row.id}/`);
+                            const deleteUrl = `{% url 'products:proveedores_delete_admin' 0 %}`.replace('/0/', `/${row.id}/`);
+                            let buttons = '';
+                            {% if request.user|has_perm:"providers,editar" %}
+                            buttons += `<a href="${editUrl}" class="btn btn-sm btn-warning" title="Editar ${row.proveedor}" aria-label="Editar proveedor ${row.proveedor}">` +
+                                       `<img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a> `;
+                            {% endif %}
+                            {% if request.user|has_perm:"providers,eliminar" %}
+                            buttons += `<a href="${deleteUrl}" class="btn btn-sm btn-danger" title="Eliminar ${row.proveedor}" aria-label="Eliminar proveedor ${row.proveedor}">` +
+                                       `<img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>`;
+                            {% endif %}
+                            return buttons || '';
+                        }
+                    }
+                ]
+            };
+
+            const dt = jQuery(sel).DataTable(options);
+
+            // Recargar datos al volver desde crear/editar/eliminar
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    dt.ajax.reload(null, false);
+                }
+            });
         });
-    });
+    })();
     </script>
 {% endblock %}

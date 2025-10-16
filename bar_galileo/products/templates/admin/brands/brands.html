@@ -4,8 +4,10 @@
 {% load roles_tags %}
 
 <h1>Lista de marcas</h1>
+{% if request.user|has_perm:"brands,crear" %}
+    <a href="{% url 'products:brands_create_admin' %}" class="btn btn-success mb-3">Crear Marca</a>
+{% endif %}
 
-<<<<<<< HEAD
 <div class="table-contenedor">
     <div class="table-responsive">
         <table id="brands-table" class="table display">
@@ -32,44 +34,23 @@
             </tbody>
         </table>
     </div>
-=======
-<!-- Contenedor responsivo -->
-<div class="table-responsive">
-    <table id="brands-table" class="table display">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for brand in brands %}
-            <tr>
-                <td>{{ brand.id_marca }}</td>
-                <td>{{ brand.marca }}</td>
-                <td>
-                    {% if request.user|has_perm:"brands,editar" %}
-                    <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning">Editar</a>
-                    {% endif %}
-                    {% if request.user|has_perm:"brands,eliminar" %}
-                    <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger">Eliminar</a>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 </div>
 
 <script>
 $(document).ready(function() {
-    $('#brands-table').DataTable({
+    var sel = '#brands-table';
+    if (!$(sel).length) return;
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+    $(sel).DataTable({
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
-        responsive: true // Activar el modo responsive de DataTables
+        columnDefs: [
+            { targets: '_all', defaultContent: '' }
+        ],
+        responsive: true
     });
 });
 </script>

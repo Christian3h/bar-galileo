@@ -5,8 +5,10 @@
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Categorías</h1>
+        {% if request.user|has_perm:"categories,crear" %}
+            <a href="{% url 'products:categories_create_admin' %}" class="btn btn-success mb-3">Crear Categoría</a>
+        {% endif %}
 
-<<<<<<< HEAD
         <div class="table-contenedor">
             <div class="table-responsive">
                 <table id="tabla-categorias" class="table table-striped">
@@ -35,51 +37,28 @@
                     </tbody>
                 </table>
             </div>
-=======
-        <!-- Contenedor responsivo para la tabla -->
-        <div class="table-responsive">
-            <table id="tabla-categorias" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for categoria in categorias %}
-                    <tr>
-                        <td>{{ categoria.id_categoria }}</td>
-                        <td>{{ categoria.nombre_categoria }}</td>
-                        <td>{{ categoria.descripcion }}</td>
-                        <td>
-                            {% if request.user|has_perm:"categories,editar" %}
-                                <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning">Editar</a>
-                            {% endif %}
-                            {% if request.user|has_perm:"categories,eliminar" %}
-                                <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger">Eliminar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
         </div>
     </div>
 
     <!-- Activación de DataTable -->
     <script>
     $(document).ready(function() {
-        $('#tabla-categorias').DataTable({
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
+        var sel = '#tabla-categorias';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
             },
-            responsive: true,  // Activar el modo responsivo de DataTables
-            "pageLength": 10,  // Definir el número de filas por página
-            "lengthChange": true,  // Permite cambiar el número de filas por página
-            "ordering": true  // Permite ordenar las columnas
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
+            responsive: true,
+            pageLength: 10,
+            lengthChange: true,
+            ordering: true
         });
     });
     </script>
