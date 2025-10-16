@@ -1,7 +1,10 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 {% load format_tags %}
+<<<<<<< HEAD
 {% load roles_tags %}
+=======
+>>>>>>> Jorge
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
@@ -11,9 +14,12 @@
 {% block content %}
 <div class="dashboard-container">
     <h2 class="dashboard-title">Gestión de Nóminas</h2>
+<<<<<<< HEAD
     {% if request.user|has_perm:"nominas,crear" %}
         <a href="{% url 'nominas:empleado_crear' %}" class="btn btn-success mb-3">Crear Empleado</a>
     {% endif %}
+=======
+>>>>>>> Jorge
 
     <!-- Estadísticas -->
     <section class="dashboard-cards">
@@ -116,7 +122,11 @@
         if ($.fn.dataTable.isDataTable('#tabla-empleados')) {
             $('#tabla-empleados').DataTable().destroy();
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> Jorge
         // Inicialización mínima + idioma (manejo correcto cuando no hay datos)
         var tabla = $('#tabla-empleados').DataTable({
             language: {
@@ -131,7 +141,11 @@
                 }
             }
         });
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> Jorge
         if (tabla) {
             tabla.order([0, 'asc']).draw();
         }

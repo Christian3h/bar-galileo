@@ -81,7 +81,7 @@ def mesa_pedido_api(request, mesa_id):
     pedido, _ = Pedido.objects.get_or_create(mesa=mesa, estado='en_proceso')
 
     productos_data = []
-    for p in Producto.objects.all().order_by('nombre'):
+    for p in Producto.objects.filter(activo=True).order_by('nombre'):
         first_image = p.imagenes.first()
         imagen_url = f"/static/{first_image.imagen}" if first_image else None
         productos_data.append({
@@ -107,7 +107,7 @@ def mesa_pedido_api(request, mesa_id):
 @transaction.atomic
 def agregar_item_api(request):
     data = json.loads(request.body)
-    producto = get_object_or_404(Producto, id_producto=data['producto_id'])
+    producto = get_object_or_404(Producto, id_producto=data['producto_id'], activo=True)
     cantidad_a_agregar = data.get('cantidad', 1)
 
     pedido, _ = Pedido.objects.get_or_create(mesa_id=data['mesa_id'], estado='en_proceso')
@@ -132,6 +132,10 @@ def agregar_item_api(request):
 def actualizar_item_api(request, item_id):
     item = get_object_or_404(PedidoItem, id=item_id)
     old_cantidad = item.cantidad
+    
+    # Evitar actualizar si el producto fue archivado
+    if not item.producto.activo:
+        return JsonResponse({'error': f'El producto {item.producto.nombre} está archivado y no puede modificarse.'}, status=400)
     
     data = json.loads(request.body)
     nueva_cantidad = data.get('cantidad')

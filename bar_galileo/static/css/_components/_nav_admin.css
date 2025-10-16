@@ -1,3 +1,32 @@
+/* === Botón para cerrar el sidebar === */
+.close-sidebar-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1001;
+  background-color: var(--color-light);
+  color: var(--color-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.close-sidebar-btn:hover {
+  background: var(--color-dark);
+  color: var(--color-secondary);
+}
+
+/* Eliminar scroll del sidebar cuando está abierto en móvil */
+.sidebar.mobile-show {
+  overflow: hidden;
+}
 header {
   background-color: var(--color-light);
 }
