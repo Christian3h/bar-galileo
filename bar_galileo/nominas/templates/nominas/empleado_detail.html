@@ -9,10 +9,10 @@
 <div class="dashboard-container empleado-perfil-page">
     <h2 class="dashboard-title">Perfil del Empleado</h2>
     <div class="buttons-group" style="margin-bottom: 1rem;">
-        <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+        <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary" title="Volver a la lista de empleados">
             <i class="fa fa-arrow-left"></i> Volver
         </a>
-        <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-primary">
+        <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-primary" title="Editar información del empleado">
             <i class="fa fa-edit"></i> Editar
         </a>
     </div>
@@ -84,7 +84,7 @@
             <section class="perfil-panel">
                 <div class="panel-header">
                     <h3>Historial de Pagos</h3>
-                    <a href="{% url 'nominas:agregar_pago' empleado.id %}" class="btn btn-primary btn-sm">
+                    <a href="{% url 'nominas:agregar_pago' empleado.id %}" class="btn btn-primary btn-sm" title="Registrar un nuevo pago">
                         <i class="fa fa-plus"></i> Registrar Pago
                     </a>
                 </div>
@@ -114,7 +114,7 @@
                                 <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
                                 <td class="comprobanteCol">
                                     {% if pago.comprobante %}
-                                        <a href="{{ pago.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary">
+                                        <a href="{{ pago.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary" title="Descargar comprobante de pago">
                                             <i class="fa fa-download"></i>
                                         </a>
                                     {% else %}
@@ -135,7 +135,7 @@
             <section class="perfil-panel">
                 <div class="panel-header">
                     <h3>Bonificaciones</h3>
-                    <a href="{% url 'nominas:agregar_bonificacion' empleado.id %}" class="btn btn-primary btn-sm">
+                    <a href="{% url 'nominas:agregar_bonificacion' empleado.id %}" class="btn btn-primary btn-sm" title="Agregar una nueva bonificación">
                         <i class="fa fa-plus"></i> Agregar Bonificación
                     </a>
                 </div>
