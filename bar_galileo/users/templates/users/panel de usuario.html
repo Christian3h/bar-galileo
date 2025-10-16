@@ -184,11 +184,11 @@ function toggleEmergenciaForm(show) {
 
         <!-- Menú de navegación -->
         <nav class="user-navigation">
-          <a href="{% url 'core:index' %}" class="menu-btn"><img src="{% static 'img/icons/home.svg' %}" alt="">Inicio</a>
-          <a href="{% url 'account_email' %}" class="menu-btn"><img src="{% static 'img/icons/mail.svg' %}" alt="">Email</a>
-          <a href="{% url 'account_change_password' %}" class="menu-btn"><img src="{% static 'img/icons/lock.svg' %}" alt="">Cambiar Contraseña</a>
-          <a href="{% url 'socialaccount_connections' %}" class="menu-btn"><img src="{% static 'img/icons/link.svg' %}" alt="">Conexiones</a>
-          <a href="{% url 'account_logout' %}" class="menu-btn"><img src="{% static 'img/icons/logout.svg' %}" alt="">Cerrar Sesión</a>
+          <a href="{% url 'core:index' %}" class="menu-btn" title="Ir al inicio"><img src="{% static 'img/icons/home.svg' %}" alt="">Inicio</a>
+          <a href="{% url 'account_email' %}" class="menu-btn" title="Gestionar correos electrónicos"><img src="{% static 'img/icons/mail.svg' %}" alt="">Email</a>
+          <a href="{% url 'account_change_password' %}" class="menu-btn" title="Cambiar tu contraseña"><img src="{% static 'img/icons/lock.svg' %}" alt="">Cambiar Contraseña</a>
+          <a href="{% url 'socialaccount_connections' %}" class="menu-btn" title="Gestionar conexiones con redes sociales"><img src="{% static 'img/icons/link.svg' %}" alt="">Conexiones</a>
+          <a href="{% url 'account_logout' %}" class="menu-btn" title="Cerrar sesión"><img src="{% static 'img/icons/logout.svg' %}" alt="">Cerrar Sesión</a>
         </nav>
       </div>
       <div class="dashboard">
