@@ -2,11 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Module(models.Model):
-<<<<<<< HEAD
     nombre = models.CharField(max_length=50, unique=True)
-=======
-    nombre = models.CharField(max_length=100, unique=True)
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
     def __str__(self):
         return self.nombre
@@ -18,11 +14,7 @@ class Action(models.Model):
         return self.nombre
 
 class Role(models.Model):
-<<<<<<< HEAD
     nombre = models.CharField(max_length=50, unique=True)
-=======
-    nombre = models.CharField(max_length=100, unique=True)
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     descripcion = models.TextField(blank=True)
 
     def __str__(self):

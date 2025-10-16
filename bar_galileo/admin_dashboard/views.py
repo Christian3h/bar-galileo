@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from products.models import Producto, Categoria
-<<<<<<< HEAD
 from tables.models import Mesa, Pedido, PedidoItem, Factura
 from expenses.models import Expense
 from roles.decorators import permission_required
@@ -32,13 +31,6 @@ def get_date_range(period):
         start_date = None
         end_date = None
     return start_date, end_date
-=======
-from tables.models import Mesa 
-from roles.decorators import permission_required
-from django.utils.decorators import method_decorator
-from notifications.utils import notificar_usuario
-
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 @method_decorator(permission_required('dashboard', 'ver'), name='dispatch')
 class DashboardView(TemplateView):
@@ -46,7 +38,6 @@ class DashboardView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-<<<<<<< HEAD
 
         period = self.request.GET.get('period', 'month') # Default to month
         start_date, end_date = get_date_range(period)
@@ -95,17 +86,8 @@ class DashboardView(TemplateView):
         
         context['selected_period'] = period
 
-=======
-        context['productos'] = Producto.objects.count()
-        context['categorias'] = Categoria.objects.count()
-        context['mesas'] = Mesa.objects.count()
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
         # Enviar notificación al usuario actual
         if self.request.user.is_authenticated:
             mensaje = f"¡Bienvenido al dashboard, {self.request.user.first_name or self.request.user.username}!"
             notificar_usuario(self.request.user, mensaje)
-<<<<<<< HEAD
         return context
-=======
-        return context
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a

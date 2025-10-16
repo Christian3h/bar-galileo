@@ -12,11 +12,7 @@ def crear_modulos_y_acciones():
 
     modulos_a_crear = get_local_apps()
     if not modulos_a_crear:
-<<<<<<< HEAD
         modulos_a_crear = ['products', 'tables', 'users', 'reservations', 'providers', 'brands', 'roles', 'categories', 'dashboard', 'expenses', 'nominas']
-=======
-        modulos_a_crear = ['products', 'tables', 'users', 'reservations', 'providers', 'brands', 'roles', 'categories', 'dashboard']
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     for m in modulos_a_crear:
         Module.objects.get_or_create(nombre=m)
 from roles.models import Module, Action, Role

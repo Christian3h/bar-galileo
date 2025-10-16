@@ -1,5 +1,4 @@
 from django.shortcuts import render
-<<<<<<< HEAD
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from products.models import Producto, Categoria, Marca
@@ -7,18 +6,11 @@ from django.views.generic import ListView
 from django.views import View
 from django.db.models import Q
 
-=======
-
-from products.models import Producto
-
-from django.views.generic import ListView
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 # Create your views here.
 
 class indexView(ListView): 
     model = Producto
     template_name = 'index.html'
-<<<<<<< HEAD
     context_object_name = 'productos'
     
     def get_context_data(self, **kwargs):
@@ -95,6 +87,3 @@ class StoreView(ListView):
         context['min_precio_actual'] = self.request.GET.get('min_precio', '')
         context['max_precio_actual'] = self.request.GET.get('max_precio', '')
         return context
-=======
-    context_object_name = 'productos'
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
