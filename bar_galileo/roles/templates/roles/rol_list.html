@@ -24,11 +24,11 @@
                         <td>{{ rol.descripcion }}</td>
                         <td>
                             {% if request.user|has_perm:"roles,editar" %}
-                                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info">Permisos</a>
-                                <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info" title="Gestionar permisos del rol">Permisos</a>
+                                <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary" title="Editar rol"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                             {% endif %}
                             {% if request.user|has_perm:"roles,eliminar" %}
-                                <a href="{% url 'roles:rol_delete' rol.pk %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                <a href="{% url 'roles:rol_delete' rol.pk %}" class="btn btn-sm btn-danger" title="Eliminar rol"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
                             {% endif %}
                         </td>
                     </tr>
