@@ -1,0 +1,9 @@
+@import '../_variables/_colors.css';
+
+select {
+    background-color: var(--color-light) !important;
+    color: var(--color-secondary) !important;
+    border: 1px solid #555 !important;
+    border-radius: 5px !important;
+    padding: 0.5rem !important;
+}
