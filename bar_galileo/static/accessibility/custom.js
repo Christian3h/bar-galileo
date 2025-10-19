@@ -11,9 +11,10 @@ document.addEventListener("DOMContentLoaded", function() {
         "Dark Contrast": "Contraste Oscuro",
         "Big Cursor": "Cursor Grande",
         "Stop Animations": "Detener Animaciones",
-        "Reading Guide": "Guía de Lectura"
-        ,"Read Page": "Leer Página"
-        ,"Read Full Page": "Leer toda la página"
+        "Reading Guide": "Guía de Lectura",
+        "Read Page": "Leer Página",
+        "Read Full Page": "Leer toda la página",
+        "Dark Mode": "Modo Oscuro"
     };
 
     document.querySelectorAll('.asw-btn').forEach(button => {
