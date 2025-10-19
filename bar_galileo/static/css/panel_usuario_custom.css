@@ -1,3 +1,4 @@
+@import '_variables/_colors.css';
 @import '_components/selects.css';
 
 /* Estilo para campos de formulario en columna, igual que tablas */

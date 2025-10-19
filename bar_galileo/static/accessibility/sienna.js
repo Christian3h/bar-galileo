@@ -126,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .asw-btn { width: 140px; height: 120px; border-radius: 8px; padding: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: #fff; background: #3a3a3a; border: 3px solid #3a3a3a; transition: all .3s; cursor: pointer; }
         .asw-btn .material-icons { margin-bottom: 16px; }
         .asw-btn:hover { border-color: ${options.highlightColor}; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        .asw-btn.asw-selected { background: ${options.highlightColor} !important; color: #fff !important; border-color: ${options.highlightColor} !important; box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.3), 0 4px 12px rgba(166, 137, 50, 0.5) !important; transform: scale(1.02); font-weight: 600; }
+        .asw-btn.asw-selected { !important; border-color: ${options.highlightColor} !important; box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.3), 0 4px 12px rgba(166, 137, 50, 0.5) !important; transform: scale(1.02); font-weight: 600; }
         .asw-btn.asw-selected .material-icons { transform: scale(1.1); }
         .asw-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #62733d; padding: 16px; text-align: center; color: #fff; }
         .asw-footer a { text-decoration: underline; color: #fff; background: 0 0 !important; }
