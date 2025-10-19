@@ -1,5 +1,26 @@
 /* Colores principales para el e-commerce Vive Natural */
+/* :root {
+  --color-primary: #62733d;
+  --color-secondary: #a68932;
+  --color-dark: #bf452a;
+  --color-light: #262626;
+  --color-accent: #0d0d0d;
+  --color-gray: #a68932;
+  --color-shadow: #62733d;
+} */
+
 :root {
+  --color-primary: #7d9250;   /* verde natural más claro */
+  --color-secondary: #4a4a4a; /* gris oscuro para texto (mejor contraste) */
+  --color-dark: #a6502a;      /* acento rojizo natural */
+  --color-light: #e5e5e5;     /* fondo claro */
+  --color-accent: #ffffff;    /* tarjetas o contenedores */
+  --color-gray: #b1b1b1;      /* texto secundario */
+  --color-shadow: #c3d1a3;    /* sombras suaves */
+}
+
+/* === 🌑 Tema Oscuro === */
+[data-theme="dark"] {
   --color-primary: #62733d;
   --color-secondary: #a68932;
   --color-dark: #bf452a;

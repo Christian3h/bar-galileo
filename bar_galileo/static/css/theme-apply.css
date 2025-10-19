@@ -1,0 +1,35 @@
+/* ============================================
+   APLICACIÓN DE VARIABLES CSS - TEMA
+   Aplica las variables del tema a elementos principales
+   ============================================ */
+
+/* Body y contenedor principal */
+body {
+    background-color: var(--color-light) !important;
+    color: var(--color-secondary) !important;
+}
+
+/* Header y navegación */
+.header {
+    background-color: var(--color-light);
+}
+
+.nav-menu a,
+.logo {
+    color: var(--color-secondary) !important;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--color-light);
+    color: var(--color-secondary);
+}
+
+/* Transiciones suaves */
+body,
+.header,
+.footer,
+.nav-menu a,
+.logo {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
