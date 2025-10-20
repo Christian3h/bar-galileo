@@ -1,3 +1,4 @@
+@import '../../_variables/_colors.css';
 @import '../../_components/selects.css';
 
 .store-container {
@@ -22,6 +23,7 @@
 .filters h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
+    color: var(--color-secondary);
 }
 
 .filter-group {
@@ -31,14 +33,15 @@
 .filter-group h4 {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    color: var(--color-secondary);
 }
 
 .filter-group select {
     width: 100%;
     padding: 0.5rem;
-    background: #333;
-    border: 1px solid #555;
-    color: #fff;
+    background: var(--color-accent);
+    border: 1px solid var(--color-primary);
+    color: var(--color-secondary);
     border-radius: 5px;
 }
 
@@ -50,23 +53,28 @@
 .price-range input {
     width: 100%;
     padding: 0.5rem;
-    background: #333;
-    border: 1px solid #555;
-    color: #fff;
+    background: var(--color-accent);
+    border: 1px solid var(--color-primary);
+    color: var(--color-secondary);
     border-radius: 5px;
 }
 
 .btn-filter {
     width: 100%;
     padding: 0.75rem;
-    background: #d4af37;
-    color: #111;
+    background: var(--color-primary);
+    color: var(--color-light);
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
     text-transform: uppercase;
     font-weight: bold;
+    transition: opacity 0.3s ease;
+}
+
+.btn-filter:hover {
+    opacity: 0.9;
 }
 
 .product-grid-container {
@@ -86,10 +94,16 @@
 
 .step-links a {
     margin: 0 0.5rem;
-    color: #d4af37;
+    color: var(--color-primary);
     text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.step-links a:hover {
+    opacity: 0.7;
 }
 
 .step-links .current {
     margin: 0 0.5rem;
+    color: var(--color-secondary);
 }
