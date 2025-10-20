@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme-apply.css' %}">
   <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+  {% block extra_css %}{% endblock %}
 
 </head>
 <body>
@@ -30,7 +31,7 @@
         <button class="menu-toggle" id="menu-toggle">&#9776;</button>
         <ul class="nav-menu" id="nav-menu">
           <li><a href="{% url 'core:index' %}#about">EXPERIENCIA</a></li>
-          <li><a href="{% url 'core:store' %}">Carta</a></li>
+          <li><a href="{% url 'core:store' %}">CARTA</a></li>
           <li><a href="{% url 'core:index' %}#reservas-section">RESERVAS</a></li>
           <li><a href="{% url 'core:index' %}#contact">CONTACTO</a></li>
 
@@ -99,17 +100,6 @@
             <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
             <li><a href="{% url 'core:index' %}#about">Cenas Maridaje</a></li>
             <li><a href="{% url 'core:index' %}#about">Masterclasses</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-section">
-          <h4>Especialidades</h4>
-          <ul>
-            <li><a href="{% url 'core:index' %}#cocktails-section">Cocteles Clásicos</a></li>
-            <li><a href="{% url 'core:index' %}#cocktails-section">Creaciones Propias</a></li>
-            <li><a href="{% url 'core:index' %}#carta-section">Destilados Premium</a></li>
-            <li><a href="{% url 'core:index' %}#carta-section">Vinos Selectos</a></li>
-            <li><a href="{% url 'core:index' %}#carta-section">Licores Artesanales</a></li>
           </ul>
         </div>
 

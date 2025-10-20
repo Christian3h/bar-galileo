@@ -172,6 +172,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+  background-color: #2a4a2a; /* Verde temporal para debug */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -181,6 +182,7 @@ body {
 
 .hero-slide.active {
   opacity: 1;
+  z-index: 1; /* Asegurar que esté por encima */
 }
 
 .hero-slide::before {
@@ -236,6 +238,7 @@ body {
   letter-spacing: 8px;
   margin-bottom: 20px;
   text-transform: uppercase;
+  color: #e5e5e5 !important;
 }
 
 .hero-content p {
@@ -244,6 +247,7 @@ body {
   margin: 0 auto 40px;
   font-weight: 300;
   letter-spacing: 1px;
+  color: #e5e5e5 !important;
 }
 
 .hero-buttons {
@@ -295,7 +299,7 @@ body {
   font-size: 16px;
   line-height: 1.8;
   margin-bottom: 20px;
-  color: var(--color-gray);
+  color: var(--color-secondary);
 }
 
 .about-image {
@@ -312,7 +316,6 @@ body {
 
 /* Services Section */
 .services {
-  padding: 120px 0;
   background: var(--color-accent);
   color: var(--color-secondary);
 }
@@ -328,7 +331,7 @@ body {
 .services-subtitle {
   text-align: center;
   font-size: 18px;
-  color: var(--color-gray);
+  color: var(--color-secondary);
   margin-bottom: 80px;
   max-width: 600px;
   margin-left: auto;
@@ -362,7 +365,7 @@ body {
 
 .service-item p {
   font-size: 14px;
-  color: var(--color-gray);
+  color: var(--color-secondary);
   line-height: 1.6;
 }
 
@@ -430,7 +433,7 @@ body {
 }
 
 .product-description {
-  color: var(--color-gray);
+  color: var(--color-secondary);
   margin-bottom: 20px;
   line-height: 1.6;
   font-size: 14px;
@@ -471,7 +474,7 @@ body {
 
 /* Signature cocktails */
 .signature-section {
-  padding: 120px 0;
+  padding-top: 120px;
   background: var(--color-accent);
   color: var(--color-secondary);
   text-align: center;
@@ -486,7 +489,7 @@ body {
 
 .signature-subtitle {
   font-size: 18px;
-  color: var(--color-gray);
+  color: var(--color-secondary);
   margin-bottom: 60px;
   max-width: 600px;
   margin-left: auto;

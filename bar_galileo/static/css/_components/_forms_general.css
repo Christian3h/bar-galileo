@@ -1,4 +1,4 @@
-@import '_components/selects.css';
+@import 'selects.css';
 
 /* ====================================
    ESTILOS PARA FORMULARIOS - BAR GALILEO
@@ -213,12 +213,12 @@ legend {
         padding: 15px;
         margin: 10px;
     }
-    
+
     .form-inline {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .btn-form {
         width: 100%;
         margin: 5px 0;
