@@ -1,10 +1,16 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // Función para obtener variables CSS del tema actual
+    function getCSSVariable(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // Cargar colores desde variables CSS
     const defaultOptions = {
-        buttonColor: '#62733d',
-        buttonIconColor: '#a68932',
-        highlightColor: '#a68932',
-        menuBackgroundColor: '#262626',
-        menuTextColor: '#ffffff',
+        buttonColor: getCSSVariable('--color-primary') || '#62733d',
+        buttonIconColor: getCSSVariable('--color-secondary') || '#a68932',
+        highlightColor: getCSSVariable('--color-secondary') || '#a68932',
+        menuBackgroundColor: getCSSVariable('--color-light') || '#262626',
+        menuTextColor: getCSSVariable('--color-accent') || '#ffffff',
         customLabels: {}
     };
 
@@ -54,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let o = e[i], l = t.states[o.key];
             "asw-filter" == s && t.states.contrast == o.key && (l = !0);
             const label = options.customLabels[o.label] || o.label;
-            n += `\n<div class="asw-btn ${s || ""} ${l ? "asw-selected" : ""}" role="button" aria-pressed="false" data-key="${o.key}" aria-label="${label}" title="${label}"><span class="material-icons">${o.icon}</span>${label}\n</div>`;
+            n += `\n<div class="asw-btn ${s || ""} ${l ? "asw-selected" : ""}" role="button" aria-pressed="false" data-key="${o.key}" aria-label="${label}" title="${label}"><span class="material-icons" data-icon="${o.icon}"></span>${label}\n</div>`;
             a.push(o.icon)
         }
         return n
@@ -64,7 +70,8 @@ document.addEventListener("DOMContentLoaded", function() {
             { label: "Highlight Links", key: "highlight-links", icon: "link" },
         { label: "Highlight Title", key: "highlight-title", icon: "title" },
         { label: "Read Page", key: "read-page", icon: "record_voice_over" },
-        { label: "Read Full Page", key: "read-full", icon: "subscriptions" }
+        { label: "Read Full Page", key: "read-full", icon: "subscriptions" },
+        { label: "Dark Mode", key: "dark-mode", icon: "nightlight" }
         ]),
         o = n([
             { label: "Monochrome", key: "monochrome", icon: "filter_b_and_w" },
@@ -81,8 +88,27 @@ document.addEventListener("DOMContentLoaded", function() {
         ], "asw-tools");
     var r = document.createElement("div");
     r.innerHTML = `
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons&text=${a.toString()}" rel="stylesheet">
     <style>
+        /* Material Icons - Iconos locales */
+        .material-icons { font-family: 'Material Icons', sans-serif; font-weight: normal; font-style: normal; font-size: 24px; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; -moz-osx-font-smoothing: grayscale; font-feature-settings: 'liga'; vertical-align: middle; }
+        .material-icons { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+        .material-icons[data-icon="local_parking"] { background-image: url('/static/img/icons/local_parking.svg'); }
+        .material-icons[data-icon="link"] { background-image: url('/static/img/icons/link.svg'); }
+        .material-icons[data-icon="title"] { background-image: url('/static/img/icons/title.svg'); }
+        .material-icons[data-icon="record_voice_over"] { background-image: url('/static/img/icons/record_voice_over.svg'); }
+        .material-icons[data-icon="subscriptions"] { background-image: url('/static/img/icons/subscriptions.svg'); }
+        .material-icons[data-icon="nightlight"] { background-image: url('/static/img/icons/nightlight.svg'); }
+        .material-icons[data-icon="brightness_5"] { background-image: url('/static/img/icons/brightness_5.svg'); }
+        .material-icons[data-icon="format_size"] { background-image: url('/static/img/icons/format_size.svg'); }
+        .material-icons[data-icon="add"] { background-image: url('/static/img/icons/add.svg'); }
+        .material-icons[data-icon="remove"] { background-image: url('/static/img/icons/remove.svg'); }
+        .material-icons[data-icon="filter_b_and_w"] { background-image: url('/static/img/icons/filter_b_and_w.svg'); }
+        .material-icons[data-icon="gradient"] { background-image: url('/static/img/icons/gradient.svg'); }
+        .material-icons[data-icon="filter_vintage"] { background-image: url('/static/img/icons/filter_vintage.svg'); }
+        .material-icons[data-icon="tonality"] { background-image: url('/static/img/icons/tonality.svg'); }
+        .material-icons[data-icon="mouse"] { background-image: url('/static/img/icons/mouse.svg'); }
+        .material-icons[data-icon="motion_photos_off"] { background-image: url('/static/img/icons/motion_photos_off.svg'); }
+        .material-icons[data-icon="local_library"] { background-image: url('/static/img/icons/local_library.svg'); }
         .asw-menu, .asw-menu-btn { position: fixed; left: 20px; transition: .3s; z-index: 500000; }
         .asw-widget { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-weight: 400; -webkit-font-smoothing: antialiased; }
         .asw-widget * { box-sizing: border-box; }
@@ -95,20 +121,22 @@ document.addEventListener("DOMContentLoaded", function() {
         .asw-menu-header > div { display: flex; }
         .asw-menu-header div[role=button] { padding: 12px; cursor: pointer; }
         .asw-menu-header div[role=button]:hover, .asw-minus:hover, .asw-plus:hover { opacity: .8; }
+        .asw-menu-header div[role=button] img { filter: brightness(0) invert(1); transition: opacity 0.3s; }
         .asw-items { display: flex; gap: 10px; padding: 0; list-style: none; flex-wrap: wrap; justify-content: space-between; }
-        .asw-btn { width: 140px; height: 120px; border-radius: 8px; padding: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: #fff; background: #3a3a3a; border: 3px solid #3a3a3a; transition: background-color .3s; cursor: pointer; }
+        .asw-btn { width: 140px; height: 120px; border-radius: 8px; padding: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: #fff; background: #3a3a3a; border: 3px solid #3a3a3a; transition: all .3s; cursor: pointer; }
         .asw-btn .material-icons { margin-bottom: 16px; }
-        .asw-btn:hover { border-color: ${options.highlightColor}; }
-        .asw-btn.asw-selected { background: ${options.highlightColor}; color: #fff; border-color: ${options.highlightColor}; }
+        .asw-btn:hover { border-color: ${options.highlightColor}; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+        .asw-btn.asw-selected { !important; border-color: ${options.highlightColor} !important; box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.3), 0 4px 12px rgba(166, 137, 50, 0.5) !important; transform: scale(1.02); font-weight: 600; }
+        .asw-btn.asw-selected .material-icons { transform: scale(1.1); }
         .asw-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #62733d; padding: 16px; text-align: center; color: #fff; }
         .asw-footer a { text-decoration: underline; color: #fff; background: 0 0 !important; }
         .asw-menu-content { overflow: scroll; max-height: calc(100% - 80px); }
         .asw-card { margin: 0 15px 30px; }
-        .asw-card-title { font-size: 18px; padding: 15px 0; color: #fff; }
+        .asw-card-title { font-size: 18px; padding: 15px 0; color: #4a4a4a; font-weight: 600; }
         .asw-adjust-font { background: #3a3a3a; padding: 20px 25px; margin-bottom: 16px; color: #fff; }
         .asw-adjust-font .label { display: flex; align-items: center; }
         .asw-adjust-font > div { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; font-size: 16px; font-weight: 700; }
-        .asw-adjust-font div[role=button] { background: #a68932; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; }
+        .asw-adjust-font div[role=button] { background: #62733d; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; }
         .asw-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; display: none; }
         @media only screen and (max-width: 560px) {
             .asw-menu { width: calc(100vw - 20px); left: 10px; }
@@ -126,10 +154,10 @@ document.addEventListener("DOMContentLoaded", function() {
             <div class="asw-menu-header">Accesibilidad
                 <div>
                     <div role="button" class="asw-menu-reset" title="Reset Settings">
-                        <span class="material-icons">reiniciar</span>
+                        <img src="/static/img/icons/reset.svg" alt="Reset" style="width: 24px; height: 24px;">
                     </div>
                     <div role="button" class="asw-menu-close" title="Close Accessibility Menu">
-                        <span class="material-icons">cerrar</span>
+                        <img src="/static/img/icons/close.svg" alt="Close" style="width: 24px; height: 24px;">
                     </div>
                 </div>
             </div>
@@ -138,15 +166,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     <div class="asw-card-title">Ajustes</div>
                     <div class="asw-adjust-font">
                         <div class="label">
-                            <span class="material-icons" style="margin-right:8px;">format_size</span> Tamaño de Fuente
+                            <span class="material-icons" data-icon="format_size" style="margin-right:8px;"></span> Tamaño de Fuente
                         </div>
                         <div>
                             <div class="asw-minus" data-key="font-size" role="button" aria-pressed="false">
-                                <span class="material-icons">remove</span>
+                                <span class="material-icons" data-icon="remove"></span>
                             </div>
                             <div class="asw-amount">${t.states.fontSize && 1 != t.states.fontSize ? `${parseInt(100 * t.states.fontSize)}%` : "Normal"}</div>
                             <div class="asw-plus" data-key="font-size" role="button" aria-pressed="false">
-                                <span class="material-icons">add</span>
+                                <span class="material-icons" data-icon="add"></span>
                             </div>
                         </div>
                     </div>
@@ -306,6 +334,38 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }, 100);
             }
+        } else if (n === 'dark-mode') {
+            // Toggle dark mode
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            // Cambiar el tema
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('bar-galileo-theme', newTheme);
+
+            // Actualizar estado
+            t.states['dark-mode'] = newTheme === 'dark';
+            a.classList.toggle("asw-selected", t.states['dark-mode']);
+            a.setAttribute("aria-pressed", t.states['dark-mode'] ? "true" : "false");
+
+            // Actualizar el texto del botón
+            const icon = a.querySelector('.material-icons');
+            const textNode = icon.nextSibling;
+            if (newTheme === 'dark') {
+                icon.setAttribute('data-icon', 'brightness_5');
+                textNode.nodeValue = 'Modo Claro';
+                a.setAttribute('aria-label', 'Modo Claro');
+                a.setAttribute('title', 'Modo Claro');
+            } else {
+                icon.setAttribute('data-icon', 'nightlight');
+                textNode.nodeValue = 'Modo Oscuro';
+                a.setAttribute('aria-label', 'Modo Oscuro');
+                a.setAttribute('title', 'Modo Oscuro');
+            }
+
+            // Actualizar colores del widget para que use las nuevas variables CSS
+            updateWidgetColors();
         } else {
             t.states[n] = !t.states[n];
             a.classList.toggle("asw-selected", t.states[n]);
@@ -792,6 +852,68 @@ document.addEventListener("DOMContentLoaded", function() {
             _aswSpeech.keyboardHandler = null;
         }
     }
+    // Función para actualizar los colores del widget con las variables CSS actuales
+    const updateWidgetColors = function() {
+        const menuBtn = document.querySelector('.asw-menu-btn');
+        const menu = document.querySelector('.asw-menu');
+        const menuHeader = document.querySelector('.asw-menu-header');
+        const footer = document.querySelector('.asw-footer');
+        const adjustFont = document.querySelector('.asw-adjust-font');
+        const buttons = document.querySelectorAll('.asw-btn');
+        const cardTitles = document.querySelectorAll('.asw-card-title');
+
+        if (menuBtn) {
+            menuBtn.style.background = getCSSVariable('--color-primary');
+            menuBtn.style.fill = getCSSVariable('--color-secondary');
+        }
+
+        if (menu) {
+            menu.style.background = getCSSVariable('--color-light');
+            menu.style.color = getCSSVariable('--color-accent');
+        }
+
+        if (menuHeader) {
+            menuHeader.style.background = getCSSVariable('--color-primary');
+        }
+
+        if (footer) {
+            footer.style.background = getCSSVariable('--color-primary');
+        }
+
+        if (adjustFont) {
+            adjustFont.style.background = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
+        }
+
+        buttons.forEach(btn => {
+            const isDarkModeBtn = btn.dataset.key === 'dark-mode';
+
+            if (!btn.classList.contains('asw-selected')) {
+                btn.style.background = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
+                btn.style.borderColor = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
+                btn.style.boxShadow = 'none';
+                btn.style.transform = 'none';
+            } else if (!isDarkModeBtn) {
+                // Asegurar que los botones seleccionados tengan el estilo destacado (excepto dark-mode)
+                const highlightColor = getCSSVariable('--color-secondary');
+                btn.style.setProperty('background', highlightColor, 'important');
+                btn.style.setProperty('border-color', highlightColor, 'important');
+                btn.style.setProperty('box-shadow', '0 0 0 3px rgba(166, 137, 50, 0.3), 0 4px 12px rgba(166, 137, 50, 0.5)', 'important');
+                btn.style.transform = 'scale(1.02)';
+            } else if (isDarkModeBtn) {
+                // Para el botón de dark-mode, solo mantener colores normales sin efectos especiales
+                btn.style.background = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
+                btn.style.borderColor = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
+                btn.style.boxShadow = 'none';
+                btn.style.transform = 'none';
+            }
+        });
+
+        cardTitles.forEach(title => {
+            // Modo oscuro: texto blanco, modo claro: texto gris oscuro
+            title.style.color = getCSSVariable('--color-accent') === '#ffffff' ? '#4a4a4a' : '#ffffff';
+        });
+    };
+
     const h = function(e, s) {
         let a = !1;
         !s && e && (a = e.currentTarget, s = parseFloat(t.states.fontSize) || 1, a.classList.contains("asw-minus") ? s -= .1 : s += .1, s = Math.max(s, .1), s = Math.min(s, 2), s = parseFloat(s.toFixed(2))), document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,a,dl,dt,li,ol,th,td,span").forEach((function(t) {
@@ -825,6 +947,43 @@ document.addEventListener("DOMContentLoaded", function() {
             h(t), e()
         }, !1)
     }), document.body.appendChild(r), s && (u(), 1 !== t.states.fontSize && h(null, t.states.fontSize), t.states.contrast && p(t.states.contrast));
+
+    // Inicializar tema desde localStorage
+    const savedTheme = localStorage.getItem('bar-galileo-theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        t.states['dark-mode'] = savedTheme === 'dark';
+    } else {
+        // Tema oscuro por defecto
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('bar-galileo-theme', 'dark');
+        t.states['dark-mode'] = true;
+    }
+
+    // Actualizar el botón de dark mode según el tema actual
+    const darkModeBtn = document.querySelector('[data-key="dark-mode"]');
+    if (darkModeBtn) {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const icon = darkModeBtn.querySelector('.material-icons');
+        const textNode = icon.nextSibling;
+
+        if (currentTheme === 'dark') {
+            darkModeBtn.classList.add('asw-selected');
+            darkModeBtn.setAttribute('aria-pressed', 'true');
+            icon.setAttribute('data-icon', 'brightness_5');
+            textNode.nodeValue = 'Modo Claro';
+            darkModeBtn.setAttribute('aria-label', 'Modo Claro');
+            darkModeBtn.setAttribute('title', 'Modo Claro');
+        } else {
+            icon.setAttribute('data-icon', 'nightlight');
+            textNode.nodeValue = 'Modo Oscuro';
+            darkModeBtn.setAttribute('aria-label', 'Modo Oscuro');
+            darkModeBtn.setAttribute('title', 'Modo Oscuro');
+        }
+    }
+
+    // Actualizar colores del widget según el tema
+    updateWidgetColors();
 
     // Restore read modes if they were active
     if (t.states['read-page']) {

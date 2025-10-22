@@ -1,6 +1,7 @@
 /* Centrar todas las tablas de administración */
 #tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas {
   margin: 0 auto !important;
+  width: 0 !important;
 }
 
 /* =======================================

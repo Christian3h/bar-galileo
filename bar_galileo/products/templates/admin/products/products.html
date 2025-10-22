@@ -79,7 +79,7 @@
         {% if request.user|has_perm:"products,crear" %}
             <a href="{% url 'products:products_create_admin' %}" class="btn btn-success mb-3">Crear Producto</a>
         {% endif %}
-        <p><a href="{% url 'products:products_archived_admin' %}" class="btn-secondary">Ver archivados</a></p>
+        <p><a href="{% url 'products:products_archived_admin' %}" class="btn btn-secondary">Ver archivados</a></p>
         
         <!-- Tabla con DataTables (AJAX) -->
         <div id="ajax-table-container" class="table-contenedor">
