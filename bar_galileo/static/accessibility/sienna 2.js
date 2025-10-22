@@ -67,10 +67,10 @@ document.addEventListener("DOMContentLoaded", function() {
     };
     let i = n([
             { label: "Readable Font", key: "readable-font", icon: "local_parking" },
-            { label: "Highlight Links", key: "highlight-links", icon: "link" },
-        { label: "Highlight Title", key: "highlight-title", icon: "title" },
+            { label: "Highlight Links", key: "highlight-links", icon: "edit" },
+        { label: "Highlight Title", key: "highlight-title", icon: "brightness_5" },
         { label: "Read Page", key: "read-page", icon: "record_voice_over" },
-        { label: "Read Full Page", key: "read-full", icon: "subscriptions" },
+        { label: "Read Full Page", key: "read-full", icon: "notifications" },
         { label: "Dark Mode", key: "dark-mode", icon: "nightlight" }
         ]),
         o = n([
@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .material-icons { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; }
         .material-icons[data-icon="local_parking"] { background-image: url('/static/img/icons/local_parking.svg'); }
         .material-icons[data-icon="link"] { background-image: url('/static/img/icons/link.svg'); }
+        .material-icons[data-icon="edit"] { background-image: url('/static/img/icons/edit.svg'); }
         .material-icons[data-icon="title"] { background-image: url('/static/img/icons/title.svg'); }
         .material-icons[data-icon="record_voice_over"] { background-image: url('/static/img/icons/record_voice_over.svg'); }
         .material-icons[data-icon="subscriptions"] { background-image: url('/static/img/icons/subscriptions.svg'); }
@@ -109,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .material-icons[data-icon="mouse"] { background-image: url('/static/img/icons/mouse.svg'); }
         .material-icons[data-icon="motion_photos_off"] { background-image: url('/static/img/icons/motion_photos_off.svg'); }
         .material-icons[data-icon="local_library"] { background-image: url('/static/img/icons/local_library.svg'); }
+        .material-icons[data-icon="notifications"] { background-image: url('/static/img/icons/notifications.svg'); }
         .asw-menu, .asw-menu-btn { position: fixed; left: 20px; transition: .3s; z-index: 500000; }
         .asw-widget { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-weight: 400; -webkit-font-smoothing: antialiased; }
         .asw-widget * { box-sizing: border-box; }

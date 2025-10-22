@@ -66,25 +66,25 @@ document.addEventListener("DOMContentLoaded", function() {
         return n
     };
     let i = n([
-            { label: "Readable Font", key: "readable-font", icon: "local_parking" },
-            { label: "Highlight Links", key: "highlight-links", icon: "link" },
-        { label: "Highlight Title", key: "highlight-title", icon: "title" },
+            { label: "Readable Font", key: "readable-font", icon: "format_size" },
+            { label: "Highlight Links", key: "highlight-links", icon: "edit" },
+        { label: "Highlight Title", key: "highlight-title", icon: "brightness_5" },
         { label: "Read Page", key: "read-page", icon: "record_voice_over" },
-        { label: "Read Full Page", key: "read-full", icon: "subscriptions" },
+        { label: "Read Full Page", key: "read-full", icon: "notifications" },
         { label: "Dark Mode", key: "dark-mode", icon: "nightlight" }
         ]),
         o = n([
-            { label: "Monochrome", key: "monochrome", icon: "filter_b_and_w" },
-            { label: "Low Saturation", key: "low-saturation", icon: "gradient" },
-            { label: "High Saturation", key: "high-saturation", icon: "filter_vintage" },
-            { label: "High Contrast", key: "high-contrast", icon: "tonality" },
+            { label: "Monochrome", key: "monochrome", icon: "monocromo" },
+            { label: "Low Saturation", key: "low-saturation", icon: "baja_saturacion" },
+            { label: "High Saturation", key: "high-saturation", icon: "alta_saturacion" },
+            { label: "High Contrast", key: "high-contrast", icon: "alto_contraste" },
             { label: "Light Contrast", key: "light-contrast", icon: "brightness_5" },
             { label: "Dark Contrast", key: "dark-contrast", icon: "nightlight" }
         ], "asw-filter"),
         l = n([
             { label: "Big Cursor", key: "big-cursor", icon: "mouse" },
-            { label: "Stop Animations", key: "stop-animations", icon: "motion_photos_off" },
-            { label: "Reading Guide", key: "readable-guide", icon: "local_library" }
+            { label: "Stop Animations", key: "stop-animations", icon: "animation" },
+            { label: "Reading Guide", key: "readable-guide", icon: "guia" }
         ], "asw-tools");
     var r = document.createElement("div");
     r.innerHTML = `
@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .material-icons { width: 24px; height: 24px; background-size: contain; background-repeat: no-repeat; background-position: center; }
         .material-icons[data-icon="local_parking"] { background-image: url('/static/img/icons/local_parking.svg'); }
         .material-icons[data-icon="link"] { background-image: url('/static/img/icons/link.svg'); }
+        .material-icons[data-icon="edit"] { background-image: url('/static/img/icons/edit.svg'); }
         .material-icons[data-icon="title"] { background-image: url('/static/img/icons/title.svg'); }
         .material-icons[data-icon="record_voice_over"] { background-image: url('/static/img/icons/record_voice_over.svg'); }
         .material-icons[data-icon="subscriptions"] { background-image: url('/static/img/icons/subscriptions.svg'); }
@@ -102,13 +103,17 @@ document.addEventListener("DOMContentLoaded", function() {
         .material-icons[data-icon="format_size"] { background-image: url('/static/img/icons/format_size.svg'); }
         .material-icons[data-icon="add"] { background-image: url('/static/img/icons/add.svg'); }
         .material-icons[data-icon="remove"] { background-image: url('/static/img/icons/remove.svg'); }
+        .material-icons[data-icon="monocromo"] { background-image: url('/static/img/icons/monocromo.svg'); }
+        .material-icons[data-icon="baja_saturacion"] { background-image: url('/static/img/icons/baja%20saturacion.svg'); }
+        .material-icons[data-icon="alta_saturacion"] { background-image: url('/static/img/icons/alta%20saturacion.svg'); }
+        .material-icons[data-icon="alto_contraste"] { background-image: url('/static/img/icons/alto_contraste.svg'); }
         .material-icons[data-icon="filter_b_and_w"] { background-image: url('/static/img/icons/filter_b_and_w.svg'); }
-        .material-icons[data-icon="gradient"] { background-image: url('/static/img/icons/gradient.svg'); }
-        .material-icons[data-icon="filter_vintage"] { background-image: url('/static/img/icons/filter_vintage.svg'); }
-        .material-icons[data-icon="tonality"] { background-image: url('/static/img/icons/tonality.svg'); }
         .material-icons[data-icon="mouse"] { background-image: url('/static/img/icons/mouse.svg'); }
         .material-icons[data-icon="motion_photos_off"] { background-image: url('/static/img/icons/motion_photos_off.svg'); }
+        .material-icons[data-icon="guia"] { background-image: url('/static/img/icons/guia.svg'); }
+        .material-icons[data-icon="animation"] { background-image: url('/static/img/icons/animation.svg'); }
         .material-icons[data-icon="local_library"] { background-image: url('/static/img/icons/local_library.svg'); }
+        .material-icons[data-icon="notifications"] { background-image: url('/static/img/icons/notifications.svg'); }
         .asw-menu, .asw-menu-btn { position: fixed; left: 20px; transition: .3s; z-index: 500000; }
         .asw-widget { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-weight: 400; -webkit-font-smoothing: antialiased; }
         .asw-widget * { box-sizing: border-box; }
