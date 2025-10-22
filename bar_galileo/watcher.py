@@ -22,7 +22,8 @@ def get_reload_dirs():
     # Agregar directorios de apps que existan
     app_dirs = [
         "core", "products", "tables", "notifications", 
-        "roles", "users", "admin_dashboard", "accounts"
+        "roles", "users", "admin_dashboard", "accounts",
+        "expenses", "facturacion", "nominas"
     ]
     
     for app_dir in app_dirs:
