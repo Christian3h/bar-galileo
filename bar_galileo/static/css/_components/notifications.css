@@ -18,8 +18,8 @@
 .alert-message {
   position: relative;
   padding: 1rem 2rem 1rem 1.5rem;
-  background-color: #323232; /* Color oscuro como base */
-  color:var(--color-secondary) !important;
+  background-color: var(--color-light) !important; /* Color oscuro como base */
+  color: var(--color-secondary) !important;
   border-left: 4px solid var(--color-primary); /* Verde para éxito */
   margin-bottom: 1rem;
   border-radius: 8px;

@@ -1,4 +1,158 @@
-@import '_components/selects.css';
+@import '../../_variables/_colors.css';
+@import '../../_components/selects.css';
+
+/* =======================================
+   ESTILOS ESPECÍFICOS DEL PANEL DE USUARIO
+======================================= */
+
+/* Avatar */
+.avatar-container {
+    margin-bottom: 15px;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-secondary);
+}
+
+.default-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: var(--color-secondary);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    border: 3px solid var(--color-secondary);
+}
+
+.avatar-management {
+    padding: 15px;
+    text-align: center;
+}
+
+/* Errores de formulario */
+.form-error {
+    color: var(--color-dark);
+    background: var(--color-light);
+    border: 1px solid var(--color-secondary);
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-top: 6px;
+    font-size: 0.95em;
+    font-weight: bold;
+    box-shadow: 0 0 8px var(--color-secondary);
+}
+
+/* Mensajes de éxito */
+.alert-success {
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    font-size: 1.1em;
+    font-weight: bold;
+    box-shadow: 0 0 16px var(--color-secondary);
+    padding: 18px 32px;
+    margin-bottom: 10px;
+    opacity: 1;
+    animation: fadeInOut 3.5s forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-20px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Tabla de historial */
+.history-table-container {
+    padding: 15px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--color-secondary);
+}
+
+.history-table th,
+.history-table td {
+    border: 1px solid var(--color-secondary);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.history-table th {
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
+}
+
+.history-table tbody tr:nth-child(odd) {
+    background-color: var(--color-light);
+}
+
+/* Botón de factura */
+.btn-factura {
+    color: var(--color-secondary);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-back {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: var(--color-secondary);
+    color: var(--color-light);
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* Navegación de usuario */
+.user-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.menu-btn {
+    background: none;
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+    text-align: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.menu-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.menu-btn:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-light);
+}
 
 /* Estilo para campos de formulario en columna, igual que tablas */
 .form-field-col {
@@ -8,7 +162,7 @@
     margin-bottom: 22px;
 }
 .form-label {
-    color: #A68932;
+    color: var(--color-secondary);
     font-weight: bold;
     font-size: 1.1em;
     margin-bottom: 10px;
@@ -17,9 +171,9 @@
 }
 /* Estilo para inputs y selects en formularios tipo panel */
 .info-input, .info-row input, .info-row select, .info-row textarea {
-    background: #262626;
-    color: #d4af37;
-    border: 2px solid #d4af37;
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
     border-radius: 6px;
     padding: 10px 16px;
     font-size: 1.1em;
@@ -28,13 +182,13 @@
     transition: border 0.3s;
 }
 .info-input:focus, .info-row input:focus, .info-row select:focus, .info-row textarea:focus {
-    border-color: #A68932;
+    border-color: var(--color-primary);
     outline: none;
 }
 .edit-form button, .edit-btn {
-    background: #181818;
-    color: #d4af37;
-    border: 2px solid #d4af37;
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
     border-radius: 6px;
     padding: 10px 32px;
     font-size: 1.1em;
@@ -44,14 +198,14 @@
     transition: background 0.3s, color 0.3s, border 0.3s;
 }
 .edit-form button:hover, .edit-btn:hover {
-    background: #d4af37;
-    color: #181818;
-    border: 2px solid #d4af37;
+    background: var(--color-secondary);
+    color: var(--color-light);
+    border: 2px solid var(--color-secondary);
 }
 .delete-btn {
-    background: #BF452A;
-    color: #fff;
-    border: 2px solid #d4af37;
+    background: var(--color-dark);
+    color: var(--color-light);
+    border: 2px solid var(--color-secondary);
     border-radius: 6px;
     padding: 10px 32px;
     font-size: 1.1em;
@@ -61,9 +215,9 @@
     transition: background 0.3s, color 0.3s, border 0.3s;
 }
 .delete-btn:hover {
-    background: #d4af37;
-    color: #BF452A;
-    border: 2px solid #BF452A;
+    background: var(--color-secondary);
+    color: var(--color-dark);
+    border: 2px solid var(--color-dark);
 }
 /* Mensajes tipo notificación */
 .messages {
@@ -75,47 +229,29 @@
     flex-direction: column;
     gap: 15px;
 }
-.alert-success {
-    background: #262626;
-    color: #A68932;
-    border: 2px solid #A68932;
-    border-radius: 12px;
-    font-size: 1.1em;
-    font-weight: bold;
-    box-shadow: 0 0 16px #A68932;
-    padding: 18px 32px;
-    margin-bottom: 10px;
-    opacity: 1;
-    animation: fadeInOut 3.5s forwards;
-}
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(-20px); }
-    10% { opacity: 1; transform: translateY(0); }
-    90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-20px); }
-}
+/* alert-success y fadeInOut ya están definidos arriba */
 /* Botones de formularios en panel de usuario */
 .edit-btn, .delete-btn {
     padding: 10px 22px;
     border: none;
     border-radius: 8px;
-        font-size: 1em;
-        font-weight: bold;
-        margin: 10px 8px 0 0;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 10px 8px 0 0;
     cursor: pointer;
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(34,139,34,0.08);
+    box-shadow: 0 2px 8px var(--color-shadow);
 }
 .edit-btn {
-        background: #262626;
-        color: #A68932;
-        border: 2px dashed #A68932;
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px dashed var(--color-secondary);
 }
 .edit-btn:hover {
-        background: #262626;
-        color: #A68932;
-        border: 2px solid #A68932;
-        box-shadow: 0 0 8px 0 #A68932;
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
+    box-shadow: 0 0 8px 0 var(--color-secondary);
 }
 .delete-btn {
     background: linear-gradient(135deg, #ff4d4d 60%, #ffb3b3 100%);
@@ -135,28 +271,28 @@
 }
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #262626 0%, #0D0D0D 100%);
+    background: linear-gradient(135deg, var(--color-light) 0%, var(--color-accent) 100%);
     min-height: 100vh;
     padding: 20px;
 }
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    background: #262626;
+    background: var(--color-light);
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(166, 137, 50, 0.15);
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1px solid #A68932;
+    border: 1px solid var(--color-secondary);
 }
 .header {
-    background: #262626;
-    color: #A68932;
+    background: var(--color-light);
+    color: var(--color-secondary);
     padding: 30px;
     text-align: left;
     position: relative;
     overflow: hidden;
-    border-bottom: 2px solid #A68932;
+    border-bottom: 2px solid var(--color-secondary);
 }
 .header::before {
     display: none;
@@ -184,18 +320,18 @@ body {
     padding: 30px;
 }
 .card {
-    background: #262626;
+    background: var(--color-light);
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 8px 16px rgba(166, 137, 50, 0.1);
     transition: all 0.3s ease;
-    border: 2px solid #A68932;
-    color: #A68932;
+    border: 2px solid var(--color-secondary);
+    color: var(--color-secondary);
 }
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 24px rgba(166, 137, 50, 0.15);
-    border-color: #A68932;
+    border-color: var(--color-secondary);
 }
 .card-header {
     display: flex;
@@ -216,27 +352,27 @@ body {
 .card-title {
     font-size: 1.5em;
     font-weight: bold;
-    color: #d4af37;
+    color: var(--color-secondary);
 }
 .current-bill {
-    background: linear-gradient(135deg, #d4af37, #f4d467);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 }
 .monthly-history {
-    background: linear-gradient(135deg, #d4af37, #1a1a1a);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-light));
 }
 .user-info {
-    background: linear-gradient(135deg, #d4af37, #1a1a1a);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-light));
 }
 .emergency-contact {
-    background: linear-gradient(135deg, #d4af37, #1a1a1a);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-light));
 }
 .bill-amount {
     font-size: 3em;
     font-weight: bold;
-    color: #d4af37;
+    color: var(--color-secondary);
     text-align: center;
     margin: 20px 0;
-    text-shadow: 2px 2px 4px rgba(212, 175, 55, 0.3);
+    text-shadow: 2px 2px 4px rgba(166, 137, 50, 0.3);
 }
 .bill-details {
     background: rgba(212, 175, 55, 0.07);
@@ -250,13 +386,13 @@ body {
     justify-content: space-between;
     margin-bottom: 10px;
     padding: 8px 0;
-    border-bottom: 1px solid rgba(34, 139, 34, 0.2);
-    color: #d4af37;
+    border-bottom: 1px solid var(--color-shadow);
+    color: var(--color-secondary);
 }
 .bill-item:last-child {
     border-bottom: none;
     font-weight: bold;
-    color: #d4af37;
+    color: var(--color-secondary);
 }
 .month-selector {
     display: flex;
@@ -266,32 +402,32 @@ body {
 }
 .month-btn {
     padding: 8px 16px;
-    border: 2px solid #d4af37;
-    background: rgba(212, 175, 55, 0.1);
-    color: #d4af37;
+    border: 2px solid var(--color-secondary);
+    background: var(--color-light);
+    color: var(--color-secondary);
     border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 500;
 }
 .month-btn:hover, .month-btn.active {
-    background: #d4af37;
-    color: #181818;
+    background: var(--color-secondary);
+    color: var(--color-light);
     transform: scale(1.05);
 }
 .history-chart {
     height: 200px;
-    background: linear-gradient(45deg, rgba(212, 175, 55, 0.07), rgba(20, 20, 20, 0.15));
+    background: var(--color-light);
     border-radius: 10px;
     display: flex;
     align-items: end;
     padding: 15px;
     gap: 8px;
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--color-shadow);
 }
 .chart-bar {
     flex: 1;
-    background: linear-gradient(to top, #d4af37, #f4d467);
+    background: linear-gradient(to top, var(--color-primary), var(--color-secondary));
     border-radius: 4px 4px 0 0;
     transition: all 0.3s ease;
     cursor: pointer;
@@ -323,65 +459,52 @@ body {
     justify-content: space-between;
     margin-bottom: 15px;
     padding: 10px;
-    background: rgba(212, 175, 55, 0.07);
+    background: var(--color-light);
     border-radius: 8px;
     transition: background 0.3s ease;
-    border: 1px solid rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--color-shadow);
 }
 .info-row:hover {
-    background: rgba(212, 175, 55, 0.15);
+    background: var(--color-accent);
 }
 .info-label {
     font-weight: bold;
-    color: #d4af37;
+    color: var(--color-secondary);
 }
 .info-value {
-    color: #d4af37;
+    color: var(--color-secondary);
 }
 .emergency-btn {
-    background: linear-gradient(135deg, #228b22, #006400);
-    color: white;
-    border: none;
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
     padding: 15px 30px;
     border-radius: 25px;
-        background: #262626;
-        color: #A68932;
-    color: #A68932;
     transition: all 0.3s ease;
     width: 100%;
     margin-top: 15px;
+    cursor: pointer;
 }
 .emergency-btn:hover {
-        background: #262626;
-        color: #A68932;
-        border: 2px dashed #A68932;
+    background: var(--color-secondary);
+    color: var(--color-light);
+    border: 2px dashed var(--color-secondary);
 }
 .status-indicator {
     display: inline-block;
     width: 12px;
     height: 12px;
-    background: #228b22;
+    background: var(--color-primary);
     border-radius: 50%;
     margin-right: 8px;
     animation: pulse 2s infinite;
 }
 @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(34, 139, 34, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(34, 139, 34, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(34, 139, 34, 0); }
+    0% { box-shadow: 0 0 0 0 var(--color-shadow); }
+    70% { box-shadow: 0 0 0 10px transparent; }
+    100% { box-shadow: 0 0 0 0 transparent; }
 }
-/* Estilos movidos desde panel de usuario.html */
-.form-error {
-  color: #BF452A;
-  background: #262626;
-  border: 1px solid #A68932;
-  border-radius: 6px;
-  padding: 6px 12px;
-  margin-top: 6px;
-  font-size: 0.95em;
-  font-weight: bold;
-  box-shadow: 0 0 8px #A68932;
-}
+/* Mensaje de error duplicado - ya está definido arriba con variables */
 
 /* =======================================
  * RESPONSIVE DESIGN

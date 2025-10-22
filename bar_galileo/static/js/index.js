@@ -26,26 +26,26 @@ let productosOriginales = 3; // Número de productos iniciales
 // Función para cargar más productos
 const cargarMasProductos = () => {
     if (isLoading) return;
-    
+
     isLoading = true;
     const loadingEl = document.getElementById('loading-productos');
     const btnMostrarMas = document.getElementById('mostrar-mas-productos');
     const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
-    
+
     if (loadingEl) loadingEl.style.display = 'block';
     if (btnMostrarMas) btnMostrarMas.style.display = 'none';
-    
+
     fetch(`/productos/ajax/?offset=${currentOffset}&limit=6`)
         .then(response => response.json())
         .then(data => {
             const productosGrid = document.getElementById('productos-grid');
-            
+
             data.productos.forEach(producto => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card producto-adicional';
-                
+
                 const imagenSrc = producto.imagen_url || 'https://via.placeholder.com/400x300?text=Sin+Imagen';
-                
+
                 productCard.innerHTML = `
                     <div class="product-carousel">
                         <img src="${imagenSrc}" class="product-img" alt="${producto.nombre}" />
@@ -57,21 +57,21 @@ const cargarMasProductos = () => {
                         <button class="btn-green" data-producto-id="${producto.id}">Ver producto</button>
                     </div>
                 `;
-                
+
                 productosGrid.appendChild(productCard);
             });
-            
+
             currentOffset += data.productos.length;
-            
+
             if (data.has_more) {
                 if (btnMostrarMas) btnMostrarMas.style.display = 'inline-block';
             } else {
                 if (btnMostrarMas) btnMostrarMas.style.display = 'none';
             }
-            
+
             // Mostrar botón "Mostrar menos productos"
             if (btnMostrarMenos) btnMostrarMenos.style.display = 'inline-block';
-            
+
             if (loadingEl) loadingEl.style.display = 'none';
             isLoading = false;
         })
@@ -88,16 +88,16 @@ const mostrarMenosProductos = () => {
     const productosGrid = document.getElementById('productos-grid');
     const btnMostrarMas = document.getElementById('mostrar-mas-productos');
     const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
-    
+
     // Eliminar todos los productos adicionales
     const productosAdicionales = productosGrid.querySelectorAll('.producto-adicional');
     productosAdicionales.forEach(producto => {
         producto.remove();
     });
-    
+
     // Resetear variables
     currentOffset = productosOriginales;
-    
+
     // Mostrar botón "Mostrar más" y ocultar "Mostrar menos"
     if (btnMostrarMas) btnMostrarMas.style.display = 'inline-block';
     if (btnMostrarMenos) btnMostrarMenos.style.display = 'none';
@@ -120,14 +120,39 @@ const initSmoothScrolling = () => {
 
 // Efecto del navbar al hacer scroll
 const initNavbarScrollEffect = () => {
-    window.addEventListener('scroll', function() {
-        const header = document.querySelector('.header');
+    const header = document.querySelector('.header');
+    const menu = document.getElementById('nav-menu');
+
+    const onScroll = () => {
+        if (!header) return;
         if (window.scrollY > 100) {
-            header.style.background = 'rgba(0,0,0,0.9)';
+            header.classList.add('scrolled');
         } else {
-            header.style.background = 'transparent';
+            header.classList.remove('scrolled');
         }
-    });
+    };
+
+    // toggle .menu-open when mobile menu is opened so styles can adapt
+    const observerMenu = () => {
+        if (!menu || !header) return;
+        const update = () => {
+            if (menu.classList.contains('show')) {
+                header.classList.add('menu-open');
+            } else {
+                header.classList.remove('menu-open');
+            }
+        };
+        // initial state
+        update();
+        // click toggle is handled elsewhere; also observe class changes
+        const mo = new MutationObserver(update);
+        mo.observe(menu, { attributes: true, attributeFilter: ['class'] });
+    };
+
+    window.addEventListener('scroll', onScroll);
+    // init on load
+    onScroll();
+    observerMenu();
 };
 
 // Botones del hero
@@ -175,11 +200,11 @@ const initButtonEffects = () => {
 const initProductsPagination = () => {
     const btnMostrarMas = document.getElementById('mostrar-mas-productos');
     const btnMostrarMenos = document.getElementById('mostrar-menos-productos');
-    
+
     if (btnMostrarMas) {
         btnMostrarMas.addEventListener('click', cargarMasProductos);
     }
-    
+
     if (btnMostrarMenos) {
         btnMostrarMenos.addEventListener('click', mostrarMenosProductos);
     }
@@ -193,12 +218,12 @@ const initNewsletter = () => {
             e.preventDefault();
             const emailInput = this.querySelector('.newsletter-input');
             const email = emailInput.value.trim();
-            
+
             if (email) {
                 // Aquí puedes agregar la lógica para enviar el email al backend
                 alert(`¡Gracias por suscribirte! Enviaremos novedades a: ${email}`);
                 emailInput.value = '';
-                
+
                 // Opcional: enviar datos al servidor
                 // fetch('/newsletter/subscribe/', {
                 //     method: 'POST',
@@ -235,7 +260,7 @@ const initSocialIcons = () => {
         icon.addEventListener('mouseenter', function() {
             this.style.transform = 'translateY(-3px) scale(1.1)';
         });
-        
+
         icon.addEventListener('mouseleave', function() {
             this.style.transform = 'translateY(0) scale(1)';
         });
@@ -271,10 +296,11 @@ let slides = [];
 let dots = [];
 
 const showSlide = (index) => {
+
     // Remove active class from all slides and dots
     slides.forEach(slide => slide.classList.remove('active'));
     dots.forEach(dot => dot.classList.remove('active'));
-    
+
     // Add active class to current slide and dot
     if (slides[index]) {
         slides[index].classList.add('active');
@@ -282,7 +308,7 @@ const showSlide = (index) => {
     if (dots[index]) {
         dots[index].classList.add('active');
     }
-    
+
     currentSlide = index;
 };
 
@@ -308,14 +334,16 @@ const initHeroCarousel = () => {
     // Define slides and dots after DOM is loaded
     slides = document.querySelectorAll('.hero-slide');
     dots = document.querySelectorAll('.hero-dot');
-    
+
+
     if (slides.length === 0) {
+        console.warn('⚠️ No hero slides found!');
         return;
     }
-    
+
     // Initialize first slide
     showSlide(0);
-    
+
     // Add click event to dots
     dots.forEach((dot, index) => {
         dot.addEventListener('click', () => {
@@ -324,14 +352,14 @@ const initHeroCarousel = () => {
             startCarousel();
         });
     });
-    
+
     // Pause carousel on hover
     const heroSection = document.querySelector('.hero');
     if (heroSection) {
         heroSection.addEventListener('mouseenter', stopCarousel);
         heroSection.addEventListener('mouseleave', startCarousel);
     }
-    
+
     // Start the carousel immediately
     startCarousel();
 };
@@ -344,9 +372,9 @@ const preloadHeroImages = () => {
         'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
         'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
         'https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-        'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=2070&q=80'
+        'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
     ];
-    
+
     imageUrls.forEach(url => {
         const img = new Image();
         img.src = url;
@@ -358,17 +386,17 @@ function formatPrice(price) {
     if (price === null || price === undefined || price === '') {
         return '$0';
     }
-    
+
     try {
         // Convertir a número y luego a entero para eliminar decimales
         const num = parseInt(price);
-        
+
         // Usar Intl.NumberFormat para formatear con separador de miles (punto)
-        const formatted = new Intl.NumberFormat('de-DE', { 
+        const formatted = new Intl.NumberFormat('de-DE', {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }).format(num);
-        
+
         // Retornar con símbolo de peso colombiano
         return `$${formatted}`;
     } catch (error) {
@@ -384,7 +412,6 @@ const init = () => {
     initSmoothScrolling();
     initNavbarScrollEffect();
     initHeroButtons();
-    initProductButtons();
     initButtonEffects();
     initProductsPagination();
     initNewsletter();
