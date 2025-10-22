@@ -70,6 +70,9 @@ INSTALLED_APPS = [
     #app para el manejo de las notificaciones
     'channels',
     'notifications',
+    #app para el manejo de backups
+    'dbbackup',
+    'backups',
     ]
 
 AUTHENTICATION_BACKENDS = [
@@ -100,7 +103,8 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, 'products', 'templates'),
                 os.path.join(BASE_DIR, 'core', 'templates'),
                 os.path.join(BASE_DIR, 'admin_dashboard', 'templates'),
-                os.path.join(BASE_DIR, 'notifications', 'templates')
+                os.path.join(BASE_DIR, 'notifications', 'templates'),
+                os.path.join(BASE_DIR, 'backups', 'templates')
                 ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -166,6 +170,27 @@ USE_TZ = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Configuración de storages para Django 5.2+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+    "dbbackup": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": str(BASE_DIR / "backups" / "backup_files" / "db"),
+        },
+    },
+    "mediabackup": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {
+            "location": str(BASE_DIR / "backups" / "backup_files" / "media"),
+        },
+    },
+}
 
 #lineas de codigo necesarias para que funcione django-allauth
 
@@ -232,3 +257,29 @@ CAPTCHA_LENGTH = 1
 CAPTCHA_IMAGE_SIZE = (225, 75)
 CAPTCHA_FONT_SIZE = 40
 CAPTCHA_FLITE_PATH = '/usr/bin/flite'
+
+# ==================== Configuración de Django-DBBackup ====================
+# Usar el storage "dbbackup" definido en STORAGES para base de datos
+DBBACKUP_STORAGE = 'dbbackup'
+
+# Usar el storage "mediabackup" definido en STORAGES para archivos media
+DBBACKUP_MEDIA_STORAGE = 'mediabackup'
+
+# Ruta de los archivos media a respaldar
+DBBACKUP_MEDIA_PATH = MEDIA_ROOT
+
+# Formato de nombres de archivos de backup (formato: 2025-10-19-123456.psql.gpg)
+DBBACKUP_FILENAME_TEMPLATE = '{datetime}.psql'
+DBBACKUP_MEDIA_FILENAME_TEMPLATE = '{datetime}.media.zip'# Limpieza automática - mantener solo los últimos 10 backups
+DBBACKUP_CLEANUP_KEEP = 10
+DBBACKUP_CLEANUP_KEEP_MEDIA = 10
+
+# Compresión de backups
+DBBACKUP_COMPRESS = True
+DBBACKUP_COMPRESSION_LEVEL = 6  # 1-9, donde 9 es la máxima compresión
+
+# Encriptación de backups con GNU Privacy Guard (GPG)
+# IMPORTANTE: Los backups SIEMPRE están encriptados para mayor seguridad
+DBBACKUP_ENCRYPTION = True
+DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+

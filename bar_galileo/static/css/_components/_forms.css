@@ -158,6 +158,6 @@ input[type="radio"] {
 
 @media (max-width: 600px){
     form{
-        padding: 0
+        padding-top: 0
     }
 }
