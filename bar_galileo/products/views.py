@@ -29,7 +29,7 @@ class ProductosJsonView(View):
         data = []
         for producto in productos:
             primera_imagen = producto.imagenes.first()
-            imagen_url = request.build_absolute_uri(f'/static/{primera_imagen.imagen}') if primera_imagen else ''
+            imagen_url = request.build_absolute_uri(f'/media/{primera_imagen.imagen}') if primera_imagen else ''
 
             # Obtener el stock actual de la tabla Stock
             ultimo_stock = producto.stocks.order_by('-fecha_hora').first()
@@ -822,18 +822,18 @@ class ProductoDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         producto_actual = self.object
-        
+
         # Obtener productos relacionados (misma marca, excluyendo el producto actual) y solo activos
         productos_relacionados = Producto.objects.filter(
             id_marca=producto_actual.id_marca, activo=True
         ).exclude(
             id_producto=producto_actual.id_producto
         )[:4]
-        
+
         context['productos_relacionados'] = productos_relacionados
         return context
 
-@method_decorator(permission_required('products', 'ver'), name='dispatch')
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
 class ProductosArchivadosAdminView(TemplateView):
     template_name = "admin/products/products_archived.html"
 

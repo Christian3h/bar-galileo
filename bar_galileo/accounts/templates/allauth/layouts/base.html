@@ -10,6 +10,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
         <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
+        <link rel="stylesheet" href="{% static 'css/theme-apply.css' %}">
         <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
         <link rel="stylesheet" href="{% static 'css/main/auth/avatar.css' %}">
         <title>
@@ -76,6 +77,10 @@
         {% block extra_body %}
         {% endblock extra_body %}
 
+
+        <script src="{% static 'accessibility/sienna.js' %}"></script>
+        <script src="{% static 'accessibility/custom.js' %}"></script>
+
         <script src="{% static 'js/admin/notification_history.js' %}"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -89,5 +94,7 @@
                 }
             });
         </script>
+
+
     </body>
 </html>
