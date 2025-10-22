@@ -29,7 +29,7 @@ class ProductosJsonView(View):
         data = []
         for producto in productos:
             primera_imagen = producto.imagenes.first()
-            imagen_url = request.build_absolute_uri(f'/static/{primera_imagen.imagen}') if primera_imagen else ''
+            imagen_url = request.build_absolute_uri(f'/media/{primera_imagen.imagen}') if primera_imagen else ''
 
             # Obtener el stock actual de la tabla Stock
             ultimo_stock = producto.stocks.order_by('-fecha_hora').first()
