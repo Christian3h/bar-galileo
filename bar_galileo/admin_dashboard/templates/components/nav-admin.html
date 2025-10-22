@@ -137,7 +137,7 @@
 
                 {% if request.user|has_perm:"backups,ver" %}
                 <li>
-                                        <button class="menu-btn" onclick="toggleMenu('backups-submenu')"><img src="{% static 'img/icons/payments.svg' %}" alt="Backups"> Backups</button>
+                                        <button class="menu-btn" onclick="toggleMenu('backups-submenu')"><img src="{% static 'img/icons/backup.svg' %}" alt="Backups"> Backups</button>
                     <ul id="backups-submenu" class="submenu hidden">
                         <li><a href="{% url 'backups:backup_list' %}">Gestión de Backups</a></li>
                     </ul>
