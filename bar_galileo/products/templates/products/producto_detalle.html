@@ -48,10 +48,10 @@
 {% block content %}
 <div class="detalle-container">
     <div class="gallery-container">
-        <img id="mainProductImage" src="{% static producto.imagenes.first.imagen %}" class="main-image-display" alt="{{ producto.nombre }}">
+        <img id="mainProductImage" src="{{ producto.imagenes.first.imagen.url }}" class="main-image-display" alt="{{ producto.nombre }}">
         <div class="thumbnail-container">
             {% for imagen in producto.imagenes.all %}
-                <img src="{% static imagen.imagen %}" class="product-thumbnail {% if forloop.first %}active{% endif %}" alt="Thumbnail {{ forloop.counter }}">
+                <img src="{{ imagen.imagen.url }}" class="product-thumbnail {% if forloop.first %}active{% endif %}" alt="Thumbnail {{ forloop.counter }}">
             {% endfor %}
         </div>
     </div>
@@ -76,7 +76,7 @@
         {% for prod_relacionado in productos_relacionados %}
             <div class="product-card">
                 {% if prod_relacionado.imagenes.exists %}
-                    <img src="{% static prod_relacionado.imagenes.first.imagen %}" class="product-img" alt="{{ prod_relacionado.nombre }}">
+                    <img src="{{ prod_relacionado.imagenes.first.imagen.url }}" class="product-img" alt="{{ prod_relacionado.nombre }}">
                 {% else %}
                     <img src="https://via.placeholder.com/400x300?text=Sin+Imagen" class="product-img" alt="{{ prod_relacionado.nombre }}">
                 {% endif %}

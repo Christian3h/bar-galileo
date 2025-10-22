@@ -545,8 +545,10 @@ body {
     }
 
     .dashboard {
-        padding: 15px;
         gap: 15px;
+        display: flex;
+        flex-direction: column;
+        align-content: center;
     }
 
     .card {

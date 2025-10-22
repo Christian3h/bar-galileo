@@ -107,9 +107,9 @@
         <div class="image-grid" id="image-grid">
             {% for imagen in object.imagenes.all %}
                 <div class="image-container" id="image-container-{{ imagen.id_imagen }}">
-                    <img src="{% static imagen.imagen %}" class="img-thumbnail">
+                    <img src="{{ imagen.imagen.url }}" class="img-thumbnail">
                     <div class="image-actions">
-                        <button type="button" class="btn btn-sm btn-info maximize-image-btn" data-src="{% static imagen.imagen %}">🔍</button>
+                        <button type="button" class="btn btn-sm btn-info maximize-image-btn" data-src="{{ imagen.imagen.url }}">🔍</button>
                         <button type="button" class="btn btn-sm btn-danger delete-image-btn" data-id="{{ imagen.id_imagen }}" data-delete-url="{% url 'products:producto_imagen_eliminar_api' imagen.id_imagen %}">🗑️</button>
                     </div>
                 </div>
@@ -136,7 +136,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const imageGrid = document.getElementById('image-grid');
-    
+
     // Elementos del modal de maximizar imagen
     const imageViewerModal = document.getElementById('imageViewerModal');
     const viewerModalImage = document.getElementById('viewerModalImage');
@@ -198,9 +198,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (imageGrid) {
         imageGrid.addEventListener('click', function(event) {
-            const target = event.target.closest('button'); 
+            const target = event.target.closest('button');
 
-            if (!target) return; 
+            if (!target) return;
 
             // --- Manejar clic en el botón de eliminar ---
             if (target.classList.contains('delete-image-btn')) {

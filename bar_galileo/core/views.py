@@ -8,14 +8,14 @@ from django.db.models import Q
 
 # Create your views here.
 
-class indexView(ListView): 
+class indexView(ListView):
     model = Producto
     template_name = 'index.html'
     context_object_name = 'productos'
-    
+
     def get_queryset(self):
         return Producto.objects.filter(activo=True)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['productos_iniciales'] = Producto.objects.filter(activo=True)[:3]
@@ -26,18 +26,18 @@ class ProductosAjaxView(View):
     def get(self, request):
         offset = int(request.GET.get('offset', 0))
         limit = int(request.GET.get('limit', 6))
-        
+
         qs = Producto.objects.filter(activo=True)
         productos = qs.order_by('nombre')[offset:offset + limit]
         total_productos = qs.count()
-        
+
         productos_data = []
         for producto in productos:
             imagen_url = None
             if producto.imagenes.exists():
                 primera_imagen = producto.imagenes.first()
-                imagen_url = f"/static/{primera_imagen.imagen}"
-            
+                imagen_url = f"/media/{primera_imagen.imagen}"
+
             productos_data.append({
                 'id': producto.id_producto,
                 'nombre': producto.nombre,
@@ -45,7 +45,7 @@ class ProductosAjaxView(View):
                 'descripcion': producto.descripcion,
                 'imagen_url': imagen_url,
             })
-        
+
         return JsonResponse({
             'productos': productos_data,
             'has_more': (offset + limit) < total_productos,
@@ -64,10 +64,10 @@ class StoreView(ListView):
         marca = self.request.GET.get('marca')
         min_precio = self.request.GET.get('min_precio')
         max_precio = self.request.GET.get('max_precio')
-        
+
         if categoria:
             queryset = queryset.filter(id_categoria__nombre_categoria=categoria)
-        
+
         if marca:
             queryset = queryset.filter(id_marca__marca=marca)
 
@@ -77,7 +77,7 @@ class StoreView(ListView):
             queryset = queryset.filter(precio_venta__gte=min_precio)
         elif max_precio:
             queryset = queryset.filter(precio_venta__lte=max_precio)
-            
+
         return queryset
 
     def get_context_data(self, **kwargs):
