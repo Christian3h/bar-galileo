@@ -46,6 +46,11 @@
     background-image: url('/static/img/icons/link.svg');
 }
 
+.material-icons.icon-edit::before { content: ''; }
+.material-icons.icon-edit {
+    background-image: url('/static/img/icons/edit.svg');
+}
+
 .material-icons.icon-title::before { content: ''; }
 .material-icons.icon-title {
     background-image: url('/static/img/icons/title.svg');
@@ -119,4 +124,9 @@
 .material-icons.icon-local_library::before { content: ''; }
 .material-icons.icon-local_library {
     background-image: url('/static/img/icons/local_library.svg');
+}
+
+.material-icons.icon-notifications::before { content: ''; }
+.material-icons.icon-notifications {
+    background-image: url('/static/img/icons/notifications.svg');
 }
