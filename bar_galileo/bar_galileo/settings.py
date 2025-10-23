@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import ssl
 from django.core.management.utils import get_random_secret_key
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -220,12 +221,34 @@ LOGIN_REDIRECT_URL = '/'
 
 #---------------------- credenciales para enviar correos
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('emailHost')
-EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
+# Configuración condicional de email
+if DEBUG:
+    # Para desarrollo: mostrar emails en la consola
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # Para producción: usar SMTP
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.getenv('emailHost')
+    EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
+
+# Si quieres forzar el uso de SMTP en desarrollo, descomenta las siguientes líneas:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.getenv('emailHost')
+# EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
+
+# Configuración SSL para macOS y Python 3.13
+EMAIL_SSL_CERTFILE = None
+EMAIL_SSL_KEYFILE = None
+
+# Solo para desarrollo - permitir certificados no verificados
+if DEBUG:
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 # Endpoints de seguridad para producción
 if not DEBUG:
