@@ -1,0 +1,170 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <style>
+    .delete-card {
+      background: var(--card-bg, #262626);
+      border: 2px solid #e74c3c;
+      border-radius: 8px;
+      padding: 30px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .delete-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .delete-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: #e74c3c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .delete-icon img {
+      width: 40px;
+      height: 40px;
+      filter: invert(1);
+    }
+    
+    .delete-header h2 {
+      color: #e74c3c;
+      margin: 0 0 10px 0;
+    }
+    
+    .delete-warning {
+      color: #f39c12;
+      font-weight: 600;
+    }
+    
+    .delete-info {
+      background: var(--input-bg, #1a1a1a);
+      border: 1px solid var(--border-color, #444);
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .delete-info h3 {
+      color: var(--primary-color, #d4af37);
+      margin: 0 0 15px 0;
+      font-size: 1.2rem;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-color, #333);
+    }
+    
+    .info-item:last-child {
+      border-bottom: none;
+    }
+    
+    .info-label {
+      color: #888;
+      font-weight: 600;
+    }
+    
+    .info-value {
+      color: var(--text-color, #fff);
+      text-align: right;
+    }
+    
+    .delete-actions {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .delete-actions .btn {
+      flex: 1;
+    }
+    
+    @media (max-width: 768px) {
+      .delete-card {
+        padding: 20px;
+      }
+      .delete-actions {
+        flex-direction: column-reverse;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Eliminar Reporte</h2>
+    
+    <div class="delete-card">
+        <div class="delete-header">
+            <div class="delete-icon">
+                <img src="{% static 'img/icons/warning.svg' %}" alt="Advertencia">
+            </div>
+            <h2>¿Estás seguro?</h2>
+            <p class="delete-warning">Esta acción no se puede deshacer</p>
+        </div>
+        
+        <div class="delete-info">
+            <h3>Información del Reporte a Eliminar</h3>
+            
+            <div class="info-item">
+                <span class="info-label">Nombre:</span>
+                <span class="info-value">{{ reporte.nombre }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Tipo:</span>
+                <span class="info-value">{{ reporte.get_tipo_display }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Periodo:</span>
+                <span class="info-value">{{ reporte.fecha_inicio|date:"d/m/Y" }} - {{ reporte.fecha_fin|date:"d/m/Y" }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Creado por:</span>
+                <span class="info-value">{{ reporte.creado_por.username }}</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Fecha de creación:</span>
+                <span class="info-value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</span>
+            </div>
+            
+            {% if reporte.archivo %}
+            <div class="info-item">
+                <span class="info-label">Archivo adjunto:</span>
+                <span class="info-value">Sí</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <p style="text-align: center; color: #888; margin-bottom: 20px;">
+            Al confirmar, se eliminará permanentemente este reporte y todos sus datos asociados.
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="delete-actions">
+                <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">
+                    <img src="{% static 'img/icons/close.svg' %}" alt="Cancelar" style="width: 16px; height: 16px; filter: invert(1);">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width: 16px; height: 16px; filter: invert(1);">
+                    Sí, Eliminar Reporte
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

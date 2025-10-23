@@ -67,12 +67,13 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    #app para el manejo de las notificaciones
-    'channels',
+    #app para el manejo de las notificaciones (sin websockets obligatorios)
     'notifications',
     #app para el manejo de backups
     'dbbackup',
     'backups',
+    #app para el manejo de reportes
+    'reportes',
     ]
 
 AUTHENTICATION_BACKENDS = [
@@ -104,7 +105,8 @@ TEMPLATES = [
                 os.path.join(BASE_DIR, 'core', 'templates'),
                 os.path.join(BASE_DIR, 'admin_dashboard', 'templates'),
                 os.path.join(BASE_DIR, 'notifications', 'templates'),
-                os.path.join(BASE_DIR, 'backups', 'templates')
+                os.path.join(BASE_DIR, 'backups', 'templates'),
+                os.path.join(BASE_DIR, 'reportes', 'templates')
                 ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -242,15 +244,8 @@ if not DEBUG:
 # ALLOWED_HOSTS se lee desde entorno arriba
 
 
-# configuracion para el backend de las nofifaciones channels
-# Mantener solo la configuración correcta de WSGI/ASGI definida arriba
-
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
-    },
-}
+# Si en algún momento se reactivan websockets con Channels,
+# habilitar CHANNEL_LAYERS aquí. Por ahora no se requiere.
 
 # Captcha settings
 CAPTCHA_LENGTH = 1
