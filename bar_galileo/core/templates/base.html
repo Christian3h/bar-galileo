@@ -17,11 +17,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <link rel="stylesheet" href="{% static 'css/theme-apply.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard-loading.css' %}">
   <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
   {% block extra_css %}{% endblock %}
 
 </head>
 <body>
+  <!-- Pantalla de carga del Dashboard -->
+  <div id="dashboard-loading-screen" class="dashboard-loading-screen hidden">
+    <div class="loading-content">
+      <div class="loading-logo">
+        <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo Logo">
+      </div>
+      <div class="loading-text">
+        <h2>BAR GALILEO</h2>
+        <p>Cargando Dashboard...</p>
+      </div>
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+    </div>
+  </div>
+
   {% include 'components/notificaciones.html' %}
   <!-- Header -->
   <header class="header">
@@ -50,7 +67,7 @@
                 </div>
                 <a href="{% url 'users:panel_usuario' %}">Mi Panel</a>
                 {% if request.user|has_perm:"dashboard,ver" %}
-                <a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a>
+                <a href="{% url 'admin_dashboard:dashboard' %}" id="dashboard-link">Dashboard</a>
                 {% endif %}
                 <a href="{% url 'account_logout' %}">Cerrar sesión</a>
               </div>
@@ -157,6 +174,9 @@
       });
     });
   </script>
+  
+  <script src="{% static 'js/dashboard-loading.js' %}"></script>
+  
   {% block extra_js %}{% endblock %}
 
   <script src="{% static 'accessibility/sienna.js' %}"></script>
