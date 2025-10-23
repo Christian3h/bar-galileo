@@ -1,3 +1,10 @@
+/* Variables CSS para colores sincronizados */
+:root {
+  --loading-background-color: #0a0a0a; /* Color principal de las pantallas de carga */
+  --loading-text-primary: #ffd700; /* Color dorado para títulos */
+  --loading-text-secondary: #cccccc; /* Color gris para subtítulos */
+}
+
 /* Pantalla de carga del Dashboard */
 .dashboard-loading-screen {
   position: fixed;
@@ -5,7 +12,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #0a0a0a;
+  background: var(--loading-background-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,7 +62,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 2.5em;
   font-weight: 700;
-  color: #ffd700;
+  color: var(--loading-text-primary);
   margin: 0 0 10px 0;
   letter-spacing: 2px;
   text-shadow: 
@@ -67,7 +74,7 @@
 .loading-text p {
   font-family: 'Inter', sans-serif;
   font-size: 1.2em;
-  color: #cccccc;
+  color: var(--loading-text-secondary);
   margin: 0 0 30px 0;
   font-weight: 300;
   opacity: 0.8;
@@ -227,7 +234,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #0a0a0a;
+  background: var(--loading-background-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -255,3 +262,23 @@
   background: rgba(0, 0, 0, 0.8);
   z-index: -1;
 }
+
+/*
+INSTRUCCIONES PARA CAMBIAR COLORES DE TODAS LAS PANTALLAS DE CARGA:
+
+Para modificar el color de fondo de TODAS las pantallas de carga 
+(login, dashboard y navegación), solo cambia esta variable:
+
+--loading-background-color: #0a0a0a;
+
+Ejemplos de colores:
+- Negro: #0a0a0a (actual)
+- Azul oscuro: #1a1a2e
+- Verde oscuro: #16213e
+- Morado: #4a148c
+- Rojo: #d32f2f
+
+Para cambiar colores de texto:
+--loading-text-primary: #ffd700; (títulos)
+--loading-text-secondary: #cccccc; (subtítulos)
+*/
