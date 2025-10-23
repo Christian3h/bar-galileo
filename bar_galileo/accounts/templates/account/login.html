@@ -1,6 +1,7 @@
 {% extends "account/base_entrance.html" %}
 {% load i18n %}
 {% load allauth account %}
+{% load static %}
 {% block head_title %}
     {% trans "Sign In" %}
 {% endblock head_title %}
@@ -80,10 +81,29 @@
     {% endblock content %}
     {% block extra_body %}
         {{ block.super }}
+
+<!-- Pantalla de carga del Login -->
+<div id="login-loading-screen" class="dashboard-loading-screen hidden">
+    <div class="loading-content">
+        <div class="loading-logo">
+            <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo Logo">
+        </div>
+        <div class="loading-text">
+            <h2>BAR GALILEO</h2>
+            <p>Iniciando sesión...</p>
+        </div>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Solo funcionalidad del captcha aquí, la pantalla de carga se maneja en login-loading.js
     const captchaContainer = document.querySelector('#div_id_captcha');
 
+    // Funcionalidad del captcha
     if (captchaContainer) {
         // Get original elements
         const captchaLabel = captchaContainer.querySelector('label[for="id_captcha_1"]');
