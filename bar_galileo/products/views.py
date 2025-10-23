@@ -522,7 +522,9 @@ class ProductosAdminView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # En admin, mostrar todos para poder reactivar/archivar
-        context["products"] = Producto.objects.all()
+        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes').filter(activo=True).order_by('nombre')
+        context["products"] = productos
+        context["productos"] = productos  # Para compatibilidad
         return context
 
 @method_decorator(permission_required('products', 'crear'), name='dispatch')
