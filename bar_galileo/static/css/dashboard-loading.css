@@ -1,6 +1,6 @@
 /* Variables CSS para colores sincronizados */
 :root {
-  --loading-background-color: #0a0a0a; /* Color principal de las pantallas de carga */
+  --loading-background-color: #373636; /* Color principal de las pantallas de carga */
   --loading-text-primary: #ffd700; /* Color dorado para títulos */
   --loading-text-secondary: #cccccc; /* Color gris para subtítulos */
 }
@@ -250,35 +250,3 @@
   visibility: hidden;
   pointer-events: none;
 }
-
-/* Asegurar que la pantalla de carga esté sobre todo */
-#home-loading-screen::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: -1;
-}
-
-/*
-INSTRUCCIONES PARA CAMBIAR COLORES DE TODAS LAS PANTALLAS DE CARGA:
-
-Para modificar el color de fondo de TODAS las pantallas de carga 
-(login, dashboard y navegación), solo cambia esta variable:
-
---loading-background-color: #0a0a0a;
-
-Ejemplos de colores:
-- Negro: #0a0a0a (actual)
-- Azul oscuro: #1a1a2e
-- Verde oscuro: #16213e
-- Morado: #4a148c
-- Rojo: #d32f2f
-
-Para cambiar colores de texto:
---loading-text-primary: #ffd700; (títulos)
---loading-text-secondary: #cccccc; (subtítulos)
-*/
