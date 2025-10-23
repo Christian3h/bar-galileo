@@ -1,0 +1,221 @@
+/* Pantalla de carga del Dashboard */
+.dashboard-loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  backdrop-filter: blur(5px);
+}
+
+.dashboard-loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-content {
+  text-align: center;
+  color: white;
+  animation: fadeInUp 0.8s ease;
+  position: relative;
+}
+
+.loading-logo {
+  margin-bottom: 30px;
+  animation: logoFloat 2s ease-in-out infinite;
+  position: relative;
+}
+
+.loading-logo img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow: 
+    0 10px 30px rgba(255, 215, 0, 0.3),
+    0 0 50px rgba(255, 215, 0, 0.1),
+    inset 0 0 20px rgba(255, 215, 0, 0.1);
+  border: 3px solid #ffd700;
+  transition: transform 0.3s ease;
+}
+
+.loading-logo:hover img {
+  transform: scale(1.05);
+}
+
+.loading-text h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5em;
+  font-weight: 700;
+  color: #ffd700;
+  margin: 0 0 10px 0;
+  letter-spacing: 2px;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 215, 0, 0.3);
+  animation: textGlow 2s ease-in-out infinite alternate;
+}
+
+.loading-text p {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.2em;
+  color: #cccccc;
+  margin: 0 0 30px 0;
+  font-weight: 300;
+  opacity: 0.8;
+  animation: textFade 2s ease-in-out infinite alternate;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 215, 0, 0.2);
+  border-left: 4px solid #ffd700;
+  border-right: 4px solid #ffd700;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: relative;
+}
+
+.spinner::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 2px solid transparent;
+  border-top: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 50%;
+  animation: spin 2s linear infinite reverse;
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes textGlow {
+  0% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.5),
+      0 0 20px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    text-shadow: 
+      2px 2px 4px rgba(0, 0, 0, 0.5),
+      0 0 30px rgba(255, 215, 0, 0.6);
+  }
+}
+
+@keyframes textFade {
+  0% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Efectos adicionales para mejor experiencia */
+.loading-content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Animación de entrada más suave */
+.dashboard-loading-screen:not(.hidden) {
+  animation: screenFadeIn 0.5s ease;
+}
+
+@keyframes screenFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(5px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .loading-logo img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .loading-text h2 {
+    font-size: 2em;
+  }
+  
+  .loading-text p {
+    font-size: 1em;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+  }
+}
