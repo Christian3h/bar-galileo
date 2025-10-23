@@ -245,7 +245,7 @@ def user_list(request):
         profile.save()
         
         rol = Role.objects.get(id=rol_id)
-        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.name}'."
+        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.nombre}'."
         notificar_usuario(request.user, mensaje)
 
         return redirect('users:user_list')
