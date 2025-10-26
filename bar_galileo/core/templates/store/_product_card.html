@@ -4,7 +4,7 @@
 <div class="product-card">
     <div class="product-carousel">
         {% if producto.imagenes.exists %}
-            <img src="{% static producto.imagenes.first.imagen %}" class="product-img" alt="{{ producto.nombre }}" />
+            <img src="{{ producto.imagenes.first.imagen.url }}" class="product-img" alt="{{ producto.nombre }}" />
         {% else %}
             <img src="https://via.placeholder.com/400x300?text=Sin+Imagen" class="product-img" alt="{{ producto.nombre }}" />
         {% endif %}

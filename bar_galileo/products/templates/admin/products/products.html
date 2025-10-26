@@ -3,18 +3,20 @@
 {% load roles_tags %}
 
 {% block extra_css%}
-  <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
 {% endblock %}
 
 {% block content %}
+    <div class="container">
         <h1 class="my-4">Lista de Productos</h1>
         {% if request.user|has_perm:"products,crear" %}
-            <a href="{% url 'products:products_create_admin' %}" class="btn btn-success mb-3">Crear Producto</a>
+            <a href="{% url 'products:products_create_admin' %}" class="btn btn-success">Crear Producto</a>
+            <a href="{% url 'products:products_archived_admin' %}" class="btn btn-success">Ver archivados</a>
         {% endif %}
-        <p><a href="{% url 'products:products_archived_admin' %}" class="btn-secondary">Ver archivados</a></p>
+
         <div class="table-contenedor">
             <div class="table-responsive">
-                <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
+                <table id="tabla-productos" class="table table-striped table-bordered nowrap table-productos" style="width:100%">
                     <thead>
                         <tr>
                             <th class="col-1">Imagen</th>
@@ -36,7 +38,74 @@
             </div>
         </div>
 
+        <!-- Tabla fallback (estática) -->
+        <div id="static-table-container" class="table-contenedor simple-table" style="display: none;">
+            <div class="alert-info">
+                <strong>Nota:</strong> Mostrando tabla simplificada debido a problemas de conectividad.
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-productos">
+                    <thead>
+                        <tr>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Precio Venta</th>
+                            <th>Stock</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <tr>
+                            <td class="text-center">
+                                {% if producto.imagenes.exists %}
+                                    <img src="{% static producto.imagenes.first.imagen %}" alt="Imagen" style="max-width:60px; max-height:60px; object-fit: cover;">
+                                {% else %}
+                                    <div style="width:60px; height:60px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:12px;">Sin imagen</div>
+                                {% endif %}
+                            </td>
+                            <td>{{ producto.nombre }}</td>
+                            <td class="text-right">${{ producto.precio_venta|floatformat:0 }}</td>
+                            <td class="text-center">
+                                {{ producto.stock }}
+                                {% if producto.stock <= 0 %}
+                                    <span class="badge bg-danger">Sin stock</span>
+                                {% elif producto.stock <= 10 %}
+                                    <span class="badge bg-warning">Bajo</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ producto.id_categoria.nombre_categoria|default:"Sin categoría" }}</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    {% if request.user|has_perm:"products,editar" %}
+                                        <a href="{% url 'products:products_edit_admin' producto.id_producto %}" class="btn btn-sm btn-warning" title="Editar {{ producto.nombre }}">
+                                            <img src="{% static 'img/icons/edit.svg' %}" alt="Editar" style="width:16px; height:16px;">
+                                        </a>
+                                    {% endif %}
+                                    {% if request.user|has_perm:"products,eliminar" %}
+                                        <a href="{% url 'products:producto_eliminar' producto.id_producto %}" class="btn btn-sm btn-danger" title="Eliminar {{ producto.nombre }}">
+                                            <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width:16px; height:16px;">
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No hay productos registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
+
+{% endblock %}
+
+{% block extra_js %}
     <script>
     // Permisos del usuario
     const canEdit = {% if request.user|has_perm:"products,editar" %}true{% else %}false{% endif %};
@@ -46,80 +115,224 @@
 
     $(document).ready(function() {
         var sel = '#tabla-productos';
-        if (!$(sel).length) return;
+        var ajaxContainer = $('#ajax-table-container');
+        var staticContainer = $('#static-table-container');
+
+        if (!$(sel).length) {
+            console.error('No se encontró la tabla #tabla-productos');
+            showFallbackTable();
+            return;
+        }
+
+        // Función para mostrar tabla de fallback
+        function showFallbackTable() {
+            ajaxContainer.hide();
+            staticContainer.show();
+
+            // Aplicar DataTables simple a la tabla estática
+            const staticTable = staticContainer.find('table');
+            if (staticTable.length) {
+                staticTable.DataTable({
+                    responsive: true,
+                    language: {
+                        url: "{% static 'js/DataTables/es-ES.json' %}"
+                    },
+                    pageLength: 25,
+                    order: [[1, 'asc']],
+                    columnDefs: [
+                        { targets: [0, 5], orderable: false }
+                    ]
+                });
+            }
+        }
+
+        // Destruir instancia previa si existe
         if ($.fn.dataTable.isDataTable(sel)) {
             $(sel).DataTable().destroy();
         }
-        // Inicializar DataTables con la opción de responsividad
-        $(sel).DataTable({
-            responsive: true,
-            columnDefs: [
-                { targets: '_all', defaultContent: '' }
-            ],
-            "ajax": {
-                "url": "/api/productos/",
-                "dataSrc": "data"
+
+        // Verificar conectividad con la API
+        $.ajax({
+            url: "{% url 'products:productos_json' %}",
+            method: 'GET',
+            timeout: 5000,
+            success: function(data) {
+                // La API funciona, inicializar DataTables con AJAX
+                initializeAjaxTable();
             },
-            "columns": [
-                {
-                    data: "imagen_url",
-                    render: function(data, type, row) {
-                        if (data) {
-                            return `<img src="${data}" alt="Imagen" style="max-width:60px; max-height:60px;">`;
-                        } else {
-                            return "Sin imagen";
-                        }
-                    },
-                    orderable: false,
-                    className: 'col-1'
-                },
-                { "data": "nombre", className: 'col-2' },
-                {
-                    data: "precio_compra",
-                    render: function(data, type, row) {
-                        const formatted = new Intl.NumberFormat('de-DE', {
-                            style: 'decimal',
-                            minimumFractionDigits: 0
-                        }).format(data);
-                        return `${formatted}`;
-                    },
-                    className: 'col-3'
-                },
-                {
-                    data: "precio_venta",
-                    render: function(data, type, row) {
-                        const formatted = new Intl.NumberFormat('de-DE', {
-                            style: 'decimal',
-                            minimumFractionDigits: 0
-                        }).format(data);
-                        return `${formatted}`;
-                    },
-                    className: 'col-4'
-                },
-                { "data": "stock", className: 'col-5' },
-                { "data": "descripcion", className: 'col-6' },
-                { "data": "categoria", className: 'col-7' },
-                { "data": "proveedor", className: 'col-8' },
-                { "data": "marca", className: 'col-9' },
-                {
-                    data: null,
-                    render: function (data, type, row) {
-                        let buttons = '';
-                        if (canEdit) {
-                            buttons += `<a href="/adminD/products/update/${row.id}/" class="btn btn-sm btn-warning"><img src="${editIconUrl}" alt="Editar"></a> `;
-                        }
-                        if (canDelete) {
-                            buttons += `<a href="/adminD/products/delete/${row.id}/" class="btn btn-sm btn-danger"><img src="${deleteIconUrl}" alt="Eliminar"></a>`;
-                        }
-                        return buttons;
-                    },
-                    orderable: false
-                }
-            ],
-            language: {
-                url: "{% static 'js/DataTables/es-ES.json' %}"
+            error: function(xhr, status, error) {
+                console.warn('API no disponible, usando tabla estática:', error);
+                showFallbackTable();
             }
         });
+
+        function initializeAjaxTable() {
+            // Inicializar DataTables con la opción de responsividad
+            const table = $(sel).DataTable({
+                processing: true,
+                serverSide: false,
+                responsive: true,
+                autoWidth: false,
+                columnDefs: [
+                    { targets: '_all', defaultContent: '' },
+                    { targets: [0], orderable: false, width: '80px' }, // Imagen
+                    { targets: [9], orderable: false, width: '120px' }  // Acciones
+                ],
+                ajax: {
+                    url: "{% url 'products:productos_json' %}",
+                    dataSrc: "data",
+                    error: function(xhr, error, thrown) {
+                        console.error('Error cargando datos AJAX:', error, thrown);
+                        // Cambiar a tabla estática en caso de error
+                        showFallbackTable();
+                    }
+                },
+                columns: [
+                    {
+                        data: "imagen_url",
+                        name: "imagen",
+                        render: function(data, type, row) {
+                            if (data && data !== '') {
+                                return `<img src="${data}" alt="Imagen de ${row.nombre}" style="max-width:60px; max-height:60px; object-fit: cover; border-radius: 4px;">`;
+                            } else {
+                                return '<div style="width:60px; height:60px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:12px;">Sin imagen</div>';
+                            }
+                        },
+                        orderable: false,
+                        className: 'text-center col-1'
+                    },
+                    {
+                        data: "nombre",
+                        name: "nombre",
+                        className: 'col-2',
+                        render: function(data, type, row) {
+                            return data ? data : 'Sin nombre';
+                        }
+                    },
+                    {
+                        data: "precio_compra",
+                        name: "precio_compra",
+                        render: function(data, type, row) {
+                            if (!data || data === '' || data === '0') return '$0';
+                            const num = parseFloat(data);
+                            if (isNaN(num)) return '$0';
+                            return '$' + num.toLocaleString('es-CO', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2
+                            });
+                        },
+                        className: 'text-right col-3'
+                    },
+                    {
+                        data: "precio_venta",
+                        name: "precio_venta",
+                        render: function(data, type, row) {
+                            if (!data || data === '' || data === '0') return '$0';
+                            const num = parseFloat(data);
+                            if (isNaN(num)) return '$0';
+                            return '$' + num.toLocaleString('es-CO', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 2
+                            });
+                        },
+                        className: 'text-right col-4'
+                    },
+                    {
+                        data: "stock",
+                        name: "stock",
+                        className: 'text-center col-5',
+                        render: function(data, type, row) {
+                            const stock = data || 0;
+                            let badge = '';
+                            if (stock <= 0) {
+                                badge = '<span class="badge bg-danger">Sin stock</span>';
+                            } else if (stock <= 10) {
+                                badge = '<span class="badge bg-warning">Bajo</span>';
+                            }
+                            return `${stock} ${badge}`;
+                        }
+                    },
+                    {
+                        data: "descripcion",
+                        name: "descripcion",
+                        className: 'col-6',
+                        render: function(data, type, row) {
+                            if (!data || data === '') return 'Sin descripción';
+                            return data.length > 50 ? data.substring(0, 50) + '...' : data;
+                        }
+                    },
+                    {
+                        data: "categoria",
+                        name: "categoria",
+                        className: 'col-7',
+                        render: function(data, type, row) {
+                            return data || 'Sin categoría';
+                        }
+                    },
+                    {
+                        data: "proveedor",
+                        name: "proveedor",
+                        className: 'col-8',
+                        render: function(data, type, row) {
+                            return data || 'Sin proveedor';
+                        }
+                    },
+                    {
+                        data: "marca",
+                        name: "marca",
+                        className: 'col-9',
+                        render: function(data, type, row) {
+                            return data || 'Sin marca';
+                        }
+                    },
+                    {
+                        data: null,
+                        name: "acciones",
+                        render: function (data, type, row) {
+                            let buttons = '<div class="btn-group" role="group">';
+                            if (canEdit) {
+                                const editUrl = "{% url 'products:products_edit_admin' 0 %}".replace('0', row.id);
+                                buttons += `<a href="${editUrl}" class="btn btn-sm btn-warning" title="Editar ${row.nombre}">
+                                    <img src="${editIconUrl}" alt="Editar" style="width:16px; height:16px;">
+                                </a>`;
+                            }
+                            if (canDelete) {
+                                const deleteUrl = "{% url 'products:producto_eliminar' 0 %}".replace('0', row.id);
+                                buttons += `<a href="${deleteUrl}" class="btn btn-sm btn-danger" title="Eliminar ${row.nombre}">
+                                    <img src="${deleteIconUrl}" alt="Eliminar" style="width:16px; height:16px;">
+                                </a>`;
+                            }
+                            buttons += '</div>';
+                            return buttons || '<span class="text-muted">Sin acciones</span>';
+                        },
+                        orderable: false,
+                        className: 'text-center'
+                    }
+                ],
+                language: {
+                    url: "{% static 'js/DataTables/es-ES.json' %}"
+                },
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                order: [[1, 'asc']], // Ordenar por nombre por defecto
+                initComplete: function() {
+                    console.log('Tabla AJAX inicializada correctamente');
+                }
+            });
+
+            // Recargar datos cuando regrese de crear/editar
+            $(window).on('focus', function() {
+                if (table) {
+                    table.ajax.reload(null, false);
+                }
+            });
+
+            // Manejar errores de carga
+            table.on('error.dt', function(e, settings, techNote, message) {
+                console.error('DataTables error:', message);
+                showFallbackTable();
+            });
+        }
     });
     </script>
 

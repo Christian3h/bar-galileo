@@ -26,10 +26,10 @@
                             <td class="col-2">{{ categoria.descripcion }}</td>
                             <td>
                                 {% if request.user|has_perm:"categories,editar" %}
-                                    <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                    <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning" title="Editar categoría"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                                 {% endif %}
                                 {% if request.user|has_perm:"categories,eliminar" %}
-                                    <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger" title="Eliminar categoría"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
                                 {% endif %}
                             </td>
                         </tr>
