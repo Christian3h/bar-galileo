@@ -82,12 +82,14 @@ body {
 
 /* --- HERO --- */
 .hero {
+  position: relative;
   text-align: center;
   padding: 6rem 2rem 4rem 2rem;
   max-width: 900px;
   margin: 0 auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
   border-radius: 24px;
+  min-height: 80vh;
 }
 
 .badge {
@@ -328,6 +330,14 @@ body {
   .hero {
     padding: 3rem 1rem;
   }
+
+  .scroll-indicator {
+    bottom: 15px;
+  }
+
+  .scroll-text {
+    font-size: 0.75rem;
+  }
 }
 
 @media (max-width: 900px) {
@@ -347,3 +357,74 @@ body {
     font-size: 2.2rem;
   }
 }
+
+/* --- SCROLL INDICATOR --- */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  z-index: 100;
+}
+
+.scroll-indicator:hover {
+  opacity: 1;
+}
+
+.scroll-indicator.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.scroll-indicator .arrow {
+  width: 30px;
+  height: 30px;
+  border-left: 3px solid var(--color-white);
+  border-bottom: 3px solid var(--color-white);
+  transform: rotate(-45deg);
+  opacity: 0;
+  animation: scrollDown 1s infinite;
+}
+
+/* Animación en cascada */
+@keyframes scrollDown {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(-45deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(10px) rotate(-45deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px) rotate(-45deg);
+  }
+}
+
+/* Retrasos para el efecto en cascada */
+.scroll-indicator .arrow:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.scroll-indicator .arrow:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.scroll-indicator .arrow:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.scroll-indicator .arrow:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+

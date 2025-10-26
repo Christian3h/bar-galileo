@@ -39,6 +39,7 @@ urlpatterns = [
     path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
     path('expenses/', include(('expenses.urls', 'expenses'), namespace='expenses')),
     path('nominas/', include(('nominas.urls', 'nominas'), namespace='nominas')),
+    path('backups/', include(('backups.urls', 'backups'), namespace='backups')),
 
     # Evitar 404 para iconos solicitados en la raíz por navegadores
     path('favicon.ico', RedirectView.as_view(url=staticfiles_static('img/favicon/favicon.ico'), permanent=True)),

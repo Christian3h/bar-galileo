@@ -54,7 +54,7 @@ def editar_info(request):
     perfil.save()
     request.user.email = email
     request.user.save()
-    messages.success(request, '¡Información personal actualizada correctamente!')
+    notificar_usuario(request.user, '¡Información personal actualizada correctamente!')
     return redirect('users:panel_usuario')
 
 @require_POST
@@ -76,7 +76,7 @@ def borrar_info(request):
         emergencia.save()
     request.user.email = ''
     request.user.save()
-    messages.success(request, '¡Información personal y contacto de emergencia borrados correctamente!')
+    notificar_usuario(request.user, '¡Información personal y contacto de emergencia borrados correctamente!')
     return redirect('users:panel_usuario')
 
 @require_POST
@@ -122,7 +122,7 @@ def editar_emergencia(request):
     emergencia.sangre = sangre
     emergencia.alergias = alergias
     emergencia.save()
-    messages.success(request, '¡Contacto de emergencia actualizado correctamente!')
+    notificar_usuario(request.user, '¡Contacto de emergencia actualizado correctamente!')
     return redirect('users:panel_usuario')
 
 @require_POST
@@ -140,7 +140,7 @@ def borrar_emergencia(request):
         emergencia.alergias = ''
         emergencia.save()
         logger.warning(f"Emergencia borrada para perfil {perfil.id}: {emergencia.__dict__}")
-        messages.success(request, '¡Contacto de emergencia borrado correctamente!')
+        notificar_usuario(request.user, '¡Contacto de emergencia borrado correctamente!')
     else:
         logger.warning(f"No se encontró emergencia para perfil {perfil.id}")
     return redirect('users:panel_usuario')
@@ -153,23 +153,23 @@ def panel_usuario(request):
         if 'delete_avatar' in request.POST:
             if perfil.avatar:
                 perfil.avatar.delete(save=True)
-                messages.success(request, '¡Foto de perfil eliminada!')
+                notificar_usuario(request.user, '¡Foto de perfil eliminada!')
             return redirect('users:panel_usuario')
-        
+
         if 'avatar' in request.FILES:
             try:
                 img = Image.open(request.FILES['avatar'])
-                
+
                 buffer = BytesIO()
                 img.save(buffer, format='WEBP', quality=85)
                 buffer.seek(0)
 
                 file_name = f"{request.user.id}_avatar.webp"
                 perfil.avatar.save(file_name, ContentFile(buffer.read()), save=True)
-                messages.success(request, '¡Foto de perfil actualizada!')
+                notificar_usuario(request.user, '¡Foto de perfil actualizada!')
 
             except Exception as e:
-                messages.error(request, f"Error al procesar la imagen: {e}")
+                notificar_usuario(request.user, f"Error al procesar la imagen: {e}")
 
             return redirect('users:panel_usuario')
 
@@ -182,7 +182,7 @@ def panel_usuario(request):
             'total': obj.total,
             'barras': obj.barras or []
         }
-    
+
     pedidos_facturados = Pedido.objects.filter(
         usuarios=request.user,
         estado='facturado'
@@ -226,6 +226,7 @@ def panel_usuario(request):
     }
     return render(request, 'users/panel de usuario.html', {'datos': datos})
 
+@login_required
 def user_list(request):
     users = User.objects.all().select_related('userprofile')
     users = users.annotate(
@@ -243,10 +244,13 @@ def user_list(request):
         profile, _ = UserProfile.objects.get_or_create(user=user)
         profile.rol_id = rol_id
         profile.save()
-        
+
         rol = Role.objects.get(id=rol_id)
-        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.name}'."
-        notificar_usuario(request.user, mensaje)
+        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.nombre}'."
+
+        # Solo notificar si el usuario está autenticado
+        if request.user.is_authenticated:
+            notificar_usuario(request.user, mensaje)
 
         return redirect('users:user_list')
     return render(request, 'users/user_list.html', {'users': users, 'roles': roles})

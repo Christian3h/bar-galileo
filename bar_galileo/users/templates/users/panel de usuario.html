@@ -7,171 +7,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario - Bar Galileo</title>
-    <link rel="stylesheet" href="/static/css/panel_usuario_custom.css">
-    <style>
-.avatar-container {
-    margin-bottom: 15px;
-}
-.profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #A68932;
-}
-.default-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background-color: #333;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 48px;
-    font-weight: bold;
-    border: 3px solid #A68932;
-}
-.avatar-management {
-    padding: 15px;
-    text-align: center;
-}
-.form-error {
-  color: #BF452A;
-  background: #262626;
-  border: 1px solid #A68932;
-  border-radius: 6px;
-  padding: 6px 12px;
-  margin-top: 6px;
-  font-size: 0.95em;
-  font-weight: bold;
-  box-shadow: 0 0 8px #A68932;
-}
-.alert-success {
-  background: #262626;
-  color: #A68932;
-  border: 2px solid #A68932;
-  border-radius: 12px;
-  font-size: 1.1em;
-  font-weight: bold;
-  box-shadow: 0 0 16px #A68932;
-  padding: 18px 32px;
-  margin-bottom: 10px;
-  opacity: 1;
-  animation: fadeInOut 3.5s forwards;
-}
-.history-table-container {
-    padding: 15px;
-}
-.history-table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #ddd;
-}
-.history-table th, .history-table td {
-    border: 1px solid #444;
-    padding: 8px 12px;
-    text-align: left;
-}
-.history-table th {
-    background-color: #333;
-    color: #A68932;
-}
-.history-table tbody tr:nth-child(odd) {
-    background-color: #2c2c2c;
-}
-.btn-factura {
-    color: #A68932;
-    text-decoration: none;
-    font-weight: bold;
-}
-.btn-back {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 15px;
-    background-color: #A68932;
-    color: #1a1a1a;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
-}
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
 
-/* Styles for menu-btn */
-.user-navigation {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  justify-content: center;
-}
-
-.menu-btn {
-  background: none;
-  border: 1px solid #A68932;
-  color: #A68932;
-  text-align: center;
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.menu-btn img {
-  width: 20px;
-  height: 20px;
-  filter: brightness(0) saturate(100%) invert(61%) sepia(48%) saturate(476%) hue-rotate(4deg) brightness(92%) contrast(88%);
-}
-
-.menu-btn:hover {
-  background-color: #A68932;
-  color: #262626;
-}
-
-.menu-btn:hover img {
-  filter: brightness(0) saturate(100%) invert(13%) sepia(9%) saturate(422%) hue-rotate(314deg) brightness(95%) contrast(91%);
-}
-
-</style>
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{% static 'css/main/users/panel_usuario.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
 </head>
 <body>
-    {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
+    {% include 'components/notificaciones.html' %}
 
-    <script>
-// Mostrar/ocultar formularios de edición
-function toggleInfoForm(show) {
-  document.getElementById('info-display').style.display = show ? 'none' : '';
-  document.getElementById('info-form').style.display = show ? '' : 'none';
-}
-function toggleEmergenciaForm(show) {
-  document.getElementById('emergencia-display').style.display = show ? 'none' : '';
-  document.getElementById('emergencia-form').style.display = show ? '' : 'none';
-}
-        setTimeout(function() {
-          document.querySelectorAll('.alert-success').forEach(function(el) {
-            el.style.display = 'none';
-          });
-        }, 3500);
-    </script>
-    <div class="container">
+    <div class="container dashboard-container">
       <div class="header">
         <div class="avatar-container">
             {% if datos.avatar_url %}
@@ -182,13 +26,42 @@ function toggleEmergenciaForm(show) {
         </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
 
+        <!-- Sistema de Notificaciones -->
+        <div class="notification-icon" id="notification-icon">
+            <span id="icono-notification"> <img width="50px" src="{% static 'img/icons/notifications.svg' %}" alt=""> </span>
+            <span class="notification-badge" id="notification-badge">0</span>
+            <div class="notifications-panel" id="notifications-panel">
+                <div class="notification-header">
+                    <h4>Notificaciones</h4>
+                    <button id="mark-all-as-read">Marcar todas como leídas</button>
+
+                    <ul class="notification-list" id="notification-list">
+                    <!-- Las notificaciones se cargarán aquí -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- Menú de navegación -->
         <nav class="user-navigation">
-          <a href="{% url 'core:index' %}" class="menu-btn"><img src="{% static 'img/icons/home.svg' %}" alt="">Inicio</a>
-          <a href="{% url 'account_email' %}" class="menu-btn"><img src="{% static 'img/icons/mail.svg' %}" alt="">Email</a>
-          <a href="{% url 'account_change_password' %}" class="menu-btn"><img src="{% static 'img/icons/lock.svg' %}" alt="">Cambiar Contraseña</a>
-          <a href="{% url 'socialaccount_connections' %}" class="menu-btn"><img src="{% static 'img/icons/link.svg' %}" alt="">Conexiones</a>
-          <a href="{% url 'account_logout' %}" class="menu-btn"><img src="{% static 'img/icons/logout.svg' %}" alt="">Cerrar Sesión</a>
+          <a href="{% url 'core:index' %}" class="menu-btn">
+            <img src="{% static 'img/icons/home.svg' %}" alt="Inicio">Inicio
+          </a>
+            <a href="{% url 'users:panel_usuario' %}" class="menu-btn">
+            <img src="{% static 'img/icons/group.svg' %}" alt="Panel">Panel de Usuario
+          </a>
+          <a href="{% url 'account_email' %}" class="menu-btn">
+            <img src="{% static 'img/icons/email.svg' %}" alt="Email">Email
+          </a>
+          <a href="{% url 'account_change_password' %}" class="menu-btn">
+            <img src="{% static 'img/icons/password.svg' %}" alt="Contraseña">Cambiar Contraseña
+          </a>
+          <a href="{% url 'socialaccount_connections' %}" class="menu-btn">
+            <img src="{% static 'img/icons/accounts.svg' %}" alt="Cuentas">Conexiones
+          </a>
+          <a href="{% url 'account_logout' %}" class="menu-btn">
+            <img src="{% static 'img/icons/logout.svg' %}" alt="Salir">Cerrar Sesión
+          </a>
         </nav>
       </div>
       <div class="dashboard">
@@ -401,103 +274,79 @@ function toggleEmergenciaForm(show) {
       </div>
     </div>
 
-  <script>
-function validarInfoForm() {
-  let nombre = document.querySelector('input[name="nombre"]').value.trim();
-  let cedula = document.querySelector('input[name="cedula"]').value.trim();
-  let telefono = document.querySelector('input[name="telefono"]').value.trim();
-  let email = document.querySelector('input[name="email"]').value.trim();
-  let errores = [];
-  if (nombre.length < 3) errores.push('El nombre debe tener al menos 3 caracteres.');
-  if (!/^\d{6,}$/.test(cedula)) errores.push('La cédula debe ser numérica y tener al menos 6 dígitos.');
-  if (!/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
-  if (!email.includes('@')) errores.push('El email debe ser válido.');
-  if (errores.length) {
-    alert(errores.join('\n'));
-    return false;
-  }
-  return true;
-}
-function validarEmergenciaForm() {
-  let nombre = document.querySelector('input[name="emergencia_nombre"]').value.trim();
-  let telefono = document.querySelector('input[name="emergencia_telefono"]').value.trim();
-  let telefono_alt = document.querySelector('input[name="emergencia_telefono_alt"]').value.trim();
-  let errores = [];
-  if (nombre.length < 3) errores.push('El nombre de emergencia debe tener al menos 3 caracteres.');
-  if (telefono && !/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
-  if (telefono_alt && !/^\d{10}$/.test(telefono_alt)) errores.push('El teléfono alternativo debe ser numérico y tener exactamente 10 dígitos.');
-  if (errores.length) {
-    alert(errores.join('\n'));
-    return false;
-  }
-  return true;
-}
-document.addEventListener('DOMContentLoaded', function() {
-  var infoForm = document.getElementById('info-form');
-  if (infoForm) infoForm.onsubmit = validarInfoForm;
-  var emergenciaForm = document.getElementById('emergencia-form');
-  if (emergenciaForm) emergenciaForm.onsubmit = validarEmergenciaForm;
-});
-  </script>
-  <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const protocol = window.location.protocol === 'https' ? 'wss' : 'ws';
-    const ws = new WebSocket(`${protocol}://${window.location.host}/ws/panel/`);
+<footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>BAR GALILEO</h3>
+                    <p>Creamos experiencias únicas en coctelería premium y ofrecemos un ambiente sofisticado para
+                        momentos especiales. Descubre el arte de la mixología con nosotros.</p>
 
-    ws.onopen = function() {
-        console.log("WebSocket connection for panel established.");
-    };
-
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        if (data.cuenta_actual) {
-            updateCuentaActual(data.cuenta_actual);
-        }
-    };
-
-    ws.onclose = function() {
-        console.log("WebSocket connection for panel closed.");
-    };
-
-    ws.onerror = function(error) {
-        console.error("WebSocket error:", error);
-    };
-
-    function formatPrice(number) {
-        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(number);
-    }
-
-    function updateCuentaActual(cuenta) {
-        const billAmount = document.querySelector('.bill-amount');
-        const billDetails = document.querySelector('.bill-details');
-
-        if (billAmount) {
-            billAmount.textContent = formatPrice(cuenta.total);
-        }
-
-        if (billDetails) {
-            let itemsHtml = '';
-            if (cuenta.items && cuenta.items.length > 0) {
-                cuenta.items.forEach(item => {
-                    itemsHtml += `
-                        <div class="bill-item">
-                            <span>${item.nombre}</span>
-                            <span>${formatPrice(item.precio)}</span>
-                        </div>
-                    `;
-                });
-            }
-
-            itemsHtml += `
-                <div class="bill-item">
-                    <span><span class="status-indicator"></span>Total a Pagar</span>
-                    <span>${formatPrice(cuenta.total)}</span>
+                    <div class="social-icons">
+                        <a href="https://facebook.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>f</span>
+                        </a>
+                        <a href="https://instagram.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>📷</span>
+                        </a>
+                        <a href="https://twitter.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>🐦</span>
+                        </a>
+                        <a href="https://wa.me/525512345678" class="social-icon" target="_blank" rel="noopener">
+                            <span>📱</span>
+                        </a>
+                    </div>
                 </div>
-            `;
-            billDetails.innerHTML = itemsHtml;
-        }
-    }
-});
-  </script>
+
+                <div class="footer-section">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="{% url 'core:store' %}">Tienda</a></li>
+                        <li><a href="{% url 'core:index' %}#reservas-section">Reservas</a></li>
+                        <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i>📞</i>
+                            <a href="tel:+322-227-1308">+57 322-227-1308</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>✉️</i>
+                            <a href="mailto:bargalileo07@gmail.com">bargalileo07@gmail.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>📍</i>
+                            <span>Sogamoso,Boyaca</span>
+                        </div>
+                        <div class="contact-item">
+                            <i>🕒</i>
+                            <span>Mar-Dom: 6:00 PM - 2:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        <div class="footer-bottom-left">
+                            <p>&copy; 2025 Bar Galileo. Todos los derechos reservados.</p>
+                        </div>
+                        <div class="footer-bottom-right">
+                            <a href="#privacy">Política de Privacidad</a>
+                            <a href="#terms">Términos y Condiciones</a>
+                            <a href="#cookies">Política de Cookies</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/panel_usuario.js' %}"></script>
+    <script src="{% static 'js/admin/notification_history.js' %}"></script>
+    <script src="{% static 'accessibility/sienna.js' %}"></script>
+    <script src="{% static 'accessibility/custom.js' %}"></script>
 </body>
 </html>

@@ -94,13 +94,13 @@
                     <td class="fechaContratacionCol">{{ empleado.fecha_contratacion }}</td>
                     <td>
                         <div class="actions-cell">
-                            <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info">
+                            <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info" title="Ver detalles del empleado">
                                 <i class="fa fa-eye"></i>
                             </a>
-                            <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary">
+                            <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary" title="Editar empleado">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger">
+                            <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger" title="Eliminar empleado">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </div>
