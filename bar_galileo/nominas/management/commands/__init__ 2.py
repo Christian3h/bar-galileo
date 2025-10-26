@@ -1,1 +1,0 @@
-# Paquete de comandos custom para nóminas
