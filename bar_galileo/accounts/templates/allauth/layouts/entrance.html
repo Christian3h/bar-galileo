@@ -1,2 +1,6 @@
 {% extends "allauth/layouts/base.html" %}
-{% block content %}{% endblock %}
+{% block content %}
+<div class="auth-content-wrapper">
+    {% block inner_content %}{% endblock %}
+</div>
+{% endblock %}
