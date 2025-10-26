@@ -10,17 +10,12 @@
 
     <!-- Estilos -->
     <link rel="stylesheet" href="{% static 'css/main/users/panel_usuario.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
 </head>
 <body>
-    <!-- Mensajes de éxito -->
-    {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
-    <div class="container">
+    {% include 'components/notificaciones.html' %}
+
+    <div class="container dashboard-container">
       <div class="header">
         <div class="avatar-container">
             {% if datos.avatar_url %}
@@ -31,10 +26,29 @@
         </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
 
+        <!-- Sistema de Notificaciones -->
+        <div class="notification-icon" id="notification-icon">
+            <span id="icono-notification"> <img width="50px" src="{% static 'img/icons/notifications.svg' %}" alt=""> </span>
+            <span class="notification-badge" id="notification-badge">0</span>
+            <div class="notifications-panel" id="notifications-panel">
+                <div class="notification-header">
+                    <h4>Notificaciones</h4>
+                    <button id="mark-all-as-read">Marcar todas como leídas</button>
+
+                    <ul class="notification-list" id="notification-list">
+                    <!-- Las notificaciones se cargarán aquí -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- Menú de navegación -->
         <nav class="user-navigation">
           <a href="{% url 'core:index' %}" class="menu-btn">
             <img src="{% static 'img/icons/home.svg' %}" alt="Inicio">Inicio
+          </a>
+            <a href="{% url 'users:panel_usuario' %}" class="menu-btn">
+            <img src="{% static 'img/icons/group.svg' %}" alt="Panel">Panel de Usuario
           </a>
           <a href="{% url 'account_email' %}" class="menu-btn">
             <img src="{% static 'img/icons/email.svg' %}" alt="Email">Email
@@ -260,8 +274,78 @@
       </div>
     </div>
 
+<footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>BAR GALILEO</h3>
+                    <p>Creamos experiencias únicas en coctelería premium y ofrecemos un ambiente sofisticado para
+                        momentos especiales. Descubre el arte de la mixología con nosotros.</p>
+
+                    <div class="social-icons">
+                        <a href="https://facebook.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>f</span>
+                        </a>
+                        <a href="https://instagram.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>📷</span>
+                        </a>
+                        <a href="https://twitter.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>🐦</span>
+                        </a>
+                        <a href="https://wa.me/525512345678" class="social-icon" target="_blank" rel="noopener">
+                            <span>📱</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="{% url 'core:store' %}">Tienda</a></li>
+                        <li><a href="{% url 'core:index' %}#reservas-section">Reservas</a></li>
+                        <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i>📞</i>
+                            <a href="tel:+322-227-1308">+57 322-227-1308</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>✉️</i>
+                            <a href="mailto:bargalileo07@gmail.com">bargalileo07@gmail.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>📍</i>
+                            <span>Sogamoso,Boyaca</span>
+                        </div>
+                        <div class="contact-item">
+                            <i>🕒</i>
+                            <span>Mar-Dom: 6:00 PM - 2:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        <div class="footer-bottom-left">
+                            <p>&copy; 2025 Bar Galileo. Todos los derechos reservados.</p>
+                        </div>
+                        <div class="footer-bottom-right">
+                            <a href="#privacy">Política de Privacidad</a>
+                            <a href="#terms">Términos y Condiciones</a>
+                            <a href="#cookies">Política de Cookies</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- Scripts -->
     <script src="{% static 'js/panel_usuario.js' %}"></script>
+    <script src="{% static 'js/admin/notification_history.js' %}"></script>
     <script src="{% static 'accessibility/sienna.js' %}"></script>
     <script src="{% static 'accessibility/custom.js' %}"></script>
 </body>

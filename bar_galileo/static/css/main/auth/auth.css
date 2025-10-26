@@ -74,10 +74,103 @@ body {
 }
 
 /* =======================================
+   HEADER ESTILO PANEL DE USUARIO
+======================================= */
+.auth-header {
+  background: var(--color-light);
+  padding: 2rem;
+  text-align: center;
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 900px;
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.auth-header .avatar-container {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-header .profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--color-secondary);
+}
+
+.auth-header .default-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: var(--color-secondary);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: bold;
+  border: 3px solid var(--color-secondary);
+}
+
+.auth-header .welcome-text {
+  color: var(--color-secondary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Navegación de usuario */
+.user-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.menu-btn {
+  background: none;
+  border: 1px solid var(--color-secondary);
+  color: var(--color-secondary);
+  text-align: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.menu-btn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) saturate(100%) invert(77%) sepia(77%) saturate(434%)
+    hue-rotate(359deg) brightness(96%) contrast(89%);
+}
+
+.menu-btn:hover {
+  background-color: var(--color-secondary);
+  color: var(--color-light);
+}
+
+.menu-btn:hover img {
+  filter: brightness(0) saturate(100%) invert(9%) sepia(7%) saturate(859%)
+    hue-rotate(169deg) brightness(96%) contrast(88%);
+}
+
+/* =======================================
    CONTAINER LOGIN - ESTILO GALILEO
 ======================================= */
 .container-login {
-  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,7 +178,6 @@ body {
   color: white;
   position: relative;
   overflow: hidden;
-  background: #0a0a0a;
   padding-top: 80px;
   flex-direction: column;
 }
@@ -97,7 +189,6 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6));
   z-index: 1;
 }
 
@@ -501,6 +592,7 @@ body {
   width: 100%;
   text-transform: uppercase;
   font-family: "Inter", sans-serif;
+  margin-top: 30px;
 }
 
 .container-login button[type="submit"]:hover,
@@ -781,6 +873,7 @@ body {
   color: #d4af37;
   text-align: center;
   letter-spacing: 1px;
+  margin-top: 40px;
 }
 
 form p:has(input#id_remember) {
@@ -792,17 +885,17 @@ form p:has(input#id_remember) {
   padding: 0;
 }
 
-form p:has(input#id_remember) input{
+form p:has(input#id_remember) input {
   margin: 0;
   padding: 0;
 }
 
-form p:has(input#id_remember) label{
+form p:has(input#id_remember) label {
   margin: 0;
   padding: 0;
 }
 
-ul{
+ul {
   list-style: none;
 }
 
@@ -812,11 +905,11 @@ ul{
   place-content: center;
 }
 
-.container-menu-login{
+.container-menu-login {
   background: transparent;
 }
 
-.menu-toggle-login{
+.menu-toggle-login {
   background: transparent;
   border: none;
   color: #fff;
@@ -824,7 +917,7 @@ ul{
   cursor: pointer;
 }
 
-.menu-items-login{
+.menu-items-login {
   display: none;
   background: #1a1a1a;
   border: 1px solid #333;
@@ -835,7 +928,7 @@ ul{
   z-index: 1000;
 }
 
-.menu-items-login.show{
+.menu-items-login.show {
   display: block;
 }
 
@@ -1067,7 +1160,265 @@ body.auth-page .container-login {
   background: transparent;
 }
 
+/* =======================================
+   FOOTER STYLES
+======================================= */
+.footer {
+  background: var(--color-light);
+  color: var(--color-secondary);
+  padding: 80px 0 30px;
+  border-top: 1px solid var(--color-primary);
+  margin-top: 60px;
+}
+
+.footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 50px;
+}
+
+.footer-brand h3 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  color: #d4af37;
+}
+
+.footer-brand p {
+  color: var(--color-gray);
+  line-height: 1.8;
+  margin-bottom: 30px;
+  font-size: 16px;
+}
+
+.footer-section h4 {
+  font-size: 20px;
+  margin-bottom: 25px;
+  color: #d4af37;
+  font-weight: 600;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 12px;
+}
+
+.footer-section ul li a {
+  color: var(--color-gray);
+  text-decoration: none;
+  display: block;
+  padding: 5px 0;
+  transition: color 0.3s, padding-left 0.3s;
+  font-size: 15px;
+}
+
+.footer-section ul li a:hover {
+  color: #d4af37;
+  padding-left: 10px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #d4af37, #f4d467);
+  color: #000;
+  text-decoration: none;
+  border-radius: 50%;
+  font-size: 18px;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.social-icon:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+}
+
+.contact-info {
+  margin-top: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  color: var(--color-gray);
+  font-size: 15px;
+}
+
+.contact-item i {
+  margin-right: 12px;
+  color: #d4af37;
+  width: 20px;
+  font-size: 16px;
+}
+
+.contact-item a {
+  color: var(--color-gray);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.contact-item a:hover {
+  color: #d4af37;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--color-primary);
+  padding-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer-bottom-left {
+  color: var(--color-gray);
+  font-size: 14px;
+}
+
+.footer-bottom-right {
+  display: flex;
+  gap: 30px;
+}
+
+.footer-bottom-right a {
+  color: var(--color-gray);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+
+.footer-bottom-right a:hover {
+  color: #d4af37;
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    text-align: center;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-bottom-right {
+    justify-content: center;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+}
+
 /* Hide the gradient overlay on auth pages for a uniform background */
 body.auth-page .container-login::before {
   display: none;
+}
+
+
+/* =======================================
+   SOCIAL PROVIDERS STYLES
+======================================= */
+.provider-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 30px 40px;
+  background: var(--color-light);
+  border: 2px solid var(--color-primary);
+  border-radius: 12px;
+  color: var(--color-secondary) !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  min-width: 200px;
+}
+
+.provider-link:hover {
+  background: var(--color-primary);
+  border-color: #d4af37;
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+}
+
+.provider-icon {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.provider-link:hover .provider-icon {
+  transform: scale(1.1);
+}
+
+.provider-link span {
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* =======================================
+   AUTH CONTENT WRAPPER
+======================================= */
+.auth-content-wrapper {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 20px;
+}
+
+.auth-content-wrapper .container-login {
+  background: var(--color-light);
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* =======================================
+   PROVIDER LIST LAYOUT
+======================================= */
+.auth-content-wrapper ul,
+.container-login ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.auth-content-wrapper ul li,
+.container-login ul li {
+  margin: 0;
 }

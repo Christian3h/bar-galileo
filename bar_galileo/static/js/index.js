@@ -289,6 +289,40 @@ const getCookie = (name) => {
     return cookieValue;
 };
 
+// Scroll Indicator functionality
+const initScrollIndicator = () => {
+    const scrollIndicator = document.getElementById('scroll-indicator');
+    if (!scrollIndicator) return;
+
+    // Hide indicator on scroll
+    let lastScrollY = window.scrollY;
+    const hideIndicatorOnScroll = () => {
+        if (window.scrollY > 100) {
+            scrollIndicator.classList.add('hidden');
+        } else {
+            scrollIndicator.classList.remove('hidden');
+        }
+        lastScrollY = window.scrollY;
+    };
+
+    // Click to scroll to next section
+    scrollIndicator.addEventListener('click', () => {
+        const aboutSection = document.querySelector('.about');
+        if (aboutSection) {
+            aboutSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+
+    // Listen to scroll events
+    window.addEventListener('scroll', hideIndicatorOnScroll);
+
+    // Initial check
+    hideIndicatorOnScroll();
+};
+
 // Hero Carousel functionality
 let currentSlide = 0;
 let slideInterval;
@@ -408,6 +442,7 @@ function formatPrice(price) {
 const init = () => {
     preloadHeroImages();
     initHeroCarousel();
+    initScrollIndicator();
     initWebSocket();
     initSmoothScrolling();
     initNavbarScrollEffect();

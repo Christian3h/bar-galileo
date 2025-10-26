@@ -3,7 +3,7 @@
 {% block head_title %}
     {% trans "Email Addresses" %}
 {% endblock head_title %}
-{% block content %}
+{% block inner_content %}
     <div class="container-login">
         {% element h1 %}
             {% trans "Direcciones de Correo" %}
@@ -55,7 +55,7 @@
         {% else %}
             {% include "account/snippets/warn_no_email.html" %}
         {% endif %}
-        
+
         {% if can_add_email %}
             {% element h2 %}
                 {% trans "Agregar Correo Electrónico" %}
@@ -83,13 +83,13 @@
                 {% endslot %}
             {% endelement %}
         {% endif %}
-        
+
         <div class="nav-links">
             <a href="{% url 'account_change_password' %}">Cambiar contraseña</a>
             <a href="{% url 'core:index' %}">Volver al inicio</a>
         </div>
     </div>
-{% endblock content %}
+{% endblock inner_content %}
 {% block extra_body %}
     <script src="{% static 'account/js/account.js' %}"></script>
     <script src="{% static 'account/js/onload.js' %}"></script>

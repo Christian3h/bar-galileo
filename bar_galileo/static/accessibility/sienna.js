@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .material-icons[data-icon="animation"] { background-image: url('/static/img/icons/animation.svg'); }
         .material-icons[data-icon="local_library"] { background-image: url('/static/img/icons/local_library.svg'); }
         .material-icons[data-icon="notifications"] { background-image: url('/static/img/icons/notifications.svg'); }
-        .asw-menu, .asw-menu-btn { position: fixed; left: 20px; transition: .3s; z-index: 500000; }
+        .asw-menu, .asw-menu-btn { position: fixed; right: 20px; transition: .3s; z-index: 500000; }
         .asw-widget { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; font-weight: 400; -webkit-font-smoothing: antialiased; }
         .asw-widget * { box-sizing: border-box; }
         .asw-menu-btn { bottom: 20px; background: ${options.buttonColor}; box-shadow: 0 5px 15px 0 rgb(37 44 97 / 15%), 0 2px 4px 0 rgb(93 100 148 / 20%); border-radius: 50%; align-items: center; justify-content: center; transform: translateY(0); width: 50px; height: 50px; display: flex; fill: ${options.buttonIconColor} !important; cursor: pointer; }

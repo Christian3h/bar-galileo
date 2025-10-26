@@ -2,101 +2,177 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
-        <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
-        <link rel="stylesheet" href="{% static 'css/theme-apply.css' %}">
-        <link rel="stylesheet" href="{% static 'css/dashboard-loading.css' %}">
-        <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
-        <link rel="stylesheet" href="{% static 'css/main/auth/avatar.css' %}">
-        <title>
-            {% block head_title %}
-            {% endblock head_title %}
-        </title>
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
-        <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
-        <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
-        <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
-        {% block extra_head %}
-        {% endblock extra_head %}
-    </head>
-    <body class="{% if not user.is_authenticated %}auth-page{% endif %}">
-        {% block body %}
-            {% include 'components/notificaciones.html' %}
 
-            {% if user.is_authenticated %}
-                <!-- Header Navigation for Authenticated Users -->
-                <div class="container-menu">
-                    <button class="menu-toggle" id="menu-toggle">&#9776;</button>
-                    <ul id="menu-items">
-                        <li><a href="{% url 'core:index' %}">Inicio</a></li>
-                        <li><a href="{% url 'account_email' %}">Email</a></li>
-                        <li><a href="{% url 'account_change_password' %}">Contraseña</a></li>
-                        <li><a href="{% url 'socialaccount_connections' %}">Conexiones</a></li>
-                        <li><a href="{% url 'account_logout' %}">Cerrar Sesión</a></li>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/fonts/outfit.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main/auth/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'css/theme-apply.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard-loading.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main/auth/avatar.css' %}">
+    <title>
+        {% block head_title %}
+        {% endblock head_title %}
+    </title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'img/favicon/favicon-96x96.png' %}">
+    <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
+    <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
+    {% block extra_head %}
+    {% endblock extra_head %}
+</head>
 
-                        {% if user.is_staff or user.is_superuser %}
-                        <li>
-                            <div class="user-avatar-dropdown" tabindex="0">
-                                {% if user.userprofile.avatar %}
-                                    <img src="{{ user.userprofile.avatar.url }}" alt="Avatar" class="user-avatar">
-                                {% else %}
-                                    <span class="user-avatar-initials">
-                                        {{ user.first_name|default:user.username|slice:":1"|upper }}
-                                    </span>
-                                {% endif %}
-                                <div class="user-avatar-dropdown-content">
-                                    <div style="padding: 10px 20px; color: #fff; font-size: 15px;">
-                                        {{ user.get_full_name|default:user.username }}
-                                    </div>
-                                    <a href="{% url 'account_email' %}">Cambiar foto</a>
-                                    <a href="{% url 'account_email' %}?remove_avatar=1">Eliminar foto</a>
-                                </div>
-                            </div>
-                        </li>
-                        {% endif %}
+<body class="{% if not user.is_authenticated %}auth-page{% endif %}">
+    {% block body %}
+    {% include 'components/notificaciones.html' %}
+
+    {% if user.is_authenticated %}
+    <!-- Header Navigation for Authenticated Users - Estilo Panel Usuario -->
+    <div class="auth-header">
+        <div class="avatar-container">
+            {% if user.perfilusuario.avatar %}
+                <img src="{{ user.perfilusuario.avatar.url }}" alt="Avatar" class="profile-avatar">
+            {% else %}
+                <div class="default-avatar">{{ user.username|slice:":1"|upper }}</div>
+            {% endif %}
+        </div>
+        <p class="welcome-text">Bienvenido, {{ user.get_full_name|default:user.username }}</p>
+
+        <!-- Menú de navegación -->
+        <nav class="user-navigation">
+            <a href="{% url 'core:index' %}" class="menu-btn">
+                <img src="{% static 'img/icons/home.svg' %}" alt="Inicio">Inicio
+            </a>
+            <a href="{% url 'users:panel_usuario' %}" class="menu-btn">
+                <img src="{% static 'img/icons/group.svg' %}" alt="Panel">Panel de Usuario
+            </a>
+            <a href="{% url 'account_email' %}" class="menu-btn">
+                <img src="{% static 'img/icons/email.svg' %}" alt="Email">Email
+            </a>
+            <a href="{% url 'account_change_password' %}" class="menu-btn">
+                <img src="{% static 'img/icons/password.svg' %}" alt="Contraseña">Cambiar Contraseña
+            </a>
+            <a href="{% url 'socialaccount_connections' %}" class="menu-btn">
+                <img src="{% static 'img/icons/accounts.svg' %}" alt="Cuentas">Conexiones
+            </a>
+            <a href="{% url 'account_logout' %}" class="menu-btn">
+                <img src="{% static 'img/icons/logout.svg' %}" alt="Salir">Cerrar Sesión
+            </a>
+        </nav>
+    </div>
+    {% else %}
+    <!-- Centered Logo for Unauthenticated Users -->
+    <div class="auth-logo-container">
+        <a href="/">
+            <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo" class="auth-logo">
+        </a>
+    </div>
+    {% endif %}
+
+    {% block content %}
+    {% endblock content %}
+    {% endblock body %}
+
+    {% block extra_body %}
+    {% endblock extra_body %}
+
+
+    <script src="{% static 'accessibility/sienna.js' %}"></script>
+    <script src="{% static 'accessibility/custom.js' %}"></script>
+    <script src="{% static 'js/login-loading.js' %}"></script>
+
+    <script src="{% static 'js/admin/notification_history.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("menu-toggle");
+            const menu = document.getElementById("menu-items");
+
+            if (toggle && menu) {
+                toggle.addEventListener("click", function () {
+                    menu.classList.toggle("show");
+                });
+            }
+        });
+    </script>
+
+    {% if user.is_authenticated %}
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>BAR GALILEO</h3>
+                    <p>Creamos experiencias únicas en coctelería premium y ofrecemos un ambiente sofisticado para
+                        momentos especiales. Descubre el arte de la mixología con nosotros.</p>
+
+                    <div class="social-icons">
+                        <a href="https://facebook.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>f</span>
+                        </a>
+                        <a href="https://instagram.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>📷</span>
+                        </a>
+                        <a href="https://twitter.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>🐦</span>
+                        </a>
+                        <a href="https://wa.me/525512345678" class="social-icon" target="_blank" rel="noopener">
+                            <span>📱</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="{% url 'core:store' %}">Tienda</a></li>
+                        <li><a href="{% url 'core:index' %}#reservas-section">Reservas</a></li>
+                        <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
                     </ul>
                 </div>
-            {% else %}
-                <!-- Centered Logo for Unauthenticated Users -->
-                <div class="auth-logo-container">
-                    <a href="/">
-                        <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo" class="auth-logo">
-                    </a>
+
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i>📞</i>
+                            <a href="tel:+322-227-1308">+57 322-227-1308</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>✉️</i>
+                            <a href="mailto:bargalileo07@gmail.com">bargalileo07@gmail.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>📍</i>
+                            <span>Sogamoso,Boyaca</span>
+                        </div>
+                        <div class="contact-item">
+                            <i>🕒</i>
+                            <span>Mar-Dom: 6:00 PM - 2:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        <div class="footer-bottom-left">
+                            <p>&copy; 2025 Bar Galileo. Todos los derechos reservados.</p>
+                        </div>
+                        <div class="footer-bottom-right">
+                            <a href="#privacy">Política de Privacidad</a>
+                            <a href="#terms">Términos y Condiciones</a>
+                            <a href="#cookies">Política de Cookies</a>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
-
-            {% block content %}
-            {% endblock content %}
-        {% endblock body %}
-
-        {% block extra_body %}
-        {% endblock extra_body %}
+            </div>
+        </div>
+    </footer>
+    {% endif %}
 
 
-        <script src="{% static 'accessibility/sienna.js' %}"></script>
-        <script src="{% static 'accessibility/custom.js' %}"></script>
-        <script src="{% static 'js/login-loading.js' %}"></script>
+</body>
 
-        <script src="{% static 'js/admin/notification_history.js' %}"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const toggle = document.getElementById("menu-toggle");
-                const menu = document.getElementById("menu-items");
-
-                if (toggle && menu) {
-                    toggle.addEventListener("click", function () {
-                        menu.classList.toggle("show");
-                    });
-                }
-            });
-        </script>
-
-
-    </body>
 </html>
