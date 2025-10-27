@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 class Empleado(models.Model):
     ESTADO_CHOICES = [
@@ -17,6 +18,17 @@ class Empleado(models.Model):
         ('temporal', 'Temporal'),
         ('por_proyecto', 'Por Proyecto'),
     ]
+    
+    # Relación con el usuario del sistema (NUEVO)
+    usuario = models.OneToOneField(
+        User, 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='empleado_nomina',
+        verbose_name="Usuario del sistema",
+        help_text="Conectar con un usuario existente del sistema (opcional)"
+    )
     
     nombre = models.CharField(max_length=100, verbose_name="Nombre completo")
     cargo = models.CharField(max_length=100, verbose_name="Cargo")
@@ -36,6 +48,11 @@ class Empleado(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de registro")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
 
+    class Meta:
+        verbose_name = "Empleado"
+        verbose_name_plural = "Empleados"
+        ordering = ['-fecha_contratacion']
+
     def __str__(self):
         return f"{self.nombre} - {self.cargo}"
     
@@ -48,6 +65,23 @@ class Empleado(models.Model):
         """Calcula la antigüedad del empleado en años"""
         today = timezone.now().date()
         return (today - self.fecha_contratacion).days // 365
+    
+    def sincronizar_con_usuario(self):
+        """Sincroniza los datos del empleado con su usuario del sistema"""
+        if self.usuario:
+            # Actualizar información del empleado desde el usuario
+            if self.usuario.first_name and self.usuario.last_name:
+                self.nombre = f"{self.usuario.first_name} {self.usuario.last_name}"
+            if self.usuario.email:
+                self.email = self.usuario.email
+            
+            # Actualizar desde el perfil si existe
+            if hasattr(self.usuario, 'perfilusuario'):
+                perfil = self.usuario.perfilusuario
+                if perfil.telefono:
+                    self.telefono = perfil.telefono
+                if perfil.direccion:
+                    self.direccion = perfil.direccion
 
 class Pago(models.Model):
     TIPO_CHOICES = [

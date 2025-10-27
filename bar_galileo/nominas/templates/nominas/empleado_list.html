@@ -1,154 +1,432 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 {% load format_tags %}
-<<<<<<< HEAD
 {% load roles_tags %}
-=======
->>>>>>> Jorge
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
-<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+<style>
+  /* Ocultar buscador nativo de DataTables */
+  .dataTables_filter { display: none !important; }
+  .dataTables_length { display: none !important; }
+
+  .nominas-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .page-header h2 {
+    margin: 0;
+    color: #d4af37;
+    font-size: 2rem;
+  }
+
+  /* Estadísticas */
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+
+  .stat-card {
+    background: #262626;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .stat-card h3 {
+    margin: 0 0 8px 0;
+    color: #d4af37;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  .stat-card p {
+    margin: 0;
+    color: #bbb;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Filtros */
+  .filter-section {
+    background: #262626;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+
+  .filter-section h4 {
+    color: #d4af37;
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .filter-row input,
+  .filter-row select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 14px;
+  }
+
+  .filter-row input:focus,
+  .filter-row select:focus {
+    outline: none;
+    border-color: #d4af37;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 10px;
+    grid-column: 1 / -1;
+    margin-top: 10px;
+  }
+
+  .filter-actions button,
+  .filter-actions a {
+    flex: 1;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .btn-filter {
+    background: #d4af37;
+    color: #000;
+  }
+
+  .btn-filter:hover {
+    background: #c5a032;
+  }
+
+  .btn-clear {
+    background: #555;
+    color: #fff;
+  }
+
+  .btn-clear:hover {
+    background: #666;
+  }
+
+  /* Tabla */
+  .table-section {
+    background: #262626;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .table-header h3 {
+    margin: 0;
+    color: #d4af37;
+    font-size: 1.3rem;
+  }
+
+  #tabla-empleados {
+    width: 100%;
+    background: #1a1a1a;
+  }
+
+  #tabla-empleados thead th {
+    background: #2c2c2c;
+    color: #d4af37;
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #d4af37;
+  }
+
+  #tabla-empleados tbody td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #333;
+    color: #ddd;
+    font-size: 0.9rem;
+  }
+
+  #tabla-empleados tbody tr:hover {
+    background: #2a2a2a;
+  }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .bg-success { background: #333; color: #ddd; border: 1px solid #555; }
+  .bg-danger { background: #333; color: #ddd; border: 1px solid #555; }
+  .bg-info { background: #333; color: #ddd; border: 1px solid #555; }
+  .bg-warning { background: #333; color: #ddd; border: 1px solid #555; }
+  .bg-secondary { background: #333; color: #ddd; border: 1px solid #555; }
+
+  .actions-cell {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-action {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    background: #555;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .btn-action:hover {
+    background: #666;
+  }
+
+  .btn-create {
+    background: #d4af37;
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-create:hover {
+    background: #c5a032;
+  }
+
+  @media (max-width: 1024px) {
+    .filter-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .stats-container {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-row {
+      grid-template-columns: 1fr;
+    }
+
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .actions-cell {
+      flex-wrap: wrap;
+    }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <h2 class="dashboard-title">Gestión de Nóminas</h2>
-<<<<<<< HEAD
-    {% if request.user|has_perm:"nominas,crear" %}
-        <a href="{% url 'nominas:empleado_crear' %}" class="btn btn-success mb-3">Crear Empleado</a>
-    {% endif %}
-=======
->>>>>>> Jorge
+<div class="nominas-container">
+    <!-- Encabezado -->
+    <div class="page-header">
+        <h2><i class="fas fa-users"></i> Gestión de Nóminas</h2>
+        {% if request.user|has_perm:"nominas,crear" %}
+        <a href="{% url 'nominas:empleado_crear' %}" class="btn-create">
+            <i class="fas fa-plus"></i> Crear Empleado
+        </a>
+        {% endif %}
+    </div>
 
     <!-- Estadísticas -->
-    <section class="dashboard-cards">
-        <div class="card">
-            <h3>Total Empleados</h3>
-            <p>{{ total_empleados }}</p>
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>{{ total_empleados }}</h3>
+            <p>Total Empleados</p>
         </div>
-        <div class="card">
-            <h3>Empleados Activos</h3>
-            <p>{{ total_activos }}</p>
+        <div class="stat-card">
+            <h3>{{ total_activos }}</h3>
+            <p>Empleados Activos</p>
         </div>
-        <div class="card">
-            <h3>Empleados Inactivos</h3>
-            <p>{{ total_inactivos }}</p>
+        <div class="stat-card">
+            <h3>{{ total_inactivos }}</h3>
+            <p>Empleados Inactivos</p>
         </div>
-        <div class="card">
-            <h3>Salarios (Mensual)</h3>
-            <p>${{ total_salarios }}</p>
+        <div class="stat-card">
+            <h3>${{ total_salarios|floatformat:2 }}</h3>
+            <p>Salarios Mensuales</p>
         </div>
-    </section>
+    </div>
 
-    <!-- Filtros de búsqueda -->
-    <div class="search-container">
-        <form method="GET" class="search-form">
-            <div class="search-fields">
-                <div class="field-group">
-                    <label>Estado:</label>
+    <!-- Filtros -->
+    <div class="filter-section">
+        <h4><i class="fas fa-filter"></i> Filtros de Búsqueda</h4>
+        <form method="GET">
+            <div class="filter-row">
+                <div>
+                    <label for="id_estado" style="color: #bbb; display: block; margin-bottom: 5px; font-size: 0.9rem;">Estado</label>
                     {{ filter_form.estado }}
                 </div>
-                <div class="field-group">
-                    <label>Tipo de Contrato:</label>
+                <div>
+                    <label for="id_tipo_contrato" style="color: #bbb; display: block; margin-bottom: 5px; font-size: 0.9rem;">Tipo de Contrato</label>
                     {{ filter_form.tipo_contrato }}
                 </div>
-                <div class="field-group">
-                    <label>Buscar:</label>
+                <div>
+                    <label for="id_busqueda" style="color: #bbb; display: block; margin-bottom: 5px; font-size: 0.9rem;">Buscar por nombre o cargo</label>
                     {{ filter_form.busqueda }}
                 </div>
             </div>
-            <div class="field-group buttons-group">
-                <button type="submit" class="btn btn-primary">Buscar</button>
-                <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">Limpiar</a>
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+                <a href="{% url 'nominas:empleado_list' %}" class="btn-clear">
+                    <i class="fas fa-times"></i> Limpiar Filtros
+                </a>
             </div>
         </form>
     </div>
 
-    <!-- Lista de empleados -->
-    <div class="table-responsive">
-        <table id="tabla-empleados" class="table nowrap">
-            <thead>
-                <tr>
-                    <th class="col-1">Nombre</th>
-                    <th class="col-2">Cargo</th>
-                    <th class="col-3">Salario Base</th>
-                    <th class="estadoCol">Estado</th>
-                    <th class="tipoContratoCol">Tipo Contrato</th>
-                    <th class="fechaContratacionCol">Fecha Contratación</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for empleado in empleados %}
-                <tr>
-                    <td class="col-1">{{ empleado.nombre }}</td>
-                    <td class="col-2">{{ empleado.cargo }}</td>
-                    <td class="col-3">${{ empleado.salario }}</td>
-                    <td class="estadoCol">
-                        <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
-                            {{ empleado.get_estado_display }}
-                        </span>
-                    </td>
-                    <td class="tipoContratoCol">{{ empleado.get_tipo_contrato_display }}</td>
-                    <td class="fechaContratacionCol">{{ empleado.fecha_contratacion }}</td>
-                    <td>
-                        <div class="actions-cell">
-                            <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info" title="Ver detalles del empleado">
-                                <i class="fa fa-eye"></i>
-                            </a>
-                            <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary" title="Editar empleado">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                            <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger" title="Eliminar empleado">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Tabla -->
+    <div class="table-section">
+        <div class="table-header">
+            <h3><i class="fas fa-list"></i> Listado de Empleados</h3>
+        </div>
+
+        <div class="table-responsive">
+            <table id="tabla-empleados" class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Cargo</th>
+                        <th>Salario Base</th>
+                        <th>Estado</th>
+                        <th>Tipo Contrato</th>
+                        <th>Fecha Contratación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empleado in empleados %}
+                    <tr>
+                        <td><strong>{{ empleado.nombre }}</strong></td>
+                        <td>{{ empleado.cargo }}</td>
+                        <td>${{ empleado.salario|floatformat:2 }}</td>
+                        <td>
+                            <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
+                                {{ empleado.get_estado_display }}
+                            </span>
+                        </td>
+                        <td>{{ empleado.get_tipo_contrato_display }}</td>
+                        <td>{{ empleado.fecha_contratacion|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn-action" title="Ver detalles">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                {% if request.user|has_perm:"nominas,editar" %}
+                                <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn-action" title="Editar">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                {% endif %}
+                                {% if request.user|has_perm:"nominas,eliminar" %}
+                                <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn-action" title="Eliminar">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center" style="padding: 40px; color: #999;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>No hay empleados registrados.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-{% load static %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar solo si existe la tabla en el DOM
-        if (!document.querySelector('#tabla-empleados')) return;
+        var sel = '#tabla-empleados';
+        if (!document.querySelector(sel)) return;
 
-        // Destruir instancia previa si existe
-        if ($.fn.dataTable.isDataTable('#tabla-empleados')) {
-            $('#tabla-empleados').DataTable().destroy();
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
         }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> Jorge
-        // Inicialización mínima + idioma (manejo correcto cuando no hay datos)
-        var tabla = $('#tabla-empleados').DataTable({
+        $(sel).DataTable({
+            dom: 'rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: 6, orderable: false }
+            ],
             language: {
                 emptyTable: 'No hay empleados registrados',
                 zeroRecords: 'No se encontraron resultados',
-                search: 'Buscar:',
-                lengthMenu: 'Mostrar _MENU_ registros',
                 info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
                 infoEmpty: 'Mostrando 0 a 0 de 0 registros',
                 paginate: {
-                    first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior'
+                    first: 'Primero',
+                    last: 'Último',
+                    next: 'Siguiente',
+                    previous: 'Anterior'
                 }
-            }
+            },
+            responsive: true,
+            pageLength: 15,
+            order: [[0, 'asc']]
         });
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> Jorge
-        if (tabla) {
-            tabla.order([0, 'asc']).draw();
-        }
     });
 </script>
 {% endblock %}

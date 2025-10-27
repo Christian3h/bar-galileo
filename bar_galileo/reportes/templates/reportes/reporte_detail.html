@@ -4,107 +4,293 @@
 
 {% block extra_css %}
   <style>
+    .reportes-detail-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      color: var(--primary-color, #d4af37);
+      font-size: 2rem;
+    }
+
     .detail-card {
-      background: var(--card-bg, #262626);
-      border: 1px solid var(--border-color, #444);
+      background: #262626;
+      border: 1px solid #444;
       border-radius: 8px;
-      padding: 25px;
-      margin-bottom: 20px;
+      padding: 30px;
+      margin-bottom: 25px;
     }
     
     .detail-header {
-      border-bottom: 2px solid var(--primary-color, #d4af37);
-      padding-bottom: 15px;
-      margin-bottom: 20px;
+      border-bottom: 2px solid #d4af37;
+      padding-bottom: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
     }
     
     .detail-header h2 {
-      color: var(--primary-color, #d4af37);
+      color: #d4af37;
       margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    .status-badge {
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #333;
+      color: #ddd;
+      border: 1px solid #555;
     }
     
     .detail-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 25px;
     }
     
     .detail-item {
-      padding: 10px 0;
+      padding: 15px;
+      background: #1a1a1a;
+      border-radius: 6px;
+      border: 1px solid #333;
     }
     
     .detail-item label {
       display: block;
-      color: var(--primary-color, #d4af37);
-      font-weight: 600;
-      margin-bottom: 5px;
-      font-size: 0.9rem;
+      color: #d4af37;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
     
     .detail-item .value {
-      color: var(--text-color, #fff);
-      font-size: 1rem;
+      color: #ddd;
+      font-size: 1.05rem;
+      font-weight: 500;
     }
     
     .tipo-badge {
       display: inline-block;
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 4px;
       font-size: 13px;
       font-weight: 600;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #333;
+      color: #ddd;
+      border: 1px solid #555;
     }
     
-    .badge-ventas { background-color: #27ae60; color: white; }
-    .badge-inventario { background-color: #3498db; color: white; }
-    .badge-gastos { background-color: #e74c3c; color: white; }
-    .badge-nominas { background-color: #9b59b6; color: white; }
-    .badge-general { background-color: #95a5a6; color: white; }
-    
+    .badge {
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      background: #333;
+      color: #ddd;
+      border: 1px solid #555;
+    }
+
     .description-box {
-      background: var(--input-bg, #1a1a1a);
-      border: 1px solid var(--border-color, #444);
-      border-radius: 6px;
-      padding: 15px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
       margin-top: 10px;
-      line-height: 1.6;
+      line-height: 1.8;
+      color: #ddd;
     }
     
-    .action-buttons {
+    .action-section {
+      margin-top: 30px;
+      padding-top: 25px;
+      border-top: 2px solid #333;
+    }
+
+    .action-section h3 {
+      color: #d4af37;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      font-weight: 700;
       display: flex;
+      align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 20px;
+    }
+
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+
+    .btn-custom {
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-align: center;
+      background: #555;
+      color: #fff;
+    }
+
+    .btn-custom:hover {
+      background: #666;
+    }
+
+    .btn-secondary-custom {
+      background: #555;
+      color: #fff;
+    }
+
+    .btn-secondary-custom:hover {
+      background: #666;
+    }
+
+    .btn-primary-custom {
+      background: #d4af37;
+      color: #000;
+    }
+
+    .btn-primary-custom:hover {
+      background: #c5a032;
+    }
+
+    .export-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .btn-export {
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid #555;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: #333;
+      color: #ddd;
+    }
+
+    .btn-export:hover {
+      background: #444;
+      border-color: #d4af37;
+    }
+
+    .btn-download {
+      background: #d4af37;
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    .btn-download:hover {
+      background: #c5a032;
+    }
+
+    .btn-download img {
+      width: 16px;
+      height: 16px;
+      filter: invert(1);
+    }
+
+    .no-file {
+      color: #999;
+      font-style: italic;
     }
     
     @media (max-width: 768px) {
       .detail-row {
         grid-template-columns: 1fr;
       }
-      .action-buttons {
-        flex-direction: column;
+      
+      .action-buttons, .export-grid {
+        grid-template-columns: 1fr;
       }
-      .action-buttons .btn {
-        width: 100%;
+
+      .detail-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="my-4">Detalle del Reporte</h2>
+<div class="reportes-detail-container">
+    <div class="page-header">
+        <h2><i class="fas fa-file-alt"></i> Detalle del Reporte</h2>
+        <a href="{% url 'reportes:reporte_list' %}" class="btn-custom btn-secondary-custom">
+            <i class="fas fa-arrow-left"></i> Volver al Listado
+        </a>
+    </div>
     
     <div class="detail-card">
         <div class="detail-header">
             <h2>{{ reporte.nombre }}</h2>
+            {% if reporte.generado %}
+                <span class="status-badge status-generado">
+                    <i class="fas fa-check-circle"></i> Generado
+                </span>
+            {% else %}
+                <span class="status-badge status-pendiente">
+                    <i class="fas fa-clock"></i> Pendiente
+                </span>
+            {% endif %}
         </div>
         
         <div class="detail-row">
             <div class="detail-item">
-                <label>Tipo de Reporte</label>
+                <label><i class="fas fa-tag"></i> Tipo de Reporte</label>
                 <div class="value">
                     <span class="tipo-badge badge-{{ reporte.tipo }}">
                         {{ reporte.get_tipo_display }}
@@ -113,14 +299,14 @@
             </div>
             
             <div class="detail-item">
-                <label>Periodo</label>
+                <label><i class="fas fa-calendar-alt"></i> Periodo</label>
                 <div class="value">
                     <span class="badge bg-info">{{ reporte.get_periodo_display }}</span>
                 </div>
             </div>
             
             <div class="detail-item">
-                <label>Formato</label>
+                <label><i class="fas fa-file-export"></i> Formato</label>
                 <div class="value">
                     <span class="badge bg-secondary">{{ reporte.get_formato_display|upper }}</span>
                 </div>
@@ -129,99 +315,91 @@
         
         <div class="detail-row">
             <div class="detail-item">
-                <label>Creado por</label>
+                <label><i class="fas fa-user"></i> Creado por</label>
                 <div class="value">{{ reporte.creado_por.get_full_name|default:reporte.creado_por.username }}</div>
             </div>
             
             <div class="detail-item">
-                <label>Fecha de Creación</label>
+                <label><i class="fas fa-clock"></i> Fecha de Creación</label>
                 <div class="value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</div>
             </div>
             
             <div class="detail-item">
-                <label>Estado</label>
-                <div class="value">
-                    {% if reporte.generado %}
-                        <span class="badge bg-success">Generado</span>
-                    {% else %}
-                        <span class="badge bg-warning text-dark">Pendiente</span>
-                    {% endif %}
-                </div>
+                <label><i class="fas fa-calendar-week"></i> Duración</label>
+                <div class="value">{{ reporte.duracion_dias }} días</div>
             </div>
         </div>
         
         <div class="detail-row">
             <div class="detail-item">
-                <label>Fecha de Inicio</label>
+                <label><i class="fas fa-calendar-day"></i> Fecha de Inicio</label>
                 <div class="value">{{ reporte.fecha_inicio|date:"d/m/Y" }}</div>
             </div>
             
             <div class="detail-item">
-                <label>Fecha de Fin</label>
+                <label><i class="fas fa-calendar-check"></i> Fecha de Fin</label>
                 <div class="value">{{ reporte.fecha_fin|date:"d/m/Y" }}</div>
             </div>
             
             <div class="detail-item">
-                <label>Archivo</label>
+                <label><i class="fas fa-file-download"></i> Archivo Adjunto</label>
                 <div class="value">
                     {% if reporte.archivo %}
-                        <a href="{{ reporte.archivo.url }}" class="btn btn-sm btn-success" download>
-                            <img src="{% static 'img/icons/download.svg' %}" alt="Descargar" style="width: 16px; height: 16px; filter: invert(1);">
-                            Descargar Archivo
+                        <a href="{{ reporte.archivo.url }}" class="btn-download" download>
+                            <i class="fas fa-download"></i> Descargar Archivo
                         </a>
                     {% else %}
-                        <span style="color: #95a5a6;">No hay archivo adjunto</span>
+                        <span class="no-file">No hay archivo adjunto</span>
                     {% endif %}
                 </div>
             </div>
         </div>
         
         {% if reporte.descripcion %}
-        <div class="detail-item" style="margin-top: 20px;">
-            <label>Descripción</label>
+        <div class="detail-item" style="margin-top: 25px;">
+            <label><i class="fas fa-align-left"></i> Descripción</label>
             <div class="description-box">
                 {{ reporte.descripcion|linebreaks }}
             </div>
         </div>
         {% endif %}
         
-        <div class="action-buttons">
-            <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">
-                Volver al Listado
-            </a>
-            
+        <div class="action-section">
             {% if request.user|has_perm:"reportes,exportar" %}
-            <div class="btn-group">
-                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    Exportar
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{% url 'reportes:reporte_export' reporte.pk 'pdf' %}">
-                        Exportar a PDF
-                    </a></li>
-                    <li><a class="dropdown-item" href="{% url 'reportes:reporte_export' reporte.pk 'excel' %}">
-                        Exportar a Excel
-                    </a></li>
-                    <li><a class="dropdown-item" href="{% url 'reportes:reporte_export' reporte.pk 'csv' %}">
-                        Exportar a CSV
-                    </a></li>
-                </ul>
+            <h3><i class="fas fa-file-export"></i> Exportar Reporte</h3>
+            <div class="export-grid">
+                <a href="{% url 'reportes:reporte_export' reporte.pk 'pdf' %}" class="btn-export btn-export-pdf">
+                    <i class="fas fa-file-pdf"></i> Exportar a PDF
+                </a>
+                <a href="{% url 'reportes:reporte_export' reporte.pk 'excel' %}" class="btn-export btn-export-excel">
+                    <i class="fas fa-file-excel"></i> Exportar a Excel
+                </a>
+                <a href="{% url 'reportes:reporte_export' reporte.pk 'csv' %}" class="btn-export btn-export-csv">
+                    <i class="fas fa-file-csv"></i> Exportar a CSV
+                </a>
             </div>
             {% endif %}
             
-            {% if request.user|has_perm:"reportes,generar" %}
-            <button type="button" class="btn btn-info" onclick="generarReporte({{ reporte.pk }})">
-                Generar Datos
-            </button>
-            {% endif %}
-            
-            {% if request.user|has_perm:"reportes,editar" %}
-            <a href="{% url 'reportes:reporte_update' reporte.pk %}" class="btn btn-primary">Editar Reporte</a>
-            {% endif %}
-            
-            {% if request.user|has_perm:"reportes,eliminar" %}
-            <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn btn-danger">Eliminar Reporte</a>
-            {% endif %}
+            <h3><i class="fas fa-tools"></i> Acciones</h3>
+            <div class="action-buttons">
+                {% if request.user|has_perm:"reportes,generar" %}
+                <button type="button" class="btn-custom btn-info-custom" onclick="generarReporte({{ reporte.pk }})">
+                    <i class="fas fa-sync-alt"></i> Generar Datos
+                </button>
+                {% endif %}
+                
+                {% if request.user|has_perm:"reportes,editar" %}
+                <a href="{% url 'reportes:reporte_update' reporte.pk %}" class="btn-custom btn-primary-custom">
+                    <i class="fas fa-edit"></i> Editar Reporte
+                </a>
+                {% endif %}
+                
+                {% if request.user|has_perm:"reportes,eliminar" %}
+                <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn-custom btn-danger-custom">
+                    <i class="fas fa-trash-alt"></i> Eliminar Reporte
+                </a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
@@ -229,6 +407,12 @@
 <script>
 function generarReporte(reporteId) {
     if (confirm('¿Desea generar/actualizar los datos de este reporte?')) {
+        // Mostrar un indicador de carga
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+        btn.disabled = true;
+
         fetch(`/reportes/${reporteId}/generar/`, {
             method: 'GET',
             headers: {
@@ -238,15 +422,19 @@ function generarReporte(reporteId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Reporte generado exitosamente');
+                alert('✅ Reporte generado exitosamente');
                 location.reload();
             } else {
-                alert('Error al generar reporte: ' + data.message);
+                alert('❌ Error al generar reporte: ' + data.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         })
         .catch(error => {
-            alert('Error al generar reporte');
+            alert('❌ Error al generar reporte');
             console.error('Error:', error);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         });
     }
 }
