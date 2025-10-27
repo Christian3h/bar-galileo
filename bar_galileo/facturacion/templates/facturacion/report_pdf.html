@@ -1,0 +1,39 @@
+{% extends 'base_admin.html' %}
+{% load format_tags %}
+
+{% block content %}
+<div class="report-printable">
+  <h2>Reporte de Facturas</h2>
+  <section class="dashboard-cards">
+    <div class="card">
+      <h3>Total Facturas</h3>
+      <p>{{ estadisticas.total_facturas }}</p>
+    </div>
+    <div class="card">
+      <h3>Ingresos Totales</h3>
+      <p>{{ estadisticas.total_ingresos|format_price }}</p>
+    </div>
+  </section>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Mesa</th>
+        <th>Fecha</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in facturas %}
+      <tr>
+        <td>#{{ f.numero }}</td>
+        <td>{% if f.pedido and f.pedido.mesa %}{{ f.pedido.mesa.nombre }}{% else %}-{% endif %}</td>
+        <td>{{ f.fecha|date:"d/m/Y H:i" }}</td>
+        <td>{{ f.total|format_price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
