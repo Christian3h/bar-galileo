@@ -23,7 +23,7 @@
 }
 
 /* =======================================
-   DASHBOARD CARDS - IDENTICAL TO DASHBOARD  
+   DASHBOARD CARDS - IDENTICAL TO DASHBOARD
 ======================================= */
 .dashboard-cards {
     display: flex;
@@ -466,34 +466,34 @@
     .dashboard-cards {
         flex-direction: column;
     }
-    
+
     .dashboard-container {
         padding: 1rem;
     }
-    
+
     .card {
         width: 100%;
         min-width: unset;
     }
-    
+
     .search-fields {
         gap: 1rem;
     }
-    
+
     .buttons-group {
         flex-direction: column;
         gap: 0.75rem;
     }
-    
+
     .buttons-group .btn {
         width: 100%;
     }
-    
+
     .actions-cell {
         flex-direction: column;
         gap: 0.5rem;
     }
-    
+
     /* Responsive table columns */
     .estadoCol, .tipoContratoCol {
         display: none;
@@ -504,37 +504,37 @@
     .dashboard-title {
         font-size: 1.5rem;
     }
-    
+
     .card h3 {
         font-size: 1rem;
     }
-    
+
     .card p {
         font-size: 1.5rem;
     }
-    
+
     .fechaContratacionCol {
         display: none;
     }
-    
+
     .table-responsive {
         font-size: 0.85rem;
     }
-    
+
     /* Filtros mobile */
     .card-header h5 {
         font-size: 1rem;
     }
-    
+
     .card-body {
         padding: 1rem;
     }
-    
+
     .card-body label {
         font-size: 0.8rem;
         margin-bottom: 0.25rem;
     }
-    
+
     .form-control, .form-select {
         padding: 0.5rem 0.65rem;
         font-size: 0.9rem;
@@ -675,6 +675,18 @@
 .list-header .buttons-group {
     display: flex;
     gap: 0.75rem;
+}
+
+.buttons-group-detail {
+    margin-bottom: 1rem;
+}
+
+.empleado-delete-text {
+    color: var(--color-secondary);
+}
+
+.empleado-delete-panel {
+    margin-bottom: 1rem;
 }
 
 @media (max-width: 576px) {

@@ -8,7 +8,7 @@
 {% block content %}
 <div class="dashboard-container empleado-perfil-page">
     <h2 class="dashboard-title">Perfil del Empleado</h2>
-    <div class="buttons-group" style="margin-bottom: 1rem;">
+    <div class="buttons-group buttons-group-detail">
         <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary" title="Volver a la lista de empleados">
             <i class="fa fa-arrow-left"></i> Volver
         </a>
@@ -51,6 +51,66 @@
                     </li>
                 </ul>
             </section>
+
+            {% if empleado.user %}
+            <section class="perfil-panel">
+                <h3>Acceso al Sistema</h3>
+                <ul class="perfil-datos">
+                    <li>
+                        <span class="label">Usuario:</span>
+                        <span class="value">
+                            <span class="badge bg-primary">
+                                <i class="fa fa-user"></i> {{ empleado.user.username }}
+                            </span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="label">Email de acceso:</span>
+                        <span class="value">{{ empleado.user.email }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Estado de cuenta:</span>
+                        <span class="value">
+                            {% if empleado.user.is_active %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    <li>
+                        <span class="label">Último acceso:</span>
+                        <span class="value">
+                            {% if empleado.user.last_login %}
+                                {{ empleado.user.last_login|date:"d/m/Y H:i" }}
+                            {% else %}
+                                <span class="text-muted">Nunca</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                    {% if empleado.user.userprofile.rol %}
+                    <li>
+                        <span class="label">Rol:</span>
+                        <span class="value">
+                            <span class="badge bg-info">{{ empleado.user.userprofile.rol.nombre }}</span>
+                        </span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </section>
+            {% else %}
+            <section class="perfil-panel">
+                <h3>Acceso al Sistema</h3>
+                <div class="alert alert-warning">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    Este empleado no tiene usuario vinculado al sistema.
+                    <br>
+                    <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary mt-2">
+                        <i class="fa fa-user-plus"></i> Vincular Usuario
+                    </a>
+                </div>
+            </section>
+            {% endif %}
 
             {% if empleado.email or empleado.telefono or empleado.direccion %}
             <section class="perfil-panel">
