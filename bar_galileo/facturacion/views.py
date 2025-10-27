@@ -11,6 +11,10 @@ from roles.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from decimal import InvalidOperation
 import logging
+from django.http import HttpResponse
+import csv
+from io import BytesIO
+from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
 
@@ -234,3 +238,117 @@ def diagnostico_facturas(request):
         logger.error(f"Error en diagnostico_facturas: {e}")
         messages.error(request, f'Error al ejecutar diagnóstico: {str(e)}')
         return redirect('facturacion:lista_facturas')
+
+
+
+@login_required
+@permission_required('facturacion', 'ver')
+def export_facturas(request, fmt):
+    """
+    Exportar facturas en formato CSV o PDF.
+    fmt: 'csv' o 'pdf'
+    Los filtros GET compatibles son los mismos que en lista_facturas (busqueda, fecha_inicio, fecha_fin)
+    """
+    # Recuperar filtros (misma lógica que lista_facturas)
+    busqueda = request.GET.get('busqueda', '')
+    fecha_inicio = request.GET.get('fecha_inicio', '')
+    fecha_fin = request.GET.get('fecha_fin', '')
+
+    fecha_inicio_obj = None
+    fecha_fin_obj = None
+    from datetime import datetime
+    if fecha_inicio:
+        try:
+            fecha_inicio_obj = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+        except ValueError:
+            fecha_inicio_obj = None
+
+    if fecha_fin:
+        try:
+            fecha_fin_obj = datetime.strptime(fecha_fin, '%Y-%m-%d')
+        except ValueError:
+            fecha_fin_obj = None
+
+    try:
+        facturas = FacturacionManager.obtener_facturas_con_filtros(
+            busqueda=busqueda,
+            fecha_inicio=fecha_inicio_obj,
+            fecha_fin=fecha_fin_obj
+        )
+    except Exception as e:
+        logger.error(f"Error obteniendo facturas para exportar: {e}")
+        facturas = []
+
+    if fmt == 'csv':
+        # Generar CSV
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="facturas_export.csv"'
+
+        writer = csv.writer(response)
+        # Cabeceras
+        writer.writerow(['Número', 'Mesa', 'Fecha', 'Total'])
+
+        for f in facturas:
+            mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
+            fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
+            total = f.total
+            writer.writerow([f.numero, mesa, fecha, total])
+
+        return response
+
+    elif fmt == 'pdf':
+        # Intentar usar reportlab si está instalado para generar PDF simple
+        try:
+            from reportlab.lib.pagesizes import letter
+            from reportlab.pdfgen import canvas
+        except Exception as e:
+            # Si reportlab no está instalado, ofrecer una vista HTML imprimible como fallback
+            html = render_to_string('facturacion/report_pdf.html', {
+                'facturas': facturas,
+                'estadisticas': FacturacionManager.obtener_estadisticas()
+            })
+            response = HttpResponse(html, content_type='text/html')
+            return response
+
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
+        x_margin = 40
+        y = height - 40
+
+        p.setFont('Helvetica-Bold', 14)
+        p.drawString(x_margin, y, 'Reporte de Facturas')
+        y -= 30
+
+        p.setFont('Helvetica', 10)
+        # Cabeceras
+        p.drawString(x_margin, y, 'Número')
+        p.drawString(x_margin + 80, y, 'Mesa')
+        p.drawString(x_margin + 200, y, 'Fecha')
+        p.drawString(x_margin + 320, y, 'Total')
+        y -= 18
+
+        for f in facturas:
+            if y < 60:
+                p.showPage()
+                y = height - 40
+            mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
+            fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
+            p.drawString(x_margin, y, str(f.numero))
+            p.drawString(x_margin + 80, y, str(mesa))
+            p.drawString(x_margin + 200, y, str(fecha))
+            p.drawString(x_margin + 320, y, str(f.total))
+            y -= 16
+
+        p.showPage()
+        p.save()
+
+        pdf = buffer.getvalue()
+        buffer.close()
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="facturas_export.pdf"'
+        response.write(pdf)
+        return response
+
+    else:
+        return HttpResponse('Formato no soportado', status=400)

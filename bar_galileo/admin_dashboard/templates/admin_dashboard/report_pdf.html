@@ -1,0 +1,28 @@
+{% extends 'base_admin.html' %}
+
+{% block content %}
+<div class="report-printable">
+  <h2>Estadísticas Generales</h2>
+  <ul>
+    <li>Ingresos Totales: {{ estadisticas.ingresos_totales }}</li>
+    <li>Ganancia Total: {{ estadisticas.ganancia_total }}</li>
+    <li>Valor Total del Stock: {{ estadisticas.valor_total_stock }}</li>
+    <li>Gastos Totales: {{ estadisticas.gastos_totales }}</li>
+  </ul>
+
+  <h3>Ventas por Día</h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr><th>Fecha</th><th>Total</th></tr>
+    </thead>
+    <tbody>
+      {% for v in estadisticas.ventas_periodo %}
+        <tr>
+          <td>{{ v.dia }}</td>
+          <td>{{ v.total_dia }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

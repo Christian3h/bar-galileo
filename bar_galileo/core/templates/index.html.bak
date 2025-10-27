@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load format_tags %}
+
+{% block title %}Inicio - {{ block.super }}{% endblock %}
+
+{% block content %}
+  <!-- Quick access / admin buttons -->
+  <div class="quick-access">
+    <a href="{% url 'admin_dashboard:dashboard' %}" class="quick-btn">Dashboard</a>
+    <a href="#login-section" class="quick-btn">Login</a>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container" style="display: flex; align-items: center; justify-content: space-between;">
+      <div class="logo">BAR GALILEO</div>
+      <ul class="nav-menu">
+        <li><a href="#cocktails-section">COCKTAILS</a></li>
+        <li><a href="#experiencia-section">EXPERIENCIA</a></li>
+        <li><a href="#eventos-section">EVENTOS</a></li>
+        <li><a href="#reservas-section">RESERVAS</a></li>
+      </ul>
+      <div class="nav-buttons">
+        <button class="btn-green" data-action="login">LOGIN</button>
+        <button class="btn-green" data-action="reservar">RESERVAR MESA</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="experiencia-section">
+    <div class="badge">EXPERIENCIA PREMIUM</div>
+    <h1 class="hero-title">
+      <span class="text-white">BAR</span> <span class="text-red">GALILEO</span>
+    </h1>
+    <p class="hero-subtitle">Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable</p>
+    <div class="hero-buttons">
+      <button class="btn-green" data-action="carta">EXPLORAR CARTA</button>
+      <button class="btn-green" data-action="historia">NUESTRA HISTORIA</button>
+    </div>
+  </header>
+
+  <!-- SIGNATURE COCKTAILS -->
+  <span class="section-anchor" id="cocktails-section"></span>
+  <section class="signature-section">
+    <div class="badge">SELECCIÓN ESPECIAL</div>
+    <h2 class="signature-title"><span class="text-white">CÓCTELES</span> <span class="text-red">SIGNATURE</span></h2>
+    <p class="signature-subtitle">Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo</p>
+    <div class="signature-cards">
+      <div class="signature-card"><div class="card-badge">ESPECIAL</div><div class="card-icon">🍸</div></div>
+      <div class="signature-card"><div class="card-badge">ESPECIAL</div><div class="card-icon">🍹</div></div>
+      <div class="signature-card"><div class="card-badge">ESPECIAL</div><div class="card-icon">🥃</div></div>
+    </div>
+  </section>
+
+  <!-- PRODUCTOS (dinámicos si existen) -->
+  <span class="section-anchor" id="carta-section"></span>
+  <section class="products-section">
+    <div class="container">
+      <h2 class="products-title">Nuestros Productos</h2>
+      <div class="products-grid" id="productos-grid">
+        {% for producto in productos_iniciales %}
+        <div class="product-card">
+          <div class="product-carousel">
+            {% if producto.imagenes.exists %}
+              <img src="{{ producto.imagenes.first.imagen.url }}" class="product-img" alt="{{ producto.nombre }}" />
+            {% else %}
+              <img src="https://via.placeholder.com/400x300?text=Sin+Imagen" class="product-img" alt="{{ producto.nombre }}" />
+            {% endif %}
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">{{ producto.nombre }}</h3>
+            <p class="product-price">{{ producto.precio_venta|format_price }}</p>
+            <p class="product-description">{{ producto.descripcion|truncatewords:10 }}</p>
+            <button class="btn-green" data-producto-id="{{ producto.id_producto }}">Ver producto</button>
+          </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; color: #ccc; grid-column: 1 / -1;"><p>No hay productos disponibles en este momento.</p></div>
+        {% endfor %}
+      </div>
+
+      {% if total_productos > 3 %}
+      <div class="productos-botones">
+        <button id="mostrar-mas-productos" class="btn-green">Mostrar más productos</button>
+        <button id="mostrar-menos-productos" class="btn-green" style="display: none;">Mostrar menos productos</button>
+        <div id="loading-productos" style="display: none;"></div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- SECCIÓN RESERVAS -->
+  <span class="section-anchor" id="reservas-section"></span>
+  <section class="reservas-section">
+    <div class="container">
+      <h2 class="products-title">Reservas</h2>
+      <p style="font-size: 18px; margin-bottom: 40px;">¡Reserva tu mesa y asegura tu lugar en Bar Galileo!</p>
+      <a href="https://wa.me/573044029343" class="nav-button">Reservar por WhatsApp</a>
+    </div>
+  </section>
+{% endblock %}
