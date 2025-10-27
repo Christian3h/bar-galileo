@@ -1,10 +1,7 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 {% load format_tags %}
-<<<<<<< HEAD
 {% load roles_tags %}
-=======
->>>>>>> Jorge
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
@@ -14,12 +11,9 @@
 {% block content %}
 <div class="dashboard-container">
     <h2 class="dashboard-title">Gestión de Nóminas</h2>
-<<<<<<< HEAD
     {% if request.user|has_perm:"nominas,crear" %}
         <a href="{% url 'nominas:empleado_crear' %}" class="btn btn-success mb-3">Crear Empleado</a>
     {% endif %}
-=======
->>>>>>> Jorge
 
     <!-- Estadísticas -->
     <section class="dashboard-cards">
@@ -76,6 +70,7 @@
                     <th class="estadoCol">Estado</th>
                     <th class="tipoContratoCol">Tipo Contrato</th>
                     <th class="fechaContratacionCol">Fecha Contratación</th>
+                    <th class="usuarioCol">Usuario</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -83,7 +78,7 @@
                 {% for empleado in empleados %}
                 <tr>
                     <td class="col-1">{{ empleado.nombre }}</td>
-                    <td class="col-2">{{ empleado.cargo }}</td>
+                    <td class="col-2">{{ empleado.get_cargo_display }}</td>
                     <td class="col-3">${{ empleado.salario }}</td>
                     <td class="estadoCol">
                         <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
@@ -92,6 +87,17 @@
                     </td>
                     <td class="tipoContratoCol">{{ empleado.get_tipo_contrato_display }}</td>
                     <td class="fechaContratacionCol">{{ empleado.fecha_contratacion }}</td>
+                    <td class="usuarioCol">
+                        {% if empleado.user %}
+                            <span class="badge bg-primary" title="Usuario: {{ empleado.user.username }}">
+                                <i class="fa fa-user-check"></i> {{ empleado.user.username }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary" title="Sin usuario vinculado">
+                                <i class="fa fa-user-times"></i> Sin usuario
+                            </span>
+                        {% endif %}
+                    </td>
                     <td>
                         <div class="actions-cell">
                             <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info" title="Ver detalles del empleado">
@@ -122,11 +128,8 @@
         if ($.fn.dataTable.isDataTable('#tabla-empleados')) {
             $('#tabla-empleados').DataTable().destroy();
         }
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> Jorge
+
         // Inicialización mínima + idioma (manejo correcto cuando no hay datos)
         var tabla = $('#tabla-empleados').DataTable({
             language: {
@@ -141,11 +144,8 @@
                 }
             }
         });
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> Jorge
+
         if (tabla) {
             tabla.order([0, 'asc']).draw();
         }
