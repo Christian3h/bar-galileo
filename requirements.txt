@@ -56,3 +56,5 @@ uvicorn==0.23.2
 watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
+reportlab==4.0.0
+openpyxl==3.1.2

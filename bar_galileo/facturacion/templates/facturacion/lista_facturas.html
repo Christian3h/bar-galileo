@@ -41,7 +41,8 @@
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'pdf' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" target="_blank">Exportar PDF</a>
-                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'csv' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Exportar Excel (CSV)</a>
+                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'csv' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Exportar CSV</a>
+                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'xlsx' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Exportar Excel (.xlsx)</a>
             </div>
         </div>
     </div>
