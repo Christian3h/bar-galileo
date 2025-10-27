@@ -20,11 +20,7 @@
             <tr>
                 <td>{{ modulo.nombre|title }}</td>
                 {% for accion in acciones %}
-<<<<<<< HEAD
                     <td style="text-align: center;">
-=======
-                    <td>
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
                         <input type="checkbox" name="perm_{{ modulo.id }}_{{ accion.id }}"
                                {% for permiso in permisos %}
                                    {% if permiso.modulo_id == modulo.id and permiso.accion_id == accion.id %}
@@ -39,7 +35,6 @@
     </table>
 
 
-<<<<<<< HEAD
     <button type="submit" class="btn btn-primary">Guardar permisos</button>
 </form>
 
