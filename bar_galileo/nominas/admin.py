@@ -23,13 +23,27 @@ class EmpleadoAdmin(admin.ModelAdmin):
 
 @admin.register(Pago)
 class PagoAdmin(admin.ModelAdmin):
-    list_display = ['empleado', 'fecha_pago', 'monto', 'tipo']
+    list_display = ['empleado', 'fecha_pago', 'monto', 'tipo', 'created_by', 'fecha_creacion']
     list_filter = ['tipo', 'fecha_pago']
     search_fields = ['empleado__nombre', 'descripcion']
     date_hierarchy = 'fecha_pago'
+    readonly_fields = ['created_by', 'modified_by', 'fecha_creacion', 'fecha_modificacion']
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # Si es un objeto nuevo
+            obj.created_by = request.user
+        obj.modified_by = request.user
+        super().save_model(request, obj, form, change)
 
 @admin.register(Bonificacion)
 class BonificacionAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'empleado', 'monto', 'recurrente', 'fecha_inicio', 'fecha_fin']
-    list_filter = ['recurrente', 'fecha_inicio']
+    list_display = ['nombre', 'empleado', 'monto', 'recurrente', 'activa', 'fecha_inicio', 'fecha_fin', 'created_by']
+    list_filter = ['recurrente', 'activa', 'fecha_inicio']
     search_fields = ['nombre', 'empleado__nombre']
+    readonly_fields = ['created_by', 'modified_by', 'fecha_creacion', 'fecha_modificacion']
+    
+    def save_model(self, request, obj, form, change):
+        if not change:  # Si es un objeto nuevo
+            obj.created_by = request.user
+        obj.modified_by = request.user
+        super().save_model(request, obj, form, change)

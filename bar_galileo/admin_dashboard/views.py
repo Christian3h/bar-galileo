@@ -3,6 +3,7 @@ from django.views.generic import TemplateView
 from products.models import Producto, Categoria
 from tables.models import Mesa, Pedido, PedidoItem, Factura
 from expenses.models import Expense
+from nominas.models import Empleado, Pago, Bonificacion
 from roles.decorators import permission_required
 from django.utils.decorators import method_decorator
 from notifications.utils import notificar_usuario
@@ -46,11 +47,13 @@ class DashboardView(TemplateView):
         facturas_periodo = Factura.objects.all()
         pedidos_periodo = PedidoItem.objects.filter(pedido__factura__isnull=False)
         gastos_periodo = Expense.objects.all()
+        pagos_periodo = Pago.objects.all()
 
         if start_date and end_date:
             facturas_periodo = facturas_periodo.filter(fecha__date__range=[start_date, end_date])
             pedidos_periodo = pedidos_periodo.filter(pedido__factura__fecha__date__range=[start_date, end_date])
             gastos_periodo = gastos_periodo.filter(date__range=[start_date, end_date])
+            pagos_periodo = pagos_periodo.filter(fecha_pago__range=[start_date, end_date])
 
         context['productos'] = Producto.objects.count()
         context['categorias'] = Categoria.objects.count()
@@ -83,6 +86,22 @@ class DashboardView(TemplateView):
         context['ganancia_total'] = ganancia_total
 
         context['gastos_totales'] = gastos_periodo.aggregate(total=Sum('amount'))['total'] or 0
+        
+        # Nóminas data
+        context['total_empleados'] = Empleado.objects.filter(estado='activo').count()
+        context['total_empleados_inactivos'] = Empleado.objects.filter(estado='inactivo').count()
+        context['nominas_pagadas'] = pagos_periodo.aggregate(total=Sum('monto'))['total'] or 0
+        context['bonificaciones_activas'] = Bonificacion.objects.filter(activa=True).count()
+        
+        # Total de bonificaciones pagadas como pagos de tipo "bono" en el periodo
+        bonificaciones_periodo = pagos_periodo.filter(tipo='bono').aggregate(total_bonificaciones=Sum('monto'))['total_bonificaciones'] or 0
+        context['bonificaciones_pagadas'] = bonificaciones_periodo
+        
+        # Pagos por empleado (top 5 con mayores pagos en el periodo)
+        top_pagos = pagos_periodo.values('empleado__nombre').annotate(
+            total_pagado=Sum('monto')
+        ).order_by('-total_pagado')[:5]
+        context['top_pagos_empleados'] = top_pagos
         
         context['selected_period'] = period
 

@@ -31,7 +31,6 @@ class Empleado(models.Model):
 
     nombre = models.CharField(max_length=100, verbose_name="Nombre completo")
     cargo = models.CharField(max_length=100, verbose_name="Cargo", blank=True, null=True, help_text="Descripción del cargo (se usa el rol del usuario si está vinculado)")
-    cargo = models.CharField(max_length=100, verbose_name="Cargo")
     salario = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Salario base")
     fecha_contratacion = models.DateField(verbose_name="Fecha de contratación")
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activo', verbose_name="Estado")
@@ -92,6 +91,31 @@ class Pago(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='salario', verbose_name="Tipo de pago")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
     comprobante = models.FileField(upload_to='nominas/comprobantes/', blank=True, null=True, verbose_name="Comprobante")
+    
+    # Auditoría
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pagos_creados',
+        verbose_name="Creado por"
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='pagos_modificados',
+        verbose_name="Modificado por"
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    fecha_modificacion = models.DateTimeField(auto_now=True, verbose_name="Última modificación")
+
+    class Meta:
+        ordering = ['-fecha_pago']
+        verbose_name = "Pago"
+        verbose_name_plural = "Pagos"
 
     def __str__(self):
         return f"Pago a {self.empleado.nombre} - {self.fecha_pago} - ${self.monto}"
@@ -103,6 +127,48 @@ class Bonificacion(models.Model):
     recurrente = models.BooleanField(default=False, verbose_name="¿Es recurrente?")
     fecha_inicio = models.DateField(verbose_name="Fecha de inicio")
     fecha_fin = models.DateField(blank=True, null=True, verbose_name="Fecha de finalización (opcional)")
+    activa = models.BooleanField(default=True, verbose_name="Activa")
+    
+    # Auditoría
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bonificaciones_creadas',
+        verbose_name="Creado por"
+    )
+    modified_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='bonificaciones_modificadas',
+        verbose_name="Modificado por"
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    fecha_modificacion = models.DateTimeField(auto_now=True, verbose_name="Última modificación")
+
+    class Meta:
+        ordering = ['-fecha_inicio']
+        verbose_name = "Bonificación"
+        verbose_name_plural = "Bonificaciones"
 
     def __str__(self):
         return f"{self.nombre} - {self.empleado.nombre} - ${self.monto}"
+    
+    def clean(self):
+        """Validar fechas de bonificación"""
+        from django.core.exceptions import ValidationError
+        if self.fecha_fin and self.fecha_inicio > self.fecha_fin:
+            raise ValidationError("La fecha de fin no puede ser anterior a la fecha de inicio")
+    
+    @property
+    def esta_vigente(self):
+        """Verifica si la bonificación está vigente"""
+        if not self.activa:
+            return False
+        hoy = timezone.now().date()
+        if self.fecha_fin:
+            return self.fecha_inicio <= hoy <= self.fecha_fin
+        return self.fecha_inicio <= hoy
