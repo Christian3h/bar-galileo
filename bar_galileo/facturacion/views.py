@@ -15,6 +15,11 @@ from django.http import HttpResponse
 import csv
 from io import BytesIO
 from django.template.loader import render_to_string
+try:
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+except Exception:
+    openpyxl = None
 
 logger = logging.getLogger(__name__)
 
@@ -296,12 +301,90 @@ def export_facturas(request, fmt):
 
         return response
 
+    elif fmt == 'xlsx' or fmt == 'excel':
+        # Generar XLSX con openpyxl si está disponible, si no devolver CSV
+        if openpyxl is None:
+            # fallback to CSV (con columnas extendidas)
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="facturas_export.csv"'
+            writer = csv.writer(response)
+            writer.writerow(['Número', 'Mesa', 'Fecha', 'Total', 'Usuarios', 'Items', 'Productos'])
+            for f in facturas:
+                mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
+                fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
+                usuarios = ''
+                items_count = 0
+                productos = ''
+                if getattr(f, 'pedido', None):
+                    try:
+                        usuarios_qs = f.pedido.usuarios.all()
+                        usuarios = ', '.join([u.get_full_name() or u.username for u in usuarios_qs])
+                    except Exception:
+                        usuarios = ''
+                    try:
+                        items_count = f.pedido.items.count()
+                        productos = ', '.join([str(it.producto.nombre) for it in f.pedido.items.all()])
+                    except Exception:
+                        items_count = 0
+                        productos = ''
+
+                writer.writerow([f.numero, mesa, fecha, f.total, usuarios, items_count, productos])
+            return response
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = 'Facturas'
+        headers = ['Número', 'Mesa', 'Fecha', 'Total', 'Usuarios', 'Items', 'Productos']
+        ws.append(headers)
+
+        for f in facturas:
+            mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
+            fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
+            usuarios = ''
+            items_count = 0
+            productos = ''
+            if getattr(f, 'pedido', None):
+                try:
+                    usuarios_qs = f.pedido.usuarios.all()
+                    usuarios = ', '.join([u.get_full_name() or u.username for u in usuarios_qs])
+                except Exception:
+                    usuarios = ''
+                try:
+                    items_count = f.pedido.items.count()
+                    productos = ', '.join([str(it.producto.nombre) for it in f.pedido.items.all()])
+                except Exception:
+                    items_count = 0
+                    productos = ''
+
+            ws.append([f.numero, mesa, fecha, float(f.total), usuarios, items_count, productos])
+
+        # Ajustar ancho de columnas
+        for i, col in enumerate(ws.columns, 1):
+            max_length = 0
+            for cell in col:
+                try:
+                    value = str(cell.value)
+                except Exception:
+                    value = ''
+                if value and len(value) > max_length:
+                    max_length = len(value)
+            ws.column_dimensions[get_column_letter(i)].width = min(max_length + 2, 70)
+
+        output = BytesIO()
+        wb.save(output)
+        output.seek(0)
+        response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="facturas_export.xlsx"'
+        return response
+
     elif fmt == 'pdf':
-        # Intentar usar reportlab si está instalado para generar PDF simple
+        # Mejor generación de PDF usando reportlab Platypus si está disponible
         try:
             from reportlab.lib.pagesizes import letter
-            from reportlab.pdfgen import canvas
-        except Exception as e:
+            from reportlab.lib import colors
+            from reportlab.lib.styles import getSampleStyleSheet
+            from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+        except Exception:
             # Si reportlab no está instalado, ofrecer una vista HTML imprimible como fallback
             html = render_to_string('facturacion/report_pdf.html', {
                 'facturas': facturas,
@@ -311,43 +394,35 @@ def export_facturas(request, fmt):
             return response
 
         buffer = BytesIO()
-        p = canvas.Canvas(buffer, pagesize=letter)
-        width, height = letter
-        x_margin = 40
-        y = height - 40
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+        elements = []
 
-        p.setFont('Helvetica-Bold', 14)
-        p.drawString(x_margin, y, 'Reporte de Facturas')
-        y -= 30
+        elements.append(Paragraph('Reporte de Facturas', styles['Title']))
+        elements.append(Spacer(1, 12))
 
-        p.setFont('Helvetica', 10)
-        # Cabeceras
-        p.drawString(x_margin, y, 'Número')
-        p.drawString(x_margin + 80, y, 'Mesa')
-        p.drawString(x_margin + 200, y, 'Fecha')
-        p.drawString(x_margin + 320, y, 'Total')
-        y -= 18
-
+        data = [['Número', 'Mesa', 'Fecha', 'Total']]
         for f in facturas:
-            if y < 60:
-                p.showPage()
-                y = height - 40
             mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
             fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
-            p.drawString(x_margin, y, str(f.numero))
-            p.drawString(x_margin + 80, y, str(mesa))
-            p.drawString(x_margin + 200, y, str(fecha))
-            p.drawString(x_margin + 320, y, str(f.total))
-            y -= 16
+            data.append([str(f.numero), mesa, fecha, f"{f.total}"])
 
-        p.showPage()
-        p.save()
+        table = Table(data, repeatRows=1, hAlign='LEFT')
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#a68932')),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+            ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ]))
+
+        elements.append(table)
+        doc.build(elements)
 
         pdf = buffer.getvalue()
         buffer.close()
-        response = HttpResponse(content_type='application/pdf')
+        response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="facturas_export.pdf"'
-        response.write(pdf)
         return response
 
     else:
