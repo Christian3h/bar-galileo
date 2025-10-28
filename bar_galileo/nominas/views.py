@@ -257,6 +257,12 @@ class PagoCreateView(SuccessMessageMixin, CreateView):
     template_name = "nominas/pago_form.html"
     success_message = "Pago registrado exitosamente"
 
+    def form_valid(self, form):
+        # Asignar el usuario que crea el pago
+        form.instance.created_by = self.request.user
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse_lazy("nominas:empleado_detail", kwargs={'pk': self.object.empleado.pk})
 
@@ -272,6 +278,12 @@ class BonificacionCreateView(SuccessMessageMixin, CreateView):
     template_name = "nominas/bonificacion_form.html"
     success_message = "Bonificación agregada exitosamente"
 
+    def form_valid(self, form):
+        # Asignar el usuario que crea la bonificación
+        form.instance.created_by = self.request.user
+        form.instance.modified_by = self.request.user
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse_lazy("nominas:empleado_detail", kwargs={'pk': self.object.empleado.pk})
 
@@ -284,6 +296,8 @@ def agregar_pago(request, empleado_id):
         if form.is_valid():
             pago = form.save(commit=False)
             pago.empleado = empleado
+            pago.created_by = request.user
+            pago.modified_by = request.user
             pago.save()
             messages.success(request, "Pago registrado exitosamente")
             return redirect('nominas:empleado_detail', pk=empleado.pk)
@@ -303,6 +317,8 @@ def agregar_bonificacion(request, empleado_id):
         if form.is_valid():
             bonificacion = form.save(commit=False)
             bonificacion.empleado = empleado
+            bonificacion.created_by = request.user
+            bonificacion.modified_by = request.user
             bonificacion.save()
             messages.success(request, "Bonificación agregada exitosamente")
             return redirect('nominas:empleado_detail', pk=empleado.pk)
