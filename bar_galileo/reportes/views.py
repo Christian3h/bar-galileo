@@ -109,7 +109,6 @@ class ReporteDeleteView(SuccessMessageMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-@permission_required('reportes', 'exportar')
 def exportar_reporte(request, pk, formato):
     """Vista para exportar un reporte en diferentes formatos"""
     reporte = get_object_or_404(Reporte, pk=pk)

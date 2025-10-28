@@ -209,11 +209,37 @@
       font-size: 0.9rem;
       background: #333;
       color: #ddd;
+      transition: all 0.3s ease;
     }
 
     .btn-export:hover {
-      background: #444;
+      background: #d4af37;
       border-color: #d4af37;
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
+    }
+
+    .btn-export i {
+      font-size: 1.2rem;
+    }
+
+    .btn-export-pdf:hover {
+      background: #dc3545;
+      border-color: #dc3545;
+      color: #fff;
+    }
+
+    .btn-export-excel:hover {
+      background: #28a745;
+      border-color: #28a745;
+      color: #fff;
+    }
+
+    .btn-export-csv:hover {
+      background: #17a2b8;
+      border-color: #17a2b8;
+      color: #fff;
     }
 
     .btn-download {
@@ -365,20 +391,18 @@
         {% endif %}
         
         <div class="action-section">
-            {% if request.user|has_perm:"reportes,exportar" %}
-            <h3><i class="fas fa-file-export"></i> Exportar Reporte</h3>
+            <h3><i class="fas fa-download"></i> Descargar Reporte</h3>
             <div class="export-grid">
                 <a href="{% url 'reportes:reporte_export' reporte.pk 'pdf' %}" class="btn-export btn-export-pdf">
-                    <i class="fas fa-file-pdf"></i> Exportar a PDF
+                    <i class="fas fa-file-pdf"></i> Descargar PDF
                 </a>
                 <a href="{% url 'reportes:reporte_export' reporte.pk 'excel' %}" class="btn-export btn-export-excel">
-                    <i class="fas fa-file-excel"></i> Exportar a Excel
+                    <i class="fas fa-file-excel"></i> Descargar Excel
                 </a>
                 <a href="{% url 'reportes:reporte_export' reporte.pk 'csv' %}" class="btn-export btn-export-csv">
-                    <i class="fas fa-file-csv"></i> Exportar a CSV
+                    <i class="fas fa-file-csv"></i> Descargar CSV
                 </a>
             </div>
-            {% endif %}
             
             <h3><i class="fas fa-tools"></i> Acciones</h3>
             <div class="action-buttons">
