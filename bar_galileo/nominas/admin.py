@@ -28,7 +28,7 @@ class PagoAdmin(admin.ModelAdmin):
     search_fields = ['empleado__nombre', 'descripcion']
     date_hierarchy = 'fecha_pago'
     readonly_fields = ['created_by', 'modified_by', 'fecha_creacion', 'fecha_modificacion']
-    
+
     def save_model(self, request, obj, form, change):
         if not change:  # Si es un objeto nuevo
             obj.created_by = request.user
@@ -41,7 +41,7 @@ class BonificacionAdmin(admin.ModelAdmin):
     list_filter = ['recurrente', 'activa', 'fecha_inicio']
     search_fields = ['nombre', 'empleado__nombre']
     readonly_fields = ['created_by', 'modified_by', 'fecha_creacion', 'fecha_modificacion']
-    
+
     def save_model(self, request, obj, form, change):
         if not change:  # Si es un objeto nuevo
             obj.created_by = request.user
