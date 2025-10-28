@@ -304,27 +304,59 @@ def export_facturas(request, fmt):
     elif fmt == 'xlsx' or fmt == 'excel':
         # Generar XLSX con openpyxl si está disponible, si no devolver CSV
         if openpyxl is None:
-            # fallback to CSV
+            # fallback to CSV (con columnas extendidas)
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="facturas_export.csv"'
             writer = csv.writer(response)
-            writer.writerow(['Número', 'Mesa', 'Fecha', 'Total'])
+            writer.writerow(['Número', 'Mesa', 'Fecha', 'Total', 'Usuarios', 'Items', 'Productos'])
             for f in facturas:
                 mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
                 fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
-                writer.writerow([f.numero, mesa, fecha, f.total])
+                usuarios = ''
+                items_count = 0
+                productos = ''
+                if getattr(f, 'pedido', None):
+                    try:
+                        usuarios_qs = f.pedido.usuarios.all()
+                        usuarios = ', '.join([u.get_full_name() or u.username for u in usuarios_qs])
+                    except Exception:
+                        usuarios = ''
+                    try:
+                        items_count = f.pedido.items.count()
+                        productos = ', '.join([str(it.producto.nombre) for it in f.pedido.items.all()])
+                    except Exception:
+                        items_count = 0
+                        productos = ''
+
+                writer.writerow([f.numero, mesa, fecha, f.total, usuarios, items_count, productos])
             return response
 
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = 'Facturas'
-        headers = ['Número', 'Mesa', 'Fecha', 'Total']
+        headers = ['Número', 'Mesa', 'Fecha', 'Total', 'Usuarios', 'Items', 'Productos']
         ws.append(headers)
 
         for f in facturas:
             mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
             fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
-            ws.append([f.numero, mesa, fecha, float(f.total)])
+            usuarios = ''
+            items_count = 0
+            productos = ''
+            if getattr(f, 'pedido', None):
+                try:
+                    usuarios_qs = f.pedido.usuarios.all()
+                    usuarios = ', '.join([u.get_full_name() or u.username for u in usuarios_qs])
+                except Exception:
+                    usuarios = ''
+                try:
+                    items_count = f.pedido.items.count()
+                    productos = ', '.join([str(it.producto.nombre) for it in f.pedido.items.all()])
+                except Exception:
+                    items_count = 0
+                    productos = ''
+
+            ws.append([f.numero, mesa, fecha, float(f.total), usuarios, items_count, productos])
 
         # Ajustar ancho de columnas
         for i, col in enumerate(ws.columns, 1):
@@ -336,7 +368,7 @@ def export_facturas(request, fmt):
                     value = ''
                 if value and len(value) > max_length:
                     max_length = len(value)
-            ws.column_dimensions[get_column_letter(i)].width = min(max_length + 2, 50)
+            ws.column_dimensions[get_column_letter(i)].width = min(max_length + 2, 70)
 
         output = BytesIO()
         wb.save(output)
