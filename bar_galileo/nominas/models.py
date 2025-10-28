@@ -91,7 +91,7 @@ class Pago(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default='salario', verbose_name="Tipo de pago")
     descripcion = models.TextField(blank=True, null=True, verbose_name="Descripción")
     comprobante = models.FileField(upload_to='nominas/comprobantes/', blank=True, null=True, verbose_name="Comprobante")
-    
+
     # Auditoría
     created_by = models.ForeignKey(
         User,
@@ -128,7 +128,7 @@ class Bonificacion(models.Model):
     fecha_inicio = models.DateField(verbose_name="Fecha de inicio")
     fecha_fin = models.DateField(blank=True, null=True, verbose_name="Fecha de finalización (opcional)")
     activa = models.BooleanField(default=True, verbose_name="Activa")
-    
+
     # Auditoría
     created_by = models.ForeignKey(
         User,
@@ -156,13 +156,13 @@ class Bonificacion(models.Model):
 
     def __str__(self):
         return f"{self.nombre} - {self.empleado.nombre} - ${self.monto}"
-    
+
     def clean(self):
         """Validar fechas de bonificación"""
         from django.core.exceptions import ValidationError
         if self.fecha_fin and self.fecha_inicio > self.fecha_fin:
             raise ValidationError("La fecha de fin no puede ser anterior a la fecha de inicio")
-    
+
     @property
     def esta_vigente(self):
         """Verifica si la bonificación está vigente"""

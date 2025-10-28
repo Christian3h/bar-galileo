@@ -86,23 +86,23 @@ class DashboardView(TemplateView):
         context['ganancia_total'] = ganancia_total
 
         context['gastos_totales'] = gastos_periodo.aggregate(total=Sum('amount'))['total'] or 0
-        
+
         # Nóminas data
         context['total_empleados'] = Empleado.objects.filter(estado='activo').count()
         context['total_empleados_inactivos'] = Empleado.objects.filter(estado='inactivo').count()
         context['nominas_pagadas'] = pagos_periodo.aggregate(total=Sum('monto'))['total'] or 0
         context['bonificaciones_activas'] = Bonificacion.objects.filter(activa=True).count()
-        
+
         # Total de bonificaciones pagadas como pagos de tipo "bono" en el periodo
         bonificaciones_periodo = pagos_periodo.filter(tipo='bono').aggregate(total_bonificaciones=Sum('monto'))['total_bonificaciones'] or 0
         context['bonificaciones_pagadas'] = bonificaciones_periodo
-        
+
         # Pagos por empleado (top 5 con mayores pagos en el periodo)
         top_pagos = pagos_periodo.values('empleado__nombre').annotate(
             total_pagado=Sum('monto')
         ).order_by('-total_pagado')[:5]
         context['top_pagos_empleados'] = top_pagos
-        
+
         context['selected_period'] = period
 
         # Enviar notificación al usuario actual
