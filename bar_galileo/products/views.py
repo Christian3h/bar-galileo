@@ -554,16 +554,7 @@ class ProductoCreateAdminView(CreateView):
         messages.success(self.request, "Producto creado correctamente.")
         return response
 
-@method_decorator(permission_required('products', 'editar'), name='dispatch')
-class ProductoUpdateAdminView(UpdateView):
-    model = Producto
-    form_class = ProductoForm
-    template_name = "admin/products/products_form.html"
-    success_url = reverse_lazy("products:products_admin")
-    pk_url_kwarg = "pk"
 
-    def get_object(self, queryset=None):
-        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -852,4 +843,48 @@ class ProductoReactivarAdminView(View):
         producto.save(update_fields=['activo'])
         messages.success(request, f"Producto '{producto.nombre}' reactivado.")
         return redirect('products:products_archived_admin')
+
+
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
+class ProductoUpdateAdminView(UpdateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = "admin/products/products_form.html"
+    success_url = reverse_lazy("products:products_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["imagenes"] = ProductoImagen.objects.filter(producto=self.object)
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        producto = self.object
+
+        # Guardar nuevas imágenes si las hay, asignando índices consecutivos
+        imagenes_existentes = ProductoImagen.objects.filter(producto=producto).values_list('imagen', flat=True)
+        indices = []
+        for ruta in imagenes_existentes:
+            nombre_archivo = os.path.basename(ruta)
+            try:
+                indice = int(nombre_archivo.split('_')[-1].split('.')[0])
+                indices.append(indice)
+            except (IndexError, ValueError):
+                continue
+
+        siguiente_indice = max(indices) + 1 if indices else 0
+
+        for imagen in self.request.FILES.getlist('imagenes'):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{siguiente_indice}")
+            ProductoImagen.objects.create(producto=producto, imagen=ruta)
+            siguiente_indice += 1
+
+        mensaje = f"El producto '{producto.nombre}' ha sido actualizado."
+        notificar_usuario(self.request.user, mensaje)
+        messages.success(self.request, "Producto actualizado correctamente.")
+        return response
 

@@ -11,6 +11,7 @@ click==8.2.1
 constantly==23.10.4
 cryptography==45.0.5
 daphne==4.2.1
+dbackup==1.0.1
 Django==5.2.4
 django-allauth==65.10.0
 django-dbbackup==5.0.0
@@ -38,6 +39,7 @@ pyee==13.0.0
 PyJWT==2.10.1
 pyOpenSSL==25.1.0
 python-dotenv==1.1.1
+python-gnupg==0.5.5
 pytube==15.0.0
 PyYAML==6.0.2
 requests==2.32.4
@@ -56,9 +58,6 @@ uvicorn==0.23.2
 watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
-python-gnupg==0.5.5
 
 # Librerías para generación de reportes
-reportlab==4.2.5
-xlsxwriter==3.2.0
 openpyxl==3.1.5

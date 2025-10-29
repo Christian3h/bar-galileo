@@ -27,7 +27,7 @@
 
   .page-header h2 {
     margin: 0;
-    color: #d4af37;
+    color: var(--color-secondary, #d4af37);
     font-size: 2rem;
   }
 
@@ -40,23 +40,30 @@
   }
 
   .stat-card {
-    background: #262626;
-    border: 1px solid #444;
-    border-radius: 8px;
+    background: rgba(166, 137, 50, 0.1);
+    border: 2px solid var(--color-secondary, #d4af37);
+    border-radius: 12px;
     padding: 20px;
     text-align: center;
+    box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
   }
 
   .stat-card h3 {
     margin: 0 0 8px 0;
-    color: #d4af37;
+    color: var(--color-secondary, #d4af37);
     font-size: 2.5rem;
     font-weight: 700;
   }
 
   .stat-card p {
     margin: 0;
-    color: #bbb;
+    color: var(--color-text, #fff);
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -64,15 +71,15 @@
 
   /* Filtros */
   .filter-section {
-    background: #262626;
-    border: 1px solid #444;
-    border-radius: 8px;
+    background: transparent;
+    border: 2px solid var(--color-secondary, #d4af37);
+    border-radius: 12px;
     padding: 20px;
     margin-bottom: 25px;
   }
 
   .filter-section h4 {
-    color: #d4af37;
+    color: var(--color-secondary, #d4af37);
     margin: 0 0 15px 0;
     font-size: 1.1rem;
     display: flex;
@@ -91,17 +98,34 @@
   .filter-row select {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #555;
+    border: 1px solid var(--color-secondary, #d4af37);
     border-radius: 6px;
-    background: #1a1a1a;
-    color: #fff;
+    background: transparent;
+    color: var(--color-text, #fff);
     font-size: 14px;
+    transition: all 0.3s ease;
   }
 
   .filter-row input:focus,
   .filter-row select:focus {
     outline: none;
-    border-color: #d4af37;
+    border-color: var(--color-secondary, #d4af37);
+    box-shadow: 0 0 0 2px rgba(166, 137, 50, 0.2);
+  }
+
+  .filter-row label {
+    color: var(--color-secondary, #d4af37);
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .filter-row input:focus,
+  .filter-row select:focus {
+    outline: none;
+    border-color: var(--color-secondary, #d4af37);
+    box-shadow: 0 0 0 2px rgba(166, 137, 50, 0.2);
   }
 
   .filter-actions {
@@ -119,34 +143,37 @@
     font-weight: 600;
     text-align: center;
     cursor: pointer;
-    border: none;
+    border: 2px solid var(--color-secondary, #d4af37);
     text-decoration: none;
     display: inline-block;
+    transition: all 0.3s ease;
   }
 
   .btn-filter {
-    background: #d4af37;
+    background: var(--color-secondary, #d4af37);
     color: #000;
   }
 
   .btn-filter:hover {
-    background: #c5a032;
+    background: linear-gradient(135deg, #d4af37, #f4d467);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
   }
 
   .btn-clear {
-    background: #555;
-    color: #fff;
+    background: transparent;
+    color: var(--color-secondary, #d4af37);
   }
 
   .btn-clear:hover {
-    background: #666;
+    background: rgba(166, 137, 50, 0.1);
   }
 
   /* Tabla */
   .table-section {
-    background: #262626;
-    border: 1px solid #444;
-    border-radius: 8px;
+    background: transparent;
+    border: 2px solid var(--color-secondary, #d4af37);
+    border-radius: 12px;
     padding: 20px;
   }
 
@@ -161,36 +188,41 @@
 
   .table-header h3 {
     margin: 0;
-    color: #d4af37;
+    color: var(--color-secondary, #d4af37);
     font-size: 1.3rem;
+  }
+
+  .table-contenedor {
+    display: flex;
+    justify-content: center;
   }
 
   #tabla-empleados {
     width: 100%;
-    background: #1a1a1a;
+    background: transparent;
   }
 
   #tabla-empleados thead th {
-    background: #2c2c2c;
-    color: #d4af37;
+    background: transparent;
+    color: var(--color-secondary, #d4af37);
     padding: 15px 12px;
     text-align: left;
     font-weight: 700;
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid #d4af37;
+    border-bottom: 2px solid var(--color-secondary, #d4af37);
   }
 
   #tabla-empleados tbody td {
     padding: 14px 12px;
-    border-bottom: 1px solid #333;
-    color: #ddd;
+    border-bottom: 1px solid var(--color-secondary, #d4af37);
+    color: var(--color-text, #fff);
     font-size: 0.9rem;
   }
 
   #tabla-empleados tbody tr:hover {
-    background: #2a2a2a;
+    background: rgba(166, 137, 50, 0.1);
   }
 
   .badge {
@@ -201,11 +233,31 @@
     text-transform: uppercase;
   }
 
-  .bg-success { background: #333; color: #ddd; border: 1px solid #555; }
-  .bg-danger { background: #333; color: #ddd; border: 1px solid #555; }
-  .bg-info { background: #333; color: #ddd; border: 1px solid #555; }
-  .bg-warning { background: #333; color: #ddd; border: 1px solid #555; }
-  .bg-secondary { background: #333; color: #ddd; border: 1px solid #555; }
+  .bg-success { 
+    background: rgba(40, 167, 69, 0.15);
+    color: #28a745;
+    border: 1px solid #28a745;
+  }
+  .bg-danger { 
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+    border: 1px solid #e74c3c;
+  }
+  .bg-info { 
+    background: rgba(52, 152, 219, 0.15);
+    color: #3498db;
+    border: 1px solid #3498db;
+  }
+  .bg-warning { 
+    background: rgba(243, 156, 18, 0.15);
+    color: #f39c12;
+    border: 1px solid #f39c12;
+  }
+  .bg-secondary { 
+    background: rgba(166, 137, 50, 0.15);
+    color: var(--color-secondary, #d4af37);
+    border: 1px solid var(--color-secondary, #d4af37);
+  }
 
   .actions-cell {
     display: flex;
@@ -215,33 +267,50 @@
   .btn-action {
     padding: 6px 12px;
     border-radius: 4px;
-    border: none;
+    border: 1px solid var(--color-secondary, #d4af37);
     cursor: pointer;
-    background: #555;
-    color: #fff;
-    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  .btn-action img {
+    width: 16px;
+    height: 16px;
+    filter: brightness(0) saturate(100%) invert(73%) sepia(54%) saturate(417%) hue-rotate(6deg) brightness(94%) contrast(92%);
   }
 
   .btn-action:hover {
-    background: #666;
+    background: var(--color-secondary, #d4af37);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
+  }
+
+  .btn-action:hover img {
+    filter: brightness(0) saturate(100%);
   }
 
   .btn-create {
-    background: #d4af37;
+    background: var(--color-secondary, #d4af37);
     color: #000;
     padding: 10px 20px;
-    border-radius: 4px;
+    border-radius: 6px;
     font-weight: 600;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    border: none;
+    border: 2px solid var(--color-secondary, #d4af37);
     cursor: pointer;
+    transition: all 0.3s ease;
   }
 
   .btn-create:hover {
-    background: #c5a032;
+    background: linear-gradient(135deg, #d4af37, #f4d467);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
   }
 
   @media (max-width: 1024px) {

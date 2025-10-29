@@ -3,15 +3,18 @@
 <header class="layout">
     <div class="header-content">
         <nav id="sidebar" class="sidebar expanded">
+<<<<<<< HEAD
+
+=======
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
             <ul class="menu">
                 <a href="{% url 'admin_dashboard:dashboard' %}">
                     <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo">
                 </a>
                 <li>
-                    <button class="menu-btn" onclick="window.location.href='/'" >
-                        <a href="{% url 'core:index' %}"><img src="{% static 'img/icons/home.svg' %}" alt="Página Principal"></a>
-                         Página Principal
-
+                    <button class="menu-btn" id="home-page-btn" data-url="{% url 'core:index' %}">
+                        <img src="{% static 'img/icons/home.svg' %}" alt="Página Principal">
+                        Página Principal
                     </button>
                 </li>
 
@@ -166,6 +169,23 @@
                 </ul>
             </li>
             {% endif %} -->
+            <!-- Comentario de prueba -->
             </ul>
         </nav>
 </header>
+
+<!-- Pantalla de carga para navegación a página principal -->
+<div id="home-loading-screen" class="dashboard-loading-screen hidden">
+    <div class="loading-content">
+        <div class="loading-logo">
+            <img src="{% static 'img/favicon/apple-touch-icon.png' %}" alt="Bar Galileo Logo">
+        </div>
+        <div class="loading-text">
+            <h2>Bar Galileo</h2>
+            <p>Cargando página principal...</p>
+        </div>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>

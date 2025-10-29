@@ -1,3 +1,9 @@
+{% load static %}
 <li>
-    <a title="{{ attrs.name }}" href="{{ attrs.href }}">{{ attrs.name }}</a>
+    <a title="{{ attrs.name }}" href="{{ attrs.href }}" class="provider-link" data-provider="{{ attrs.provider_id }}">
+        {% if attrs.provider_id == "google" %}
+            <img src="{% static 'img/icons/google.svg' %}" alt="Google" class="provider-icon">
+        {% endif %}
+        <span>{{ attrs.name }}</span>
+    </a>
 </li>
