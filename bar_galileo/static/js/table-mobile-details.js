@@ -25,13 +25,13 @@
                 </div>
             </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
-        
+
         // Event listeners para cerrar el modal
         const modal = document.getElementById('table-details-modal');
         const closeBtn = modal.querySelector('.table-details-modal-close');
-        
+
         closeBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
@@ -44,7 +44,7 @@
         const modal = document.getElementById('table-details-modal');
         const modalTitle = document.getElementById('table-details-modal-title');
         const modalBody = document.getElementById('table-details-modal-body');
-        
+
         modalTitle.textContent = title;
         modalBody.innerHTML = content;
         modal.classList.add('active');
@@ -62,12 +62,12 @@
         const cells = row.querySelectorAll('td');
         const headers = row.closest('table').querySelectorAll('th');
         const data = [];
-        
+
         cells.forEach((cell, index) => {
             if (index < headers.length - 1) { // Excluir columna de acciones
                 const headerText = headers[index].textContent.trim();
                 const cellContent = cell.innerHTML.trim();
-                
+
                 // Solo agregar si la celda tiene contenido
                 if (cellContent && headerText.toLowerCase() !== 'acciones') {
                     data.push({
@@ -78,14 +78,14 @@
                 }
             }
         });
-        
+
         return data;
     }
 
     // Función para generar HTML del modal
     function generateModalContent(data) {
         let html = '<div class="table-details-list">';
-        
+
         data.forEach(item => {
             const hiddenClass = item.isHidden ? ' hidden-field' : '';
             html += `
@@ -95,7 +95,7 @@
                 </div>
             `;
         });
-        
+
         html += '</div>';
         return html;
     }
@@ -103,53 +103,53 @@
     // Agregar botones de "Ver detalles" a las tablas
     function addDetailsButtons(tableSelector) {
         const tables = document.querySelectorAll(tableSelector);
-        
+
         tables.forEach(table => {
             const tbody = table.querySelector('tbody');
             if (!tbody) return;
-            
+
             const rows = tbody.querySelectorAll('tr');
-            
+
             rows.forEach(row => {
                 // Verificar si ya tiene botón de detalles
                 if (row.querySelector('.btn-view-details')) return;
-                
+
                 // Verificar si es una fila vacía (con colspan que indica "No hay datos")
                 const cellWithColspan = row.querySelector('td[colspan]');
                 if (cellWithColspan) {
                     // Es una fila de mensaje vacío, no agregar botón
                     return;
                 }
-                
+
                 // Verificar si la fila solo tiene una celda (probablemente mensaje vacío)
                 const cells = row.querySelectorAll('td');
                 if (cells.length === 1) {
                     return;
                 }
-                
+
                 // Buscar la celda de acciones
                 const actionCell = row.querySelector('td:last-child, .actions-cell');
                 if (!actionCell) return;
-                
+
                 // Crear botón de ver detalles
                 const detailsBtn = document.createElement('button');
                 detailsBtn.className = 'btn btn-sm btn-secondary btn-view-details';
                 detailsBtn.innerHTML = '<img src="/static/img/icons/info.svg" alt="Info" style="width:16px; height:16px;"><span class="btn-text-mobile"> Info</span>';
                 detailsBtn.title = 'Ver todos los detalles';
                 detailsBtn.type = 'button';
-                
+
                 // Event listener para mostrar detalles
                 detailsBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    
+
                     const rowData = extractRowData(row);
                     const title = rowData.length > 0 ? rowData[0].value.replace(/<[^>]*>/g, '').substring(0, 50) : 'Detalles';
                     const content = generateModalContent(rowData);
-                    
+
                     openModal(title, content);
                 });
-                
+
                 // Insertar el botón al inicio del contenedor de acciones
                 const actionsDiv = actionCell.querySelector('.actions-cell, div, .btn-group');
                 if (actionsDiv) {
@@ -164,10 +164,10 @@
     // Inicializar cuando el DOM esté listo
     function init() {
         createModal();
-        
+
         // Agregar botones a las tablas existentes
         addDetailsButtons('table.table');
-        
+
         // Observar cambios en el DOM para tablas dinámicas (DataTables, AJAX, etc.)
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
@@ -176,7 +176,7 @@
                 }
             });
         });
-        
+
         // Observar cambios en el body
         observer.observe(document.body, {
             childList: true,
