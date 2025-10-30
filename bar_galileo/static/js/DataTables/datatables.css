@@ -503,6 +503,13 @@ table.dataTable {
    * Body styles
    */
 }
+
+@media (max-width: 767px){
+  table.dataTable {
+    width: 0 !important;
+  }
+}
+
 table.dataTable thead th,
 table.dataTable tfoot th {
   font-weight: bold;
