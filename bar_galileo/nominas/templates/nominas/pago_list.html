@@ -2,13 +2,15 @@
 {% load static %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="dashboard-container">
     <div class="list-header">
-        <h2 class="page-title">Historial de Pagos</h2>
+        <h2 class="dashboard-title">Historial de Pagos</h2>
         <div class="buttons-group">
             <a href="{% url 'nominas:pago_crear' %}" class="btn btn-primary" title="Registrar un nuevo pago">
                 <i class="fa fa-plus"></i> Registrar Pago
@@ -16,58 +18,224 @@
         </div>
     </div>
 
-    <div class="table-contenedor">
-        <div class="table-responsive">
-            <table id="pagos-table" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class="col-1">Empleado</th>
-                        <th class="col-2">Fecha</th>
-                        <th class="col-3">Tipo</th>
-                        <th class="col-4">Monto</th>
-                        <th class="descripcionCol">Descripción</th>
-                        <th class="comprobanteCol">Comprobante</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for pago in pagos %}
-                    <tr>
-                        <td class="col-1">
-                            <a href="{% url 'nominas:empleado_detail' pago.empleado.pk %}">{{ pago.empleado.nombre }}</a>
-                        </td>
-                        <td class="col-2">{{ pago.fecha_pago }}</td>
-                        <td class="col-3">{{ pago.get_tipo_display }}</td>
-                        <td class="col-4">${{ pago.monto }}</td>
-                        <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
-                        <td class="comprobanteCol">
-                            {% if pago.comprobante %}
-                                <a href="{{ pago.comprobante.url }}" target="_blank">Ver Comprobante</a>
-                            {% else %}
-                                -
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="table-responsive">
+        <table id="pagos-table" class="table">
+            <thead>
+                <tr>
+                    <th class="col-1">Empleado</th>
+                    <th class="col-2">Fecha</th>
+                    <th class="col-3">Tipo</th>
+                    <th class="col-4">Monto</th>
+                    <th class="descripcionCol">Descripción</th>
+                    <th class="comprobanteCol" {% if not pagos %}style="display: none;"{% endif %}>Comprobante</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pago in pagos %}
+                <tr>
+                    <td class="col-1">
+                        <a href="{% url 'nominas:empleado_detail' pago.empleado.pk %}" style="color: var(--color-secondary); text-decoration: underline;">
+                            {{ pago.empleado.nombre }}
+                        </a>
+                    </td>
+                    <td class="col-2">{{ pago.fecha_pago }}</td>
+                    <td class="col-3">{{ pago.get_tipo_display }}</td>
+                    <td class="col-4">${{ pago.monto }}</td>
+                    <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
+                    <td class="comprobanteCol">
+                        {% if pago.comprobante %}
+                            <button type="button" class="btn btn-sm btn-secondary preview-comprobante"
+                                    data-url="{{ pago.comprobante.url }}"
+                                    data-name="{{ pago.comprobante.name }}"
+                                    title="Ver comprobante">
+                                <i class="fa fa-eye"></i> Ver
+                            </button>
+                        {% else %}
+                            <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center" style="color: var(--color-secondary);">No hay pagos registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal para preview de comprobantes -->
+<div id="comprobanteModal" class="modal-preview" style="display: none;">
+    <div class="modal-preview-content">
+        <span class="close-modal-preview">&times;</span>
+        <h3 id="comprobanteModalTitle" style="color: var(--color-secondary); margin-bottom: 1rem;">Comprobante de Pago</h3>
+        <div id="comprobanteModalBody" style="text-align: center;">
+            <!-- Contenido dinámico -->
+        </div>
+        <div style="margin-top: 1rem; text-align: center;">
+            <a id="comprobanteDownloadLink" href="#" target="_blank" class="btn btn-primary" download>
+                <i class="fa fa-download"></i> Descargar
+            </a>
         </div>
     </div>
 </div>
 
+<style>
+/* Modal para preview de archivos */
+.modal-preview {
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.modal-preview-content {
+    background-color: #2c2c2c;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(166, 137, 50, 0.4);
+}
+
+.close-modal-preview {
+    color: var(--color-secondary);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal-preview:hover,
+.close-modal-preview:focus {
+    color: var(--color-primary);
+}
+
+.modal-preview img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 8px;
+    border: 2px solid var(--color-secondary);
+}
+
+.modal-preview embed,
+.modal-preview iframe {
+    width: 100%;
+    height: 500px;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+}
+
+.file-icon {
+    font-size: 100px;
+    color: var(--color-secondary);
+    margin: 2rem 0;
+}
+</style>
+
 <script>
-    $(document).ready(function () {
-        var sel = '#pagos-table';
-        if (!$(sel).length) return;
-        if ($.fn.dataTable.isDataTable(sel)) {
-            $(sel).DataTable().destroy();
-        }
-        $(sel).DataTable({
-            columnDefs: [
-                { targets: '_all', defaultContent: '' }
-            ],
-            language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-            responsive: true
+document.addEventListener('DOMContentLoaded', function() {
+    var sel = '#pagos-table';
+    if (!$(sel).length) return;
+
+    if ($.fn.dataTable.isDataTable(sel)) {
+        $(sel).DataTable().destroy();
+    }
+
+    // Verificar si hay datos en la tabla
+    var rowCount = $(sel + ' tbody tr').length;
+    var hasData = rowCount > 0 && !$(sel + ' tbody tr td[colspan]').length;
+
+    if (!hasData) {
+        // Si no hay datos, no inicializar DataTables
+        console.log('No hay datos en la tabla de pagos');
+        return;
+    }
+
+    var tabla = $(sel).DataTable({
+        language: {
+            emptyTable: 'No hay pagos registrados',
+            zeroRecords: 'No se encontraron resultados',
+            search: 'Buscar:',
+            lengthMenu: 'Mostrar _MENU_ registros',
+            info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+            infoEmpty: 'Mostrando 0 a 0 de 0 registros',
+            paginate: {
+                first: 'Primero',
+                last: 'Último',
+                next: 'Siguiente',
+                previous: 'Anterior'
+            }
+        },
+        order: [[1, 'desc']]
+    });
+
+    // Preview de comprobantes
+    const modal = document.getElementById('comprobanteModal');
+    const modalBody = document.getElementById('comprobanteModalBody');
+    const modalTitle = document.getElementById('comprobanteModalTitle');
+    const downloadLink = document.getElementById('comprobanteDownloadLink');
+    const closeBtn = document.querySelector('.close-modal-preview');
+
+    document.querySelectorAll('.preview-comprobante').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const name = this.dataset.name;
+            const extension = url.split('.').pop().toLowerCase();
+
+            modalTitle.textContent = 'Comprobante de Pago';
+            downloadLink.href = url;
+            downloadLink.download = name || 'comprobante';
+
+            modalBody.innerHTML = '';
+
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Comprobante';
+                modalBody.appendChild(img);
+            } else if (extension === 'pdf') {
+                const embed = document.createElement('embed');
+                embed.src = url;
+                embed.type = 'application/pdf';
+                modalBody.appendChild(embed);
+            } else {
+                const icon = document.createElement('div');
+                icon.className = 'file-icon';
+                icon.innerHTML = '<i class="fa fa-file"></i>';
+                modalBody.appendChild(icon);
+
+                const text = document.createElement('p');
+                text.style.color = 'var(--color-secondary)';
+                text.textContent = 'Vista previa no disponible para este tipo de archivo';
+                modalBody.appendChild(text);
+            }
+
+            modal.style.display = 'block';
         });
     });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    }
+
+    if (modal) {
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+});
 </script>
 {% endblock %}

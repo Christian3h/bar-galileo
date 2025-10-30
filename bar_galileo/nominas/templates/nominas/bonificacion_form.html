@@ -1,119 +1,128 @@
 {% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas_form.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-warning text-dark">
-<<<<<<< HEAD
-                    <h3 class="my-2">{% if object %}Editar{% else %}Agregar{% endif %} Bonificación</h3>
-=======
-                    <h3 class="my-2">Agregar Bonificación</h3>
->>>>>>> Jorge
+<div class="dashboard-container">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4 empleado-form-header">
+        <h2 class="dashboard-title mb-0">{% if object %}Editar{% else %}Agregar{% endif %} Bonificación</h2>
+        {% if empleado %}
+            <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        {% else %}
+            <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        {% endif %}
+    </div>
+
+    <form method="post" id="bonificacion-form" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        <!-- Sección: Información de la Bonificación -->
+        <div class="form-section">
+            <h4><i class="fas fa-gift"></i> Información de la Bonificación</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.empleado.id_for_label }}">{{ form.empleado.label }}</label>
+                        {{ form.empleado }}
+                        {% if form.empleado.errors %}
+                            <ul class="errorlist">{% for error in form.empleado.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.empleado.help_text %}<small class="help-text">{{ form.empleado.help_text }}</small>{% endif %}
+                    </div>
                 </div>
-                <div class="card-body">
-                    <form method="post" class="needs-validation" novalidate>
-                        {% csrf_token %}
-<<<<<<< HEAD
 
-=======
-                        
->>>>>>> Jorge
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.empleado.id_for_label }}" class="form-label">Empleado</label>
-                                {{ form.empleado }}
-                                {% if form.empleado.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.empleado.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre de la bonificación</label>
-                                {{ form.nombre }}
-                                {% if form.nombre.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.nombre.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-<<<<<<< HEAD
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <ul class="errorlist">{% for error in form.nombre.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.nombre.help_text %}<small class="help-text">{{ form.nombre.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+            </div>
 
-=======
-                        
->>>>>>> Jorge
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.monto.id_for_label }}" class="form-label">Monto ($)</label>
-                                {{ form.monto }}
-                                {% if form.monto.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.monto.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check mt-4">
-                                    {{ form.recurrente }}
-                                    <label class="form-check-label" for="{{ form.recurrente.id_for_label }}">
-                                        ¿Es una bonificación recurrente?
-                                    </label>
-                                    {% if form.recurrente.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.recurrente.errors }}
-                                    </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-<<<<<<< HEAD
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.monto.id_for_label }}">{{ form.monto.label }}</label>
+                        {{ form.monto }}
+                        {% if form.monto.errors %}
+                            <ul class="errorlist">{% for error in form.monto.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.monto.help_text %}<small class="help-text">{{ form.monto.help_text }}</small>{% endif %}
+                    </div>
+                </div>
 
-=======
-                        
->>>>>>> Jorge
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label">Fecha de inicio</label>
-                                {{ form.fecha_inicio }}
-                                {% if form.fecha_inicio.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.fecha_inicio.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.fecha_fin.id_for_label }}" class="form-label">Fecha de fin (opcional)</label>
-                                {{ form.fecha_fin }}
-                                {% if form.fecha_fin.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.fecha_fin.errors }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-<<<<<<< HEAD
-
-=======
-                        
->>>>>>> Jorge
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            {% if empleado %}
-                                <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary me-md-2">Cancelar</a>
-                            {% else %}
-                                <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary me-md-2">Cancelar</a>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="form-check mt-4">
+                            {{ form.recurrente }}
+                            <label class="form-check-label" for="{{ form.recurrente.id_for_label }}">
+                                {{ form.recurrente.label }}
+                            </label>
+                            {% if form.recurrente.errors %}
+                                <ul class="errorlist">{% for error in form.recurrente.errors %}<li>{{ error }}</li>{% endfor %}</ul>
                             {% endif %}
-<<<<<<< HEAD
-                            <button type="submit" class="btn btn-warning">{% if object %}Actualizar{% else %}Agregar{% endif %} Bonificación</button>
-=======
-                            <button type="submit" class="btn btn-warning">Agregar Bonificación</button>
->>>>>>> Jorge
+                            {% if form.recurrente.help_text %}<small class="help-text d-block">{{ form.recurrente.help_text }}</small>{% endif %}
                         </div>
-                    </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.fecha_inicio.id_for_label }}">{{ form.fecha_inicio.label }}</label>
+                        {{ form.fecha_inicio }}
+                        {% if form.fecha_inicio.errors %}
+                            <ul class="errorlist">{% for error in form.fecha_inicio.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.fecha_inicio.help_text %}<small class="help-text">{{ form.fecha_inicio.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.fecha_fin.id_for_label }}">{{ form.fecha_fin.label }}</label>
+                        {{ form.fecha_fin }}
+                        {% if form.fecha_fin.errors %}
+                            <ul class="errorlist">{% for error in form.fecha_fin.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.fecha_fin.help_text %}<small class="help-text">{{ form.fecha_fin.help_text }}</small>{% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- Botones de acción -->
+        <div class="form-section">
+            <div class="form-actions">
+                {% if empleado %}
+                    <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                {% else %}
+                    <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if object %}Actualizar{% else %}Agregar{% endif %} Bonificación
+                </button>
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}

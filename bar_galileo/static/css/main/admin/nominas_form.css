@@ -17,11 +17,12 @@
 
 /* Secciones del formulario */
 .form-section {
-    background: var(--color-light);
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: rgba(166, 137, 50, 0.1);
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -32,23 +33,24 @@
 
 .form-section h4 {
     color: var(--color-secondary);
-    border-bottom: 2px solid var(--color-primary);
+    border-bottom: 2px solid var(--color-secondary);
     padding-bottom: 10px;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 1.2rem;
 }
 
 /* Opciones de usuario */
 .usuario-option {
     padding: 15px;
-    border: 1px solid var(--color-accent);
-    border-radius: 5px;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.3s;
-    background: var(--color-light);
+    background: transparent;
 }
 
 @media (max-width: 768px) {
@@ -58,12 +60,13 @@
 }
 
 .usuario-option:hover {
-    background: var(--color-accent);
+    background: rgba(166, 137, 50, 0.15);
     border-color: var(--color-primary);
 }
 
 .usuario-option input[type="radio"] {
     margin-right: 10px;
+    accent-color: var(--color-secondary);
 }
 
 .usuario-option label {
@@ -71,14 +74,16 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    color: var(--color-secondary);
 }
 
 /* Campos de usuario */
 .usuario-fields {
     display: none;
     padding: 15px;
-    background: var(--color-accent);
-    border-radius: 5px;
+    background: rgba(166, 137, 50, 0.08);
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
     margin-top: 10px;
 }
 
@@ -104,20 +109,116 @@
     display: block;
 }
 
+/* Estilos para inputs, selects y textareas */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="tel"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-secondary);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="date"]:focus,
+.form-group input[type="tel"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 5px var(--color-primary);
+}
+
+.form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23A68932' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='feather feather-chevron-down'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+
+/* Estilos para campos de archivo */
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px dashed var(--color-secondary);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="file"]:hover {
+    border-color: var(--color-primary);
+    background: rgba(166, 137, 50, 0.05);
+}
+
+.form-group input[type="file"]::file-selector-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: var(--color-secondary);
+    color: #2c2c2c;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-group input[type="file"]::file-selector-button:hover {
+    background: var(--color-primary);
+}
+
+/* Estilos para checkboxes */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-check input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--color-secondary);
+    cursor: pointer;
+}
+
+.form-check-label {
+    color: var(--color-secondary);
+    cursor: pointer;
+    margin: 0;
+}
+
 .help-text {
     font-size: 0.875rem;
     color: var(--color-secondary);
     opacity: 0.7;
     margin-top: 0.25rem;
+    display: block;
 }
 
 /* Alertas */
 .alert-info {
-    background-color: var(--color-accent);
-    border: 1px solid var(--color-primary);
+    background-color: rgba(166, 137, 50, 0.15);
+    border: 2px solid var(--color-secondary);
     color: var(--color-secondary);
     padding: 12px;
-    border-radius: 5px;
+    border-radius: 8px;
     margin-bottom: 15px;
 }
 
@@ -131,6 +232,7 @@
 .errorlist li {
     color: #e74a3b;
     font-size: 0.875rem;
+    font-weight: 600;
 }
 
 /* Autocomplete de usuarios */
@@ -143,14 +245,15 @@
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--color-light);
-    border: 1px solid var(--color-accent);
-    border-radius: 5px;
+    background: #2c2c2c;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
     display: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.3);
+    margin-top: 4px;
 }
 
 .usuario-suggestions.active {
@@ -160,12 +263,13 @@
 .usuario-suggestion {
     padding: 10px;
     cursor: pointer;
-    border-bottom: 1px solid var(--color-accent);
+    border-bottom: 1px solid rgba(166, 137, 50, 0.3);
     transition: all 0.2s;
+    color: var(--color-secondary);
 }
 
 .usuario-suggestion:hover {
-    background: var(--color-accent);
+    background: rgba(166, 137, 50, 0.2);
 }
 
 .usuario-suggestion:last-child {
@@ -187,9 +291,9 @@
 .usuario-seleccionado {
     display: none;
     padding: 10px;
-    background: var(--color-primary);
-    color: white;
-    border-radius: 5px;
+    background: var(--color-secondary);
+    color: #2c2c2c;
+    border-radius: 8px;
     margin-top: 10px;
     align-items: center;
     justify-content: space-between;
@@ -200,16 +304,18 @@
 }
 
 .btn-remove {
-    background: rgba(255,255,255,0.2);
+    background: rgba(44, 44, 44, 0.3);
     border: none;
-    color: white;
+    color: #2c2c2c;
     padding: 5px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
 }
 
 .btn-remove:hover {
-    background: rgba(255,255,255,0.3);
+    background: rgba(44, 44, 44, 0.5);
 }
 
 /* Sección de botones de acción */
@@ -226,12 +332,14 @@
     gap: 10px;
 }
 
-.empleado-form-header h1 {
+.empleado-form-header h1,
+.empleado-form-header h2 {
     color: var(--color-secondary);
 }
 
 .usuario-option-text {
     opacity: 0.7;
+    color: var(--color-secondary);
 }
 
 @media (max-width: 576px) {
@@ -252,7 +360,8 @@
         text-align: center;
     }
 
-    .d-sm-flex h1 {
+    .d-sm-flex h1,
+    .d-sm-flex h2 {
         margin-bottom: 10px !important;
     }
 }

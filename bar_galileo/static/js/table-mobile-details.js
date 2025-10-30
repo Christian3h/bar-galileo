@@ -114,6 +114,19 @@
                 // Verificar si ya tiene botón de detalles
                 if (row.querySelector('.btn-view-details')) return;
                 
+                // Verificar si es una fila vacía (con colspan que indica "No hay datos")
+                const cellWithColspan = row.querySelector('td[colspan]');
+                if (cellWithColspan) {
+                    // Es una fila de mensaje vacío, no agregar botón
+                    return;
+                }
+                
+                // Verificar si la fila solo tiene una celda (probablemente mensaje vacío)
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 1) {
+                    return;
+                }
+                
                 // Buscar la celda de acciones
                 const actionCell = row.querySelector('td:last-child, .actions-cell');
                 if (!actionCell) return;
