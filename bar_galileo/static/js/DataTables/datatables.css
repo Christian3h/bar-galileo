@@ -493,7 +493,7 @@ table.dataTable tbody td.dt-body-nowrap {
  * Table styles
  */
 table.dataTable {
-  width: 100%;
+  width: 0% !important;
   margin: 0 auto;
   border-spacing: 0;
   /*
