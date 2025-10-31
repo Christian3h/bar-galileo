@@ -4,64 +4,61 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
-<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="list-header">
-        <h2 class="dashboard-title">Historial de Pagos</h2>
-        <div class="buttons-group">
-            <a href="{% url 'nominas:pago_crear' %}" class="btn btn-primary" title="Registrar un nuevo pago">
-                <i class="fa fa-plus"></i> Registrar Pago
-            </a>
-        </div>
-    </div>
+<div class="container">
+    <h2 class="my-4">Historial de Pagos</h2>
+    <a href="{% url 'nominas:pago_crear' %}" class="btn btn-primary mb-3">
+        <i class="fa fa-plus"></i> Registrar Pago
+    </a>
 
-    <div class="table-responsive">
-        <table id="pagos-table" class="table">
-            <thead>
-                <tr>
-                    <th class="col-1">Empleado</th>
-                    <th class="col-2">Fecha</th>
-                    <th class="col-3">Tipo</th>
-                    <th class="col-4">Monto</th>
-                    <th class="descripcionCol">Descripción</th>
-                    <th class="comprobanteCol" {% if not pagos %}style="display: none;"{% endif %}>Comprobante</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for pago in pagos %}
-                <tr>
-                    <td class="col-1">
-                        <a href="{% url 'nominas:empleado_detail' pago.empleado.pk %}" style="color: var(--color-secondary); text-decoration: underline;">
-                            {{ pago.empleado.nombre }}
-                        </a>
-                    </td>
-                    <td class="col-2">{{ pago.fecha_pago }}</td>
-                    <td class="col-3">{{ pago.get_tipo_display }}</td>
-                    <td class="col-4">${{ pago.monto }}</td>
-                    <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
-                    <td class="comprobanteCol">
-                        {% if pago.comprobante %}
-                            <button type="button" class="btn btn-sm btn-secondary preview-comprobante"
-                                    data-url="{{ pago.comprobante.url }}"
-                                    data-name="{{ pago.comprobante.name }}"
-                                    title="Ver comprobante">
-                                <i class="fa fa-eye"></i> Ver
-                            </button>
-                        {% else %}
-                            <span class="text-muted">-</span>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center" style="color: var(--color-secondary);">No hay pagos registrados</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="table-contenedor">
+        <div class="table-responsive">
+            <table id="pagos-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="col-1">Empleado</th>
+                        <th class="col-2">Fecha</th>
+                        <th class="col-3">Tipo</th>
+                        <th class="col-4">Monto</th>
+                        <th class="col-5">Descripción</th>
+                        <th>Comprobante</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pago in pagos %}
+                    <tr>
+                        <td class="col-1">
+                            <a href="{% url 'nominas:empleado_detail' pago.empleado.pk %}" style="color: var(--color-secondary); text-decoration: underline;">
+                                {{ pago.empleado.nombre }}
+                            </a>
+                        </td>
+                        <td class="col-2">{{ pago.fecha_pago }}</td>
+                        <td class="col-3">{{ pago.get_tipo_display }}</td>
+                        <td class="col-4">${{ pago.monto }}</td>
+                        <td class="col-5">{{ pago.descripcion|default:"-" }}</td>
+                        <td class="actions-cell">
+                            {% if pago.comprobante %}
+                                <button type="button" class="btn btn-sm btn-secondary preview-comprobante"
+                                        data-url="{{ pago.comprobante.url }}"
+                                        data-name="{{ pago.comprobante.name }}"
+                                        title="Ver comprobante">
+                                    <i class="fa fa-eye"></i> Ver
+                                </button>
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">No hay pagos registrados</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -142,7 +139,7 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+$(document).ready(function() {
     var sel = '#pagos-table';
     if (!$(sel).length) return;
 
@@ -150,32 +147,16 @@ document.addEventListener('DOMContentLoaded', function() {
         $(sel).DataTable().destroy();
     }
 
-    // Verificar si hay datos en la tabla
-    var rowCount = $(sel + ' tbody tr').length;
-    var hasData = rowCount > 0 && !$(sel + ' tbody tr td[colspan]').length;
-
-    if (!hasData) {
-        // Si no hay datos, no inicializar DataTables
-        console.log('No hay datos en la tabla de pagos');
-        return;
-    }
-
-    var tabla = $(sel).DataTable({
+    $(sel).DataTable({
         language: {
-            emptyTable: 'No hay pagos registrados',
-            zeroRecords: 'No se encontraron resultados',
-            search: 'Buscar:',
-            lengthMenu: 'Mostrar _MENU_ registros',
-            info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
-            infoEmpty: 'Mostrando 0 a 0 de 0 registros',
-            paginate: {
-                first: 'Primero',
-                last: 'Último',
-                next: 'Siguiente',
-                previous: 'Anterior'
-            }
+            url: "{% static 'js/DataTables/es-ES.json' %}"
         },
-        order: [[1, 'desc']]
+        responsive: true,
+        order: [[1, 'desc']],
+        columnDefs: [
+            { targets: '_all', defaultContent: '' },
+            { targets: -1, orderable: false }
+        ]
     });
 
     // Preview de comprobantes
