@@ -26,22 +26,15 @@ document.addEventListener("DOMContentLoaded", function () {
         loadingContent.style.animation = 'fadeInUp 0.8s ease';
       }
       
-      // Después de 3 segundos, ocultar la pantalla y navegar
+      // Después de 3 segundos, iniciar animación de salida y navegar simultáneamente
       setTimeout(function() {
         // Agregar animación de salida
         if (loadingContent) {
           loadingContent.style.animation = 'fadeOutDown 0.5s ease';
         }
         
-        loadingScreen.classList.add("hidden");
-        
-        // Restaurar scroll del body
-        document.body.style.overflow = "";
-        
-        // Esperar un poco más para que termine la animación de fade out
-        setTimeout(function() {
-          window.location.href = dashboardUrl;
-        }, 500); // 0.5 segundos adicionales para la animación
+        // Navegar inmediatamente cuando inicia la animación de salida
+        window.location.href = dashboardUrl;
         
       }, 3000); // 3 segundos de pantalla de carga
     });
