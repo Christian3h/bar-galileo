@@ -1422,3 +1422,106 @@ body.auth-page .container-login::before {
 .container-login ul li {
   margin: 0;
 }
+
+/* =======================================
+   TEMA CLARO - SOPORTE PARA LOGIN
+======================================= */
+:root:not([data-theme="dark"]) body {
+  background-color: var(--color-light);
+}
+
+:root:not([data-theme="dark"]) .container-login {
+  color: var(--color-secondary);
+}
+
+:root:not([data-theme="dark"]) .container-login h1 {
+  color: var(--color-primary);
+}
+
+:root:not([data-theme="dark"]) .container-login p {
+  color: var(--color-secondary);
+}
+
+:root:not([data-theme="dark"]) .container-login form {
+  background: var(--color-accent);
+  border: 1px solid var(--color-gray);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+:root:not([data-theme="dark"]) .container-login form input {
+  background: var(--color-light);
+  color: var(--color-secondary);
+  border: 1px solid var(--color-gray);
+}
+
+:root:not([data-theme="dark"]) .container-login form input::placeholder {
+  color: var(--color-gray);
+}
+
+:root:not([data-theme="dark"]) .container-login form input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 20px rgba(125, 146, 80, 0.3);
+}
+
+:root:not([data-theme="dark"]) .container-login form button {
+  background: linear-gradient(135deg, var(--color-primary), #8fa860);
+  color: white;
+}
+
+:root:not([data-theme="dark"]) .container-login a {
+  color: var(--color-primary);
+}
+
+:root:not([data-theme="dark"]) .container-login a:hover {
+  color: var(--color-dark);
+}
+
+:root:not([data-theme="dark"]) .container-login .errorlist {
+  color: #dc2626;
+}
+
+:root:not([data-theme="dark"]) .container-login hr {
+  background: linear-gradient(90deg, transparent, var(--color-gray), transparent);
+}
+
+:root:not([data-theme="dark"]) .container-login .button-group button {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+:root:not([data-theme="dark"]) .container-login .button-group button:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+:root:not([data-theme="dark"]) .alert-message {
+  background: var(--color-accent);
+  border: 1px solid var(--color-gray);
+  color: var(--color-secondary);
+}
+
+:root:not([data-theme="dark"]) .container-menu {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid var(--color-gray);
+}
+
+:root:not([data-theme="dark"]) .container-menu .logo {
+  color: var(--color-primary);
+}
+
+:root:not([data-theme="dark"]) .container-menu a {
+  color: var(--color-secondary);
+}
+
+:root:not([data-theme="dark"]) .container-menu a:hover {
+  color: var(--color-primary);
+}
+
+/* Captcha en tema claro */
+:root:not([data-theme="dark"]) .container-login img.captcha {
+  border-color: var(--color-gray) !important;
+}
+
+:root:not([data-theme="dark"]) .toggle-audio {
+  color: var(--color-primary) !important;
+}
