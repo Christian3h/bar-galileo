@@ -15,25 +15,27 @@
     <table id="tabla-productos" class="table table-striped table-bordered nowrap" style="width:100%">
       <thead>
         <tr>
-          <th>Nombre</th>
-          <th>Precio Venta</th>
-          <th>Stock</th>
+          <th class="col-1">Nombre</th>
+          <th class="col-2">Precio Venta</th>
+          <th class="col-3">Stock</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         {% for p in products %}
         <tr>
-          <td>{{ p.nombre }}</td>
-          <td>{{ p.precio_venta }}</td>
-          <td>{{ p.stock }}</td>
-          <td>
+          <td class="col-1">{{ p.nombre }}</td>
+          <td class="col-2">${{ p.precio_venta|floatformat:0 }}</td>
+          <td class="col-3">{{ p.stock }}</td>
+          <td class="actions-cell">
+            <div class="btn-group" role="group">
             {% if request.user|has_perm:"products,editar" %}
             <form method="post" action="{% url 'products:products_reactivate_admin' p.id_producto %}" style="display:inline">
               {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-success">Reactivar</button>
+              <button type="submit" class="btn btn-sm btn-success" title="Reactivar {{ p.nombre }}">Reactivar</button>
             </form>
             {% endif %}
+            </div>
           </td>
         </tr>
         {% empty %}

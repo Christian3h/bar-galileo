@@ -32,13 +32,14 @@
                             <td class="col-2">{{ proveedor.contacto }}</td>
                             <td class="col-3">{{ proveedor.telefono }}</td>
                             <td class="col-4">{{ proveedor.direccion }}</td>
-                            <td>
+                            <td class="actions-cell">
+                                <div class="btn-group" role="group">
                                 {% if request.user|has_perm:"providers,editar" %}
                                     <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}"
                                        class="btn btn-sm btn-warning"
                                        title="Editar {{ proveedor.nombre }}"
                                        aria-label="Editar proveedor {{ proveedor.nombre }}">
-                                        <img src="{% static 'img/icons/edit.svg' %}" alt="Editar">
+                                        <img src="{% static 'img/icons/edit.svg' %}" alt="Editar" style="width:16px; height:16px;">
                                     </a>
                                 {% endif %}
                                 {% if request.user|has_perm:"providers,eliminar" %}
@@ -46,9 +47,10 @@
                                        class="btn btn-sm btn-danger"
                                        title="Eliminar {{ proveedor.nombre }}"
                                        aria-label="Eliminar proveedor {{ proveedor.nombre }}">
-                                        <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
+                                        <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width:16px; height:16px;">
                                     </a>
                                 {% endif %}
+                                </div>
                             </td>
                         </tr>
                         {% empty %}
@@ -61,72 +63,27 @@
             </div>
         </div>
     </div>
-    <!-- Inicialización de DataTables con AJAX -->
+    <!-- Inicialización de DataTables -->
     <script>
-    (function() {
-        'use strict';
-        document.addEventListener('DOMContentLoaded', function() {
-            const sel = '#tabla-proveedores';
-            const tableEl = document.querySelector(sel);
-            if (!tableEl) return;
-
-            const hasJQ = typeof window.jQuery !== 'undefined';
-            const hasDT = hasJQ && !!jQuery.fn && !!jQuery.fn.dataTable;
-            if (!hasDT) {
-                console.warn('DataTables o jQuery no están cargados. La tabla se mostrará sin mejoras.');
-                return;
-            }
-
-            if (jQuery.fn.dataTable.isDataTable(sel)) {
-                jQuery(sel).DataTable().clear().destroy(true);
-            }
-
-            const options = {
-                language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-                responsive: true,
-                pageLength: 10,
-                lengthChange: true,
-                ordering: true,
-                order: [],
-                ajax: {
-                    url: "{% url 'products:proveedores_json' %}",
-                    dataSrc: 'data'
-                },
-                columns: [
-                    { data: 'proveedor' },
-                    { data: 'email' },
-                    { data: 'telefono' },
-                    { data: 'direccion' },
-                    {
-                        data: null,
-                        orderable: false,
-                        render: function(data, type, row) {
-                            const editUrl = `{% url 'products:proveedores_edit_admin' 0 %}`.replace('/0/', `/${row.id}/`);
-                            const deleteUrl = `{% url 'products:proveedores_delete_admin' 0 %}`.replace('/0/', `/${row.id}/`);
-                            let buttons = '';
-                            {% if request.user|has_perm:"providers,editar" %}
-                            buttons += `<a href="${editUrl}" class="btn btn-sm btn-warning" title="Editar ${row.proveedor}" aria-label="Editar proveedor ${row.proveedor}">` +
-                                       `<img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a> `;
-                            {% endif %}
-                            {% if request.user|has_perm:"providers,eliminar" %}
-                            buttons += `<a href="${deleteUrl}" class="btn btn-sm btn-danger" title="Eliminar ${row.proveedor}" aria-label="Eliminar proveedor ${row.proveedor}">` +
-                                       `<img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>`;
-                            {% endif %}
-                            return buttons || '';
-                        }
-                    }
-                ]
-            };
-
-            const dt = jQuery(sel).DataTable(options);
-
-            // Recargar datos al volver desde crear/editar/eliminar
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden) {
-                    dt.ajax.reload(null, false);
-                }
-            });
+    $(document).ready(function() {
+        var sel = '#tabla-proveedores';
+        if (!$(sel).length) return;
+        
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        
+        $(sel).DataTable({
+            language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
+            responsive: true,
+            pageLength: 10,
+            lengthChange: true,
+            ordering: true,
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false }
+            ]
         });
-    })();
+    });
     </script>
 {% endblock %}
