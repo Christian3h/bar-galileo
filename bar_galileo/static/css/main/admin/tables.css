@@ -1,46 +1,67 @@
 /* Centrar todas las tablas de administración */
 #tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas {
   margin: 0 auto !important;
-  width: 0 !important;
 }
 
 /* =======================================
  * ESTILOS DE TABLA RESPONSIVOS UNIVERSALES
  * ======================================= */
 
-/* Pantallas grandes (a partir de 1200px) */
-@media (max-width: 1200px) {
-  .col-7, .col-8, .col-9, .col-10 {
+/* Pantallas Extra Grandes (≥ 1400px) - MacBook M3, iMac, etc */
+@media (min-width: 1400px) {
+  /* En pantallas muy grandes, mostrar todas las columnas */
+  .table-productos .col-1,
+  .table-productos .col-2,
+  .table-productos .col-3,
+  .table-productos .col-4,
+  .table-productos .col-5,
+  .table-productos .col-6,
+  .table-productos .col-7,
+  .table-productos .col-8,
+  .table-productos .col-9 {
+    display: table-cell !important;
+  }
+}
+
+/* Pantallas Grandes (1200px - 1399px) - Desktop estándar */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  /* Ocultar solo Proveedor y Marca para dar más espacio */
+  .col-8, .col-9 {
     display: none !important;
   }
 }
 
-/* Pantallas medianas (a partir de 992px) */
-@media (max-width: 992px) {
+/* Pantallas Desktop Pequeño (992px - 1199px) */
+@media (max-width: 1199px) {
+  .col-7, .col-8, .col-9 {
+    display: none !important;
+  }
+}
+
+/* Pantallas medianas - Tablets Landscape (768px - 991px) */
+@media (max-width: 991px) {
   .col-5, .col-6 {
     display: none !important;
   }
 }
 
-/* Tablets (a partir de 768px) */
-@media (max-width: 768px) {
+/* Tablets Portrait (576px - 767px) */
+@media (max-width: 767px) {
   .col-4, .col-image {
     display: none !important;
   }
 }
 
-/* Móviles grandes (a partir de 576px) */
-@media (max-width: 576px) {
+/* Móviles grandes (480px - 575px) */
+@media (max-width: 575px) {
   .col-3 {
     display: none !important;
-    width: 0 !important;
   }
 }
 
-/* Móviles pequeños (a partir de 480px) */
-@media (max-width: 480px) {
+/* Móviles pequeños (< 480px) */
+@media (max-width: 479px) {
   .col-2 {
     display: none !important;
-    width: 0 !important;
   }
 }
