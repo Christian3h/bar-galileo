@@ -1,0 +1,533 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% load roles_tags %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Oculta el buscador nativo de DataTables */
+    .dataTables_filter { display: none !important; }
+    .dataTables_length { display: none !important; }
+
+    /* Contenedor principal */
+    .reportes-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .page-header h2 {
+      margin: 0;
+      color: var(--color-secondary, #d4af37);
+      font-size: 2rem;
+    }
+
+    /* Badges de tipo */
+    .tipo-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(166, 137, 50, 0.15);
+      color: var(--color-secondary, #d4af37);
+      border: 1px solid var(--color-secondary, #d4af37);
+    }
+    
+    /* Estadísticas */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    .stat-card {
+      background: rgba(166, 137, 50, 0.1);
+      border: 2px solid var(--color-secondary, #d4af37);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
+    }
+    
+    .stat-card h3 {
+      margin: 0 0 8px 0;
+      color: var(--color-secondary, #d4af37);
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    
+    .stat-card p {
+      margin: 0;
+      color: var(--color-text, #fff);
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    /* Sección de filtros mejorada */
+    .filter-section {
+      background: transparent;
+      border: 2px solid var(--color-secondary, #d4af37);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .filter-section h4 {
+      color: var(--color-secondary, #d4af37);
+      margin: 0 0 15px 0;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .filter-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .filter-row input,
+    .filter-row select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--color-secondary, #d4af37);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--color-text, #fff);
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .filter-row input:focus,
+    .filter-row select:focus {
+      outline: none;
+      border-color: var(--color-secondary, #d4af37);
+      box-shadow: 0 0 0 2px rgba(166, 137, 50, 0.2);
+    }
+
+    .filter-row label {
+      color: var(--color-secondary, #d4af37);
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 10px;
+      grid-column: 1 / -1;
+      margin-top: 10px;
+    }
+
+    .filter-actions button,
+    .filter-actions a {
+      flex: 1;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 2px solid var(--color-secondary, #d4af37);
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-filter {
+      background: var(--color-secondary, #d4af37);
+      color: #000;
+    }
+
+    .btn-filter:hover {
+      background: linear-gradient(135deg, #d4af37, #f4d467);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
+    }
+
+    .btn-clear {
+      background: transparent;
+      color: var(--color-secondary, #d4af37);
+    }
+
+    .btn-clear:hover {
+      background: rgba(166, 137, 50, 0.1);
+    }
+    
+    /* Tabla mejorada */
+    .table-section {
+      background: transparent;
+      border: 2px solid var(--color-secondary, #d4af37);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .table-header h3 {
+      margin: 0;
+      color: var(--color-secondary, #d4af37);
+      font-size: 1.3rem;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+
+    .table-contenedor {
+      display: flex;
+      justify-content: center;
+    }
+
+    #reportes-table {
+      width: 100%;
+      background: transparent;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    #reportes-table thead th {
+      background: transparent;
+      color: var(--color-secondary, #d4af37);
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid var(--color-secondary, #d4af37);
+    }
+
+    #reportes-table tbody td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--color-secondary, #d4af37);
+      color: var(--color-text, #fff);
+      font-size: 0.9rem;
+    }
+
+    #reportes-table tbody tr:hover {
+      background: rgba(166, 137, 50, 0.1);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: 1px solid var(--color-secondary, #d4af37);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .btn-action svg {
+      stroke: var(--color-secondary, #d4af37);
+      transition: stroke 0.3s ease;
+    }
+
+    .btn-action img {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0) saturate(100%) invert(73%) sepia(54%) saturate(417%) hue-rotate(6deg) brightness(94%) contrast(92%);
+    }
+
+    .btn-action:hover {
+      background: var(--color-secondary, #d4af37);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
+    }
+
+    .btn-action:hover svg {
+      stroke: #000;
+    }
+
+    .btn-action:hover img {
+      filter: brightness(0) saturate(100%);
+    }
+
+    .btn-create {
+      background: var(--color-secondary, #d4af37);
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 2px solid var(--color-secondary, #d4af37);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-create:hover {
+      background: linear-gradient(135deg, #d4af37, #f4d467);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
+    }
+
+    /* DataTables customización */
+    .dataTables_wrapper .dataTables_paginate {
+      padding-top: 20px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      padding: 8px 14px;
+      margin: 0 4px;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--color-secondary, #d4af37) !important;
+      border: 1px solid var(--color-secondary, #d4af37);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+      background: var(--color-secondary, #d4af37);
+      color: #000 !important;
+      border-color: var(--color-secondary, #d4af37);
+      transform: translateY(-2px);
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+      background: var(--color-secondary, #d4af37);
+      color: #000 !important;
+      border-color: var(--color-secondary, #d4af37);
+    }
+
+    .dataTables_wrapper .dataTables_info {
+      color: var(--color-secondary, #d4af37);
+      padding-top: 20px;
+    }
+    
+    @media (max-width: 1024px) {
+      .filter-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .action-buttons {
+        flex-wrap: wrap;
+      }
+
+      .stat-card {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="reportes-container">
+    <!-- Encabezado de página -->
+    <div class="page-header">
+        <h2><i class="fas fa-chart-bar"></i> Gestión de Reportes</h2>
+        {% if request.user|has_perm:"reportes,crear" %}
+        <a href="{% url 'reportes:reporte_create' %}" class="btn-create">
+            <i class="fas fa-plus"></i> Crear Nuevo Reporte
+        </a>
+        {% endif %}
+    </div>
+    
+    <!-- Estadísticas -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>{{ total_reportes }}</h3>
+            <p>Total de Reportes</p>
+        </div>
+        {% for tipo_stat in reportes_por_tipo %}
+        <div class="stat-card">
+            <h3>{{ tipo_stat.total }}</h3>
+            <p>{{ tipo_stat.tipo|title }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Filtros -->
+    <div class="filter-section">
+        <h4><i class="fas fa-filter"></i> Filtros de Búsqueda</h4>
+        <form method="get">
+            <div class="filter-row">
+                <div>
+                    <label for="id_busqueda">Buscar por nombre</label>
+                    {{ filter_form.busqueda }}
+                </div>
+                <div>
+                    <label for="id_tipo">Tipo</label>
+                    {{ filter_form.tipo }}
+                </div>
+                <div>
+                    <label for="id_periodo">Periodo</label>
+                    {{ filter_form.periodo }}
+                </div>
+                <div>
+                    <label for="id_usuario">Usuario</label>
+                    {{ filter_form.usuario }}
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+                <a href="{% url 'reportes:reporte_list' %}" class="btn-clear">
+                    <i class="fas fa-times"></i> Limpiar Filtros
+                </a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Tabla de reportes -->
+    <div class="table-section">
+        <div class="table-header">
+            <h3><i class="fas fa-list"></i> Listado de Reportes</h3>
+        </div>
+        
+        <div class="table-contenedor">
+            <div class="table-responsive">
+                <table id="reportes-table" class="table display">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Periodo</th>
+                            <th>Creado por</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reporte in reportes %}
+                        <tr>
+                            <td><strong>{{ reporte.nombre }}</strong></td>
+                            <td>
+                                <span class="tipo-badge badge-{{ reporte.tipo }}">
+                                    {{ reporte.get_tipo_display }}
+                                </span>
+                            </td>
+                            <td>{{ reporte.fecha_inicio|date:"d/m/Y" }} - {{ reporte.fecha_fin|date:"d/m/Y" }}</td>
+                            <td>{{ reporte.creado_por.username }}</td>
+                            <td>{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'reportes:reporte_detail' reporte.pk %}" class="btn-action btn-view" title="Ver detalle">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </a>
+                                    {% if request.user|has_perm:"reportes,editar" %}
+                                        <a href="{% url 'reportes:reporte_update' reporte.pk %}" class="btn-action btn-edit" title="Editar">
+                                            <img src="{% static 'img/icons/edit.svg' %}" alt="Editar">
+                                        </a>
+                                    {% endif %}
+                                    {% if request.user|has_perm:"reportes,eliminar" %}
+                                        <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn-action btn-delete" title="Eliminar">
+                                            <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center" style="padding: 40px; color: var(--color-secondary, #d4af37);">
+                                <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                                <p>No hay reportes disponibles.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var sel = '#reportes-table';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            dom: 'rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: 5, orderable: false } // Columna de acciones no ordenable
+            ],
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
+            },
+            responsive: true,
+            pageLength: 15,
+            order: [[4, 'desc']], // Ordenar por fecha descendente
+            drawCallback: function() {
+                // Mejorar la apariencia después de cada redibujado
+                $('.dataTables_paginate .paginate_button').css({
+                    'padding': '8px 14px',
+                    'margin': '0 4px',
+                    'border-radius': '6px'
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

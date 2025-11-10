@@ -143,6 +143,18 @@
                 </li>
                 {% endif %}
 
+                {% if request.user|has_perm:"reportes,ver" %}
+                <li>
+                                        <button class="menu-btn" onclick="toggleMenu('reportes-submenu')"><img src="{% static 'img/icons/bar_chart.svg' %}" alt="Reportes"> Reportes</button>
+                    <ul id="reportes-submenu" class="submenu hidden">
+                        <li><a href="{% url 'reportes:reporte_list' %}">Lista de Reportes</a></li>
+                        {% if request.user|has_perm:"reportes,crear" %}
+                        <li><a href="{% url 'reportes:reporte_create' %}">Crear Reporte</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
 
                 <!-- {% if request.user|has_perm:"dashboard,ver" %}
             <li>
