@@ -63,6 +63,27 @@
         </form>
     </div>
 
+    <!-- Botones de exportación -->
+    <div class="export-container mb-3">
+        <div class="btn-group" role="group" aria-label="Exportar datos">
+            <a href="{% url 'facturacion:exportar_csv' %}?{{ request.GET.urlencode }}" 
+               class="btn btn-outline-success">
+                <img src="{% static 'img/icons/download.svg' %}" alt="CSV" style="width:16px; height:16px;">
+                Exportar CSV
+            </a>
+            <a href="{% url 'facturacion:exportar_xlsx' %}?{{ request.GET.urlencode }}" 
+               class="btn btn-outline-primary">
+                <img src="{% static 'img/icons/download.svg' %}" alt="XLSX" style="width:16px; height:16px;">
+                Exportar Excel
+            </a>
+            <a href="{% url 'facturacion:exportar_pdf' %}?{{ request.GET.urlencode }}" 
+               class="btn btn-outline-danger">
+                <img src="{% static 'img/icons/download.svg' %}" alt="PDF" style="width:16px; height:16px;">
+                Exportar PDF
+            </a>
+        </div>
+    </div>
+
     <!-- Lista de facturas -->
     <div class="table-responsive">
         <table id="tabla-facturas" class="table table-striped table-bordered nowrap">
