@@ -9,7 +9,6 @@ from django.http import JsonResponse
 from roles.decorators import permission_required
 from .models import Reporte
 from .forms import ReporteForm, ReporteFilterForm
-from .utils import generar_pdf_reporte, generar_excel_reporte, generar_csv_reporte
 
 
 @method_decorator(permission_required('reportes', 'ver'), name='dispatch')
@@ -70,6 +69,16 @@ class ReporteDetailView(DetailView):
     model = Reporte
     template_name = 'reportes/reporte_detail.html'
     context_object_name = 'reporte'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Obtener datos del reporte si están disponibles
+        datos = self.object.get_datos()
+        context['datos_reporte'] = datos
+        context['tiene_datos'] = bool(datos)
+        
+        return context
 
 
 @method_decorator(permission_required('reportes', 'crear'), name='dispatch')
@@ -111,133 +120,91 @@ class ReporteDeleteView(SuccessMessageMixin, DeleteView):
 
 def exportar_reporte(request, pk, formato):
     """Vista para exportar un reporte en diferentes formatos"""
+    from .utils import generar_pdf_reporte, generar_excel_reporte, generar_csv_reporte, obtener_datos_reporte_detallado
+    import traceback
+    
+    # Verificar que el usuario esté autenticado
+    if not request.user.is_authenticated:
+        messages.error(request, "Debes iniciar sesión para exportar reportes")
+        return redirect('accounts:login')
+    
     reporte = get_object_or_404(Reporte, pk=pk)
     
-    # Obtener datos del reporte según su tipo
-    datos = obtener_datos_reporte(reporte)
-    
-    if formato == 'pdf':
-        return generar_pdf_reporte(reporte, datos)
-    elif formato == 'excel':
-        return generar_excel_reporte(reporte, datos)
-    elif formato == 'csv':
-        return generar_csv_reporte(reporte, datos)
-    else:
-        messages.error(request, "Formato de exportación no válido")
+    try:
+        # Obtener o regenerar datos del reporte
+        datos = reporte.get_datos()
+        
+        # Si no hay datos o están vacíos, generarlos
+        if not datos or not datos.get('resumen'):
+            print(f"Generando datos para reporte {reporte.id}...")
+            datos = obtener_datos_reporte_detallado(reporte)
+            reporte.set_datos(datos)
+            reporte.generado = True
+            reporte.save()
+            print(f"Datos generados: {len(datos.get('detalles', []))} detalles")
+        
+        # Validar formato
+        if formato not in ['pdf', 'excel', 'csv']:
+            messages.error(request, f"Formato de exportación no válido: {formato}")
+            return redirect('reportes:reporte_detail', pk=pk)
+        
+        # Exportar según formato
+        if formato == 'pdf':
+            return generar_pdf_reporte(reporte, datos)
+        elif formato == 'excel':
+            return generar_excel_reporte(reporte, datos)
+        elif formato == 'csv':
+            return generar_csv_reporte(reporte, datos)
+            
+    except Exception as e:
+        error_msg = f"Error al exportar reporte: {str(e)}"
+        print(error_msg)
+        print(traceback.format_exc())
+        messages.error(request, error_msg)
         return redirect('reportes:reporte_detail', pk=pk)
 
 
-@permission_required('reportes', 'generar')
 def generar_reporte_datos(request, pk):
     """Vista para generar/actualizar datos del reporte"""
+    from .utils import obtener_datos_reporte_detallado
+    
+    # Verificar que el usuario esté autenticado
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            'success': False,
+            'message': 'Debes iniciar sesión'
+        }, status=401)
+    
     reporte = get_object_or_404(Reporte, pk=pk)
     
     try:
         # Generar datos según el tipo de reporte
-        datos_generados = procesar_datos_reporte(reporte)
+        datos_generados = obtener_datos_reporte_detallado(reporte)
         
-        # Marcar como generado
+        # Guardar datos en el reporte
+        reporte.set_datos(datos_generados)
         reporte.generado = True
         reporte.save()
         
         messages.success(request, f"Reporte '{reporte.nombre}' generado exitosamente")
+        
+        # Preparar respuesta con resumen
         return JsonResponse({
             'success': True,
             'message': 'Reporte generado correctamente',
-            'datos': datos_generados
+            'resumen': datos_generados.get('resumen', {}),
+            'cantidad_detalles': len(datos_generados.get('detalles', [])),
+            'totales': datos_generados.get('totales', {})
         })
     except Exception as e:
+        import traceback
+        error_detail = traceback.format_exc()
         messages.error(request, f"Error al generar reporte: {str(e)}")
         return JsonResponse({
             'success': False,
-            'message': f'Error: {str(e)}'
+            'message': f'Error: {str(e)}',
+            'detail': error_detail
         }, status=500)
 
 
-def obtener_datos_reporte(reporte):
-    """Obtiene los datos del reporte según su tipo"""
-    from django.db.models import Sum, Count, Avg
-    from datetime import datetime
-    
-    datos = {}
-    
-    if reporte.tipo == 'ventas':
-        # Importar modelos necesarios
-        try:
-            from tables.models import Factura
-            
-            facturas = Factura.objects.filter(
-                fecha__range=[reporte.fecha_inicio, reporte.fecha_fin]
-            )
-            
-            datos = {
-                'Total de Ventas': facturas.aggregate(Sum('total'))['total__sum'] or 0,
-                'Cantidad de Facturas': facturas.count(),
-                'Promedio por Factura': facturas.aggregate(Avg('total'))['total__avg'] or 0,
-            }
-        except ImportError:
-            datos = {'mensaje': 'Módulo de facturación no disponible'}
-    
-    elif reporte.tipo == 'gastos':
-        try:
-            from expenses.models import Expense
-            
-            gastos = Expense.objects.filter(
-                date__range=[reporte.fecha_inicio, reporte.fecha_fin]
-            )
-            
-            datos = {
-                'Total de Gastos': gastos.aggregate(Sum('amount'))['amount__sum'] or 0,
-                'Cantidad de Gastos': gastos.count(),
-                'Promedio por Gasto': gastos.aggregate(Avg('amount'))['amount__avg'] or 0,
-            }
-        except ImportError:
-            datos = {'mensaje': 'Módulo de gastos no disponible'}
-    
-    elif reporte.tipo == 'nominas':
-        try:
-            from nominas.models import Payroll
-            
-            nominas = Payroll.objects.filter(
-                start_date__gte=reporte.fecha_inicio,
-                end_date__lte=reporte.fecha_fin
-            )
-            
-            datos = {
-                'Total Nóminas': nominas.aggregate(Sum('net_salary'))['net_salary__sum'] or 0,
-                'Cantidad de Nóminas': nominas.count(),
-                'Promedio por Nómina': nominas.aggregate(Avg('net_salary'))['net_salary__avg'] or 0,
-            }
-        except ImportError:
-            datos = {'mensaje': 'Módulo de nóminas no disponible'}
-    
-    elif reporte.tipo == 'inventario':
-        try:
-            from products.models import Product
-            
-            productos = Product.objects.all()
-            
-            datos = {
-                'Total de Productos': productos.count(),
-                'Productos con Stock Bajo': productos.filter(stock__lt=10).count(),
-            }
-        except ImportError:
-            datos = {'mensaje': 'Módulo de productos no disponible'}
-    
-    else:  # general
-        datos = {
-            'Periodo': f"{reporte.fecha_inicio.strftime('%d/%m/%Y')} - {reporte.fecha_fin.strftime('%d/%m/%Y')}",
-            'Duración': f"{reporte.duracion_dias} días",
-        }
-    
-    return datos
 
-
-def procesar_datos_reporte(reporte):
-    """Procesa y genera los datos del reporte"""
-    datos = obtener_datos_reporte(reporte)
-    
-    # Aquí puedes agregar lógica adicional de procesamiento
-    # como cálculos, análisis, etc.
-    
-    return datos

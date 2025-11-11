@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
+import json
 
 
 class Reporte(models.Model):
@@ -11,10 +12,14 @@ class Reporte(models.Model):
         ('inventario', 'Inventario'),
         ('gastos', 'Gastos'),
         ('nominas', 'Nóminas'),
+        ('productos', 'Productos'),
+        ('mesas', 'Mesas y Pedidos'),
         ('general', 'General'),
     ]
     
     PERIODO_CHOICES = [
+        ('diario', 'Diario'),
+        ('semanal', 'Semanal'),
         ('mensual', 'Mensual'),
         ('trimestral', 'Trimestral'),
         ('anual', 'Anual'),
@@ -38,6 +43,8 @@ class Reporte(models.Model):
     fecha_fin = models.DateField(verbose_name='Fecha Fin')
     archivo = models.FileField(upload_to='reportes/', blank=True, null=True, verbose_name='Archivo')
     generado = models.BooleanField(default=False, verbose_name='Reporte Generado')
+    datos_json = models.TextField(blank=True, null=True, verbose_name='Datos del Reporte (JSON)')
+    ultima_generacion = models.DateTimeField(null=True, blank=True, verbose_name='Última Generación')
     
     class Meta:
         ordering = ['-fecha_creacion']
@@ -64,3 +71,17 @@ class Reporte(models.Model):
         if self.fecha_creacion:
             return (timezone.now() - self.fecha_creacion).days > 30
         return False
+    
+    def get_datos(self):
+        """Obtiene los datos del reporte desde JSON"""
+        if self.datos_json:
+            try:
+                return json.loads(self.datos_json)
+            except json.JSONDecodeError:
+                return {}
+        return {}
+    
+    def set_datos(self, datos):
+        """Guarda los datos del reporte en JSON"""
+        self.datos_json = json.dumps(datos, ensure_ascii=False)
+        self.ultima_generacion = timezone.now()
