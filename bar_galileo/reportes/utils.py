@@ -649,16 +649,85 @@ def obtener_datos_inventario(reporte):
 
 
 def obtener_datos_productos(reporte):
-    """Obtiene datos detallados de productos"""
+    """
+    Obtiene datos detallados de productos con análisis avanzados:
+    - Análisis de rentabilidad (mayor/menor margen, valor potencial)
+    - Alertas de stock (críticos, reorden, exceso)
+    - Estadísticas por proveedor
+    - Estadísticas de precios
+    """
     from products.models import Producto, Categoria
     
     productos = Producto.objects.filter(activo=True).select_related(
         'id_categoria', 'id_proveedor', 'id_marca'
-    ).order_by('-stock')
+    )
     
     total_productos = productos.count()
     productos_activos = productos.filter(activo=True).count()
     categorias_count = Categoria.objects.all().count()
+    
+    # ========== ANÁLISIS DE RENTABILIDAD ==========
+    productos_con_margen = []
+    for p in productos:
+        if p.precio_compra > 0:
+            margen_porcentaje = ((p.precio_venta - p.precio_compra) / p.precio_compra * 100)
+            ganancia_unitaria = p.precio_venta - p.precio_compra
+            valor_potencial = ganancia_unitaria * p.stock
+            
+            productos_con_margen.append({
+                'producto': p,
+                'margen': margen_porcentaje,
+                'ganancia_unitaria': ganancia_unitaria,
+                'valor_potencial': valor_potencial
+            })
+    
+    # Productos con mayor y menor margen
+    productos_con_margen_ordenados = sorted(productos_con_margen, key=lambda x: x['margen'], reverse=True)
+    mayor_margen = productos_con_margen_ordenados[0] if productos_con_margen_ordenados else None
+    menor_margen = productos_con_margen_ordenados[-1] if productos_con_margen_ordenados else None
+    
+    # Productos con mayor valor potencial de venta
+    productos_valor_potencial = sorted(productos_con_margen, key=lambda x: x['valor_potencial'], reverse=True)
+    top_valor_potencial = productos_valor_potencial[:5] if len(productos_valor_potencial) >= 5 else productos_valor_potencial
+    
+    # ========== ALERTAS DE STOCK ==========
+    # Stock crítico (< 5 unidades)
+    productos_stock_critico = productos.filter(stock__lt=5, stock__gt=0).order_by('stock')
+    # Stock bajo - necesita reorden (5-10 unidades)
+    productos_reorden = productos.filter(stock__gte=5, stock__lte=10).order_by('stock')
+    # Sin stock (0 unidades)
+    productos_sin_stock = productos.filter(stock=0)
+    # Stock excesivo (> 100 unidades)
+    productos_exceso_stock = productos.filter(stock__gt=100).order_by('-stock')
+    
+    # ========== ESTADÍSTICAS POR PROVEEDOR ==========
+    por_proveedor = productos.values('id_proveedor__nombre').annotate(
+        cantidad=Count('id_producto'),
+        stock_total=Sum('stock'),
+        valor_compra=Sum(F('precio_compra') * F('stock')),
+        valor_venta=Sum(F('precio_venta') * F('stock'))
+    ).order_by('-cantidad')
+    
+    # ========== ESTADÍSTICAS DE PRECIOS ==========
+    precios_stats = productos.aggregate(
+        precio_compra_promedio=Avg('precio_compra'),
+        precio_venta_promedio=Avg('precio_venta'),
+        precio_compra_min=Sum('precio_compra'),
+        precio_compra_max=Sum('precio_compra'),
+        precio_venta_min=Sum('precio_venta'),
+        precio_venta_max=Sum('precio_venta')
+    )
+    
+    # Calcular margen promedio
+    if productos_con_margen:
+        margen_promedio = sum(p['margen'] for p in productos_con_margen) / len(productos_con_margen)
+    else:
+        margen_promedio = 0
+    
+    # Valor total del inventario
+    valor_inventario_compra = sum(p.precio_compra * p.stock for p in productos)
+    valor_inventario_venta = sum(p.precio_venta * p.stock for p in productos)
+    ganancia_potencial_total = valor_inventario_venta - valor_inventario_compra
     
     # Por categoría
     por_categoria = productos.values('id_categoria__nombre_categoria').annotate(
@@ -666,40 +735,146 @@ def obtener_datos_productos(reporte):
         stock_total=Sum('stock')
     ).order_by('-cantidad')
     
-    # Resumen
+    # ========== RESUMEN MEJORADO ==========
     resumen = {
+        '=== INFORMACIÓN GENERAL ===': '',
         'Total de Productos': total_productos,
         'Productos Activos': productos_activos,
         'Categorías': categorias_count,
+        'Proveedores': por_proveedor.count(),
     }
     
-    # Agregar categorías
-    for cat in por_categoria[:5]:  # Top 5
+    # Separador
+    resumen['─' * 50] = ''
+    
+    # Análisis de rentabilidad
+    resumen['=== ANÁLISIS DE RENTABILIDAD ==='] = ''
+    resumen['Margen Promedio'] = f"{margen_promedio:.2f}%"
+    resumen['Valor Inventario (Compra)'] = f"${valor_inventario_compra:,.2f}"
+    resumen['Valor Inventario (Venta)'] = f"${valor_inventario_venta:,.2f}"
+    resumen['Ganancia Potencial Total'] = f"${ganancia_potencial_total:,.2f}"
+    
+    # Agregar productos con mayor y menor margen
+    if mayor_margen:
+        resumen['Producto con Mayor Margen'] = f"{mayor_margen['producto'].nombre} ({mayor_margen['margen']:.1f}%)"
+    if menor_margen:
+        resumen['Producto con Menor Margen'] = f"{menor_margen['producto'].nombre} ({menor_margen['margen']:.1f}%)"
+    
+    # Separador
+    resumen['─' * 50 + ' '] = ''
+    
+    # Agregar top productos por valor potencial
+    resumen['=== TOP 5 VALOR POTENCIAL ==='] = ''
+    for i, item in enumerate(top_valor_potencial, 1):
+        resumen[f"  {i}. {item['producto'].nombre}"] = f"${item['valor_potencial']:,.2f}"
+    
+    # Separador
+    resumen['─' * 50 + '  '] = ''
+    
+    # Alertas de stock
+    resumen['=== ALERTAS DE STOCK ==='] = ''
+    resumen['🔴 Stock Crítico (< 5)'] = productos_stock_critico.count()
+    resumen['🟡 Requiere Reorden (5-10)'] = productos_reorden.count()
+    resumen['⚫ Sin Stock'] = productos_sin_stock.count()
+    resumen['🔵 Stock Excesivo (> 100)'] = productos_exceso_stock.count()
+    
+    # Separador
+    resumen['─' * 50 + '   '] = ''
+    
+    # Estadísticas por proveedor
+    resumen['=== TOP 5 PROVEEDORES ==='] = ''
+    for prov in por_proveedor[:5]:
+        prov_nombre = prov['id_proveedor__nombre'] or 'Sin proveedor'
+        valor = prov['valor_compra'] or 0
+        resumen[f"  - {prov_nombre}"] = f"{prov['cantidad']} productos (${valor:,.2f})"
+    
+    # Separador
+    resumen['─' * 50 + '    '] = ''
+    
+    # Estadísticas de precios
+    resumen['=== ESTADÍSTICAS DE PRECIOS ==='] = ''
+    resumen['Precio Compra Promedio'] = f"${precios_stats['precio_compra_promedio'] or 0:,.2f}"
+    resumen['Precio Venta Promedio'] = f"${precios_stats['precio_venta_promedio'] or 0:,.2f}"
+    
+    # Separador
+    resumen['─' * 50 + '     '] = ''
+    
+    # Top 5 categorías
+    resumen['=== TOP 5 CATEGORÍAS ==='] = ''
+    for cat in por_categoria[:5]:
         cat_nombre = cat['id_categoria__nombre_categoria'] or 'Sin categoría'
         resumen[f"  - {cat_nombre}"] = f"{cat['cantidad']} productos (Stock: {cat['stock_total'] or 0})"
     
-    # Detalles
+    # ========== DETALLES MEJORADOS ==========
     detalles = []
-    for producto in productos[:100]:  # Primeros 100
+    
+    # Incluir todos los productos con información completa
+    for producto in productos.order_by('-stock')[:200]:  # Primeros 200
         categoria = producto.id_categoria.nombre_categoria if producto.id_categoria else 'Sin categoría'
-        marca = producto.id_marca.nombre if producto.id_marca else 'Sin marca'
-        margen = ((producto.precio_venta - producto.precio_compra) / producto.precio_compra * 100) if producto.precio_compra > 0 else 0
+        marca = producto.id_marca.marca if producto.id_marca else 'Sin marca'
+        proveedor = producto.id_proveedor.nombre if producto.id_proveedor else 'Sin proveedor'
+        
+        if producto.precio_compra > 0:
+            margen = ((producto.precio_venta - producto.precio_compra) / producto.precio_compra * 100)
+            ganancia_unitaria = producto.precio_venta - producto.precio_compra
+            valor_potencial = ganancia_unitaria * producto.stock
+        else:
+            margen = 0
+            ganancia_unitaria = 0
+            valor_potencial = 0
+        
+        # Determinar alerta de stock
+        if producto.stock == 0:
+            alerta_stock = '⚫ Sin Stock'
+        elif producto.stock < 5:
+            alerta_stock = '🔴 Crítico'
+        elif producto.stock <= 10:
+            alerta_stock = '🟡 Reorden'
+        elif producto.stock > 100:
+            alerta_stock = '🔵 Exceso'
+        else:
+            alerta_stock = '✅ Normal'
         
         detalles.append({
             'Producto': producto.nombre,
             'Categoría': categoria,
             'Marca': marca,
+            'Proveedor': proveedor,
             'Stock': producto.stock,
+            'Alerta': alerta_stock,
             'Precio Compra': f"${producto.precio_compra:,.2f}",
             'Precio Venta': f"${producto.precio_venta:,.2f}",
-            'Margen': f"{margen:.1f}%"
+            'Margen': f"{margen:.1f}%",
+            'Ganancia Unit.': f"${ganancia_unitaria:,.2f}",
+            'Valor Potencial': f"${valor_potencial:,.2f}"
         })
     
-    # Totales
+    # ========== TOTALES MEJORADOS ==========
     totales = {
+        '=== INVENTARIO ===': '',
         'TOTAL PRODUCTOS': total_productos,
         'PRODUCTOS ACTIVOS': productos_activos,
+        'VALOR INVENTARIO (COMPRA)': f"${valor_inventario_compra:,.2f}",
+        'VALOR INVENTARIO (VENTA)': f"${valor_inventario_venta:,.2f}",
     }
+    
+    # Separador
+    totales['═' * 50] = ''
+    
+    # Rentabilidad
+    totales['=== RENTABILIDAD ==='] = ''
+    totales['GANANCIA POTENCIAL TOTAL'] = f"${ganancia_potencial_total:,.2f}"
+    totales['MARGEN PROMEDIO'] = f"{margen_promedio:.2f}%"
+    
+    # Separador
+    totales['═' * 50 + ' '] = ''
+    
+    # Alertas
+    totales['=== ALERTAS ==='] = ''
+    totales['🔴 STOCK CRÍTICO'] = productos_stock_critico.count()
+    totales['🟡 REQUIERE REORDEN'] = productos_reorden.count()
+    totales['⚫ SIN STOCK'] = productos_sin_stock.count()
+    totales['🔵 STOCK EXCESIVO'] = productos_exceso_stock.count()
     
     return {
         'resumen': resumen,
