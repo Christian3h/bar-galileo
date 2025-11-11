@@ -346,31 +346,99 @@
   }
 }
 
-@media (max-width: 768px) {
-  .stats-container {
-    grid-template-columns: 1fr;
-  }
-  
+/* =======================================
+   CLASES ADICIONALES PARA DETAIL VIEW
+======================================= */
+
+/* Estado vacío */
+.empty-state {
+  padding: 40px;
+  color: var(--color-secondary, #d4af37);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+/* Espaciado */
+.detail-item-spacing {
+  margin-top: 25px;
+}
+
+.detail-card-spacing {
+  margin-top: 20px;
+}
+
+.section-title {
+  color: var(--color-secondary);
+  margin-bottom: 15px;
+}
+
+.section-title-spacing {
+  color: var(--color-secondary);
+  margin: 25px 0 15px;
+}
+
+/* Badge de éxito */
+.status-badge-success {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+}
+
+/* Textos informativos */
+.info-text {
+  color: #6c757d;
+  margin: 0;
+}
+
+.highlight-text {
+  color: var(--color-secondary);
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+/* Items de detalles con estilo de éxito */
+.detail-item-success {
+  background: rgba(40, 167, 69, 0.05);
+  border-color: #28a745;
+}
+
+.label-success {
+  color: #28a745;
+}
+
+.value-success {
+  color: #28a745;
+}
+
+.value-large {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Alertas */
+.alert {
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.alert-info {
+  background: rgba(23, 162, 184, 0.1);
+  border: 1px solid #17a2b8;
+}
+
+.alert-success {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid #28a745;
+}
+
+@media (max-width: 1024px) {
   .filter-row {
-    grid-template-columns: 1fr;
-  }
-
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .table-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .action-buttons {
-    flex-wrap: wrap;
-  }
-
-  .stat-card {
-    width: 100%;
-    min-width: unset;
+    grid-template-columns: 1fr 1fr;
   }
 }
