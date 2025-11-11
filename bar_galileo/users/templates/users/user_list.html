@@ -18,7 +18,7 @@
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
                         <td>
-                            <form method="post" style="margin:0;">
+                            <form method="post" class="inline-form">
                                 {% csrf_token %}
                                 <select name="rol_id">
                                     {% for rol in roles %}
