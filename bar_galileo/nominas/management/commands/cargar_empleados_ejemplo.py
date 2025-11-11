@@ -6,7 +6,7 @@ from django.utils import timezone
 import random
 
 class Command(BaseCommand):
-    help = 'Carga empleados de ejemplo con rol Empleado, pagos y bonificaciones.'
+    help = 'Carga empleados de ejemplo con rol Empleado, pagos y bonificaciones, vinculados correctamente a usuarios.'
 
     def handle(self, *args, **options):
         # Datos de ejemplo
@@ -21,6 +21,8 @@ class Command(BaseCommand):
                 'email': 'juan.perez@ejemplo.com',
                 'telefono': '+573001234567',
                 'direccion': 'Calle 123 #45-67, Bogotá',
+                'username': 'juan.perez',
+                'password': 'empleado123'
             },
             {
                 'nombre': 'Ana Gómez',
@@ -32,6 +34,8 @@ class Command(BaseCommand):
                 'email': 'ana.gomez@ejemplo.com',
                 'telefono': '+573002345678',
                 'direccion': 'Cra 45 #67-89, Medellín',
+                'username': 'ana.gomez',
+                'password': 'empleado123'
             },
             {
                 'nombre': 'Carlos Ruiz',
@@ -43,26 +47,49 @@ class Command(BaseCommand):
                 'email': 'carlos.ruiz@ejemplo.com',
                 'telefono': '+573003456789',
                 'direccion': 'Av. Siempre Viva 742, Cali',
+                'username': 'carlos.ruiz',
+                'password': 'empleado123'
             },
         ]
 
         rol_empleado = Role.objects.filter(nombre__iexact='Empleado').first()
         if not rol_empleado:
-            self.stdout.write(self.style.ERROR('No existe el rol Empleado.'))
+            self.stdout.write(self.style.ERROR('No existe el rol Empleado. Créalo primero.'))
             return
 
         for data in empleados_data:
-            # Crear usuario base
-            username = data['email'].split('@')[0]
-            user, _ = User.objects.get_or_create(username=username, defaults={
-                'email': data['email'],
-                'first_name': data['nombre'].split()[0],
-                'last_name': ' '.join(data['nombre'].split()[1:]),
-            })
+            username = data.pop('username')
+            password = data.pop('password')
+
+            # Verificar si ya existe el empleado
+            empleado_existente = Empleado.objects.filter(email=data['email']).first()
+            if empleado_existente:
+                self.stdout.write(self.style.WARNING(f"Empleado ya existe: {empleado_existente}"))
+                continue
+
+            # Crear o obtener usuario
+            user, user_created = User.objects.get_or_create(
+                username=username,
+                defaults={
+                    'email': data['email'],
+                    'first_name': data['nombre'].split()[0],
+                    'last_name': ' '.join(data['nombre'].split()[1:]),
+                }
+            )
+
+            if user_created:
+                user.set_password(password)
+                user.save()
+                self.stdout.write(self.style.SUCCESS(f"Usuario creado: {username}"))
+            else:
+                self.stdout.write(self.style.WARNING(f"Usuario ya existe: {username}"))
+
             # Asignar perfil y rol
             UserProfile.objects.get_or_create(user=user, defaults={'rol': rol_empleado})
-            # Crear empleado
-            empleado, created = Empleado.objects.get_or_create(
+
+            # Crear empleado vinculado al usuario
+            empleado = Empleado.objects.create(
+                user=user,  # Vincular usuario al empleado
                 nombre=data['nombre'],
                 cargo=data['cargo'],
                 salario=data['salario'],
@@ -73,10 +100,8 @@ class Command(BaseCommand):
                 telefono=data['telefono'],
                 direccion=data['direccion'],
             )
-            if created:
-                self.stdout.write(self.style.SUCCESS(f"Empleado creado: {empleado}"))
-            else:
-                self.stdout.write(self.style.WARNING(f"Empleado ya existe: {empleado}"))
+            self.stdout.write(self.style.SUCCESS(f"Empleado creado y vinculado: {empleado} -> Usuario: {username}"))
+
             # Crear pagos de ejemplo
             for mes in range(1, 4):
                 Pago.objects.get_or_create(
@@ -86,6 +111,7 @@ class Command(BaseCommand):
                     tipo='salario',
                     descripcion=f'Salario correspondiente a mes {mes}'
                 )
+
             # Crear bonificación de ejemplo
             Bonificacion.objects.get_or_create(
                 empleado=empleado,
@@ -94,4 +120,6 @@ class Command(BaseCommand):
                 recurrente=False,
                 fecha_inicio=timezone.now().date().replace(month=2, day=1)
             )
-        self.stdout.write(self.style.SUCCESS('Empleados de ejemplo cargados correctamente.'))
+
+        self.stdout.write(self.style.SUCCESS('✅ Empleados de ejemplo cargados correctamente con usuarios vinculados.'))
+        self.stdout.write(self.style.SUCCESS('   Contraseña para todos: empleado123'))

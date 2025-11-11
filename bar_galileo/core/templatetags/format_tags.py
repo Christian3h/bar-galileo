@@ -30,3 +30,11 @@ def format_price(value):
     
     except (ValueError, TypeError):
         return '$0'
+
+@register.filter(name='add_class')
+def add_class(field, css_class):
+    """
+    Filtro para agregar clases CSS a campos de formulario
+    Uso: {{ form.field|add_class:"mi-clase" }}
+    """
+    return field.as_widget(attrs={'class': css_class})

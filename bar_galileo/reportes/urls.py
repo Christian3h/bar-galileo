@@ -5,10 +5,10 @@ app_name = 'reportes'
 
 urlpatterns = [
     path('', views.ReporteListView.as_view(), name='reporte_list'),
-    path('crear/', views.ReporteCreateView.as_view(), name='reporte_create'),
-    path('<int:pk>/', views.ReporteDetailView.as_view(), name='reporte_detail'),
-    path('<int:pk>/editar/', views.ReporteUpdateView.as_view(), name='reporte_update'),
-    path('<int:pk>/eliminar/', views.ReporteDeleteView.as_view(), name='reporte_delete'),
-    path('<int:pk>/exportar/<str:formato>/', views.exportar_reporte, name='reporte_export'),
-    path('<int:pk>/generar/', views.generar_reporte_datos, name='reporte_generar'),
+    path('nuevo/', views.ReporteCreateView.as_view(), name='reporte_create'),
+    path('detalle/<int:pk>/', views.ReporteDetailView.as_view(), name='reporte_detail'),
+    path('editar/<int:pk>/', views.ReporteUpdateView.as_view(), name='reporte_update'),
+    path('eliminar/<int:pk>/', views.ReporteDeleteView.as_view(), name='reporte_delete'),
+    path('exportar/<int:pk>/<str:formato>/', views.exportar_reporte, name='exportar_reporte'),
+    path('generar/<int:pk>/', views.generar_reporte_datos, name='generar_reporte'),
 ]

@@ -251,11 +251,11 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="page-title">{% if reporte %}Editar Reporte{% else %}Crear Nuevo Reporte{% endif %}</h2>
+    <h2 class="page-title">{% if object %}Editar Reporte{% else %}Crear Nuevo Reporte{% endif %}</h2>
     
     <div class="form-card">
         <div class="form-header">
-            <h2>{% if reporte %}Modificar Información del Reporte{% else %}Información del Reporte{% endif %}</h2>
+            <h2>{% if object %}Modificar Información del Reporte{% else %}Información del Reporte{% endif %}</h2>
         </div>
         
         <form method="post" enctype="multipart/form-data" id="reporteForm">
@@ -285,29 +285,29 @@
                 {% endif %}
             </div>
             
-      <div class="form-group">
-        <label for="{{ form.periodo.id_for_label }}" class="required-field">{{ form.periodo.label }}</label>
-        {{ form.periodo }}
-        {% if form.periodo.errors %}
-          <ul class="errorlist">
-            {% for error in form.periodo.errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      </div>
+            <div class="form-group">
+                <label for="{{ form.periodo.id_for_label }}" class="required-field">{{ form.periodo.label }}</label>
+                {{ form.periodo }}
+                {% if form.periodo.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.periodo.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
 
-      <div class="form-group">
-        <label for="{{ form.formato.id_for_label }}" class="required-field">{{ form.formato.label }}</label>
-        {{ form.formato }}
-        {% if form.formato.errors %}
-          <ul class="errorlist">
-            {% for error in form.formato.errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      </div>
+            <div class="form-group">
+                <label for="{{ form.formato.id_for_label }}" class="required-field">{{ form.formato.label }}</label>
+                {{ form.formato }}
+                {% if form.formato.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.formato.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
 
             <div class="form-group">
                 <label for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label }}</label>
@@ -359,8 +359,8 @@
                     </label>
                 </div>
                 <span id="file-name-display" class="file-name hidden"></span>
-                {% if reporte and reporte.archivo %}
-                    <small class="help-text">📎 Archivo actual: <a href="{{ reporte.archivo.url }}" target="_blank">{{ reporte.archivo.name }}</a></small>
+                {% if object and object.archivo %}
+                    <small class="help-text">📎 Archivo actual: <a href="{{ object.archivo.url }}" target="_blank">{{ object.archivo.name }}</a></small>
                 {% endif %}
                 <small class="help-text">Formatos permitidos: PDF, Excel, Word (opcional)</small>
                 {% if form.archivo.errors %}
@@ -382,7 +382,7 @@
             
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">
-                    {% if reporte %}Actualizar Reporte{% else %}Crear Reporte{% endif %}
+                    {% if object %}Actualizar Reporte{% else %}Crear Reporte{% endif %}
                 </button>
                 <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">
                     Cancelar

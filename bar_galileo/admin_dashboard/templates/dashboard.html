@@ -44,6 +44,22 @@
       <h3>Gastos Totales</h3>
       <p>{{ gastos_totales|format_price }}</p>
     </div>
+    <div class="card">
+      <h3>Nóminas Pagadas</h3>
+      <p>{{ nominas_pagadas|format_price }}</p>
+    </div>
+    <div class="card">
+      <h3>Empleados Activos</h3>
+      <p>{{ total_empleados }}</p>
+    </div>
+    <div class="card">
+      <h3>Bonificaciones Pagadas</h3>
+      <p>{{ bonificaciones_pagadas|format_price }}</p>
+    </div>
+    <div class="card">
+      <h3>Bonificaciones Activas</h3>
+      <p>{{ bonificaciones_activas }}</p>
+    </div>
   </section>
 
   <h2 class="dashboard-title">Gráficos</h2>
@@ -74,6 +90,13 @@
       <h4>Productos con Más Stock</h4>
       <div style="overflow-x: auto;">
         <div id="mas-stock-chart" style="width: 100%; height: 400px;"></div>
+      </div>
+    </article>
+
+    <article class="chart-box">
+      <h4>Top 5 Empleados - Pagos del Periodo</h4>
+      <div style="overflow-x: auto;">
+        <div id="top-pagos-chart" style="width: 100%; height: 400px;"></div>
       </div>
     </article>
   </section>
@@ -141,11 +164,37 @@
     };
     masStockChart.setOption(masStockOption);
 
+    // Gráfico de top pagos a empleados
+    var topPagosChart = echarts.init(document.getElementById('top-pagos-chart'), 'dark');
+    var topPagosOption = {
+      color: colors,
+      tooltip: {
+        ...tooltipStyle,
+        trigger: 'axis',
+        formatter: function(params) {
+          return params[0].name + '<br/>' + params[0].marker + ' ' + params[0].value.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: [{% for pago in top_pagos_empleados %}'{{ pago.empleado__nombre }}',{% endfor %}],
+        axisLabel: { interval: 0, rotate: 30 }
+      },
+      yAxis: { type: 'value' },
+      series: [{
+        data: [{% for pago in top_pagos_empleados %}{{ pago.total_pagado }},{% endfor %}],
+        type: 'bar',
+        itemStyle: { color: '#a68932' }
+      }]
+    };
+    topPagosChart.setOption(topPagosOption);
+
     window.addEventListener('resize', function() {
         mesasChart.resize();
         topProductosChart.resize();
         ventasMesChart.resize();
         masStockChart.resize();
+        topPagosChart.resize();
     });
   });
 </script>
