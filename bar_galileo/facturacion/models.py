@@ -83,7 +83,12 @@ class FacturacionManager:
             rows = cursor.fetchall()
             
             # Convertir a objetos FacturaSegura
-            facturas = []
+            class FacturaCollection(list):
+                """Wrapper ligero para exponer .count() como un QuerySet mínimo"""
+                def count(self):
+                    return len(self)
+
+            facturas = FacturaCollection()
             for row in rows:
                 facturas.append(FacturaSegura(
                     id=row[0],
@@ -93,7 +98,7 @@ class FacturacionManager:
                     pedido_id=row[4],
                     mesa_nombre=row[5]
                 ))
-            
+
             return facturas
     
     @staticmethod
