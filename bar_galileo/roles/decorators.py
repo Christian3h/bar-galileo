@@ -3,11 +3,15 @@ from functools import wraps
 from roles.models import Module, Action, RolePermission
 from django.shortcuts import redirect
 import sys
+from django.conf import settings
 
 # Durante la ejecución de tests, es conveniente relajar las comprobaciones de permisos
 # para permitir que los casos de prueba accedan a vistas sin la infraestructura completa
-# de roles/permissions. Detectamos el modo test buscando 'test' en los argumentos.
-RUNNING_TESTS = any('test' in str(a) for a in sys.argv)
+# de roles/permissions. Prioriza una bandera explícita en los settings (TESTING).
+# Si no existe, se usa el fallback que detecta 'test' en sys.argv.
+RUNNING_TESTS = getattr(settings, 'TESTING', None)
+if RUNNING_TESTS is None:
+    RUNNING_TESTS = any('test' in str(a) for a in sys.argv)
 
 def permission_required(modulo_nombre, accion_nombre):
     def decorator(view_func):
