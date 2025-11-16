@@ -1,0 +1,243 @@
+/**
+ * Estilos para el sistema de visualización de detalles en móvil
+ */
+
+/* Botón de ver detalles - oculto en desktop */
+.btn-view-details {
+    display: none;
+    margin-right: 0.25rem;
+    white-space: nowrap;
+}
+
+.btn-view-details .btn-text-mobile {
+    margin-left: 0.25rem;
+    font-size: 0.85rem;
+}
+
+/* Mostrar solo en móvil/tablet */
+@media (max-width: 992px) {
+    .btn-view-details {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: auto;
+        height: 32px;
+        padding: 0.25rem 0.5rem;
+        gap: 0.25rem;
+    }
+}
+
+/* Modal de detalles */
+.table-details-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+.table-details-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.table-details-modal-content {
+    background-color: var(--color-accent);
+    margin: 1rem;
+    padding: 0;
+    border: 1px solid var(--color-secondary);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.table-details-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: var(--color-light);
+    border-bottom: 2px solid var(--color-secondary);
+    border-radius: 8px 8px 0 0;
+}
+
+.table-details-modal-header h3 {
+    margin: 0;
+    color: var(--color-secondary);
+    font-size: 1.25rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100% - 40px);
+}
+
+.table-details-modal-close {
+    background: transparent;
+    border: none;
+    color: var(--color-secondary);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.table-details-modal-close:hover {
+    background-color: var(--color-light);
+    transform: rotate(90deg);
+}
+
+.table-details-modal-body {
+    padding: 1.25rem;
+    overflow-y: auto;
+    flex: 1;
+    background-color: var(--color-accent);
+}
+
+.table-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.table-details-item {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: var(--color-light);
+    border-radius: 6px;
+    border-left: 3px solid var(--color-primary);
+    transition: all 0.2s ease;
+}
+
+.table-details-item:hover {
+    opacity: 0.9;
+    border-left-color: var(--color-secondary);
+}
+
+/* Resaltar campos que estaban ocultos */
+.table-details-item.hidden-field {
+    border-left-color: var(--color-secondary);
+    background-color: var(--color-light);
+    opacity: 0.95;
+}
+
+.table-details-item.hidden-field:hover {
+    opacity: 1;
+}
+
+.table-details-label {
+    color: var(--color-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+}
+
+.table-details-value {
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+    word-wrap: break-word;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos para badges dentro del modal */
+.table-details-value .badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Estilos para iconos dentro del modal */
+.table-details-value i {
+    margin-right: 0.25rem;
+}
+
+/* Estilos para imágenes dentro del modal */
+.table-details-value img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid var(--color-secondary);
+}
+
+/* Responsive para el modal */
+@media (max-width: 576px) {
+    .table-details-modal-content {
+        width: 95%;
+        margin: 0.5rem;
+        max-height: 90vh;
+    }
+    
+    .table-details-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .table-details-label {
+        border-bottom: 1px solid var(--color-secondary);
+        padding-bottom: 0.25rem;
+    }
+    
+    .table-details-modal-header h3 {
+        font-size: 1rem;
+    }
+}
+
+/* Scrollbar personalizado para el modal */
+.table-details-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.table-details-modal-body::-webkit-scrollbar-track {
+    background: var(--color-light);
+    border-radius: 4px;
+}
+
+.table-details-modal-body::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+    border-radius: 4px;
+}
+
+.table-details-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+}
