@@ -1,0 +1,446 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+<style>
+    .form-section {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .form-section h4 {
+        color: #4e73df;
+        border-bottom: 2px solid #4e73df;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .usuario-option {
+        padding: 15px;
+        border: 1px solid #e3e6f0;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .usuario-option:hover {
+        background-color: #f8f9fc;
+        border-color: #4e73df;
+    }
+    .usuario-option input[type="radio"] {
+        margin-right: 10px;
+    }
+    .usuario-fields {
+        display: none;
+        padding: 15px;
+        background: #f8f9fc;
+        border-radius: 5px;
+        margin-top: 10px;
+    }
+    .usuario-fields.active {
+        display: block;
+    }
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: #5a5c69;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    .help-text {
+        font-size: 0.875rem;
+        color: #858796;
+        margin-top: 0.25rem;
+    }
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+        padding: 12px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+    }
+    .errorlist li {
+        color: #e74a3b;
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{% if object %}Editar{% else %}Crear{% endif %} Empleado</h1>
+        <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <form method="post" id="empleado-form">
+        {% csrf_token %}
+        
+        <!-- Sección: Datos del Empleado -->
+        <div class="form-section">
+            <h4><i class="fas fa-user"></i> Datos del Empleado</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.nombre.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.cargo.id_for_label }}">{{ form.cargo.label }}</label>
+                        {{ form.cargo }}
+                        {% if form.cargo.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.cargo.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.salario.id_for_label }}">{{ form.salario.label }}</label>
+                        {{ form.salario }}
+                        {% if form.salario.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.salario.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.fecha_contratacion.id_for_label }}">{{ form.fecha_contratacion.label }}</label>
+                        {{ form.fecha_contratacion }}
+                        {% if form.fecha_contratacion.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.fecha_contratacion.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
+                        {{ form.estado }}
+                        {% if form.estado.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.estado.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.tipo_contrato.id_for_label }}">{{ form.tipo_contrato.label }}</label>
+                        {{ form.tipo_contrato }}
+                        {% if form.tipo_contrato.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.tipo_contrato.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Información de Contacto -->
+        <div class="form-section">
+            <h4><i class="fas fa-address-book"></i> Información de Contacto</h4>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.email.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label }}</label>
+                        {{ form.telefono }}
+                        {% if form.telefono.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.telefono.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        {% if form.telefono.help_text %}
+                            <small class="help-text">{{ form.telefono.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.direccion.id_for_label }}">{{ form.direccion.label }}</label>
+                        {{ form.direccion }}
+                        {% if form.direccion.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.direccion.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Usuario del Sistema -->
+        <div class="form-section">
+            <h4><i class="fas fa-user-lock"></i> Usuario del Sistema</h4>
+            
+            {% if object and object.user %}
+                <div class="alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Este empleado ya tiene un usuario vinculado: <strong>{{ object.user.username }}</strong>
+                    <br>No es posible cambiar el usuario una vez asignado.
+                </div>
+                {{ form.opcion_usuario }}
+                {{ form.usuario_existente }}
+            {% else %}
+                <p class="text-muted mb-3">Seleccione una opción para gestionar el acceso al sistema:</p>
+                
+                <div class="form-group">
+                    {% for value, label in form.opcion_usuario.field.choices %}
+                        <div class="usuario-option" data-option="{{ value }}">
+                            <label>
+                                <input type="radio" name="opcion_usuario" value="{{ value }}" 
+                                       {% if form.opcion_usuario.value == value %}checked{% endif %}>
+                                <strong>{{ label }}</strong>
+                            </label>
+                            
+                            {% if value == 'sin_usuario' %}
+                                <p class="text-muted mb-0 ml-4">El empleado no tendrá acceso al sistema</p>
+                            {% elif value == 'usuario_existente' %}
+                                <p class="text-muted mb-0 ml-4">Vincular a un usuario ya existente en el sistema</p>
+                            {% elif value == 'usuario_nuevo' %}
+                                <p class="text-muted mb-0 ml-4">Crear un nuevo usuario con acceso al sistema</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    {% if form.opcion_usuario.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.opcion_usuario.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                
+                <!-- Campos para usuario existente -->
+                <div id="usuario-existente-fields" class="usuario-fields">
+                    <div class="form-group">
+                        <label for="{{ form.usuario_existente.id_for_label }}">{{ form.usuario_existente.label }}</label>
+                        {{ form.usuario_existente }}
+                        {% if form.usuario_existente.help_text %}
+                            <small class="help-text">{{ form.usuario_existente.help_text }}</small>
+                        {% endif %}
+                        {% if form.usuario_existente.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.usuario_existente.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Campos para nuevo usuario -->
+                <div id="usuario-nuevo-fields" class="usuario-fields">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                                {{ form.username }}
+                                {% if form.username.help_text %}
+                                    <small class="help-text">{{ form.username.help_text }}</small>
+                                {% endif %}
+                                {% if form.username.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in form.username.errors %}
+                                        <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.email_usuario.id_for_label }}">{{ form.email_usuario.label }}</label>
+                                {{ form.email_usuario }}
+                                {% if form.email_usuario.help_text %}
+                                    <small class="help-text">{{ form.email_usuario.help_text }}</small>
+                                {% endif %}
+                                {% if form.email_usuario.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in form.email_usuario.errors %}
+                                        <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                                {{ form.password }}
+                                {% if form.password.help_text %}
+                                    <small class="help-text">{{ form.password.help_text }}</small>
+                                {% endif %}
+                                {% if form.password.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in form.password.errors %}
+                                        <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.password_confirm.id_for_label }}">{{ form.password_confirm.label }}</label>
+                                {{ form.password_confirm }}
+                                {% if form.password_confirm.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in form.password_confirm.errors %}
+                                        <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-section">
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if object %}Actualizar{% else %}Crear{% endif %} Empleado
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const radioButtons = document.querySelectorAll('input[name="opcion_usuario"]');
+    const usuarioExistenteFields = document.getElementById('usuario-existente-fields');
+    const usuarioNuevoFields = document.getElementById('usuario-nuevo-fields');
+    
+    function updateFieldsVisibility() {
+        const selectedValue = document.querySelector('input[name="opcion_usuario"]:checked')?.value;
+        
+        // Ocultar todos los campos
+        if (usuarioExistenteFields) usuarioExistenteFields.classList.remove('active');
+        if (usuarioNuevoFields) usuarioNuevoFields.classList.remove('active');
+        
+        // Remover resaltado de todas las opciones
+        document.querySelectorAll('.usuario-option').forEach(opt => {
+            opt.style.borderColor = '#e3e6f0';
+            opt.style.backgroundColor = '';
+        });
+        
+        // Mostrar campos según selección
+        if (selectedValue === 'usuario_existente' && usuarioExistenteFields) {
+            usuarioExistenteFields.classList.add('active');
+            document.querySelector(`.usuario-option[data-option="${selectedValue}"]`).style.borderColor = '#4e73df';
+            document.querySelector(`.usuario-option[data-option="${selectedValue}"]`).style.backgroundColor = '#f8f9fc';
+        } else if (selectedValue === 'usuario_nuevo' && usuarioNuevoFields) {
+            usuarioNuevoFields.classList.add('active');
+            document.querySelector(`.usuario-option[data-option="${selectedValue}"]`).style.borderColor = '#4e73df';
+            document.querySelector(`.usuario-option[data-option="${selectedValue}"]`).style.backgroundColor = '#f8f9fc';
+        } else if (selectedValue === 'sin_usuario') {
+            document.querySelector(`.usuario-option[data-option="${selectedValue}"]`).style.borderColor = '#4e73df';
+            document.querySelector(`.usuario-option[data-option="${selectedValue}"]`).style.backgroundColor = '#f8f9fc';
+        }
+    }
+    
+    // Hacer clic en el div también selecciona el radio
+    document.querySelectorAll('.usuario-option').forEach(option => {
+        option.addEventListener('click', function(e) {
+            if (e.target.tagName !== 'INPUT') {
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    updateFieldsVisibility();
+                }
+            }
+        });
+    });
+    
+    // Escuchar cambios en los radio buttons
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', updateFieldsVisibility);
+    });
+    
+    // Inicializar visibilidad
+    updateFieldsVisibility();
+});
+</script>
+{% endblock %}

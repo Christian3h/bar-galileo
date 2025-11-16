@@ -1,15 +1,271 @@
 {% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas_form.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>{% if object %}Editar{% else %}Crear{% endif %} Empleado</h1>
-
-<a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">Volver</a>
-
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <div class="form-actions mt-3">
-        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Crear{% endif %} Empleado</button>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4 empleado-form-header">
+        <h1 class="h3 mb-0">{% if object %}Editar{% else %}Crear{% endif %} Empleado</h1>
+        <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
     </div>
-</form>
+
+    <form method="post" id="empleado-form">
+        {% csrf_token %}
+
+        <!-- Sección: Datos del Empleado -->
+        <div class="form-section">
+            <h4><i class="fas fa-user"></i> Datos del Empleado</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <ul class="errorlist">{% for error in form.nombre.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.rol_cargo.id_for_label }}">{{ form.rol_cargo.label }}</label>
+                        {{ form.rol_cargo }}
+                        {% if form.rol_cargo.help_text %}<small class="help-text">{{ form.rol_cargo.help_text }}</small>{% endif %}
+                        {% if form.rol_cargo.errors %}
+                            <ul class="errorlist">{% for error in form.rol_cargo.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.salario.id_for_label }}">{{ form.salario.label }}</label>
+                        {{ form.salario }}
+                        {% if form.salario.errors %}
+                            <ul class="errorlist">{% for error in form.salario.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.fecha_contratacion.id_for_label }}">{{ form.fecha_contratacion.label }}</label>
+                        {{ form.fecha_contratacion }}
+                        {% if form.fecha_contratacion.errors %}
+                            <ul class="errorlist">{% for error in form.fecha_contratacion.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="{{ form.estado.id_for_label }}">{{ form.estado.label }}</label>
+                        {{ form.estado }}
+                        {% if form.estado.errors %}
+                            <ul class="errorlist">{% for error in form.estado.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.tipo_contrato.id_for_label }}">{{ form.tipo_contrato.label }}</label>
+                        {{ form.tipo_contrato }}
+                        {% if form.tipo_contrato.errors %}
+                            <ul class="errorlist">{% for error in form.tipo_contrato.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Información de Contacto -->
+        <div class="form-section">
+            <h4><i class="fas fa-address-book"></i> Información de Contacto</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <ul class="errorlist">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.telefono.id_for_label }}">{{ form.telefono.label }}</label>
+                        {{ form.telefono }}
+                        {% if form.telefono.errors %}
+                            <ul class="errorlist">{% for error in form.telefono.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.telefono.help_text %}<small class="help-text">{{ form.telefono.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.direccion.id_for_label }}">{{ form.direccion.label }}</label>
+                        {{ form.direccion }}
+                        {% if form.direccion.errors %}
+                            <ul class="errorlist">{% for error in form.direccion.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección: Usuario del Sistema -->
+        <div class="form-section">
+            <h4><i class="fas fa-user-lock"></i> Usuario del Sistema</h4>
+
+            {% if object and object.user %}
+                <div class="alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    Este empleado ya tiene un usuario vinculado: <strong>{{ object.user.username }}</strong>
+                    <br>No es posible cambiar el usuario una vez asignado.
+                </div>
+                {{ form.opcion_usuario }}
+                {{ form.usuario_existente }}
+                {{ form.buscar_usuario }}
+            {% else %}
+                <p class="text-muted mb-3 usuario-option-text">Seleccione una opción para gestionar el acceso al sistema:</p>
+
+                <div class="form-group">
+                    {% for value, label in form.opcion_usuario.field.choices %}
+                        <div class="usuario-option" data-option="{{ value }}">
+                            <label>
+                                <input type="radio" name="opcion_usuario" value="{{ value }}"
+                                       {% if form.opcion_usuario.value == value %}checked{% endif %}>
+                                <strong>{{ label }}</strong>
+                            </label>
+
+                            {% if value == 'sin_usuario' %}
+                                <p class="text-muted mb-0 ml-4 usuario-option-text">El empleado no tendrá acceso al sistema</p>
+                            {% elif value == 'usuario_existente' %}
+                                <p class="text-muted mb-0 ml-4 usuario-option-text">Vincular a un usuario ya existente en el sistema</p>
+                            {% elif value == 'usuario_nuevo' %}
+                                <p class="text-muted mb-0 ml-4 usuario-option-text">Crear un nuevo usuario con acceso al sistema</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {% if form.opcion_usuario.errors %}
+                        <ul class="errorlist">{% for error in form.opcion_usuario.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                    {% endif %}
+                </div>
+
+                <!-- Campos para usuario existente con autocomplete -->
+                <div id="usuario-existente-fields" class="usuario-fields">
+                    <div class="form-group usuario-autocomplete">
+                        <label for="{{ form.buscar_usuario.id_for_label }}">{{ form.buscar_usuario.label }}</label>
+                        {{ form.buscar_usuario }}
+                        {% if form.buscar_usuario.help_text %}<small class="help-text">{{ form.buscar_usuario.help_text }}</small>{% endif %}
+
+                        <div class="usuario-suggestions" id="usuario-suggestions"></div>
+
+                        <div class="usuario-seleccionado" id="usuario-seleccionado">
+                            <div>
+                                <strong id="usuario-sel-nombre"></strong><br>
+                                <small id="usuario-sel-detalles"></small>
+                            </div>
+                            <button type="button" class="btn-remove" onclick="limpiarUsuarioSeleccionado()">
+                                <i class="fas fa-times"></i> Quitar
+                            </button>
+                        </div>
+
+                        {{ form.usuario_existente }}
+
+                        {% if form.usuario_existente.errors %}
+                            <ul class="errorlist">{% for error in form.usuario_existente.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Campos para nuevo usuario -->
+                <div id="usuario-nuevo-fields" class="usuario-fields">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                                {{ form.username }}
+                                {% if form.username.help_text %}<small class="help-text">{{ form.username.help_text }}</small>{% endif %}
+                                {% if form.username.errors %}
+                                    <ul class="errorlist">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.email_usuario.id_for_label }}">{{ form.email_usuario.label }}</label>
+                                {{ form.email_usuario }}
+                                {% if form.email_usuario.help_text %}<small class="help-text">{{ form.email_usuario.help_text }}</small>{% endif %}
+                                {% if form.email_usuario.errors %}
+                                    <ul class="errorlist">{% for error in form.email_usuario.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                                {{ form.password }}
+                                {% if form.password.help_text %}<small class="help-text">{{ form.password.help_text }}</small>{% endif %}
+                                {% if form.password.errors %}
+                                    <ul class="errorlist">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="{{ form.password_confirm.id_for_label }}">{{ form.password_confirm.label }}</label>
+                                {{ form.password_confirm }}
+                                {% if form.password_confirm.errors %}
+                                    <ul class="errorlist">{% for error in form.password_confirm.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-section">
+            <div class="form-actions">
+                <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if object %}Actualizar{% else %}Crear{% endif %} Empleado
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/admin/nominas_form.js' %}"></script>
+{% endblock %}
 {% endblock %}

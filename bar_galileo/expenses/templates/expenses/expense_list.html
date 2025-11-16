@@ -36,20 +36,38 @@
                         <td class="col-4">{{ expense.description }}</td>
                         <td class="col-5">
                             {% if expense.receipt %}
-                                <a href="{{ expense.receipt.url }}" target="_blank">Ver Recibo</a>
+                                {% if expense.receipt.url|slice:"-4:" in ".jpg,.png,jpeg,.gif,.webp,.JPG,.PNG,JPEG,.GIF,WEBP" or expense.receipt.url|slice:"-5:" in ".jpeg,.webp,.JPEG,.WEBP" %}
+                                    <a href="#" class="preview-receipt btn btn-sm btn-info" data-url="{{ expense.receipt.url }}" data-type="image" title="Ver imagen">
+                                        🖼️ Imagen
+                                    </a>
+                                {% elif expense.receipt.url|slice:"-4:" in ".mp4,.avi,.mov,.wmv,.MP4,.AVI,.MOV,.WMV" or expense.receipt.url|slice:"-5:" in ".webm,.WEBM" %}
+                                    <a href="#" class="preview-receipt btn btn-sm btn-info" data-url="{{ expense.receipt.url }}" data-type="video" title="Ver video">
+                                        🎥 Video
+                                    </a>
+                                {% else %}
+                                    <a href="{{ expense.receipt.url }}" target="_blank" class="btn btn-sm btn-secondary" title="Descargar archivo">
+                                        📄 Archivo
+                                    </a>
+                                {% endif %}
                             {% else %}
-                                No adjunto
+                                <span class="text-muted">No adjunto</span>
                             {% endif %}
                         </td>
                         <td class="col-6">{{ expense.user.username }}</td>
-                        <td>
-                            {% if request.user|has_perm:"expenses,editar" %}
-                                <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
-                            {% endif %}
-                            {% if request.user|has_perm:"expenses,eliminar" %}
-                                <a href="{% url 'expenses:expense_delete' expense.pk %}" class="btn btn-sm btn-danger"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
-                            {% endif %}
+                        <td class="actions-cell">
+                            <div class="btn-group" role="group">
+                                {% if request.user|has_perm:"expenses,editar" %}
+                                    <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary" title="Editar gasto"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                {% endif %}
+                                {% if request.user|has_perm:"expenses,eliminar" %}
+                                    <a href="{% url 'expenses:expense_delete' expense.pk %}" class="btn btn-sm btn-danger" title="Eliminar gasto"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                {% endif %}
+                            </div>
                         </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">No hay gastos registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -57,21 +75,200 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para preview de recibos -->
+<div class="modal fade" id="receiptPreviewModal" tabindex="-1" aria-labelledby="receiptPreviewModalLabel" aria-hidden="true" style="z-index: 10000;">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="receiptPreviewModalLabel">Vista Previa del Recibo</h5>
+                <button type="button" class="btn-close" onclick="closeReceiptModal()" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="preview-container"></div>
+            </div>
+            <div class="modal-footer">
+                <a id="download-receipt" href="#" class="btn btn-primary" target="_blank" download>
+                    <img src="{% static 'img/icons/download.svg' %}" alt="Descargar" style="width:16px; height:16px; margin-right: 5px; filter: brightness(0) invert(1);">
+                    Descargar
+                </a>
+                <button type="button" class="btn btn-secondary" onclick="closeReceiptModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+#receiptPreviewModal.show {
+    display: block !important;
+}
+
+#receiptPreviewModal .modal-content {
+    background-color: var(--color-accent);
+    border: 1px solid var(--color-gray);
+    border-radius: 8px;
+    color: var(--color-secondary);
+}
+
+#receiptPreviewModal .modal-header {
+    border-bottom: 1px solid var(--color-gray);
+    background-color: var(--color-accent);
+}
+
+#receiptPreviewModal .modal-title {
+    font-weight: 600;
+    color: var(--color-secondary);
+}
+
+#receiptPreviewModal .modal-body {
+    padding: 2rem;
+    background-color: var(--color-light);
+}
+
+#receiptPreviewModal .modal-footer {
+    border-top: 1px solid var(--color-gray);
+    padding: 1rem;
+    background-color: var(--color-accent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#modal-backdrop-receipt {
+    z-index: 9999 !important;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+#preview-container {
+    max-height: 75vh;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#preview-container img {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#preview-container video {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
+
 <script>
     $(document).ready(function () {
         var sel = '#expenses-table';
         if (!$(sel).length) return;
-        if ($.fn.dataTable.isDataTable(sel)) {
-            $(sel).DataTable().destroy();
+
+        // Verificar si la tabla tiene datos
+        const hasData = $(sel + ' tbody tr').length > 0 && !$(sel + ' tbody tr td[colspan]').length;
+
+        if (hasData) {
+            if ($.fn.dataTable.isDataTable(sel)) {
+                $(sel).DataTable().destroy();
+            }
+            $(sel).DataTable({
+                columnDefs: [
+                    { targets: '_all', defaultContent: '' }
+                ],
+                "language": {
+                    "url": "{% static 'js/DataTables/es-ES.json' %}"
+                },
+                responsive: true
+            });
         }
-        $(sel).DataTable({
-            columnDefs: [
-                { targets: '_all', defaultContent: '' }
-            ],
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
-            },
-            responsive: true
+
+        // Manejar preview de recibos con JavaScript vanilla
+        $(document).on('click', '.preview-receipt', function(e) {
+            e.preventDefault();
+            const url = $(this).data('url');
+            const type = $(this).data('type');
+            const container = document.getElementById('preview-container');
+
+            container.innerHTML = '';
+
+            if (type === 'image') {
+                container.innerHTML = `<img src="${url}" alt="Recibo">`;
+            } else if (type === 'video') {
+                container.innerHTML = `
+                    <video controls>
+                        <source src="${url}" type="video/mp4">
+                        Tu navegador no soporta el elemento de video.
+                    </video>
+                `;
+            }
+
+            document.getElementById('download-receipt').href = url;
+
+            // Bajar z-index del modal de tabla si existe
+            const tableModal = document.querySelector('.table-details-modal');
+            if (tableModal && tableModal.classList.contains('active')) {
+                tableModal.style.zIndex = '9998';
+            }
+
+            // Abrir modal con JavaScript vanilla puro
+            const modal = document.getElementById('receiptPreviewModal');
+            modal.classList.add('show');
+            modal.style.display = 'block';
+            document.body.classList.add('modal-open');
+
+            // Agregar backdrop
+            if (!document.getElementById('modal-backdrop-receipt')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                backdrop.id = 'modal-backdrop-receipt';
+                document.body.appendChild(backdrop);
+            }
+        });
+
+        // Función para cerrar modal
+        window.closeReceiptModal = function() {
+            const modal = document.getElementById('receiptPreviewModal');
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+
+            const backdrop = document.getElementById('modal-backdrop-receipt');
+            if (backdrop) {
+                backdrop.remove();
+            }
+
+            // Restaurar z-index del modal de tabla si existe
+            const tableModal = document.querySelector('.table-details-modal');
+            if (tableModal && tableModal.classList.contains('active')) {
+                tableModal.style.zIndex = '9999';
+            }
+        };
+
+        // Eventos para cerrar el modal
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-close') ||
+                e.target.closest('[data-bs-dismiss="modal"]')) {
+                closeReceiptModal();
+            }
+            // Cerrar al hacer click fuera del modal
+            if (e.target.id === 'receiptPreviewModal') {
+                closeReceiptModal();
+            }
+        });
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('receiptPreviewModal');
+                if (modal.classList.contains('show')) {
+                    closeReceiptModal();
+                }
+            }
         });
     });
 </script>
