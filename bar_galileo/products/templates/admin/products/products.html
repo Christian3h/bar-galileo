@@ -60,7 +60,7 @@
                         <tr>
                             <td class="text-center">
                                 {% if producto.imagenes.exists %}
-                                    <img src="{% static producto.imagenes.first.imagen %}" alt="Imagen" style="max-width:60px; max-height:60px; object-fit: cover;">
+                                    <img src="{{ producto.imagenes.first.imagen.url }}" alt="Imagen" style="max-width:60px; max-height:60px; object-fit: cover;">
                                 {% else %}
                                     <div style="width:60px; height:60px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:12px;">Sin imagen</div>
                                 {% endif %}
