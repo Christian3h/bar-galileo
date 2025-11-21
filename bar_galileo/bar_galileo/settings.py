@@ -74,6 +74,8 @@ INSTALLED_APPS = [
     #app para el manejo de backups
     'dbbackup',
     'backups',
+    #app para consumir Google API
+    'google_chat',
     ]
 
 AUTHENTICATION_BACKENDS = [

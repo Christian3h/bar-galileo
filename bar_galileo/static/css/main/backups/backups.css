@@ -199,11 +199,79 @@
     .modal-footer .btn {
         width: 100%;
     }
+
+    /* Reducir padding en cards */
+    .dashboard-cards {
+        gap: 1rem;
+    }
+
+    .card {
+        min-width: unset;
+        padding: 1rem;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    .card p {
+        font-size: 1.3rem;
+    }
+
+    /* Botones en columna */
+    .buttons-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .buttons-group button {
+        max-width: 90dvw !important;
+    }
 }
 
 @media (max-width: 480px) {
     .modal-content {
         margin: 2% auto;
         padding: 15px;
+    }
+
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-cards {
+        gap: 0.75rem;
+    }
+
+    .card {
+        padding: 0.75rem;
+    }
+
+    .card h3 {
+        font-size: 0.9rem;
+    }
+
+    .card p {
+        font-size: 1.1rem;
+    }
+
+    /* Badges más pequeños */
+    .backup-type-badge {
+        padding: 2px 8px;
+        font-size: 10px;
+    }
+
+    /* Botones más compactos */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .btn-sm img {
+        width: 14px !important;
+        height: 14px !important;
     }
 }
