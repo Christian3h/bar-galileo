@@ -339,7 +339,8 @@ def export_facturas(request, fmt):
 
         for f in facturas:
             mesa = f.pedido.mesa.nombre if getattr(f, 'pedido', None) and getattr(f.pedido, 'mesa', None) else ''
-            fecha = f.fecha.strftime('%d/%m/%Y %H:%M') if getattr(f, 'fecha', None) else ''
+            # Keep fecha as a datetime object for proper Excel formatting
+            fecha_val = f.fecha if getattr(f, 'fecha', None) else None
             usuarios = ''
             items_count = 0
             productos = ''
@@ -356,19 +357,36 @@ def export_facturas(request, fmt):
                     items_count = 0
                     productos = ''
 
-            ws.append([f.numero, mesa, fecha, float(f.total), usuarios, items_count, productos])
+            ws.append([f.numero, mesa, fecha_val, float(f.total), usuarios, items_count, productos])
 
-        # Ajustar ancho de columnas
+        # Ajustar ancho de columnas y formatos (fecha y moneda)
         for i, col in enumerate(ws.columns, 1):
             max_length = 0
             for cell in col:
                 try:
-                    value = str(cell.value)
+                    value = '' if cell.value is None else str(cell.value)
                 except Exception:
                     value = ''
                 if value and len(value) > max_length:
                     max_length = len(value)
             ws.column_dimensions[get_column_letter(i)].width = min(max_length + 2, 70)
+
+        # Apply number/date formats: Fecha is column 3 (C), Total is column 4 (D)
+        for row in ws.iter_rows(min_row=2, min_col=1, max_col=7):
+            # Fecha cell (col C)
+            fecha_cell = row[2]
+            if fecha_cell.value is not None:
+                try:
+                    # Use Excel-friendly lowercase format: days/months/years and hours:minutes
+                    fecha_cell.number_format = 'dd/mm/yyyy hh:mm'
+                except Exception:
+                    pass
+            # Total cell
+            total_cell = row[3]
+            try:
+                total_cell.number_format = '#,##0.00'
+            except Exception:
+                pass
 
         output = BytesIO()
         wb.save(output)
