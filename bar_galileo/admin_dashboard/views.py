@@ -9,11 +9,16 @@ from django.utils.decorators import method_decorator
 from notifications.utils import notificar_usuario
 from django.db.models import Sum, Count, F, ExpressionWrapper, DecimalField
 from django.db.models.functions import TruncDay
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from django.http import HttpResponse
 import csv
 from io import BytesIO
 from django.template.loader import render_to_string
+try:
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+except Exception:
+    openpyxl = None
 
 def get_date_range(period):
     today = datetime.now().date()
@@ -161,24 +166,88 @@ def export_dashboard(request, fmt):
     except Exception as e:
         return HttpResponse(f"Error generando reporte: {e}", status=500)
 
-    if fmt == 'csv':
+    if fmt == 'csv' or fmt == 'xlsx':
+        # If XLSX requested and openpyxl is available, generate Excel file
+        if fmt == 'xlsx' and openpyxl is not None:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = 'Estadisticas'
+
+            # Encabezados y métricas
+            ws.append(['Métrica', 'Valor'])
+            ws.append(['Ingresos Totales', float(ctx['ingresos_totales'])])
+            ws.append(['Ganancia Total', float(ctx['ganancia_total'])])
+            ws.append(['Valor Total del Stock', float(ctx['valor_total_stock'])])
+            ws.append(['Gastos Totales', float(ctx['gastos_totales'])])
+            ws.append([])
+            ws.append(['Ventas por Día'])
+            ws.append(['Fecha', 'Total'])
+            for v in ctx['ventas_periodo']:
+                    fecha = v.get('dia')
+                    total = v.get('total_dia')
+                    # Keep the date/datetime object so Excel recognizes it as a date
+                    if hasattr(fecha, 'isoformat'):
+                        fecha_val = fecha
+                    else:
+                        try:
+                            fecha_val = datetime.fromisoformat(str(fecha))
+                        except Exception:
+                            fecha_val = None
+                    ws.append([fecha_val, float(total or 0)])
+
+            # Ajustar anchos de columnas
+            for i, col in enumerate(ws.columns, 1):
+                max_length = 0
+                for cell in col:
+                    try:
+                        value = str(cell.value)
+                    except Exception:
+                        value = ''
+                    if value and len(value) > max_length:
+                        max_length = len(value)
+                ws.column_dimensions[get_column_letter(i)].width = min(max_length + 2, 50)
+
+            # Apply number/date formats: detect date cells and totals
+            for row in ws.iter_rows(min_row=2, min_col=1, max_col=2):
+                cell_date = row[0]
+                cell_total = row[1]
+                try:
+                    if isinstance(cell_date.value, (datetime, date)):
+                        cell_date.number_format = 'dd/mm/yyyy'
+                except Exception:
+                    pass
+                try:
+                    cell_total.number_format = '#,##0.00'
+                except Exception:
+                    pass
+
+            output = BytesIO()
+            wb.save(output)
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="estadisticas_generales.xlsx"'
+            return response
+
+        # Fallback: generate CSV with formatted values
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="estadisticas_generales.csv"'
         writer = csv.writer(response)
 
         # Escribir métricas principales
         writer.writerow(['Métrica', 'Valor'])
-        writer.writerow(['Ingresos Totales', ctx['ingresos_totales']])
-        writer.writerow(['Ganancia Total', ctx['ganancia_total']])
-        writer.writerow(['Valor Total del Stock', ctx['valor_total_stock']])
-        writer.writerow(['Gastos Totales', ctx['gastos_totales']])
+        writer.writerow(['Ingresos Totales', f"{float(ctx['ingresos_totales']):.2f}"])
+        writer.writerow(['Ganancia Total', f"{float(ctx['ganancia_total']):.2f}"])
+        writer.writerow(['Valor Total del Stock', f"{float(ctx['valor_total_stock']):.2f}"])
+        writer.writerow(['Gastos Totales', f"{float(ctx['gastos_totales']):.2f}"])
         writer.writerow([])
         writer.writerow(['Ventas por Día'])
         writer.writerow(['Fecha', 'Total'])
         for v in ctx['ventas_periodo']:
             fecha = v.get('dia')
             total = v.get('total_dia')
-            writer.writerow([fecha, total])
+            fecha_str = fecha.isoformat() if hasattr(fecha, 'isoformat') else str(fecha)
+            total_str = f"{float(total or 0):.2f}"
+            writer.writerow([fecha_str, total_str])
 
         return response
 
