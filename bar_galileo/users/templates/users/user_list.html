@@ -1,24 +1,30 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+
+{% block extra_css%}
+  <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Usuarios</h2>
+<div class="container">
+    <h2 class="my-4">Usuarios</h2>
     <div class="table-contenedor">
         <div class="table-responsive">
             <table id="users-table" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Username</th>
-                        <th>Email</th>
+                        <th class="col-1">Username</th>
+                        <th class="col-2">Email</th>
                         <th>Rol</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
                     <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>
-                            <form method="post" class="inline-form">
+                        <td class="col-1">{{ user.username }}</td>
+                        <td class="col-2">{{ user.email }}</td>
+                        <td class="actions-cell">
+                            <form method="post" style="margin:0;">
                                 {% csrf_token %}
                                 <select name="rol_id">
                                     {% for rol in roles %}
@@ -37,11 +43,16 @@
                             </form>
                         </td>
                     </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted">No hay usuarios registrados.</td>
+                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+</div>
 <script>
 $(document).ready(function() {
     var sel = '#users-table';
@@ -51,11 +62,13 @@ $(document).ready(function() {
     }
     $(sel).DataTable({
         columnDefs: [
-            { targets: '_all', defaultContent: '' }
+            { targets: '_all', defaultContent: '' },
+            { targets: -1, orderable: false }
         ],
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
-        }
+        },
+        responsive: true
     });
 });
 </script>

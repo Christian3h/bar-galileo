@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
 {% endblock %}
 
@@ -155,14 +156,14 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table">
+                    <table id="tabla-pagos" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Tipo</th>
                                 <th>Monto</th>
                                 <th class="descripcionCol">Descripción</th>
-                                <th class="comprobanteCol">Comprobante</th>
+                                <th class="comprobanteCol" {% if not pagos %}style="display: none;"{% endif %}>Comprobante</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,17 +175,20 @@
                                 <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
                                 <td class="comprobanteCol">
                                     {% if pago.comprobante %}
-                                        <a href="{{ pago.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary" title="Descargar comprobante de pago">
-                                            <i class="fa fa-download"></i>
-                                        </a>
+                                        <button type="button" class="btn btn-sm btn-secondary preview-comprobante"
+                                                data-url="{{ pago.comprobante.url }}"
+                                                data-name="{{ pago.comprobante.name }}"
+                                                title="Ver comprobante de pago">
+                                            <i class="fa fa-eye"></i> Ver
+                                        </button>
                                     {% else %}
-                                        -
+                                        <span class="text-muted">-</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center">No hay pagos registrados</td>
+                                <td colspan="5" class="text-center" style="color: var(--color-secondary);">No hay pagos registrados</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -201,14 +205,14 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table">
+                    <table id="tabla-bonificaciones" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Monto</th>
                                 <th>Recurrente</th>
-                                <th>Inicio</th>
-                                <th>Fin</th>
+                                <th class="fechaInicioCol">Inicio</th>
+                                <th class="fechaFinCol">Fin</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -223,12 +227,12 @@
                                         <span class="badge bg-secondary">No</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ bonificacion.fecha_inicio }}</td>
-                                <td>{{ bonificacion.fecha_fin|default:"-" }}</td>
+                                <td class="fechaInicioCol">{{ bonificacion.fecha_inicio }}</td>
+                                <td class="fechaFinCol">{{ bonificacion.fecha_fin|default:"-" }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center">No hay bonificaciones registradas</td>
+                                <td colspan="5" class="text-center" style="color: var(--color-secondary);">No hay bonificaciones registradas</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -238,4 +242,201 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para preview de comprobantes -->
+<div id="comprobanteModal" class="modal-preview" style="display: none;">
+    <div class="modal-preview-content">
+        <span class="close-modal-preview">&times;</span>
+        <h3 id="comprobanteModalTitle" style="color: var(--color-secondary); margin-bottom: 1rem;">Comprobante de Pago</h3>
+        <div id="comprobanteModalBody" style="text-align: center;">
+            <!-- Contenido dinámico -->
+        </div>
+        <div style="margin-top: 1rem; text-align: center;">
+            <a id="comprobanteDownloadLink" href="#" target="_blank" class="btn btn-primary" download>
+                <i class="fa fa-download"></i> Descargar
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<style>
+/* Modal para preview de archivos */
+.modal-preview {
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.modal-preview-content {
+    background-color: #2c2c2c;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(166, 137, 50, 0.4);
+}
+
+.close-modal-preview {
+    color: var(--color-secondary);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal-preview:hover,
+.close-modal-preview:focus {
+    color: var(--color-primary);
+}
+
+.modal-preview img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 8px;
+    border: 2px solid var(--color-secondary);
+}
+
+.modal-preview embed,
+.modal-preview iframe {
+    width: 100%;
+    height: 500px;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+}
+
+.file-icon {
+    font-size: 100px;
+    color: var(--color-secondary);
+    margin: 2rem 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar DataTable para Historial de Pagos
+    var tablaPagos = '#tabla-pagos';
+    if ($(tablaPagos).length) {
+        var hasPagos = $(tablaPagos + ' tbody tr').length > 0 && !$(tablaPagos + ' tbody tr td[colspan]').length;
+        if (hasPagos) {
+            if ($.fn.dataTable.isDataTable(tablaPagos)) {
+                $(tablaPagos).DataTable().destroy();
+            }
+            $(tablaPagos).DataTable({
+                language: {
+                    url: "{% static 'js/DataTables/es-ES.json' %}"
+                },
+                columnDefs: [
+                    { targets: '_all', defaultContent: '' },
+                    { targets: [3], className: 'descripcionCol' },
+                    { targets: [4], className: 'comprobanteCol' }
+                ],
+                responsive: true,
+                pageLength: 10,
+                lengthChange: true,
+                ordering: true,
+                order: [[0, 'desc']]
+            });
+        }
+    }
+
+    // Inicializar DataTable para Bonificaciones
+    var tablaBonificaciones = '#tabla-bonificaciones';
+    if ($(tablaBonificaciones).length) {
+        var hasBonificaciones = $(tablaBonificaciones + ' tbody tr').length > 0 && !$(tablaBonificaciones + ' tbody tr td[colspan]').length;
+        if (hasBonificaciones) {
+            if ($.fn.dataTable.isDataTable(tablaBonificaciones)) {
+                $(tablaBonificaciones).DataTable().destroy();
+            }
+            $(tablaBonificaciones).DataTable({
+                language: {
+                    url: "{% static 'js/DataTables/es-ES.json' %}"
+                },
+                columnDefs: [
+                    { targets: '_all', defaultContent: '' },
+                    { targets: [3], className: 'fechaInicioCol' },
+                    { targets: [4], className: 'fechaFinCol' }
+                ],
+                responsive: true,
+                pageLength: 10,
+                lengthChange: true,
+                ordering: true,
+                order: [[0, 'asc']]
+            });
+        }
+    }
+
+    // Modal de preview de comprobantes
+    const modal = document.getElementById('comprobanteModal');
+    const modalBody = document.getElementById('comprobanteModalBody');
+    const modalTitle = document.getElementById('comprobanteModalTitle');
+    const downloadLink = document.getElementById('comprobanteDownloadLink');
+    const closeBtn = document.querySelector('.close-modal-preview');
+
+    // Botones de preview
+    document.querySelectorAll('.preview-comprobante').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const name = this.dataset.name;
+            const extension = url.split('.').pop().toLowerCase();
+
+            modalTitle.textContent = 'Comprobante de Pago';
+            downloadLink.href = url;
+            downloadLink.download = name || 'comprobante';
+
+            // Limpiar contenido previo
+            modalBody.innerHTML = '';
+
+            // Mostrar según el tipo de archivo
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                // Es una imagen
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Comprobante';
+                modalBody.appendChild(img);
+            } else if (extension === 'pdf') {
+                // Es un PDF
+                const embed = document.createElement('embed');
+                embed.src = url;
+                embed.type = 'application/pdf';
+                modalBody.appendChild(embed);
+            } else {
+                // Otro tipo de archivo
+                const icon = document.createElement('div');
+                icon.className = 'file-icon';
+                icon.innerHTML = '<i class="fa fa-file"></i>';
+                modalBody.appendChild(icon);
+
+                const text = document.createElement('p');
+                text.style.color = 'var(--color-secondary)';
+                text.textContent = 'Vista previa no disponible para este tipo de archivo';
+                modalBody.appendChild(text);
+            }
+
+            modal.style.display = 'block';
+        });
+    });
+
+    // Cerrar modal
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+</script>
 {% endblock %}
