@@ -514,6 +514,18 @@
     gap: 0.5rem;
 }
 
+/* Subtítulos de sección dentro del resumen (divisores) */
+.reporte-detail-page .section-subtitle.section-divider {
+    color: var(--color-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.75rem 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(218, 165, 32, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 /* Lista de totales */
 .reporte-detail-page .totales-list .total-item {
     background: rgba(40, 167, 69, 0.1);
