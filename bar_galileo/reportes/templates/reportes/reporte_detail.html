@@ -163,10 +163,20 @@
                 <h4 class="section-subtitle"><i class="fas fa-chart-pie"></i> Resumen</h4>
                 <ul class="perfil-datos">
                     {% for key, value in datos_reporte.resumen.items %}
+                    {% if '===' in key or '─' in key or '═' in key %}
+                        {# Detectar si es un título de sección (con ===) #}
+                        {% if '===' in key %}
+                        </ul>
+                        <h4 class="section-subtitle section-divider">{{ key|cut:"==="|cut:":"|striptags }}</h4>
+                        <ul class="perfil-datos">
+                        {% endif %}
+                        {# Ignorar separadores de línea (─ y ═) #}
+                    {% else %}
                     <li>
                         <span class="label">{{ key }}:</span>
                         <span class="value">{{ value }}</span>
                     </li>
+                    {% endif %}
                     {% endfor %}
                 </ul>
                 {% endif %}
@@ -182,10 +192,20 @@
                 <h4 class="section-subtitle"><i class="fas fa-calculator"></i> Totales</h4>
                 <ul class="perfil-datos totales-list">
                     {% for key, value in datos_reporte.totales.items %}
+                    {% if '===' in key or '─' in key or '═' in key %}
+                        {# Detectar si es un título de sección (con ===) #}
+                        {% if '===' in key %}
+                        </ul>
+                        <h4 class="section-subtitle section-divider">{{ key|cut:"==="|cut:":"|striptags }}</h4>
+                        <ul class="perfil-datos totales-list">
+                        {% endif %}
+                        {# Ignorar separadores de línea (─ y ═) #}
+                    {% else %}
                     <li class="total-item">
                         <span class="label">{{ key }}:</span>
                         <span class="value total-value">{{ value }}</span>
                     </li>
+                    {% endif %}
                     {% endfor %}
                 </ul>
                 {% endif %}
