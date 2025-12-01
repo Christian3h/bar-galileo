@@ -1,212 +1,196 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 {% load roles_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/reportes/reportes.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
 {% block content %}
-<div class="reportes-detail-container">
-    <div class="page-header">
-        <h2><i class="fas fa-file-alt"></i> Detalle del Reporte</h2>
-        <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver al Listado
-        </a>
-    </div>
+<div class="dashboard-container reporte-detail-page">
+    <h2 class="dashboard-title"><i class="fas fa-file-alt"></i> Detalle del Reporte</h2>
     
-    <div class="detail-card">
-        <div class="detail-header">
-            <h2>{{ reporte.nombre }}</h2>
-            {% if reporte.generado %}
-                <span class="status-badge">
-                    <i class="fas fa-check-circle"></i> Generado
-                </span>
-            {% else %}
-                <span class="status-badge">
-                    <i class="fas fa-clock"></i> Pendiente
-                </span>
-            {% endif %}
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-item">
-                <label><i class="fas fa-tag"></i> Tipo de Reporte</label>
-                <div class="value">
-                    <span class="tipo-badge">
-                        {{ reporte.get_tipo_display }}
-                    </span>
-                </div>
-            </div>
-            
-            <div class="detail-item">
-                <label><i class="fas fa-calendar-alt"></i> Periodo</label>
-                <div class="value">
-                    <span class="badge">{{ reporte.get_periodo_display }}</span>
-                </div>
-            </div>
-            
-            <div class="detail-item">
-                <label><i class="fas fa-file-export"></i> Formato</label>
-                <div class="value">
-                    <span class="badge">{{ reporte.get_formato_display|upper }}</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-item">
-                <label><i class="fas fa-user"></i> Creado por</label>
-                <div class="value">{{ reporte.creado_por.get_full_name|default:reporte.creado_por.username }}</div>
-            </div>
-            
-            <div class="detail-item">
-                <label><i class="fas fa-clock"></i> Fecha de Creación</label>
-                <div class="value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</div>
-            </div>
-            
-            <div class="detail-item">
-                <label><i class="fas fa-calendar-week"></i> Duración</label>
-                <div class="value">{{ reporte.duracion_dias }} días</div>
-            </div>
-        </div>
-        
-        <div class="detail-row">
-            <div class="detail-item">
-                <label><i class="fas fa-calendar-day"></i> Fecha de Inicio</label>
-                <div class="value">{{ reporte.fecha_inicio|date:"d/m/Y" }}</div>
-            </div>
-            
-            <div class="detail-item">
-                <label><i class="fas fa-calendar-check"></i> Fecha de Fin</label>
-                <div class="value">{{ reporte.fecha_fin|date:"d/m/Y" }}</div>
-            </div>
-            
-            <div class="detail-item">
-                <label><i class="fas fa-file-download"></i> Archivo Adjunto</label>
-                <div class="value">
-                    {% if reporte.archivo %}
-                        <a href="{{ reporte.archivo.url }}" class="btn btn-sm btn-success" download>
-                            <i class="fas fa-download"></i> Descargar Archivo
-                        </a>
+    <div class="buttons-group buttons-group-detail">
+        <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary" title="Volver al listado">
+            <i class="fa fa-arrow-left"></i> Volver
+        </a>
+        {% if request.user|has_perm:"reportes,editar" %}
+        <a href="{% url 'reportes:reporte_update' reporte.pk %}" class="btn btn-primary" title="Editar reporte">
+            <i class="fa fa-edit"></i> Editar
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="reporte-grid">
+        <!-- Columna izquierda: Información del reporte -->
+        <div class="reporte-col">
+            <section class="perfil-panel">
+                <h3><i class="fas fa-info-circle"></i> Información General</h3>
+                <div class="reporte-identidad">
+                    <div class="reporte-nombre">{{ reporte.nombre }}</div>
+                    {% if reporte.generado %}
+                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Generado</span>
                     {% else %}
-                        <span class="no-file">No hay archivo adjunto</span>
+                        <span class="badge bg-warning"><i class="fas fa-clock"></i> Pendiente</span>
                     {% endif %}
                 </div>
-            </div>
-        </div>
-        
-        {% if reporte.descripcion %}
-        <div class="detail-item detail-item-spacing">
-            <label><i class="fas fa-align-left"></i> Descripción</label>
-            <div class="description-box">
-                {{ reporte.descripcion|linebreaks }}
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    
-    <!-- Sección de Vista Previa de Datos -->
-    {% if tiene_datos and datos_reporte %}
-    <div class="detail-card detail-card-spacing">
-        <div class="detail-header">
-            <h2><i class="fas fa-chart-bar"></i> Vista Previa del Reporte</h2>
-            <span class="status-badge status-badge-success">
-                <i class="fas fa-check-circle"></i> Datos Disponibles
-            </span>
-        </div>
-        
-        {% if datos_reporte.resumen %}
-        <h3 class="section-title">
-            <i class="fas fa-chart-pie"></i> Resumen
-        </h3>
-        <div class="detail-row">
-            {% for key, value in datos_reporte.resumen.items %}
-            <div class="detail-item">
-                <label>{{ key }}</label>
-                <div class="value">{{ value }}</div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        
-        {% if datos_reporte.detalles %}
-        <h3 class="section-title section-title-spacing">
-            <i class="fas fa-list"></i> Registros Encontrados
-        </h3>
-        <div class="detail-item">
-            <p class="info-text">
-                <i class="fas fa-database"></i> 
-                Se encontraron <strong class="highlight-text">{{ datos_reporte.detalles|length }}</strong> registros para este periodo.
-                Los datos completos se incluirán en el archivo exportado.
-            </p>
-        </div>
-        {% endif %}
-        
-        {% if datos_reporte.totales %}
-        <h3 class="section-title section-title-spacing">
-            <i class="fas fa-calculator"></i> Totales
-        </h3>
-        <div class="detail-row">
-            {% for key, value in datos_reporte.totales.items %}
-            <div class="detail-item detail-item-success">
-                <label class="label-success">{{ key }}</label>
-                <div class="value value-large value-success">{{ value }}</div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </div>
-    {% endif %}
-    
-    <!-- Sección de Acciones -->
-    <div class="detail-card detail-card-spacing">
-        <div class="action-section">
-            <h3><i class="fas fa-download"></i> Descargar Reporte</h3>
-            <div class="export-grid">
-                <a href="{% url 'reportes:exportar_reporte' reporte.pk 'pdf' %}" class="btn btn-danger">
-                    <i class="fas fa-file-pdf"></i> Descargar PDF
-                </a>
-                <a href="{% url 'reportes:exportar_reporte' reporte.pk 'excel' %}" class="btn btn-success">
-                    <i class="fas fa-file-excel"></i> Descargar Excel
-                </a>
-                <a href="{% url 'reportes:exportar_reporte' reporte.pk 'csv' %}" class="btn btn-info">
-                    <i class="fas fa-file-csv"></i> Descargar CSV
-                </a>
-            </div>
-            
-            <h3><i class="fas fa-tools"></i> Acciones</h3>
-            
-            {% if not reporte.generado or not reporte.ultima_generacion %}
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> 
-                <strong>Paso 1:</strong> Genera los datos del reporte para calcular las estadísticas y poder exportar.
-            </div>
-            {% elif reporte.ultima_generacion %}
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> 
-                <strong>Datos generados:</strong> {{ reporte.ultima_generacion|date:"d/m/Y H:i" }}
-                <br>
-                <small class="text-muted">Puedes regenerar si agregaste nuevos datos desde entonces.</small>
-            </div>
+                <ul class="perfil-datos">
+                    <li>
+                        <span class="label">Tipo de Reporte:</span>
+                        <span class="value badge">{{ reporte.get_tipo_display }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Periodo:</span>
+                        <span class="value">{{ reporte.get_periodo_display }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Formato:</span>
+                        <span class="value badge">{{ reporte.get_formato_display|upper }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Creado por:</span>
+                        <span class="value">{{ reporte.creado_por.get_full_name|default:reporte.creado_por.username }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Fecha de Creación:</span>
+                        <span class="value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</span>
+                    </li>
+                </ul>
+            </section>
+
+            <section class="perfil-panel">
+                <h3><i class="fas fa-calendar-alt"></i> Periodo del Reporte</h3>
+                <ul class="perfil-datos">
+                    <li>
+                        <span class="label">Fecha de Inicio:</span>
+                        <span class="value">{{ reporte.fecha_inicio|date:"d/m/Y" }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Fecha de Fin:</span>
+                        <span class="value">{{ reporte.fecha_fin|date:"d/m/Y" }}</span>
+                    </li>
+                    <li>
+                        <span class="label">Duración:</span>
+                        <span class="value"><strong>{{ reporte.duracion_dias }} días</strong></span>
+                    </li>
+                </ul>
+            </section>
+
+            {% if reporte.descripcion %}
+            <section class="perfil-panel">
+                <h3><i class="fas fa-align-left"></i> Descripción</h3>
+                <div class="descripcion-box">
+                    {{ reporte.descripcion|linebreaks }}
+                </div>
+            </section>
             {% endif %}
-            
-            <div class="action-buttons">
-                {% if request.user|has_perm:"reportes,generar" %}
-                <button type="button" class="btn btn-primary" onclick="generarReporte({{ reporte.pk }})" 
-                        title="Calcula las estadísticas y extrae los datos del sistema según el periodo seleccionado">
-                    <i class="fas fa-sync-alt"></i> 
-                    {% if reporte.generado %}Regenerar Datos{% else %}Generar Datos del Reporte{% endif %}
-                </button>
+
+            {% if reporte.archivo %}
+            <section class="perfil-panel">
+                <h3><i class="fas fa-paperclip"></i> Archivo Adjunto</h3>
+                <div class="archivo-box">
+                    <a href="{{ reporte.archivo.url }}" class="btn btn-success" download>
+                        <i class="fas fa-download"></i> Descargar Archivo
+                    </a>
+                </div>
+            </section>
+            {% endif %}
+        </div>
+
+        <!-- Columna derecha: Acciones y Vista Previa -->
+        <div class="reporte-col">
+            <!-- Sección de Descargas -->
+            <section class="perfil-panel">
+                <h3><i class="fas fa-download"></i> Descargar Reporte</h3>
+                <div class="export-buttons">
+                    <a href="{% url 'reportes:exportar_reporte' reporte.pk 'pdf' %}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </a>
+                    <a href="{% url 'reportes:exportar_reporte' reporte.pk 'excel' %}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </a>
+                    <a href="{% url 'reportes:exportar_reporte' reporte.pk 'csv' %}" class="btn btn-info">
+                        <i class="fas fa-file-csv"></i> CSV
+                    </a>
+                </div>
+            </section>
+
+            <!-- Sección de Acciones -->
+            <section class="perfil-panel">
+                <h3><i class="fas fa-tools"></i> Acciones</h3>
+                
+                {% if not reporte.generado or not reporte.ultima_generacion %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Paso 1:</strong> Genera los datos del reporte para calcular las estadísticas y poder exportar.
+                </div>
+                {% elif reporte.ultima_generacion %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Datos generados:</strong> {{ reporte.ultima_generacion|date:"d/m/Y H:i" }}
+                    <br>
+                    <small class="text-muted">Puedes regenerar si agregaste nuevos datos desde entonces.</small>
+                </div>
                 {% endif %}
                 
-                {% if request.user|has_perm:"reportes,editar" %}
-                <a href="{% url 'reportes:reporte_update' reporte.pk %}" class="btn btn-warning">
-                    <i class="fas fa-edit"></i> Editar Reporte
-                </a>
+                <div class="action-buttons">
+                    {% if request.user|has_perm:"reportes,generar" %}
+                    <button type="button" class="btn btn-primary" onclick="generarReporte({{ reporte.pk }})" 
+                            title="Calcula las estadísticas y extrae los datos del sistema">
+                        <i class="fas fa-sync-alt"></i> 
+                        {% if reporte.generado %}Regenerar{% else %}Generar Datos{% endif %}
+                    </button>
+                    {% endif %}
+                    
+                    {% if request.user|has_perm:"reportes,eliminar" %}
+                    <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Eliminar
+                    </a>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Vista Previa de Datos -->
+            {% if tiene_datos and datos_reporte %}
+            <section class="perfil-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-chart-bar"></i> Vista Previa del Reporte</h3>
+                    <span class="badge bg-success"><i class="fas fa-check-circle"></i> Datos Disponibles</span>
+                </div>
+                
+                {% if datos_reporte.resumen %}
+                <h4 class="section-subtitle"><i class="fas fa-chart-pie"></i> Resumen</h4>
+                <ul class="perfil-datos">
+                    {% for key, value in datos_reporte.resumen.items %}
+                    <li>
+                        <span class="label">{{ key }}:</span>
+                        <span class="value">{{ value }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
                 {% endif %}
                 
-                {% if request.user|has_perm:"reportes,eliminar" %}
-                <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn btn-danger">
-                    <i class="fas fa-trash-alt"></i> Eliminar Reporte
-                </a>
+                {% if datos_reporte.detalles %}
+                <div class="info-row-box">
+                    <span class="info-label"><i class="fas fa-database"></i> Registros Encontrados</span>
+                    <span class="info-value">{{ datos_reporte.detalles|length }}</span>
+                </div>
                 {% endif %}
-            </div>
+                
+                {% if datos_reporte.totales %}
+                <h4 class="section-subtitle"><i class="fas fa-calculator"></i> Totales</h4>
+                <ul class="perfil-datos totales-list">
+                    {% for key, value in datos_reporte.totales.items %}
+                    <li class="total-item">
+                        <span class="label">{{ key }}:</span>
+                        <span class="value total-value">{{ value }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </section>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -214,7 +198,6 @@
 <script>
 function generarReporte(reporteId) {
     if (confirm('¿Desea generar/actualizar los datos de este reporte?')) {
-        // Mostrar un indicador de carga
         const btn = event.target;
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
