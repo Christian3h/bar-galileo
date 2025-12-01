@@ -1,19 +1,348 @@
 {% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas_form.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>{% if object %}Editar{% else %}Registrar{% endif %} Pago</h1>
-
-{% if empleado %}
-  <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary">Volver</a>
-{% else %}
-  <a href="{% url 'nominas:pago_list' %}" class="btn btn-secondary">Volver</a>
-{% endif %}
-
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-
-    <div class="form-actions mt-3">
-        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Registrar{% endif %} Pago</button>
+<div class="dashboard-container">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4 empleado-form-header">
+        <h2 class="dashboard-title mb-0">{% if object %}Editar{% else %}Registrar{% endif %} Pago</h2>
+        {% if empleado %}
+            <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        {% else %}
+            <a href="{% url 'nominas:pago_list' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        {% endif %}
     </div>
-</form>
+
+    <form method="post" enctype="multipart/form-data" id="pago-form">
+        {% csrf_token %}
+
+        <!-- Sección: Información del Pago -->
+        <div class="form-section">
+            <h4><i class="fas fa-money-bill-wave"></i> Información del Pago</h4>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.empleado.id_for_label }}">{{ form.empleado.label }}</label>
+                        {{ form.empleado }}
+                        {% if form.empleado.errors %}
+                            <ul class="errorlist">{% for error in form.empleado.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.empleado.help_text %}<small class="help-text">{{ form.empleado.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.fecha_pago.id_for_label }}">{{ form.fecha_pago.label }}</label>
+                        {{ form.fecha_pago }}
+                        {% if form.fecha_pago.errors %}
+                            <ul class="errorlist">{% for error in form.fecha_pago.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.fecha_pago.help_text %}<small class="help-text">{{ form.fecha_pago.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.tipo.id_for_label }}">{{ form.tipo.label }}</label>
+                        {{ form.tipo }}
+                        {% if form.tipo.errors %}
+                            <ul class="errorlist">{% for error in form.tipo.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.tipo.help_text %}<small class="help-text">{{ form.tipo.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ form.monto.id_for_label }}">{{ form.monto.label }}</label>
+                        {{ form.monto }}
+                        {% if form.monto.errors %}
+                            <ul class="errorlist">{% for error in form.monto.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.monto.help_text %}<small class="help-text">{{ form.monto.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label }}</label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <ul class="errorlist">{% for error in form.descripcion.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.descripcion.help_text %}<small class="help-text">{{ form.descripcion.help_text }}</small>{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="{{ form.comprobante.id_for_label }}">{{ form.comprobante.label }}</label>
+                        {{ form.comprobante }}
+                        {% if form.comprobante.errors %}
+                            <ul class="errorlist">{% for error in form.comprobante.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+                        {% endif %}
+                        {% if form.comprobante.help_text %}<small class="help-text">{{ form.comprobante.help_text }}</small>{% endif %}
+
+                        <!-- Preview del archivo -->
+                        <div id="file-preview" style="display: none; margin-top: 1rem;">
+                            <div style="padding: 1rem; background: rgba(166, 137, 50, 0.1); border: 2px dashed var(--color-secondary); border-radius: 8px; text-align: center;">
+                                <div id="preview-content"></div>
+                                <button type="button" id="clear-file" class="btn btn-sm btn-secondary" style="margin-top: 0.5rem;">
+                                    <i class="fas fa-times"></i> Quitar archivo
+                                </button>
+                            </div>
+                        </div>
+
+                        {% if object and object.comprobante %}
+                        <div style="margin-top: 1rem; padding: 1rem; background: rgba(166, 137, 50, 0.15); border: 2px solid var(--color-secondary); border-radius: 8px;">
+                            <p style="color: var(--color-secondary); margin: 0 0 0.5rem 0;"><strong>Archivo actual:</strong></p>
+                            <button type="button" class="btn btn-sm btn-info preview-current-file"
+                                    data-url="{{ object.comprobante.url }}"
+                                    data-name="{{ object.comprobante.name }}">
+                                <i class="fa fa-eye"></i> Ver archivo actual
+                            </button>
+                            <a href="{{ object.comprobante.url }}" target="_blank" class="btn btn-sm btn-secondary" download>
+                                <i class="fa fa-download"></i> Descargar
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-section">
+            <div class="form-actions">
+                {% if empleado %}
+                    <a href="{% url 'nominas:empleado_detail' empleado.id %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                {% else %}
+                    <a href="{% url 'nominas:pago_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> {% if object %}Actualizar{% else %}Registrar{% endif %} Pago
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Modal para preview de archivos -->
+<div id="comprobanteModal" class="modal-preview" style="display: none;">
+    <div class="modal-preview-content">
+        <span class="close-modal-preview">&times;</span>
+        <h3 id="comprobanteModalTitle" style="color: var(--color-secondary); margin-bottom: 1rem;">Vista Previa</h3>
+        <div id="comprobanteModalBody" style="text-align: center;">
+            <!-- Contenido dinámico -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<style>
+/* Modal para preview de archivos */
+.modal-preview {
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.modal-preview-content {
+    background-color: #2c2c2c;
+    margin: 5% auto;
+    padding: 2rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(166, 137, 50, 0.4);
+}
+
+.close-modal-preview {
+    color: var(--color-secondary);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal-preview:hover,
+.close-modal-preview:focus {
+    color: var(--color-primary);
+}
+
+.modal-preview img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 8px;
+    border: 2px solid var(--color-secondary);
+}
+
+.modal-preview embed,
+.modal-preview iframe {
+    width: 100%;
+    height: 500px;
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+}
+
+.file-icon {
+    font-size: 100px;
+    color: var(--color-secondary);
+    margin: 2rem 0;
+}
+
+#preview-content img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    border: 2px solid var(--color-secondary);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('{{ form.comprobante.id_for_label }}');
+    const filePreview = document.getElementById('file-preview');
+    const previewContent = document.getElementById('preview-content');
+    const clearFileBtn = document.getElementById('clear-file');
+
+    const modal = document.getElementById('comprobanteModal');
+    const modalBody = document.getElementById('comprobanteModalBody');
+    const modalTitle = document.getElementById('comprobanteModalTitle');
+    const closeBtn = document.querySelector('.close-modal-preview');
+
+    // Preview de archivo seleccionado
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                const extension = file.name.split('.').pop().toLowerCase();
+
+                filePreview.style.display = 'block';
+                previewContent.innerHTML = '';
+
+                if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        previewContent.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                } else if (extension === 'pdf') {
+                    const icon = document.createElement('div');
+                    icon.innerHTML = '<i class="fa fa-file-pdf" style="font-size: 60px; color: var(--color-secondary);"></i>';
+                    previewContent.appendChild(icon);
+
+                    const text = document.createElement('p');
+                    text.style.color = 'var(--color-secondary)';
+                    text.textContent = file.name;
+                    previewContent.appendChild(text);
+                } else {
+                    const icon = document.createElement('div');
+                    icon.innerHTML = '<i class="fa fa-file" style="font-size: 60px; color: var(--color-secondary);"></i>';
+                    previewContent.appendChild(icon);
+
+                    const text = document.createElement('p');
+                    text.style.color = 'var(--color-secondary)';
+                    text.textContent = file.name;
+                    previewContent.appendChild(text);
+                }
+            }
+        });
+
+        // Botón para limpiar archivo
+        if (clearFileBtn) {
+            clearFileBtn.addEventListener('click', function() {
+                fileInput.value = '';
+                filePreview.style.display = 'none';
+                previewContent.innerHTML = '';
+            });
+        }
+    }
+
+    // Preview del archivo actual (en modo edición)
+    document.querySelectorAll('.preview-current-file').forEach(button => {
+        button.addEventListener('click', function() {
+            const url = this.dataset.url;
+            const name = this.dataset.name;
+            const extension = url.split('.').pop().toLowerCase();
+
+            modalTitle.textContent = 'Archivo Actual';
+            modalBody.innerHTML = '';
+
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = name;
+                modalBody.appendChild(img);
+            } else if (extension === 'pdf') {
+                const embed = document.createElement('embed');
+                embed.src = url;
+                embed.type = 'application/pdf';
+                modalBody.appendChild(embed);
+            } else {
+                const icon = document.createElement('div');
+                icon.className = 'file-icon';
+                icon.innerHTML = '<i class="fa fa-file"></i>';
+                modalBody.appendChild(icon);
+
+                const text = document.createElement('p');
+                text.style.color = 'var(--color-secondary)';
+                text.textContent = name;
+                modalBody.appendChild(text);
+            }
+
+            modal.style.display = 'block';
+        });
+    });
+
+    // Cerrar modal
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+    }
+
+    if (modal) {
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

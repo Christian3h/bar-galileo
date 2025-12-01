@@ -76,6 +76,10 @@ INSTALLED_APPS = [
     'backups',
     #app para reportes
     'reportes',
+    #app para consumir Google API
+    'google_chat',
+    #app para RAG (Retrieval-Augmented Generation) chat
+    'rag_chat',
     ]
 
 AUTHENTICATION_BACKENDS = [

@@ -3,181 +3,8 @@
 {% load roles_tags %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
-    .backup-type-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-    .badge-db {
-      background-color: #3498db;
-      color: white;
-    }
-    .badge-media {
-      background-color: #9b59b6;
-      color: white;
-    }
-    .backup-size {
-      font-family: 'Courier New', monospace;
-    }
-
-    /* Centrar acciones */
-    .actions-cell {
-      display: flex !important;
-      gap: 8px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .actions-cell .btn {
-      margin: 0;
-    }
-
-    /* Modales - Estilos del proyecto */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1100;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.7);
-      backdrop-filter: blur(5px);
-    }
-
-    .modal.active {
-      display: block;
-    }
-
-    .modal-content {
-      background-color: var(--card-bg, #262626);
-      margin: 10% auto;
-      padding: 25px;
-      border: 1px solid var(--border-color, #444);
-      width: 90%;
-      max-width: 600px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      position: relative;
-      color: var(--text-color, #fff);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color, #444);
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      color: var(--primary-color, #d4af37);
-      font-size: 1.5rem;
-    }
-
-    .modal-body {
-      padding: 10px 0;
-      line-height: 1.6;
-    }
-
-    .modal-body p {
-      margin: 10px 0;
-    }
-
-    .modal-body strong {
-      color: var(--primary-color, #d4af37);
-      word-break: break-all;
-    }
-
-    .modal-footer {
-      border-top: 1px solid var(--border-color, #444);
-      padding-top: 20px;
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-
-    .close-modal {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      color: #aaa;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .close-modal:hover {
-      color: #fff;
-    }
-
-    .field-group {
-      margin-bottom: 15px;
-    }
-
-    .field-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-      color: var(--text-color, #fff);
-    }
-
-    .field-group select,
-    .field-group input {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border-color, #444);
-      border-radius: 5px;
-      background-color: var(--input-bg, #1a1a1a);
-      color: var(--text-color, #fff);
-      font-size: 14px;
-    }
-
-    .alert-warning {
-      background-color: rgba(255, 193, 7, 0.1);
-      border-left: 4px solid #ffc107;
-      padding: 15px;
-      border-radius: 5px;
-      margin: 15px 0;
-    }
-
-    .alert-warning strong {
-      color: #ffc107;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .modal-content {
-        width: 95%;
-        margin: 5% auto;
-        padding: 20px;
-      }
-
-      .modal-header h3 {
-        font-size: 1.2rem;
-      }
-
-      .modal-footer {
-        flex-direction: column;
-      }
-
-      .modal-footer .btn {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .modal-content {
+<link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/backups/backups.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -236,22 +63,22 @@
         <table id="tabla-backups-db" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
-                    <th>Tipo</th>
-                    <th>Nombre</th>
-                    <th>Fecha</th>
-                    <th>Tamaño</th>
+                    <th class="col-1">Tipo</th>
+                    <th class="col-2">Nombre</th>
+                    <th class="col-3">Fecha</th>
+                    <th class="col-4">Tamaño</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for backup in db_backups %}
                 <tr>
-                    <td>
+                    <td class="col-1">
                         <span class="backup-type-badge badge-db">DB</span>
                     </td>
-                    <td>{{ backup.nombre }}</td>
-                    <td>{{ backup.fecha|date:"d/m/Y H:i" }}</td>
-                    <td class="backup-size">{{ backup.tamanio_kb|floatformat:2 }} KB</td>
+                    <td class="col-2">{{ backup.nombre }}</td>
+                    <td class="col-3">{{ backup.fecha|date:"d/m/Y H:i" }}</td>
+                    <td class="col-4 backup-size">{{ backup.tamanio_kb|floatformat:2 }} KB</td>
                     <td class="actions-cell">
                         {% if request.user|has_perm:"backups,crear" %}
                         <a href="{% url 'backups:backup_download' 'db' backup.nombre %}"
@@ -284,35 +111,35 @@
         <table id="tabla-backups-media" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
-                    <th>Tipo</th>
-                    <th>Nombre</th>
-                    <th>Fecha</th>
-                    <th>Tamaño</th>
+                    <th class="col-1">Tipo</th>
+                    <th class="col-2">Nombre</th>
+                    <th class="col-3">Fecha</th>
+                    <th class="col-4">Tamaño</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for backup in media_backups %}
                 <tr>
-                    <td>
+                    <td class="col-1">
                         <span class="backup-type-badge badge-media">MEDIA</span>
                     </td>
-                    <td>{{ backup.nombre }}</td>
-                    <td>{{ backup.fecha|date:"d/m/Y H:i" }}</td>
-                    <td class="backup-size">{{ backup.tamanio_mb|floatformat:2 }} MB</td>
+                    <td class="col-2">{{ backup.nombre }}</td>
+                    <td class="col-3">{{ backup.fecha|date:"d/m/Y H:i" }}</td>
+                    <td class="col-4 backup-size">{{ backup.tamanio_mb|floatformat:2 }} MB</td>
                     <td class="actions-cell">
                         {% if request.user|has_perm:"backups,crear" %}
-                        <a href="{% url 'backups:backup_download' 'media' backup.nombre %}"
-                           class="btn btn-sm"
-                           title="Descargar">
-                            <img src="{% static 'img/icons/download.svg' %}" alt="Descargar" style="width: 16px; height: 16px;">
+                        <a href="{% url 'backups:backup_download' 'media' backup.nombre %}" class="btn btn-sm"
+                            title="Descargar">
+                            <img src="{% static 'img/icons/download.svg' %}" alt="Descargar"
+                                style="width: 16px; height: 16px;">
                         </a>
                         {% endif %}
                         {% if request.user|has_perm:"backups,eliminar" %}
                         <button onclick="confirmarEliminar('media', '{{ backup.nombre }}')"
-                                class="btn btn-sm btn-delete"
-                                title="Eliminar">
-                            <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width: 16px; height: 16px;">
+                            class="btn btn-sm btn-delete" title="Eliminar">
+                            <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"
+                                style="width: 16px; height: 16px;">
                         </button>
                         {% endif %}
                     </td>
@@ -375,11 +202,14 @@
             <p>Seleccione cómo desea restaurar el backup:</p>
 
             <!-- Tabs para seleccionar modo -->
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color, #444);">
-                <button id="tabExistente" onclick="cambiarTab('existente')" class="tab-btn active" style="flex: 1; padding: 10px; background: transparent; border: none; border-bottom: 3px solid var(--primary-color, #d4af37); color: var(--primary-color, #d4af37); cursor: pointer; font-weight: 600;">
+            <div
+                style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color, #444);">
+                <button id="tabExistente" onclick="cambiarTab('existente')" class="tab-btn active"
+                    style="flex: 1; padding: 10px; background: transparent; border: none; border-bottom: 3px solid var(--primary-color, #d4af37); color: var(--primary-color, #d4af37); cursor: pointer; font-weight: 600;">
                     Desde Servidor
                 </button>
-                <button id="tabSubir" onclick="cambiarTab('subir')" class="tab-btn" style="flex: 1; padding: 10px; background: transparent; border: none; border-bottom: 3px solid transparent; color: #888; cursor: pointer; font-weight: 600;">
+                <button id="tabSubir" onclick="cambiarTab('subir')" class="tab-btn"
+                    style="flex: 1; padding: 10px; background: transparent; border: none; border-bottom: 3px solid transparent; color: #888; cursor: pointer; font-weight: 600;">
                     Subir Archivo
                 </button>
             </div>
@@ -407,13 +237,15 @@
             <div id="contenidoSubir" style="display: none;">
                 <div class="field-group">
                     <label for="uploadFile">Archivo de Backup:</label>
-                    <input type="file" id="uploadFile" accept=".gpg" class="form-control" onchange="validarArchivoSubida()">
+                    <input type="file" id="uploadFile" accept=".gpg" class="form-control"
+                        onchange="validarArchivoSubida()">
                     <small style="color: #888; margin-top: 5px; display: block;">
                         Formatos aceptados: .psql.gpg (Base de Datos) o .media.zip.gpg (Archivos Media)
                     </small>
                 </div>
 
-                <div id="uploadInfo" style="display: none; background-color: rgba(52, 152, 219, 0.1); padding: 10px; border-radius: 5px; margin-top: 10px;">
+                <div id="uploadInfo"
+                    style="display: none; background-color: rgba(52, 152, 219, 0.1); padding: 10px; border-radius: 5px; margin-top: 10px;">
                     <strong>Archivo seleccionado:</strong><br>
                     <span id="uploadFileName"></span><br>
                     <span id="uploadFileSize"></span>
@@ -427,399 +259,433 @@
         </div>
         <div class="modal-footer">
             <button onclick="cerrarModalRestaurar()" class="btn btn-secondary">Cancelar</button>
-            <button onclick="ejecutarRestauracion()" class="btn btn-warning" id="btnRestaurar" disabled>Restaurar</button>
+            <button onclick="ejecutarRestauracion()" class="btn btn-warning" id="btnRestaurar"
+                disabled>Restaurar</button>
         </div>
     </div>
-</div><script>
-let deleteType = '';
-let deleteFilename = '';
-let createBackupTipo = '';
+</div>
+<script>
+    let deleteType = '';
+    let deleteFilename = '';
+    let createBackupTipo = '';
 
-// Inicializar DataTables
-$(document).ready(function() {
-    // Tabla de backups DB
-    var selDB = '#tabla-backups-db';
-    if (document.querySelector(selDB)) {
-        if ($.fn.dataTable.isDataTable(selDB)) {
-            $(selDB).DataTable().destroy();
-        }
-        $(selDB).DataTable({
-            language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-            responsive: true,
-            pageLength: 10,
-            lengthChange: true,
-            ordering: true,
-            order: [[2, 'desc']], // Ordenar por fecha descendente
-            columnDefs: [ { targets: '_all', defaultContent: '' } ]
-        });
-    }
-
-    // Tabla de backups Media
-    var selMedia = '#tabla-backups-media';
-    if (document.querySelector(selMedia)) {
-        if ($.fn.dataTable.isDataTable(selMedia)) {
-            $(selMedia).DataTable().destroy();
-        }
-        $(selMedia).DataTable({
-            language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-            responsive: true,
-            pageLength: 10,
-            lengthChange: true,
-            ordering: true,
-            order: [[2, 'desc']], // Ordenar por fecha descendente
-            columnDefs: [ { targets: '_all', defaultContent: '' } ]
-        });
-    }
-
-    // Event listeners para cerrar modales al hacer clic fuera
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            cerrarModal();
-        }
-    });
-
-    document.getElementById('createModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            cerrarModalCrear();
-        }
-    });
-
-    document.getElementById('restoreModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            cerrarModalRestaurar();
-        }
-    });
-});
-
-// Crear backup - Mostrar modal de confirmación
-function crearBackup(tipo) {
-    createBackupTipo = tipo;
-    const tipoTexto = tipo === 'completo' ? 'Completo (Base de Datos + Archivos Media)' :
-                      tipo === 'db' ? 'Solo Base de Datos' :
-                      'Solo Archivos Media';
-    document.getElementById('createBackupType').textContent = tipoTexto;
-    document.getElementById('createModal').classList.add('active');
-}
-
-// Cerrar modal de creación
-function cerrarModalCrear() {
-    document.getElementById('createModal').classList.remove('active');
-    createBackupTipo = '';
-}
-
-// Confirmar creación de backup
-function confirmarCrearBackup() {
-    const tipo = createBackupTipo;
-    cerrarModalCrear();
-
-    const btnCrear = document.querySelector(`button[onclick*="crearBackup('${tipo}')"]`);
-    if (btnCrear) {
-        btnCrear.disabled = true;
-        btnCrear.textContent = 'Creando...';
-    }
-
-    fetch('{% url "backups:backup_create" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: `tipo=${tipo}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            console.error('Error al crear backup:', data.error);
-            if (btnCrear) {
-                btnCrear.disabled = false;
-                btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
-            }
-            location.reload();
-        }
-    })
-    .catch(error => {
-        console.error('Error al crear backup:', error);
-        if (btnCrear) {
-            btnCrear.disabled = false;
-            btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
-        }
-        location.reload();
-    });
-}
-
-// Confirmar eliminación
-function confirmarEliminar(tipo, filename) {
-    deleteType = tipo;
-    deleteFilename = filename;
-    document.getElementById('deleteFileName').textContent = filename;
-    document.getElementById('deleteModal').classList.add('active');
-}
-
-// Cerrar modal
-function cerrarModal() {
-    document.getElementById('deleteModal').classList.remove('active');
-    deleteType = '';
-    deleteFilename = '';
-}
-
-// Eliminar backup
-function eliminarBackup() {
-    fetch('{% url "backups:backup_delete" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: `tipo=${deleteType}&filename=${deleteFilename}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload();
-        } else {
-            console.error('Error al eliminar backup:', data.error);
-        }
-        cerrarModal();
-    })
-    .catch(error => {
-        console.error('Error al eliminar backup:', error);
-        cerrarModal();
-    });
-}
-
-// Funciones para modal de restauración
-let modoRestauracion = 'existente'; // 'existente' o 'subir'
-
-function mostrarModalRestaurar() {
-    document.getElementById('restoreModal').classList.add('active');
-    modoRestauracion = 'existente';
-    cambiarTab('existente');
-}
-
-function cerrarModalRestaurar() {
-    document.getElementById('restoreModal').classList.remove('active');
-    document.getElementById('restoreTipo').value = '';
-    document.getElementById('restoreFile').value = '';
-    document.getElementById('uploadFile').value = '';
-    document.getElementById('restoreFileGroup').style.display = 'none';
-    document.getElementById('uploadInfo').style.display = 'none';
-    document.getElementById('btnRestaurar').disabled = true;
-    modoRestauracion = 'existente';
-}
-
-function cambiarTab(tab) {
-    modoRestauracion = tab;
-
-    // Actualizar tabs
-    document.getElementById('tabExistente').className = tab === 'existente' ? 'tab-btn active' : 'tab-btn';
-    document.getElementById('tabSubir').className = tab === 'subir' ? 'tab-btn active' : 'tab-btn';
-
-    // Actualizar estilos de tabs
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(t => {
-        if (t.className.includes('active')) {
-            t.style.borderBottom = '3px solid var(--primary-color, #d4af37)';
-            t.style.color = 'var(--primary-color, #d4af37)';
-        } else {
-            t.style.borderBottom = '3px solid transparent';
-            t.style.color = '#888';
-        }
-    });
-
-    // Mostrar/ocultar contenido
-    document.getElementById('contenidoExistente').style.display = tab === 'existente' ? 'block' : 'none';
-    document.getElementById('contenidoSubir').style.display = tab === 'subir' ? 'block' : 'none';
-
-    // Reset botón restaurar
-    document.getElementById('btnRestaurar').disabled = true;
-}
-
-function validarArchivoSubida() {
-    const fileInput = document.getElementById('uploadFile');
-    const uploadInfo = document.getElementById('uploadInfo');
-    const btnRestaurar = document.getElementById('btnRestaurar');
-
-    if (fileInput.files.length === 0) {
-        uploadInfo.style.display = 'none';
-        btnRestaurar.disabled = true;
-        return;
-    }
-
-    const file = fileInput.files[0];
-    const filename = file.name;
-
-    // Validar extensión
-    if (!filename.endsWith('.psql.gpg') && !filename.endsWith('.media.zip.gpg')) {
-        fileInput.value = '';
-        uploadInfo.style.display = 'none';
-        btnRestaurar.disabled = true;
-
-        // Mostrar error en el uploadInfo
-        document.getElementById('uploadFileName').textContent = '❌ Archivo no válido';
-        document.getElementById('uploadFileSize').textContent = 'Debe ser .psql.gpg o .media.zip.gpg';
-        uploadInfo.style.display = 'block';
-        uploadInfo.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
-        uploadInfo.style.borderLeft = '4px solid #e74c3c';
-        return;
-    }
-
-    // Mostrar información del archivo
-    document.getElementById('uploadFileName').textContent = filename;
-    document.getElementById('uploadFileSize').textContent = `Tamaño: ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
-    uploadInfo.style.display = 'block';
-    uploadInfo.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
-    uploadInfo.style.borderLeft = '';
-    btnRestaurar.disabled = false;
-}
-
-function cargarBackupsDisponibles() {
-    const tipo = document.getElementById('restoreTipo').value;
-    const selectFile = document.getElementById('restoreFile');
-    const fileGroup = document.getElementById('restoreFileGroup');
-
-    // Limpiar opciones
-    selectFile.innerHTML = '<option value="">-- Seleccione un archivo --</option>';
-
-    if (!tipo) {
-        fileGroup.style.display = 'none';
-        document.getElementById('btnRestaurar').disabled = true;
-        return;
-    }
-
-    // Cargar backups según el tipo
-    if (tipo === 'db') {
-        {% for backup in db_backups %}
-        const optionDB{{ forloop.counter }} = document.createElement('option');
-        optionDB{{ forloop.counter }}.value = '{{ backup.nombre }}';
-        optionDB{{ forloop.counter }}.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_kb|floatformat:2 }} KB)';
-        selectFile.appendChild(optionDB{{ forloop.counter }});
-        {% endfor %}
-    } else if (tipo === 'media') {
-        {% for backup in media_backups %}
-        const optionMedia{{ forloop.counter }} = document.createElement('option');
-        optionMedia{{ forloop.counter }}.value = '{{ backup.nombre }}';
-        optionMedia{{ forloop.counter }}.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_mb|floatformat:2 }} MB)';
-        selectFile.appendChild(optionMedia{{ forloop.counter }});
-        {% endfor %}
-    }
-
-    fileGroup.style.display = 'block';
-
-    // Habilitar botón cuando se seleccione archivo
-    selectFile.onchange = function() {
-        document.getElementById('btnRestaurar').disabled = !this.value;
-    };
-}
-
-function ejecutarRestauracion() {
-    const btnRestaurar = document.getElementById('btnRestaurar');
-    btnRestaurar.disabled = true;
-    btnRestaurar.textContent = 'Procesando...';
-
-    if (modoRestauracion === 'subir') {
-        // Modo: Subir archivo
-        const fileInput = document.getElementById('uploadFile');
-
-        if (fileInput.files.length === 0) {
-            btnRestaurar.disabled = false;
-            btnRestaurar.textContent = 'Restaurar';
-            return;
-        }
-
-        const file = fileInput.files[0];
-        const filename = file.name;
-        const tipoText = filename.endsWith('.psql.gpg') ? 'base de datos' : 'archivos media';
-
-        // Crear FormData para subir archivo
-        const formData = new FormData();
-        formData.append('backup_file', file);
-
-        btnRestaurar.textContent = 'Subiendo...';
-
-        // Primero subir el archivo
-        fetch('{% url "backups:backup_upload" %}', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Archivo subido, ahora restaurar
-                btnRestaurar.textContent = 'Restaurando...';
-                return fetch('{% url "backups:backup_restore" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': '{{ csrf_token }}'
+    // Inicializar DataTables
+    $(document).ready(function () {
+        // Tabla de backups DB
+        var selDB = '#tabla-backups-db';
+        if (document.querySelector(selDB)) {
+            var hasData = $(selDB + ' tbody tr').length > 0 && !$(selDB + ' tbody tr td[colspan]').length;
+            if (hasData) {
+                if ($.fn.dataTable.isDataTable(selDB)) {
+                    $(selDB).DataTable().destroy();
+                }
+                $(selDB).DataTable({
+                    language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
+                    responsive: {
+                        details: {
+                            type: 'column',
+                            target: -1
+                        }
                     },
-                    body: `tipo=${data.tipo}&filename=${data.filename}`
+                    pageLength: 10,
+                    lengthChange: true,
+                    ordering: true,
+                    order: [[2, 'desc']], // Ordenar por fecha descendente
+                    columnDefs: [
+                        { targets: '_all', defaultContent: '' },
+                        { responsivePriority: 1, targets: 0 }, // Tipo
+                        { responsivePriority: 2, targets: 1 }, // Nombre
+                        { responsivePriority: 3, targets: 2 }, // Fecha
+                        { responsivePriority: 4, targets: 3 }, // Tamaño
+                        { responsivePriority: 0, targets: -1 } // Acciones (siempre visible)
+                    ]
                 });
-            } else {
-                throw new Error(data.error || 'Error al subir archivo');
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            } else {
-                throw new Error(data.error || 'Error al restaurar');
-            }
-        })
-        .catch(error => {
-            console.error('Error durante la restauración:', error.message);
-            btnRestaurar.disabled = false;
-            btnRestaurar.textContent = 'Restaurar';
-            location.reload();
-        });
-
-    } else {
-        // Modo: Desde servidor existente
-        const tipo = document.getElementById('restoreTipo').value;
-        const filename = document.getElementById('restoreFile').value;
-
-        if (!tipo || !filename) {
-            btnRestaurar.disabled = false;
-            btnRestaurar.textContent = 'Restaurar';
-            return;
         }
 
-        const tipoText = tipo === 'db' ? 'base de datos' : 'archivos media';
+        // Tabla de backups Media
+        var selMedia = '#tabla-backups-media';
+        if (document.querySelector(selMedia)) {
+            var hasData = $(selMedia + ' tbody tr').length > 0 && !$(selMedia + ' tbody tr td[colspan]').length;
+            if (hasData) {
+                if ($.fn.dataTable.isDataTable(selMedia)) {
+                    $(selMedia).DataTable().destroy();
+                }
+                $(selMedia).DataTable({
+                    language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
+                    responsive: {
+                        details: {
+                            type: 'column',
+                            target: -1
+                        }
+                    },
+                    pageLength: 10,
+                    lengthChange: true,
+                    ordering: true,
+                    order: [[2, 'desc']], // Ordenar por fecha descendente
+                    columnDefs: [
+                        { targets: '_all', defaultContent: '' },
+                        { responsivePriority: 1, targets: 0 }, // Tipo
+                        { responsivePriority: 2, targets: 1 }, // Nombre
+                        { responsivePriority: 3, targets: 2 }, // Fecha
+                        { responsivePriority: 4, targets: 3 }, // Tamaño
+                        { responsivePriority: 0, targets: -1 } // Acciones (siempre visible)
+                    ]
+                });
+            }
+        }
 
-        btnRestaurar.textContent = 'Restaurando...';
+        // Event listeners para cerrar modales al hacer clic fuera
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
 
-        fetch('{% url "backups:backup_restore" %}', {
+        document.getElementById('createModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarModalCrear();
+            }
+        });
+
+        document.getElementById('restoreModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                cerrarModalRestaurar();
+            }
+        });
+    });
+
+    // Crear backup - Mostrar modal de confirmación
+    function crearBackup(tipo) {
+        createBackupTipo = tipo;
+        const tipoTexto = tipo === 'completo' ? 'Completo (Base de Datos + Archivos Media)' :
+            tipo === 'db' ? 'Solo Base de Datos' :
+                'Solo Archivos Media';
+        document.getElementById('createBackupType').textContent = tipoTexto;
+        document.getElementById('createModal').classList.add('active');
+    }
+
+    // Cerrar modal de creación
+    function cerrarModalCrear() {
+        document.getElementById('createModal').classList.remove('active');
+        createBackupTipo = '';
+    }
+
+    // Confirmar creación de backup
+    function confirmarCrearBackup() {
+        const tipo = createBackupTipo;
+        cerrarModalCrear();
+
+        const btnCrear = document.querySelector(`button[onclick*="crearBackup('${tipo}')"]`);
+        if (btnCrear) {
+            btnCrear.disabled = true;
+            btnCrear.textContent = 'Creando...';
+        }
+
+        fetch('{% url "backups:backup_create" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'X-CSRFToken': '{{ csrf_token }}'
             },
-            body: `tipo=${tipo}&filename=${filename}`
+            body: `tipo=${tipo}`
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    console.error('Error al crear backup:', data.error);
+                    if (btnCrear) {
+                        btnCrear.disabled = false;
+                        btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
+                    }
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error al crear backup:', error);
+                if (btnCrear) {
+                    btnCrear.disabled = false;
+                    btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
+                }
                 location.reload();
+            });
+    }
+
+    // Confirmar eliminación
+    function confirmarEliminar(tipo, filename) {
+        deleteType = tipo;
+        deleteFilename = filename;
+        document.getElementById('deleteFileName').textContent = filename;
+        document.getElementById('deleteModal').classList.add('active');
+    }
+
+    // Cerrar modal
+    function cerrarModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+        deleteType = '';
+        deleteFilename = '';
+    }
+
+    // Eliminar backup
+    function eliminarBackup() {
+        fetch('{% url "backups:backup_delete" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `tipo=${deleteType}&filename=${deleteFilename}`
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    console.error('Error al eliminar backup:', data.error);
+                }
+                cerrarModal();
+            })
+            .catch(error => {
+                console.error('Error al eliminar backup:', error);
+                cerrarModal();
+            });
+    }
+
+    // Funciones para modal de restauración
+    let modoRestauracion = 'existente'; // 'existente' o 'subir'
+
+    function mostrarModalRestaurar() {
+        document.getElementById('restoreModal').classList.add('active');
+        modoRestauracion = 'existente';
+        cambiarTab('existente');
+    }
+
+    function cerrarModalRestaurar() {
+        document.getElementById('restoreModal').classList.remove('active');
+        document.getElementById('restoreTipo').value = '';
+        document.getElementById('restoreFile').value = '';
+        document.getElementById('uploadFile').value = '';
+        document.getElementById('restoreFileGroup').style.display = 'none';
+        document.getElementById('uploadInfo').style.display = 'none';
+        document.getElementById('btnRestaurar').disabled = true;
+        modoRestauracion = 'existente';
+    }
+
+    function cambiarTab(tab) {
+        modoRestauracion = tab;
+
+        // Actualizar tabs
+        document.getElementById('tabExistente').className = tab === 'existente' ? 'tab-btn active' : 'tab-btn';
+        document.getElementById('tabSubir').className = tab === 'subir' ? 'tab-btn active' : 'tab-btn';
+
+        // Actualizar estilos de tabs
+        const tabs = document.querySelectorAll('.tab-btn');
+        tabs.forEach(t => {
+            if (t.className.includes('active')) {
+                t.style.borderBottom = '3px solid var(--primary-color, #d4af37)';
+                t.style.color = 'var(--primary-color, #d4af37)';
             } else {
-                console.error('Error al restaurar:', data.error);
+                t.style.borderBottom = '3px solid transparent';
+                t.style.color = '#888';
+            }
+        });
+
+        // Mostrar/ocultar contenido
+        document.getElementById('contenidoExistente').style.display = tab === 'existente' ? 'block' : 'none';
+        document.getElementById('contenidoSubir').style.display = tab === 'subir' ? 'block' : 'none';
+
+        // Reset botón restaurar
+        document.getElementById('btnRestaurar').disabled = true;
+    }
+
+    function validarArchivoSubida() {
+        const fileInput = document.getElementById('uploadFile');
+        const uploadInfo = document.getElementById('uploadInfo');
+        const btnRestaurar = document.getElementById('btnRestaurar');
+
+        if (fileInput.files.length === 0) {
+            uploadInfo.style.display = 'none';
+            btnRestaurar.disabled = true;
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const filename = file.name;
+
+        // Validar extensión
+        if (!filename.endsWith('.psql.gpg') && !filename.endsWith('.media.zip.gpg')) {
+            fileInput.value = '';
+            uploadInfo.style.display = 'none';
+            btnRestaurar.disabled = true;
+
+            // Mostrar error en el uploadInfo
+            document.getElementById('uploadFileName').textContent = '❌ Archivo no válido';
+            document.getElementById('uploadFileSize').textContent = 'Debe ser .psql.gpg o .media.zip.gpg';
+            uploadInfo.style.display = 'block';
+            uploadInfo.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+            uploadInfo.style.borderLeft = '4px solid #e74c3c';
+            return;
+        }
+
+        // Mostrar información del archivo
+        document.getElementById('uploadFileName').textContent = filename;
+        document.getElementById('uploadFileSize').textContent = `Tamaño: ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+        uploadInfo.style.display = 'block';
+        uploadInfo.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+        uploadInfo.style.borderLeft = '';
+        btnRestaurar.disabled = false;
+    }
+
+    function cargarBackupsDisponibles() {
+        const tipo = document.getElementById('restoreTipo').value;
+        const selectFile = document.getElementById('restoreFile');
+        const fileGroup = document.getElementById('restoreFileGroup');
+
+        // Limpiar opciones
+        selectFile.innerHTML = '<option value="">-- Seleccione un archivo --</option>';
+
+        if (!tipo) {
+            fileGroup.style.display = 'none';
+            document.getElementById('btnRestaurar').disabled = true;
+            return;
+        }
+
+        // Cargar backups según el tipo
+        if (tipo === 'db') {
+            {% for backup in db_backups %}
+            const optionDB{{ forloop.counter }
+        } = document.createElement('option');
+        optionDB{ { forloop.counter } }.value = '{{ backup.nombre }}';
+        optionDB{ { forloop.counter } }.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_kb|floatformat:2 }} KB)';
+        selectFile.appendChild(optionDB{{ forloop.counter }});
+    {% endfor %}
+    } else if (tipo === 'media') {
+        {% for backup in media_backups %}
+        const optionMedia{{ forloop.counter }
+    } = document.createElement('option');
+        optionMedia{ { forloop.counter } }.value = '{{ backup.nombre }}';
+        optionMedia{ { forloop.counter } }.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_mb|floatformat:2 }} MB)';
+    selectFile.appendChild(optionMedia{{ forloop.counter }});
+    {% endfor %}
+    }
+
+    fileGroup.style.display = 'block';
+
+    // Habilitar botón cuando se seleccione archivo
+    selectFile.onchange = function () {
+        document.getElementById('btnRestaurar').disabled = !this.value;
+    };
+}
+
+    function ejecutarRestauracion() {
+        const btnRestaurar = document.getElementById('btnRestaurar');
+        btnRestaurar.disabled = true;
+        btnRestaurar.textContent = 'Procesando...';
+
+        if (modoRestauracion === 'subir') {
+            // Modo: Subir archivo
+            const fileInput = document.getElementById('uploadFile');
+
+            if (fileInput.files.length === 0) {
                 btnRestaurar.disabled = false;
                 btnRestaurar.textContent = 'Restaurar';
-                location.reload();
+                return;
             }
-        })
-        .catch(error => {
-            console.error('Error al restaurar backup:', error);
-            btnRestaurar.disabled = false;
-            btnRestaurar.textContent = 'Restaurar';
-            location.reload();
-        });
+
+            const file = fileInput.files[0];
+            const filename = file.name;
+            const tipoText = filename.endsWith('.psql.gpg') ? 'base de datos' : 'archivos media';
+
+            // Crear FormData para subir archivo
+            const formData = new FormData();
+            formData.append('backup_file', file);
+
+            btnRestaurar.textContent = 'Subiendo...';
+
+            // Primero subir el archivo
+            fetch('{% url "backups:backup_upload" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Archivo subido, ahora restaurar
+                        btnRestaurar.textContent = 'Restaurando...';
+                        return fetch('{% url "backups:backup_restore" %}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            },
+                            body: `tipo=${data.tipo}&filename=${data.filename}`
+                        });
+                    } else {
+                        throw new Error(data.error || 'Error al subir archivo');
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        throw new Error(data.error || 'Error al restaurar');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error durante la restauración:', error.message);
+                    btnRestaurar.disabled = false;
+                    btnRestaurar.textContent = 'Restaurar';
+                    location.reload();
+                });
+
+        } else {
+            // Modo: Desde servidor existente
+            const tipo = document.getElementById('restoreTipo').value;
+            const filename = document.getElementById('restoreFile').value;
+
+            if (!tipo || !filename) {
+                btnRestaurar.disabled = false;
+                btnRestaurar.textContent = 'Restaurar';
+                return;
+            }
+
+            const tipoText = tipo === 'db' ? 'base de datos' : 'archivos media';
+
+            btnRestaurar.textContent = 'Restaurando...';
+
+            fetch('{% url "backups:backup_restore" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `tipo=${tipo}&filename=${filename}`
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        console.error('Error al restaurar:', data.error);
+                        btnRestaurar.disabled = false;
+                        btnRestaurar.textContent = 'Restaurar';
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al restaurar backup:', error);
+                    btnRestaurar.disabled = false;
+                    btnRestaurar.textContent = 'Restaurar';
+                    location.reload();
+                });
+        }
     }
-}
 </script>
 
 {% endblock %}

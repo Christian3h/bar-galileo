@@ -83,7 +83,7 @@ def mesa_pedido_api(request, mesa_id):
     productos_data = []
     for p in Producto.objects.filter(activo=True).order_by('nombre'):
         first_image = p.imagenes.first()
-        imagen_url = f"/static/{first_image.imagen}" if first_image else None
+        imagen_url = first_image.imagen.url if first_image else None
         productos_data.append({
             'id_producto': p.id_producto,
             'nombre': p.nombre,
@@ -92,8 +92,8 @@ def mesa_pedido_api(request, mesa_id):
             'imagen': imagen_url
         })
 
-    reservas_stock = { 
-        item['producto_id']: item['cantidad_total'] 
+    reservas_stock = {
+        item['producto_id']: item['cantidad_total']
         for item in PedidoItem.objects.filter(pedido__estado='en_proceso').values('producto_id').annotate(cantidad_total=Sum('cantidad'))
     }
 
@@ -112,7 +112,7 @@ def agregar_item_api(request):
 
     pedido, _ = Pedido.objects.get_or_create(mesa_id=data['mesa_id'], estado='en_proceso')
     item, created = PedidoItem.objects.get_or_create(pedido=pedido, producto=producto, defaults={'precio_unitario': producto.precio_venta})
-    
+
     cantidad_total_requerida = (item.cantidad if not created else 0) + cantidad_a_agregar
     if producto.stock < cantidad_total_requerida:
         return JsonResponse({'error': f'Stock insuficiente para {producto.nombre}. Disponible: {producto.stock}'}, status=400)
@@ -125,18 +125,18 @@ def agregar_item_api(request):
 
     transaction.on_commit(lambda: _broadcast_stock_update(producto.id_producto, -cantidad_a_agregar))
     transaction.on_commit(lambda: _broadcast_panel_update(pedido))
-    
+
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
 @transaction.atomic
 def actualizar_item_api(request, item_id):
     item = get_object_or_404(PedidoItem, id=item_id)
     old_cantidad = item.cantidad
-    
+
     # Evitar actualizar si el producto fue archivado
     if not item.producto.activo:
         return JsonResponse({'error': f'El producto {item.producto.nombre} está archivado y no puede modificarse.'}, status=400)
-    
+
     data = json.loads(request.body)
     nueva_cantidad = data.get('cantidad')
 
@@ -155,7 +155,7 @@ def actualizar_item_api(request, item_id):
     delta = nueva_cantidad - old_cantidad
     transaction.on_commit(lambda: _broadcast_stock_update(item.producto.id_producto, -delta))
     transaction.on_commit(lambda: _broadcast_panel_update(item.pedido))
-    
+
     return JsonResponse({'pedido': _serialize_pedido(item.pedido)})
 
 @transaction.atomic
@@ -169,33 +169,33 @@ def eliminar_item_api(request, item_id):
 
     transaction.on_commit(lambda: _broadcast_stock_update(producto_id, cantidad_eliminada))
     transaction.on_commit(lambda: _broadcast_panel_update(pedido))
-    
+
     return JsonResponse({'pedido': _serialize_pedido(pedido)})
 
 @transaction.atomic
 def facturar_pedido_api(request, pedido_id):
     from django.urls import reverse
     pedido = get_object_or_404(Pedido, id=pedido_id)
-    
+
     with transaction.atomic():
         for item in pedido.items.all():
             producto = item.producto
             if producto.stock < item.cantidad:
                 return JsonResponse({'error': f'No hay stock suficiente para "{producto.nombre}". Pedido no facturado.'}, status=400)
-            
+
             producto.stock -= item.cantidad
             producto.save(update_fields=['stock'])
 
         factura = Factura.objects.create(pedido=pedido, total=pedido.total())
         pedido.estado = 'facturado'
         pedido.save()
-        
+
         if pedido.mesa:
             mesa = pedido.mesa
             mesa.estado = 'disponible'
             mensaje = f"El pedido de la mesa '{mesa.nombre}' fue facturado. La mesa está ahora disponible."
             notificar_usuario(request.user, mensaje)
-    
+
     transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     return JsonResponse({
         'success': True,
@@ -224,7 +224,7 @@ def pedido_manage_user_api(request, pedido_id):
         pedido.usuarios.add(user_obj)
     elif action == 'remove':
         pedido.usuarios.remove(user_obj)
-    
+
     transaction.on_commit(lambda: _broadcast_panel_update(pedido))
     return JsonResponse({'success': True})
 
