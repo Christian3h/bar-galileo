@@ -14,9 +14,9 @@
 
 /* Contenedor principal */
 .reportes-container {
-  max-width: 1400px;
+  max-width: 98%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 30px;
 }
 
 .page-header {
@@ -184,7 +184,8 @@
   background: transparent;
   border: 2px solid var(--color-secondary);
   border-radius: 12px;
-  padding: 20px;
+  padding: 25px 30px;
+  width: 100%;
 }
 
 .table-header {
@@ -205,36 +206,38 @@
 .table-responsive {
   overflow-x: auto;
   border-radius: 8px;
+  width: 100%;
 }
 
 .table-contenedor {
-  display: flex;
-  justify-content: center;
+  width: 100%;
 }
 
 #reportes-table {
   width: 100%;
+  min-width: 100%;
   background: transparent;
   border-collapse: separate;
   border-spacing: 0;
+  table-layout: auto;
 }
 
 #reportes-table thead th {
   background: transparent;
   color: var(--color-secondary);
-  padding: 15px 12px;
+  padding: 18px 20px;
   text-align: left;
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-bottom: 2px solid var(--color-secondary);
 }
 
 #reportes-table tbody td {
-  padding: 14px 12px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--color-secondary);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 #reportes-table tbody tr:hover {
