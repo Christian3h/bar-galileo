@@ -1,18 +1,192 @@
-
 {% extends 'base_admin.html' %}
 {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/expense_form.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">{% if form.instance.pk %}Editar Gasto{% else %}Registrar Gasto{% endif %}</h6>
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Gasto</h1>
+
+<a href="{% url 'expenses:expense_list' %}" class="btn btn-secondary">Volver</a>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    {% if object.receipt %}
+        <h4>Recibo actual</h4>
+        <div class="receipt-preview" id="receipt-preview">
+            <div class="receipt-container" id="receipt-container-{{ object.pk }}">
+                {% if object.receipt.url|slice:"-4:" in ".jpg,.png,jpeg,.gif,.webp,.JPG,.PNG,JPEG,.GIF,WEBP" or object.receipt.url|slice:"-5:" in ".jpeg,.webp,.JPEG,.WEBP" %}
+                    <img src="{{ object.receipt.url }}" class="img-thumbnail">
+                    <div class="receipt-actions">
+                        <button type="button" class="btn btn-sm btn-info maximize-receipt-btn" data-src="{{ object.receipt.url }}" data-type="image">🔍</button>
+                        <button type="button" class="btn btn-sm btn-danger delete-receipt-btn" data-id="{{ object.pk }}">🗑️</button>
+                    </div>
+                {% elif object.receipt.url|slice:"-4:" in ".mp4,.avi,.mov,.wmv,.MP4,.AVI,.MOV,.WMV" or object.receipt.url|slice:"-5:" in ".webm,.WEBM" %}
+                    <video src="{{ object.receipt.url }}" class="img-thumbnail"></video>
+                    <div class="receipt-actions">
+                        <button type="button" class="btn btn-sm btn-info maximize-receipt-btn" data-src="{{ object.receipt.url }}" data-type="video">🔍</button>
+                        <button type="button" class="btn btn-sm btn-danger delete-receipt-btn" data-id="{{ object.pk }}">🗑️</button>
+                    </div>
+                {% else %}
+                    <div style="width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                        <a href="{{ object.receipt.url }}" target="_blank" class="btn btn-sm btn-secondary">📄 Ver archivo</a>
+                    </div>
+                    <div class="receipt-actions">
+                        <button type="button" class="btn btn-sm btn-danger delete-receipt-btn" data-id="{{ object.pk }}">🗑️</button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="form-actions mt-3">
+        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Crear{% endif %} Gasto</button>
     </div>
-    <div class="card-body">
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Guardar</button>
-        </form>
-    </div>
+</form>
+
+<!-- Modal para maximizar recibo -->
+<div id="receiptViewerModal" class="modal-receipt-viewer">
+    <span class="close-modal-receipt-viewer">&times;</span>
+    <img class="modal-receipt-viewer-content" id="viewerModalReceipt" style="display: none;">
+    <video class="modal-receipt-viewer-content" id="viewerModalVideo" controls style="display: none;">
+        <source id="viewerVideoSource" src="" type="video/mp4">
+    </video>
 </div>
+
+<!-- Modal para mensajes de error/éxito -->
+{% include 'components/simple_modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const receiptPreview = document.getElementById('receipt-preview');
+
+    // Elementos del modal de maximizar recibo
+    const receiptViewerModal = document.getElementById('receiptViewerModal');
+    const viewerModalReceipt = document.getElementById('viewerModalReceipt');
+    const viewerModalVideo = document.getElementById('viewerModalVideo');
+    const viewerVideoSource = document.getElementById('viewerVideoSource');
+    const closeReceiptViewerModal = document.querySelector('.close-modal-receipt-viewer');
+
+    // Elementos del modal de mensajes
+    const simpleModal = document.getElementById('simpleModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalFooter = simpleModal.querySelector('.modal-footer');
+    const closeModalButtons = simpleModal.querySelectorAll('.close-modal');
+
+    // Función para mostrar el modal de mensajes
+    function showSimpleModal(title, message, isConfirm = false, onConfirm = null) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalFooter.innerHTML = ''; // Limpiar botones anteriores
+
+        if (isConfirm) {
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = 'Sí, Eliminar';
+            confirmBtn.classList.add('btn', 'btn-danger', 'mt-3');
+            confirmBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+                if (onConfirm) onConfirm();
+            };
+            modalFooter.appendChild(confirmBtn);
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.classList.add('btn', 'btn-secondary', 'mt-3', 'ms-2');
+            cancelBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(cancelBtn);
+        } else {
+            const okBtn = document.createElement('button');
+            okBtn.textContent = 'Aceptar';
+            okBtn.classList.add('btn', 'btn-primary', 'mt-3');
+            okBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(okBtn);
+        }
+        simpleModal.style.display = 'block';
+    }
+
+    // Event listeners para cerrar el modal de mensajes
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            simpleModal.style.display = 'none';
+        });
+    });
+    window.addEventListener('click', function(event) {
+        if (event.target == simpleModal) {
+            simpleModal.style.display = 'none';
+        }
+    });
+
+    if (receiptPreview) {
+        receiptPreview.addEventListener('click', function(event) {
+            const target = event.target.closest('button');
+
+            if (!target) return;
+
+            // --- Manejar clic en el botón de eliminar ---
+            if (target.classList.contains('delete-receipt-btn')) {
+                const expenseId = target.dataset.id;
+                const receiptContainer = document.getElementById(`receipt-container-${expenseId}`);
+
+                showSimpleModal(
+                    'Confirmar Eliminación',
+                    '¿Estás seguro de que quieres eliminar este recibo? Se eliminará solo el archivo, no el gasto completo.',
+                    true, // Es un modal de confirmación
+                    function() { // Callback para cuando se confirma la eliminación
+                        // Aquí deberías hacer una petición AJAX para eliminar el recibo
+                        // Por ahora solo mostramos que fue eliminado visualmente
+                        receiptContainer.classList.add('deleted');
+                        showSimpleModal('Éxito', 'Recibo marcado para eliminación. Guarda el formulario para confirmar.');
+                    }
+                );
+            }
+
+            // --- Manejar clic en el botón de maximizar ---
+            if (target.classList.contains('maximize-receipt-btn')) {
+                const receiptSrc = target.dataset.src;
+                const receiptType = target.dataset.type;
+
+                receiptViewerModal.style.display = "block";
+
+                if (receiptType === 'image') {
+                    viewerModalReceipt.style.display = 'block';
+                    viewerModalVideo.style.display = 'none';
+                    viewerModalReceipt.src = receiptSrc;
+                } else if (receiptType === 'video') {
+                    viewerModalReceipt.style.display = 'none';
+                    viewerModalVideo.style.display = 'block';
+                    viewerVideoSource.src = receiptSrc;
+                    viewerModalVideo.load();
+                }
+            }
+        });
+    }
+
+    // --- Cerrar el modal de maximizar recibo ---
+    if(closeReceiptViewerModal) {
+        closeReceiptViewerModal.addEventListener('click', function() {
+            receiptViewerModal.style.display = "none";
+            viewerModalVideo.pause();
+        });
+    }
+
+    if(receiptViewerModal) {
+        window.addEventListener('click', function(event) {
+            if (event.target == receiptViewerModal) {
+                receiptViewerModal.style.display = "none";
+                viewerModalVideo.pause();
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

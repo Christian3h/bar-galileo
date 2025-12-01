@@ -41,6 +41,8 @@ urlpatterns = [
     path('nominas/', include(('nominas.urls', 'nominas'), namespace='nominas')),
     path('backups/', include(('backups.urls', 'backups'), namespace='backups')),
     path('reportes/', include(('reportes.urls', 'reportes'), namespace='reportes')),
+    path('google-chat/', include(('google_chat.urls', 'google_chat'), namespace='google_chat')),
+    path('rag-chat/', include(('rag_chat.urls', 'rag_chat'), namespace='rag_chat')),
 
     # Evitar 404 para iconos solicitados en la raíz por navegadores
     path('favicon.ico', RedirectView.as_view(url=staticfiles_static('img/favicon/favicon.ico'), permanent=True)),

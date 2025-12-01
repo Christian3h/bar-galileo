@@ -183,7 +183,6 @@
    TABLE SECTION - EXACT MATCH TO REFERENCE IMAGE
 ======================================= */
 .table-responsive {
-    background: #2c2c2c;
     border-radius: 8px;
     padding: 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -194,7 +193,6 @@
 /* Wrapper adicional para asegurar fondo consistente */
 .dataTables_wrapper .table-responsive,
 #tabla-empleados_wrapper {
-    background: #2c2c2c !important;
     color: var(--color-secondary) !important;
 }
 
@@ -210,7 +208,6 @@
 
 .table {
     margin: 0;
-    background: #2c2c2c;
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -222,11 +219,9 @@
     padding: 1rem 0.75rem;
     text-align: left;
     vertical-align: middle;
-    background: #2c2c2c;
 }
 
 .table thead th {
-    background: #2c2c2c;
     color: var(--color-secondary);
     font-weight: 600;
     text-transform: none;
@@ -248,7 +243,6 @@
 
 .table tbody td {
     color: var(--color-secondary);
-    background: #2c2c2c;
     font-size: 0.95rem;
     border-bottom: 1px solid var(--color-secondary) !important;
 }
@@ -355,7 +349,6 @@
 ======================================= */
 .dataTables_wrapper {
     color: var(--color-secondary);
-    background: #2c2c2c;
     padding: 1rem;
     border-radius: 8px;
 }
@@ -468,7 +461,7 @@
     }
 
     .dashboard-container {
-        padding: 1rem;
+        padding: 0;
     }
 
     .card {
@@ -494,7 +487,7 @@
         gap: 0.5rem;
     }
 
-    /* Responsive table columns */
+    /* Responsive table columns - Ocultar en tablets */
     .estadoCol, .tipoContratoCol {
         display: none;
     }
@@ -513,7 +506,8 @@
         font-size: 1.5rem;
     }
 
-    .fechaContratacionCol {
+    /* Ocultar más columnas en móviles pequeños */
+    .fechaContratacionCol, .usuarioCol {
         display: none;
     }
 
@@ -539,20 +533,41 @@
         padding: 0.5rem 0.65rem;
         font-size: 0.9rem;
     }
+
+    .empleado-perfil-page .perfil-panel {
+      padding: 5px;
+    }
+
 }
 
 /* =======================================
    RESPONSIVE TABLE COLUMNS
 ======================================= */
 @media (max-width: 992px) {
+    /* Tablets - Ocultar columnas secundarias */
     .estadoCol, .tipoContratoCol {
         display: none;
     }
 }
 
 @media (max-width: 768px) {
+    /* Móviles - Ocultar más columnas */
     .fechaContratacionCol {
         display: none;
+    }
+    .empleado-perfil-page .perfil-panel {
+      padding: 5px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Móviles pequeños - Mantener solo lo esencial */
+    .usuarioCol {
+        display: none;
+    }
+
+    .empleado-perfil-page .perfil-panel {
+      padding: 5px !important;
     }
 }
 
@@ -560,11 +575,30 @@
    RESPONSIVE TABLE COLUMNS - PAGOS
 ======================================= */
 @media (max-width: 992px) {
-    .descripcionCol { display: none; }
+    .descripcionCol {
+        display: none;
+    }
 }
 
 @media (max-width: 768px) {
-    .comprobanteCol { display: none; }
+    .comprobanteCol {
+        display: none;
+    }
+}
+
+/* =======================================
+   RESPONSIVE TABLE COLUMNS - BONIFICACIONES
+======================================= */
+@media (max-width: 768px) {
+    .fechaFinCol {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .fechaInicioCol {
+        display: none;
+    }
 }
 
 /* =======================================
@@ -641,24 +675,47 @@
 
 /* Tablas internas coherentes con el estilo de nominas */
 .empleado-perfil-page .table-responsive {
-    background: #2c2c2c;
     border: none;
     padding: 0;
 }
-.empleado-perfil-page table.table {
-    background: #2c2c2c;
-}
+
 .empleado-perfil-page .table th,
 .empleado-perfil-page .table td {
     border: 1px solid var(--color-secondary) !important;
     color: var(--color-secondary);
 }
 
+/* Info box para total pagado */
+.info-row-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(166, 137, 50, 0.15);
+    border: 2px solid var(--color-secondary);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.info-row-box .info-label {
+    color: var(--color-secondary);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.info-row-box .info-value {
+    color: var(--color-secondary);
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
 /* Responsive */
 @media (max-width: 992px) {
     .empleado-perfil-page .perfil-grid {
         grid-template-columns: 1fr;
+        padding: 5px !important;
     }
+
 }
 
 /* Cabecera lista (título + botones) */

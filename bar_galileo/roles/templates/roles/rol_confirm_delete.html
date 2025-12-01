@@ -1,10 +1,19 @@
 {% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/admin/delete_confirmation.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Eliminar Rol</h2>
-<p>¿Estás seguro de que quieres eliminar el rol "<strong>{{ object.nombre }}</strong>"?</p>
-<form method="post">
-    {% csrf_token %}
-    <a href="{% url 'roles:rol_list' %}" class="btn btn-secondary">Cancelar</a>
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-</form>
+<div class="delete-confirmation-container">
+    <h2>Eliminar Rol</h2>
+    <p>⚠️ Esta acción no se puede deshacer.</p>
+    <p><strong>Nombre del rol:</strong> {{ object.nombre }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">Eliminar</button>
+        <a href="{% url 'roles:rol_list' %}" class="btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

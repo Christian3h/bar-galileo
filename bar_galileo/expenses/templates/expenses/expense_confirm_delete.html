@@ -1,19 +1,24 @@
-
 {% extends 'base_admin.html' %}
 {% load static %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/main/admin/delete_confirmation.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Eliminar Gasto</h6>
+<div class="delete-confirmation-container">
+    <h2>Eliminar Gasto</h2>
+    <p>⚠️ Esta acción no se puede deshacer.</p>
+    <div style="margin: 20px 0; padding: 15px; background: var(--bg-primary); border-radius: 5px; border: 1px solid var(--border-color);">
+        <p style="margin: 5px 0;"><strong>Fecha:</strong> {{ expense.date }}</p>
+        <p style="margin: 5px 0;"><strong>Monto:</strong> ${{ expense.amount }}</p>
+        <p style="margin: 5px 0;"><strong>Categoría:</strong> {{ expense.category }}</p>
+        <p style="margin: 5px 0;"><strong>Descripción:</strong> {{ expense.description }}</p>
     </div>
-    <div class="card-body">
-        <p>¿Estás seguro de que quieres eliminar el gasto "{{ expense }}"?</p>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Eliminar</button>
-            <a href="{% url 'expenses:expense_list' %}" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn-danger">Eliminar</button>
+        <a href="{% url 'expenses:expense_list' %}" class="btn-secondary">Cancelar</a>
+    </form>
 </div>
 {% endblock %}

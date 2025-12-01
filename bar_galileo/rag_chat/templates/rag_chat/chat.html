@@ -1,0 +1,114 @@
+{% extends "base_admin.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/rag_chat/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="rag-chat-container">
+    <div class="chat-header">
+        <h1 class="dashboard-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Chat con Documentos
+        </h1>
+        <div class="chat-header-actions">
+            <select id="collection-select" class="collection-select">
+                <option value="">Selecciona un manual...</option>
+            </select>
+            <button id="upload-btn" class="btn-primary" onclick="showUploadModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Subir PDF
+            </button>
+        </div>
+    </div>
+
+    <div class="chat-main">
+        <!-- Panel de mensajes -->
+        <div class="chat-messages" id="chat-messages">
+            <div class="welcome-message">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+                <h2>Bienvenido al Asistente RAG</h2>
+                <p>Selecciona un manual arriba y comienza a hacer preguntas sobre su contenido.</p>
+            </div>
+        </div>
+
+        <!-- Input de mensaje -->
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <textarea
+                    id="chat-input"
+                    class="chat-input"
+                    placeholder="Escribe tu pregunta aquí..."
+                    rows="1"
+                    disabled
+                ></textarea>
+                <button id="send-btn" class="send-btn" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+            <div class="chat-hints">
+                <span class="hint-badge">Presiona Enter para enviar</span>
+                <span class="hint-badge">Shift + Enter para nueva línea</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para subir PDF -->
+<div id="upload-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Subir Documento PDF</h2>
+            <button class="modal-close" onclick="closeUploadModal()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="pdf-file">Selecciona un archivo PDF:</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="pdf-file" accept=".pdf" required>
+                        <span class="file-name">Ningún archivo seleccionado</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pdf-title">Título del documento:</label>
+                    <input type="text" id="pdf-title" placeholder="Ej: Manual de Usuario SIMO" required>
+                </div>
+                <div class="upload-progress" id="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="progress-text">Procesando documento...</p>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeUploadModal()">Cancelar</button>
+                    <button type="submit" class="btn-primary" id="submit-upload">Subir y Procesar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/rag_chat/chat.js' %}"></script>
+{% endblock %}
