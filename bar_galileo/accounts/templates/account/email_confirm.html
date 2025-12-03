@@ -8,6 +8,7 @@
 {% block content %}
     <div class="container-login">
         {% element h1 %}
+<<<<<<< HEAD
             {% trans "Confirmar Correo Electrónico" %}
         {% endelement %}
         
@@ -50,5 +51,36 @@
             <a href="{% url 'account_login' %}">Iniciar sesión</a>
             <a href="{% url 'core:index' %}">Volver al inicio</a>
         </div>
+=======
+            {% trans "Confirm Email Address" %}
+        {% endelement %}
+        {% if confirmation %}
+            {% user_display confirmation.email_address.user as user_display %}
+            {% if can_confirm %}
+                {% element p %}
+                    {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an email address for user {{ user_display }}.{% endblocktrans %}
+                {% endelement %}
+                {% url 'account_confirm_email' confirmation.key as action_url %}
+                {% element form method="post" action=action_url %}
+                    {% slot actions %}
+                        {% csrf_token %}
+                        {{ redirect_field }}
+                        {% element button type="submit" %}
+                            {% trans 'Confirm' %}
+                        {% endelement %}
+                    {% endslot %}
+                {% endelement %}
+            {% else %}
+                {% element p %}
+                    {% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
+                {% endelement %}
+            {% endif %}
+        {% else %}
+            {% url 'account_email' as email_url %}
+            {% element p %}
+                {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new email confirmation request</a>.{% endblocktrans %}
+            {% endelement %}
+        {% endif %}
+>>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
     </div>
 {% endblock content %}
