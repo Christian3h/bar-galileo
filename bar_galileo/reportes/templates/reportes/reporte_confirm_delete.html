@@ -1,0 +1,67 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="delete-card">
+        <div class="delete-header">
+            <div class="delete-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+            </div>
+            <h2>Eliminar Reporte</h2>
+        </div>
+
+        <div class="delete-warning">
+            <p>⚠️ Esta acción es irreversible. ¿Estás seguro de que deseas eliminar este reporte?</p>
+        </div>
+
+        <div class="reporte-info">
+            <div class="reporte-info-row">
+                <span class="info-label">Nombre:</span>
+                <span class="info-value">{{ reporte.nombre }}</span>
+            </div>
+            <div class="reporte-info-row">
+                <span class="info-label">Tipo:</span>
+                <span class="info-value">
+                    <span class="tipo-badge">{{ reporte.get_tipo_display }}</span>
+                </span>
+            </div>
+            <div class="reporte-info-row">
+                <span class="info-label">Periodo:</span>
+                <span class="info-value">{{ reporte.get_periodo_display }}</span>
+            </div>
+            <div class="reporte-info-row">
+                <span class="info-label">Creado por:</span>
+                <span class="info-value">{{ reporte.creado_por.get_full_name|default:reporte.creado_por.username }}</span>
+            </div>
+            <div class="reporte-info-row">
+                <span class="info-label">Fecha de creación:</span>
+                <span class="info-value">{{ reporte.fecha_creacion|date:"d/m/Y H:i" }}</span>
+            </div>
+            {% if reporte.descripcion %}
+            <div class="reporte-info-row">
+                <span class="info-label">Descripción:</span>
+                <span class="info-value">{{ reporte.descripcion|truncatewords:20 }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="button-group">
+                <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    Confirmar Eliminación
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

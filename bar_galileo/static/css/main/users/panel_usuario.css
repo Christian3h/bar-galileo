@@ -680,6 +680,15 @@ body {
         padding: 6px 8px;
         font-size: 0.9em;
     }
+
+    .header .notification-icon {
+        top: 10px;
+        right: 10px;
+    }
+
+    .header .notification-icon img {
+        width: 35px !important;
+    }
 }
 
 @media (max-width: 480px) {
@@ -977,4 +986,39 @@ form button {
   .header .notification-icon img {
     width: 35px !important;
   }
+}
+
+/* =======================================
+   CLASES ADICIONALES PARA FORMULARIOS
+======================================= */
+
+/* Input oculto */
+.hidden-input {
+  display: none;
+}
+
+/* Formulario oculto */
+.hidden-form {
+  display: none;
+}
+
+/* Alineación de texto */
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Mensaje vacío */
+.empty-message {
+  text-align: center;
+  color: #A68932;
+  margin-bottom: 18px;
+}
+
+/* Formulario inline */
+.inline-form {
+  margin: 0;
 }

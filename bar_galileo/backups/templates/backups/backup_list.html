@@ -48,7 +48,7 @@
         {% endif %}
 
         {% if request.user|has_perm:"backups,editar" %}
-        <div class="field-group buttons-group" style="margin-top: 10px;">
+        <div class="field-group buttons-group btn-spacing">
             <button onclick="mostrarModalRestaurar()" class="btn btn-warning">
                 <img src="{% static 'img/icons/upload.svg' %}" alt="Restaurar"
                     style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
@@ -60,7 +60,7 @@
 
     <!-- Backups de Base de Datos -->
     <div class="table-responsive">
-        <h3 style="margin: 20px 0 10px 0;">💾 Backups de Base de Datos</h3>
+        <h3 class="table-title">💾 Backups de Base de Datos</h3>
         <table id="tabla-backups-db" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
