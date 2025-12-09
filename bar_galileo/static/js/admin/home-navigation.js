@@ -1,11 +1,17 @@
 /**
  * Funcionalidad de navegación a página principal con pantalla de carga
  * Muestra una pantalla de carga con el logo de Bar Galileo por 3 segundos
- * antes de navegar a la página principal
+ * solo cuando se hace clic en el botón "Página Principal"
  */
 document.addEventListener("DOMContentLoaded", function () {
     const homePageBtn = document.getElementById("home-page-btn");
     const loadingScreen = document.getElementById("home-loading-screen");
+
+    // Asegurar que la pantalla de carga esté oculta al cargar la página
+    if (loadingScreen) {
+        loadingScreen.classList.add("hidden");
+        loadingScreen.style.display = "none";
+    }
 
     if (homePageBtn && loadingScreen) {
         homePageBtn.addEventListener("click", function(e) {
