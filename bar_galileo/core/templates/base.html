@@ -67,7 +67,7 @@
                 </div>
                 <a href="{% url 'users:panel_usuario' %}">Mi Panel</a>
                 {% if request.user|has_perm:"dashboard,ver" %}
-                <a href="{% url 'admin_dashboard:dashboard' %}" id="dashboard-link">Dashboard</a>
+                <a href="{% url 'admin_dashboard:dashboard' %}" id="dashboard-link">Panel de administrador</a>
                 {% endif %}
                 <a href="{% url 'account_logout' %}">Cerrar sesión</a>
               </div>
