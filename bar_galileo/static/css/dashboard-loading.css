@@ -40,7 +40,7 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  box-shadow: 
+  box-shadow:
     0 10px 30px rgba(255, 215, 0, 0.3),
     0 0 50px rgba(255, 215, 0, 0.1),
     inset 0 0 20px rgba(255, 215, 0, 0.1);
@@ -59,7 +59,7 @@
   color: #ffd700;
   margin: 0 0 10px 0;
   letter-spacing: 2px;
-  text-shadow: 
+  text-shadow:
     2px 2px 4px rgba(0, 0, 0, 0.5),
     0 0 20px rgba(255, 215, 0, 0.3);
   animation: textGlow 2s ease-in-out infinite alternate;
@@ -138,12 +138,12 @@
 
 @keyframes textGlow {
   0% {
-    text-shadow: 
+    text-shadow:
       2px 2px 4px rgba(0, 0, 0, 0.5),
       0 0 20px rgba(255, 215, 0, 0.3);
   }
   100% {
-    text-shadow: 
+    text-shadow:
       2px 2px 4px rgba(0, 0, 0, 0.5),
       0 0 30px rgba(255, 215, 0, 0.6);
   }
@@ -206,15 +206,15 @@
     width: 100px;
     height: 100px;
   }
-  
+
   .loading-text h2 {
     font-size: 2em;
   }
-  
+
   .loading-text p {
     font-size: 1em;
   }
-  
+
   .spinner {
     width: 40px;
     height: 40px;
