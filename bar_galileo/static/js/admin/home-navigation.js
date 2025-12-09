@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const homeUrl = this.getAttribute('data-url');
             
             // Mostrar la pantalla de carga
+            loadingScreen.style.display = "flex";
             loadingScreen.classList.remove("hidden");
             
             // Deshabilitar scroll del body mientras se muestra la pantalla
