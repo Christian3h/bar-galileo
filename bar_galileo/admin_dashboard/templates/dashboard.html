@@ -16,12 +16,6 @@
     
   </div>
 
-  <!-- Botones de exportación (estilo de la página) -->
-  <div class="export-buttons" style="margin: 12px 0; display:flex; gap:8px;">
-    <a class="btn btn-primary" href="{% url 'admin_dashboard:export_dashboard' 'pdf' %}?period={{ selected_period }}" target="_blank">Exportar PDF</a>
-    <a class="btn btn-primary" href="{% url 'admin_dashboard:export_dashboard' 'xlsx' %}?period={{ selected_period }}">Exportar Excel</a>
-  </div>
-
   <section class="dashboard-cards">
     <div class="card">
       <h3>Ingresos Totales</h3>
