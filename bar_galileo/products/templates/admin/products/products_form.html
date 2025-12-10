@@ -10,7 +10,7 @@
 
 <a href="{% url 'products:products_admin' %}" class="btn btn-secondary">Volver</a>
 
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
 

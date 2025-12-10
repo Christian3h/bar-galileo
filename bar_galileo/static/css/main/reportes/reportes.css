@@ -646,3 +646,258 @@
         gap: 0.5rem;
     }
 }
+
+/* =======================================
+   ESTILOS PARA FORMULARIO DE REPORTES
+   (Consistente con products_form)
+======================================= */
+
+/* Contenedor del formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 8px;
+    align-items: flex-start;
+}
+
+form p {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Etiquetas del formulario */
+form label {
+    font-weight: 600;
+    color: var(--color-secondary);
+    margin-bottom: 0.5rem;
+}
+
+/* Inputs, textareas y selects */
+form input[type="text"],
+form input[type="date"],
+form input[type="file"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 4px;
+    background-color: transparent;
+    color: var(--color-text, #fff);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Focus para inputs */
+form input[type="text"]:focus,
+form input[type="date"]:focus,
+form input[type="file"]:focus,
+form textarea:focus,
+form select:focus {
+    outline: none;
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.2);
+}
+
+/* Textarea específico */
+form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Select específico */
+form select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23A68932' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+/* Estilos de archivo input */
+form input[type="file"] {
+    padding: 0.5rem;
+    cursor: pointer;
+    border: 2px solid var(--color-secondary);
+}
+
+form input[type="file"]::file-selector-button {
+    background: var(--color-secondary);
+    color: #000;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+}
+
+form input[type="file"]::file-selector-button:hover {
+    background: linear-gradient(135deg, #d4af37, #f4d467);
+    transform: translateY(-2px);
+}
+
+/* Mensajes de error */
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0 0;
+    color: #dc3545;
+    font-size: 0.875rem;
+}
+
+.errorlist li {
+    padding: 0.25rem 0;
+}
+
+/* Form group para campos adicionales */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--color-secondary);
+}
+
+.form-group p {
+    margin: 0;
+    color: var(--color-text, #fff);
+}
+
+.form-group a {
+    color: var(--color-secondary);
+    text-decoration: underline;
+}
+
+.form-group a:hover {
+    color: var(--color-primary);
+}
+
+/* Botones de acción del formulario */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 500px;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid var(--color-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.form-actions .btn-primary {
+    background: var(--color-secondary);
+    color: #000;
+}
+
+.form-actions .btn-primary:hover {
+    background: linear-gradient(135deg, #d4af37, #f4d467);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
+}
+
+.form-actions .btn-secondary {
+    background: transparent;
+    color: var(--color-secondary);
+}
+
+.form-actions .btn-secondary:hover {
+    background: rgba(166, 137, 50, 0.1);
+}
+
+/* Botón de volver */
+a.btn-secondary {
+    background: transparent;
+    color: var(--color-secondary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid var(--color-secondary);
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+a.btn-secondary:hover {
+    background: rgba(166, 137, 50, 0.1);
+}
+
+/* Título del formulario */
+h1 {
+    color: var(--color-secondary);
+    margin-bottom: 1rem;
+    font-size: 2rem;
+}
+
+/* Texto de ayuda */
+.help-text,
+small {
+    color: rgba(166, 137, 50, 0.7);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* Espaciado adicional */
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.ms-2 {
+    margin-left: 0.5rem;
+}
+
+/* Responsive para formularios */
+@media (max-width: 768px) {
+    form {
+        padding: 1rem;
+    }
+    
+    form p {
+        max-width: 100%;
+    }
+    
+    .form-group {
+        max-width: 100%;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        max-width: 100%;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 600px) {
+    form {
+        padding-top: 0;
+    }
+}
+
