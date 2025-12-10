@@ -10,8 +10,14 @@ urlpatterns = [
     # Ver manual en página con visor
     path('manual/', views.view_manual_page, name='view_manual'),
     
+    # Ver PDF del manual en el navegador (inline)
+    path('manual/pdf/', views.view_manual_pdf, name='view_manual_pdf'),
+    
     # Descargar manual PDF
     path('manual/descargar/', views.download_manual_view, name='download_manual'),
+    
+    # Editar manual (solo administradores)
+    path('manual/editar/', views.edit_manual, name='edit_manual'),
 
     # Subir y procesar documento
     path('api/upload/', views.UploadDocumentView.as_view(), name='upload_document'),

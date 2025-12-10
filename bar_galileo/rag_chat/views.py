@@ -364,8 +364,27 @@ class QueryHistoryView(View):
             return JsonResponse({'error': str(e)}, status=500)
 
 
+def view_manual_pdf(request):
+    """Vista para mostrar el PDF del manual en el navegador (sin descargar)"""
+    import os
+    from django.http import FileResponse, Http404
+    from django.conf import settings
+    
+    # Ruta al PDF del manual
+    pdf_path = os.path.join(settings.MEDIA_ROOT, 'rag_documents', 'manual_usuario.pdf')
+    
+    if not os.path.exists(pdf_path):
+        raise Http404("El manual no está disponible")
+    
+    # Servir el archivo para visualizarlo en el navegador
+    response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename="Manual_Usuario_Bar_Galileo.pdf"'
+    
+    return response
+
+
 def download_manual_view(request):
-    """Vista para mostrar el manual de usuario en PDF en el navegador"""
+    """Vista para descargar el manual de usuario en PDF"""
     import os
     from django.http import FileResponse, Http404
     from django.conf import settings
@@ -384,5 +403,83 @@ def download_manual_view(request):
 
 
 def view_manual_page(request):
-    """Vista HTML que muestra el manual con visor integrado"""
-    return render(request, 'rag_chat/manual.html')
+    """Vista HTML que muestra el manual convertido a HTML"""
+    import os
+    import markdown
+    from django.conf import settings
+    
+    # Leer el archivo markdown
+    manual_path = os.path.join(settings.BASE_DIR.parent, 'docs', 'manual_usuario.md')
+    
+    try:
+        with open(manual_path, 'r', encoding='utf-8') as f:
+            manual_md = f.read()
+        
+        # Convertir markdown a HTML
+        manual_html = markdown.markdown(manual_md, extensions=['extra', 'codehilite'])
+    except FileNotFoundError:
+        manual_html = "<h1>Manual no disponible</h1><p>El archivo del manual no se encontró.</p>"
+    
+    return render(request, 'rag_chat/manual.html', {'manual_html': manual_html})
+
+
+def edit_manual(request):
+    """Vista para editar el manual de usuario (solo administradores)"""
+    import os
+    from django.conf import settings
+    from django.contrib import messages
+    from django.shortcuts import redirect
+    from django.contrib.auth.decorators import user_passes_test
+    
+    # Solo staff y superusuarios pueden editar
+    if not (request.user.is_staff or request.user.is_superuser):
+        messages.error(request, 'No tienes permisos para editar el manual.')
+        return redirect('rag_chat:view_manual')
+    
+    # Ruta al archivo markdown del manual
+    manual_path = os.path.join(settings.BASE_DIR.parent, 'docs', 'manual_usuario.md')
+    
+    if request.method == 'POST':
+        content = request.POST.get('content', '')
+        
+        # Validar contenido
+        if len(content.strip()) < 100:
+            messages.error(request, 'El contenido del manual es demasiado corto.')
+            return render(request, 'rag_chat/edit_manual.html', {'content': content})
+        
+        try:
+            # Guardar el archivo markdown
+            with open(manual_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            # Intentar regenerar el PDF
+            try:
+                from .document_loader import convert_markdown_to_pdf
+                pdf_path = os.path.join(settings.MEDIA_ROOT, 'rag_documents', 'manual_usuario.pdf')
+                convert_markdown_to_pdf(manual_path, pdf_path)
+                messages.success(request, 'Manual actualizado correctamente. El PDF ha sido regenerado.')
+            except Exception as pdf_error:
+                logger.warning(f"No se pudo regenerar el PDF: {pdf_error}")
+                messages.success(request, 'Manual actualizado correctamente. El PDF no se pudo regenerar automáticamente.')
+            
+            return redirect('rag_chat:view_manual')
+            
+        except Exception as e:
+            logger.error(f"Error al guardar el manual: {e}")
+            messages.error(request, f'Error al guardar el manual: {str(e)}')
+            return render(request, 'rag_chat/edit_manual.html', {'content': content})
+    
+    # GET - Mostrar formulario de edición
+    try:
+        with open(manual_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except FileNotFoundError:
+        messages.error(request, 'No se encontró el archivo del manual.')
+        content = '# Manual de Usuario\n\nEl archivo del manual no existe.'
+    except Exception as e:
+        logger.error(f"Error al leer el manual: {e}")
+        messages.error(request, f'Error al leer el manual: {str(e)}')
+        content = ''
+    
+    return render(request, 'rag_chat/edit_manual.html', {'content': content})
+
