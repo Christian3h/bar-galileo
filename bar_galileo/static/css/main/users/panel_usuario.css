@@ -978,3 +978,8 @@ form button {
     width: 35px !important;
   }
 }
+
+/* Clase para ocultar el panel lateral */
+.hidden {
+    display: none !important;
+}
