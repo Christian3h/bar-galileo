@@ -117,7 +117,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="4" style="text-align: center;">No hay historial de consumo todavía.</td>
+                  <td colspan="4" class="text-center">No hay historial de consumo todavía.</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -134,7 +134,7 @@
               <form method="post" enctype="multipart/form-data" action="{% url 'users:panel_usuario' %}">
                   {% csrf_token %}
                   <label for="avatar-upload" class="edit-btn">Subir/Cambiar Foto</label>
-                  <input id="avatar-upload" type="file" name="avatar" accept="image/*" style="display: none;" onchange="this.form.submit()">
+                  <input id="avatar-upload" type="file" name="avatar" accept="image/*" class="hidden-input" onchange="this.form.submit()">
                   {% if datos.avatar_url %}
                       <button type="submit" name="delete_avatar" value="1" class="edit-btn" onclick="return confirm('¿Seguro que quieres eliminar tu foto de perfil?');">Eliminar Foto</button>
                   {% endif %}
@@ -143,28 +143,28 @@
           <div id="info-display">
             <div class="form-field-col">
               <label class="form-label">Nombre:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.nombre }}</div>
+              <div class="info-input text-left">{{ datos.nombre }}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Cédula:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.cedula }}</div>
+              <div class="info-input text-left">{{ datos.cedula }}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Teléfono:</label>
-                  <div class="info-input" style="text-align:left;">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
+                  <div class="info-input text-left">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Email:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.email }}</div>
+              <div class="info-input text-left">{{ datos.email }}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Dirección:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.direccion }}</div>
+              <div class="info-input text-left">{{ datos.direccion }}</div>
             </div>
 
             <button type="button" class="edit-btn" onclick="toggleInfoForm(true)">Editar</button>
           </div>
-          <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form" style="display:none;">
+          <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form hidden-form">
             {% csrf_token %}
             <div class="form-field-col">
               <label for="nombre" class="form-label">Nombre:</label>
@@ -202,35 +202,35 @@
             {% if datos.emergencia.nombre or datos.emergencia.telefono %}
               <div class="form-field-col">
                 <label class="form-label">Nombre:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.nombre }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.nombre }}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Relación:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.relacion }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.relacion }}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Teléfono:</label>
-                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono %}{% if datos.emergencia.telefono|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono }}{% endif %}{% else %}{{ datos.emergencia.telefono }}{% endif %}</div>
+                    <div class="info-input text-left">{% if datos.emergencia.telefono %}{% if datos.emergencia.telefono|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono }}{% endif %}{% else %}{{ datos.emergencia.telefono }}{% endif %}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Teléfono Alternativo:</label>
-                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono_alt %}{% if datos.emergencia.telefono_alt|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono_alt }}{% endif %}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}</div>
+                    <div class="info-input text-left">{% if datos.emergencia.telefono_alt %}{% if datos.emergencia.telefono_alt|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono_alt }}{% endif %}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Tipo de Sangre:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.sangre }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.sangre }}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Alergias:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.alergias }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.alergias }}</div>
               </div>
               <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Editar</button>
             {% else %}
-              <div class="info-input" style="text-align:center; color:#A68932; margin-bottom:18px;">No hay contacto de emergencia registrado.</div>
+              <div class="info-input text-center empty-message">No hay contacto de emergencia registrado.</div>
               <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Agregar Contacto</button>
             {% endif %}
           </div>
-          <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form" style="display:none;">
+          <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form hidden-form">
             {% csrf_token %}
             <div class="form-field-col">
               <label for="emergencia_nombre" class="form-label">Nombre:</label>

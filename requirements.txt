@@ -56,5 +56,15 @@ uvicorn==0.23.2
 watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
-reportlab==4.0.0
-openpyxl==3.1.2
+
+# Paquetes para exportación de datos
+openpyxl==3.1.5
+reportlab==4.2.5
+
+# RAG Chat Dependencies
+pymupdf==1.24.13
+sentence-transformers==3.3.1
+faiss-cpu==1.9.0.post1
+numpy==1.26.4
+torch==2.5.1
+# Optional: pytesseract==0.3.13 (para OCR de PDFs escaneados)

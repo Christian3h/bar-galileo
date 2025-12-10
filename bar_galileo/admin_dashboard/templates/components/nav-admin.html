@@ -136,9 +136,21 @@
 
                 {% if request.user|has_perm:"backups,ver" %}
                 <li>
-                                        <button class="menu-btn" onclick="toggleMenu('backups-submenu')"><img src="{% static 'img/icons/backup.svg' %}" alt="Backups"> Backups</button>
+                                        <button class="menu-btn" onclick="toggleMenu('backups-submenu')"><img src="{% static 'img/icons/backup.svg' %}" alt="Copias de seguridad"> Copias de seguridad</button>
                     <ul id="backups-submenu" class="submenu hidden">
-                        <li><a href="{% url 'backups:backup_list' %}">Gestión de Backups</a></li>
+                        <li><a href="{% url 'backups:backup_list' %}">Gestión de Copias de Seguridad</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if request.user|has_perm:"reportes,ver" %}
+                <li>
+                                        <button class="menu-btn" onclick="toggleMenu('reportes-submenu')"><img src="{% static 'img/icons/bar_chart.svg' %}" alt="Reportes"> Reportes</button>
+                    <ul id="reportes-submenu" class="submenu hidden">
+                        <li><a href="{% url 'reportes:reporte_list' %}">Lista de Reportes</a></li>
+                        {% if request.user|has_perm:"reportes,crear" %}
+                        <li><a href="{% url 'reportes:reporte_create' %}">Crear Reporte</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 {% endif %}
@@ -184,3 +196,21 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var homeBtn = document.getElementById('home-page-btn');
+    var loadingScreen = document.getElementById('home-loading-screen');
+    homeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Oculta todo el contenido excepto la pantalla de carga
+        document.body.querySelectorAll(':scope > *:not(#home-loading-screen)').forEach(function(el) {
+            el.style.display = 'none';
+        });
+        loadingScreen.classList.remove('hidden');
+        // Redirige a la página principal después de un breve delay
+        setTimeout(function() {
+            window.location.href = homeBtn.getAttribute('data-url');
+        }, 500);
+    });
+});
+</script>

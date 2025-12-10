@@ -74,6 +74,8 @@ INSTALLED_APPS = [
     #app para el manejo de backups
     'dbbackup',
     'backups',
+    #app para reportes
+    'reportes',
     #app para consumir Google API
     'google_chat',
     # RAG chat app (interfaz de chat con búsqueda/embeddings)
@@ -225,17 +227,17 @@ LOGIN_REDIRECT_URL = '/'
 
 #---------------------- credenciales para enviar correos
 
-# En desarrollo: mostrar emails en consola (evita límites de Gmail)
-# En producción: usar SMTP real
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = os.getenv('emailHost')
-    EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
+# Configuración SMTP para Gmail (funciona en desarrollo y producción)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('emailHost')
+EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
+DEFAULT_FROM_EMAIL = os.getenv('emailHost')  # Email remitente por defecto
+
+# Para debug: descomentar la siguiente línea para ver emails en consola
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Endpoints de seguridad para producción
 if not DEBUG:

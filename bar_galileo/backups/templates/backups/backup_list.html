@@ -9,16 +9,17 @@
 
 {% block content %}
 <div class="dashboard-container">
-    <h2 class="dashboard-title">Gestión de Backups</h2>
+    <h2 class="dashboard-title">Gestión de Copias de Seguridad
+    </h2>
 
     <!-- Estadísticas -->
     <section class="dashboard-cards">
         <div class="card">
-            <h3>Backups de BD</h3>
+            <h3>Copia de Seguridad de BD</h3>
             <p>{{ total_db_backups }}</p>
         </div>
         <div class="card">
-            <h3>Backups de Media</h3>
+            <h3>Copia de Seguridad de Media</h3>
             <p>{{ total_media_backups }}</p>
         </div>
         <div class="card">
@@ -36,7 +37,7 @@
         {% if request.user|has_perm:"backups,crear" %}
         <div class="field-group buttons-group">
             <button onclick="crearBackup('completo')" class="btn btn-success">
-                🔒 Crear Backup Completo
+                🔒 Crear copia Completa
             </button>
             <button onclick="crearBackup('db')" class="btn btn-primary">
                 💾 Solo Base de Datos
@@ -48,11 +49,11 @@
         {% endif %}
 
         {% if request.user|has_perm:"backups,editar" %}
-        <div class="field-group buttons-group" style="margin-top: 10px;">
+        <div class="field-group buttons-group btn-spacing">
             <button onclick="mostrarModalRestaurar()" class="btn btn-warning">
                 <img src="{% static 'img/icons/upload.svg' %}" alt="Restaurar"
                     style="width: 16px; height: 16px; vertical-align: middle; margin-right: 5px;">
-                Restaurar Backup
+                Restaurar Copia de Seguridad
             </button>
         </div>
         {% endif %}
@@ -60,7 +61,7 @@
 
     <!-- Backups de Base de Datos -->
     <div class="table-responsive">
-        <h3 style="margin: 20px 0 10px 0;">💾 Backups de Base de Datos</h3>
+        <h3 class="table-title">💾 Copia de Seguridad de Base de Datos</h3>
         <table id="tabla-backups-db" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
@@ -99,7 +100,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" style="text-align: center;">No hay backups de base de datos disponibles</td>
+                    <td colspan="5" style="text-align: center;">No hay copias de base de datos disponibles</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -108,7 +109,7 @@
 
     <!-- Backups de Media -->
     <div class="table-responsive" style="margin-top: 40px;">
-        <h3 style="margin: 20px 0 10px 0;">📁 Backups de Archivos Media</h3>
+        <h3 style="margin: 20px 0 10px 0;">📁 Copia de seguridad de Archivos Media</h3>
         <table id="tabla-backups-media" class="table table-striped table-bordered nowrap">
             <thead>
                 <tr>
@@ -147,7 +148,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5" style="text-align: center;">No hay backups de media disponibles</td>
+                    <td colspan="5" style="text-align: center;">No hay copias de media disponibles</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -178,11 +179,11 @@
 <div id="createModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>🔒 Crear Backup</h3>
+            <h3>🔒 Crear Copia de Seguridad</h3>
             <span class="close-modal" onclick="cerrarModalCrear()">&times;</span>
         </div>
         <div class="modal-body">
-            <p>¿Está seguro que desea crear un backup?</p>
+            <p>¿Está seguro que desea crear una copia de seguridad?</p>
             <p><strong id="createBackupType"></strong></p>
         </div>
         <div class="modal-footer">
@@ -200,7 +201,7 @@
             <span class="close-modal" onclick="cerrarModalRestaurar()">&times;</span>
         </div>
         <div class="modal-body">
-            <p>Seleccione cómo desea restaurar el backup:</p>
+            <p>Seleccione cómo desea restaurar la copia de seguridad:</p>
 
             <!-- Tabs para seleccionar modo -->
             <div
@@ -218,7 +219,7 @@
             <!-- Contenido: Restaurar desde servidor -->
             <div id="contenidoExistente">
                 <div class="field-group">
-                    <label for="restoreTipo">Tipo de Backup:</label>
+                    <label for="restoreTipo">Tipo de Copia de Seguridad:</label>
                     <select id="restoreTipo" class="form-control" onchange="cargarBackupsDisponibles()">
                         <option value="">-- Seleccione --</option>
                         <option value="db">Base de Datos</option>
@@ -227,7 +228,7 @@
                 </div>
 
                 <div class="field-group" id="restoreFileGroup" style="display: none;">
-                    <label for="restoreFile">Archivo de Backup:</label>
+                    <label for="restoreFile">Archivo de Copia de Seguridad:</label>
                     <select id="restoreFile" class="form-control">
                         <option value="">-- Seleccione un archivo --</option>
                     </select>
@@ -552,27 +553,24 @@
             document.getElementById('btnRestaurar').disabled = true;
             return;
         }
-
         // Cargar backups según el tipo
         if (tipo === 'db') {
             {% for backup in db_backups %}
-            const optionDB{{ forloop.counter }
-        } = document.createElement('option');
-        optionDB{ { forloop.counter } }.value = '{{ backup.nombre }}';
-        optionDB{ { forloop.counter } }.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_kb|floatformat:2 }} KB)';
-        selectFile.appendChild(optionDB{{ forloop.counter }});
-    {% endfor %}
-    } else if (tipo === 'media') {
-        {% for backup in media_backups %}
-        const optionMedia{{ forloop.counter }
-    } = document.createElement('option');
-        optionMedia{ { forloop.counter } }.value = '{{ backup.nombre }}';
-        optionMedia{ { forloop.counter } }.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_mb|floatformat:2 }} MB)';
-    selectFile.appendChild(optionMedia{{ forloop.counter }});
-    {% endfor %}
-    }
+            const optionDB{{ forloop.counter }} = document.createElement('option');
+            optionDB{{ forloop.counter }}.value = '{{ backup.nombre }}';
+            optionDB{{ forloop.counter }}.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_kb|floatformat:2 }} KB)';
+            selectFile.appendChild(optionDB{{ forloop.counter }});
+            {% endfor %}
+        } else if (tipo === 'media') {
+            {% for backup in media_backups %}
+            const optionMedia{{ forloop.counter }} = document.createElement('option');
+            optionMedia{{ forloop.counter }}.value = '{{ backup.nombre }}';
+            optionMedia{{ forloop.counter }}.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_mb|floatformat:2 }} MB)';
+            selectFile.appendChild(optionMedia{{ forloop.counter }});
+            {% endfor %}
+        }
 
-    fileGroup.style.display = 'block';
+        fileGroup.style.display = 'block';
 
     // Habilitar botón cuando se seleccione archivo
     selectFile.onchange = function () {
@@ -688,5 +686,7 @@
         }
     }
 </script>
+
+<script src="{% static 'js/backups/backups.js' %}"></script>
 
 {% endblock %}
