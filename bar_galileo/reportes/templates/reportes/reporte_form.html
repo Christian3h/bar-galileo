@@ -1,11 +1,16 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/reportes/reportes.css' %}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <h2 class="page-title">{% if object %}Editar Reporte{% else %}Crear Nuevo Reporte{% endif %}</h2>
     
         
-        <form method="post" enctype="multipart/form-data" id="reporteForm">
+        <form method="post" enctype="multipart/form-data" id="reporteForm" novalidate>
             {% csrf_token %}
             
             <div class="form-group">
