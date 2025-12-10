@@ -155,13 +155,16 @@
                 </li>
                 {% endif %}
 
-                <!-- Chat RAG con Documentos -->
+                <!-- Chat RAG con Documentos (mostrar solo si la URL está registrada) -->
+                {% url 'rag_chat:chat' as rag_chat_url %}
+                {% if rag_chat_url %}
                 <li>
-                    <button class="menu-btn" onclick="window.location.href='{% url 'rag_chat:chat' %}'">
+                    <button class="menu-btn" onclick="window.location.href='{{ rag_chat_url }}'">
                         <img src="{% static 'img/icons/group.svg' %}" alt="Chat RAG">
                         Chat con Documentos
                     </button>
                 </li>
+                {% endif %}
 
 
                 <!-- {% if request.user|has_perm:"dashboard,ver" %}

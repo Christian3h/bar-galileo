@@ -988,6 +988,11 @@ form button {
   }
 }
 
+/* Clase para ocultar el panel lateral */
+.hidden {
+    display: none !important;
+}
+
 /* =======================================
    CLASES ADICIONALES PARA FORMULARIOS
 ======================================= */
