@@ -12,21 +12,25 @@ class ReporteForm(forms.ModelForm):
         widgets = {
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Nombre del reporte'
+                'placeholder': 'Nombre del reporte',
+                'required': True
             }),
             'tipo': forms.Select(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'required': True
             }),
             'periodo': forms.Select(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'required': True
             }),
             'formato': forms.Select(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'required': True
             }),
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Descripción del reporte'
+                'placeholder': 'Descripción del reporte (opcional)'
             }),
             'fecha_inicio': forms.DateInput(attrs={
                 'class': 'form-control',
@@ -50,6 +54,30 @@ class ReporteForm(forms.ModelForm):
             'fecha_fin': 'Fecha de Fin',
             'archivo': 'Archivo del Reporte'
         }
+    
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not nombre or not nombre.strip():
+            raise forms.ValidationError('El nombre del reporte es obligatorio.')
+        return nombre.strip()
+    
+    def clean_tipo(self):
+        tipo = self.cleaned_data.get('tipo')
+        if not tipo:
+            raise forms.ValidationError('El tipo de reporte es obligatorio.')
+        return tipo
+    
+    def clean_periodo(self):
+        periodo = self.cleaned_data.get('periodo')
+        if not periodo:
+            raise forms.ValidationError('El periodo es obligatorio.')
+        return periodo
+    
+    def clean_formato(self):
+        formato = self.cleaned_data.get('formato')
+        if not formato:
+            raise forms.ValidationError('El formato es obligatorio.')
+        return formato
 
 
 class ReporteFilterForm(forms.Form):
