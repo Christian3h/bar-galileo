@@ -57,6 +57,9 @@ watchfiles==1.1.0
 websockets==15.0.1
 zope.interface==7.2
 
+# Base de datos MySQL/MariaDB
+mysqlclient==2.2.7
+
 # Paquetes para exportación de datos
 openpyxl==3.1.5
 reportlab==4.2.5
