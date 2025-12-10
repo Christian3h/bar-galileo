@@ -55,18 +55,26 @@ def _call_google_api_with_context(query: str, context_chunks: list) -> tuple:
 
     # Construir prompt con contexto
     context_text = "\n\n".join([
-        f"[Página {c['metadata'].get('source_pages', ['?'])[0]}] {c['metadata']['content']}"
+        f"{c['metadata']['content']}"
         for c in context_chunks
     ])
 
-    prompt = f"""Eres un asistente del sistema Bar Galileo. Responde de forma clara y breve.
+    prompt = f"""Eres el asistente de ayuda del Sistema Bar Galileo. Tu trabajo es responder preguntas sobre cómo usar el sistema basándote ÚNICAMENTE en el manual proporcionado.
 
-CONTEXTO:
+INSTRUCCIONES IMPORTANTES:
+1. Responde SOLO con información del contexto proporcionado
+2. Si la pregunta no está en el contexto, di: "No encontré esa información en el manual"
+3. Sé breve y directo - máximo 4-5 líneas
+4. Si hay pasos, numéralos claramente
+5. Usa un lenguaje simple y amigable
+6. NO inventes información que no esté en el contexto
+
+CONTEXTO DEL MANUAL:
 {context_text}
 
-PREGUNTA: {query}
+PREGUNTA DEL USUARIO: {query}
 
-Responde en máximo 3-4 párrafos cortos, directo al punto. Si hay pasos, númeralos. No uses encabezados markdown ni formato complejo."""
+RESPUESTA (breve y clara):"""
 
     # Intentar con diferentes modelos disponibles
     models_to_try = [
@@ -223,7 +231,7 @@ class QueryRAGView(View):
             data = json.loads(request.body)
             collection_id = data.get('collection_id')
             query = data.get('query', '').strip()
-            top_k = data.get('top_k', 3)
+            top_k = data.get('top_k', 5)  # Aumentado de 3 a 5 para mejor contexto
 
             if not query:
                 return JsonResponse({'error': 'Query vacío'}, status=400)
