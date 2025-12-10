@@ -160,6 +160,33 @@ function initWebSocket() {
     };
 }
 
+// Detectar clics fuera del panel lateral y ocultarlo
+function hidePanelOnClickOutside() {
+    const panel = document.querySelector('.sidebar-panel');
+    const toggleButton = document.getElementById('notification-icon');
+
+    if (!panel) return;
+
+    // Prevenir que los clics dentro del panel se propaguen al contenedor padre
+    // Esto evita que el listener del botón (que contiene al panel) cierre el panel al interactuar con él
+    panel.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener('click', function(event) {
+        // Si el clic fue en el botón de toggle (o sus hijos), ignoramos
+        // El listener del botón se encargará de abrir/cerrar
+        if (toggleButton && toggleButton.contains(event.target)) {
+            return;
+        }
+
+        // Si el panel está abierto y el clic fue fuera, lo cerramos
+        if (panel.classList.contains('show')) {
+            panel.classList.remove('show');
+        }
+    });
+}
+
 // Inicialización cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     // Ocultar mensajes de éxito
@@ -178,4 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar WebSocket
     initWebSocket();
+
+    // Asociar funcionalidad para ocultar el panel
+    hidePanelOnClickOutside();
 });

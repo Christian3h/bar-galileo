@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/fonts/outfit.css">
+    <link rel="stylesheet" href="/static/css/main/auth/auth.css">
+    <link rel="stylesheet" href="/static/css/theme-apply.css">
+    <link rel="stylesheet" href="/static/css/dashboard-loading.css">
+    <link rel="stylesheet" href="/static/css/_components/notifications.css">
+    <link rel="stylesheet" href="/static/css/main/auth/avatar.css">
+    <title>
+        
+    Iniciar sesión
+
+    </title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/img/favicon/favicon-96x96.png">
+    <link rel="icon" href="/static/img/favicon/favicon.ico">
+    <link rel="manifest" href="/static/img/favicon/site.webmanifest">
+    
+    
+</head>
+
+<body class="auth-page">
+    
+    <!-- Componente reutilizable de notificaciones flotantes -->
+
+<div id="notificaciones-flotantes" class="container-messages"></div>
+
+
+    
+    <!-- Centered Logo for Unauthenticated Users -->
+    <div class="auth-logo-container">
+        <a href="/">
+            <img src="/static/img/favicon/apple-touch-icon.png" alt="Bar Galileo" class="auth-logo">
+        </a>
+    </div>
+    
+
+    
+    <div class="container-login">
+        <h1>
+            Iniciar sesión
+        </h1>
+
+        
+            
+                
+            <p>
+                Si aún no ha creado una cuenta, por favor <a href="/accounts/signup/?next=%2Ffacturacion%2Fexport%2Fxlsx%2F">regístrese</a> primero.
+            </p>
+
+            
+            
+<form method="post"
+      action="/accounts/login/">
+    
+                    <input type="hidden" name="csrfmiddlewaretoken" value="zflfnXHZVAEtZ3nn7Z3EVKElMdRo1NR2pXKCBGJmy01H1Imai7xEjVftZ0uCf1mO">
+                    <div class="form-group">
+                        <label for="id_login">Usuario:</label>
+                        <input type="text" name="login" placeholder="Usuario" autocomplete="username" maxlength="150" class="form-control" required id="id_login">
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="id_password">Contraseña:</label>
+                        <input type="password" name="password" placeholder="Contraseña" autocomplete="current-password" class="form-control" required aria-describedby="id_password_helptext" id="id_password">
+                        
+                    </div>
+                    <div class="form-group" id="div_id_captcha">
+                        <label for="id_captcha_1">Captcha:</label>
+                        <a title="Reproducir CAPTCHA de audio" href="/captcha/audio/bc74fc17c4cf07c297553fb54ff729bc8c9d3684.wav"><img src="/captcha/image/bc74fc17c4cf07c297553fb54ff729bc8c9d3684/" alt="captcha" class="captcha" /></a>
+<input type="hidden" name="captcha_0" value="bc74fc17c4cf07c297553fb54ff729bc8c9d3684" required id="id_captcha_0" autocomplete="off"><input type="text" name="captcha_1" required id="id_captcha_1" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false">
+                        
+                    </div>
+                    <input type="hidden" name="next" value="/facturacion/export/xlsx/">
+                
+    
+                    
+
+<button
+
+
+
+
+type="submit"
+class=""
+
+>
+
+                        Iniciar sesión
+                    
+</button>
+
+
+                    <div style="text-align: center; margin-top: 15px;">
+                        <a href="/accounts/password/reset/"
+                           style="color: #6c757d; text-decoration: none; font-size: 0.9rem; font-weight: normal; transition: color 0.3s ease;"
+                           onmouseover="this.style.color='#d4af37';"
+                           onmouseout="this.style.color='#6c757d';">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+                    </div>
+
+                    
+                        
+
+
+
+
+
+                    
+                
+</form>
+
+        
+        
+    </div>
+    
+    
+
+    
+        
+    
+
+<!-- Pantalla de carga del Login -->
+<div id="login-loading-screen" class="dashboard-loading-screen hidden">
+    <div class="loading-content">
+        <div class="loading-logo">
+            <img src="/static/img/favicon/apple-touch-icon.png" alt="Bar Galileo Logo">
+        </div>
+        <div class="loading-text">
+            <h2>BAR GALILEO</h2>
+            <p>Iniciando sesión...</p>
+        </div>
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Solo funcionalidad del captcha aquí, la pantalla de carga se maneja en login-loading.js
+    const captchaContainer = document.querySelector('#div_id_captcha');
+
+    // Funcionalidad del captcha
+    if (captchaContainer) {
+        // Get original elements
+        const captchaLabel = captchaContainer.querySelector('label[for="id_captcha_1"]');
+        const captchaImage = captchaContainer.querySelector('img.captcha');
+        const captchaHiddenInput = captchaContainer.querySelector('input[name="captcha_0"]');
+        const captchaTextInput = captchaContainer.querySelector('input[name="captcha_1"]');
+        const captchaAudioLink = captchaContainer.querySelector('a[href*="/captcha/audio/"]'); // The default audio link
+        const captchaErrors = captchaContainer.querySelector('.errorlist'); // Get errors if any
+
+        // Clear the original container content
+        captchaContainer.innerHTML = '';
+
+        // Rebuild the layout
+        if (captchaLabel) {
+            captchaContainer.appendChild(captchaLabel);
+        }
+
+        if (captchaImage) {
+            captchaImage.style.pointerEvents = 'none'; // Prevent right-click
+            captchaImage.style.borderRadius = '8px';
+            captchaImage.style.marginBottom = '1rem';
+            captchaImage.style.border = '1px solid #444';
+            captchaContainer.appendChild(captchaImage);
+        }
+
+        if (captchaHiddenInput) {
+            captchaContainer.appendChild(captchaHiddenInput);
+        }
+
+        // Create the toggle link and audio player container
+        const toggleLink = document.createElement('a');
+        toggleLink.href = '#';
+        toggleLink.className = 'toggle-audio';
+        toggleLink.style.display = 'block';
+        toggleLink.style.marginTop = '10px';
+        toggleLink.style.fontSize = '0.9rem';
+        toggleLink.style.color = '#d4af37';
+        toggleLink.style.textDecoration = 'none';
+        toggleLink.textContent = 'Escuchar audio';
+
+        const audioPlayerContainer = document.createElement('div');
+        audioPlayerContainer.className = 'audio-player-container';
+        audioPlayerContainer.style.display = 'none';
+        audioPlayerContainer.style.marginTop = '10px';
+
+        const audioPlayer = document.createElement('audio');
+        audioPlayer.controls = true;
+        audioPlayer.preload = 'none';
+        audioPlayer.style.width = '100%';
+        audioPlayer.innerHTML = 'Tu navegador no soporta el elemento de audio.';
+
+        if (captchaAudioLink && captchaAudioLink.href) {
+            audioPlayer.src = captchaAudioLink.href;
+        }
+
+        audioPlayerContainer.appendChild(audioPlayer);
+
+        // Append elements to the main container
+        if (captchaTextInput) {
+            captchaContainer.appendChild(captchaTextInput);
+        }
+        captchaContainer.appendChild(toggleLink);
+        captchaContainer.appendChild(audioPlayerContainer);
+
+        if (captchaErrors) {
+            captchaContainer.appendChild(captchaErrors);
+        }
+
+        // Add event listener to toggle link
+        toggleLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const isHidden = audioPlayerContainer.style.display === 'none';
+            audioPlayerContainer.style.display = isHidden ? 'block' : 'none';
+            this.textContent = isHidden ? 'Ocultar audio' : 'Escuchar audio';
+        });
+    }
+});
+</script>
+
+
+
+    <script src="/static/accessibility/sienna.js"></script>
+    <script src="/static/accessibility/custom.js"></script>
+    <script src="/static/js/login-loading.js"></script>
+
+    <script src="/static/js/admin/notification_history.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggle = document.getElementById("menu-toggle");
+            const menu = document.getElementById("menu-items");
+
+            if (toggle && menu) {
+                toggle.addEventListener("click", function () {
+                    menu.classList.toggle("show");
+                });
+            }
+        });
+    </script>
+
+    
+
+</body>
+
+</html>

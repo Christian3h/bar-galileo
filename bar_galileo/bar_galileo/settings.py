@@ -78,7 +78,7 @@ INSTALLED_APPS = [
     'reportes',
     #app para consumir Google API
     'google_chat',
-    #app para RAG (Q&A sobre documentos)
+    # RAG chat app (interfaz de chat con búsqueda/embeddings)
     'rag_chat',
     ]
 
