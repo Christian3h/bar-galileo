@@ -159,6 +159,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Cerrar panel de notificaciones al hacer clic fuera
+  document.addEventListener('click', function(event) {
+    if (!panel) return;
+    // Si el panel está abierto y el clic fue fuera del panel y fuera del icono
+    if (
+      panel.classList.contains('show') &&
+      !panel.contains(event.target) &&
+      !(icon && icon.contains(event.target))
+    ) {
+      panel.classList.remove('show');
+    }
+  });
+
   function getCookie(name) {
     return document.cookie.split('; ')
       .find(row => row.startsWith(name + '='))
