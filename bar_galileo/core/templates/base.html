@@ -31,7 +31,7 @@
       </div>
       <div class="loading-text">
         <h2>BAR GALILEO</h2>
-        <p>Cargando Dashboard...</p>
+        <p>Cargando Panel de Administrador...</p>
       </div>
       <div class="loading-spinner">
         <div class="spinner"></div>
@@ -67,13 +67,13 @@
                 </div>
                 <a href="{% url 'users:panel_usuario' %}">Mi Panel</a>
                 {% if request.user|has_perm:"dashboard,ver" %}
-                <a href="{% url 'admin_dashboard:dashboard' %}" id="dashboard-link">Dashboard</a>
+                <a href="{% url 'admin_dashboard:dashboard' %}" id="dashboard-link">Panel de administrador</a>
                 {% endif %}
                 <a href="{% url 'account_logout' %}">Cerrar sesión</a>
               </div>
             </li>
           {% else %}
-            <li><a href="/accounts/login/" class="nav-strong">LOGIN</a></li>
+            <li><a href="/accounts/login/" class="nav-strong">INICIAR SESIÓN</a></li>
           {% endif %}
         </ul>
       </nav>
@@ -174,9 +174,9 @@
       });
     });
   </script>
-  
+
   <script src="{% static 'js/dashboard-loading.js' %}"></script>
-  
+
   {% block extra_js %}{% endblock %}
 
   <script src="{% static 'accessibility/sienna.js' %}"></script>

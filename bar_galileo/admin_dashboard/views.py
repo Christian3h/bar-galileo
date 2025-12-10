@@ -115,9 +115,9 @@ class DashboardView(TemplateView):
         context['selected_period'] = period
 
         # Enviar notificación al usuario actual
-        if self.request.user.is_authenticated:
-            mensaje = f"¡Bienvenido al dashboard, {self.request.user.first_name or self.request.user.username}!"
-            notificar_usuario(self.request.user, mensaje)
+        # if self.request.user.is_authenticated:
+        #     mensaje = f"¡Bienvenido al dashboard, {self.request.user.first_name or self.request.user.username}!"
+        #     notificar_usuario(self.request.user, mensaje)
         return context
 
 

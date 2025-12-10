@@ -4,13 +4,33 @@
 
 // Mostrar/ocultar formularios de edición
 function toggleInfoForm(show) {
-    document.getElementById('info-display').style.display = show ? 'none' : '';
-    document.getElementById('info-form').style.display = show ? '' : 'none';
+    const infoDisplay = document.getElementById('info-display');
+    const infoForm = document.getElementById('info-form');
+
+    if (show) {
+        infoDisplay.style.display = 'none';
+        infoForm.style.display = 'block';
+        infoForm.classList.remove('hidden-form');
+    } else {
+        infoDisplay.style.display = 'block';
+        infoForm.style.display = 'none';
+        infoForm.classList.add('hidden-form');
+    }
 }
 
 function toggleEmergenciaForm(show) {
-    document.getElementById('emergencia-display').style.display = show ? 'none' : '';
-    document.getElementById('emergencia-form').style.display = show ? '' : 'none';
+    const emergenciaDisplay = document.getElementById('emergencia-display');
+    const emergenciaForm = document.getElementById('emergencia-form');
+
+    if (show) {
+        emergenciaDisplay.style.display = 'none';
+        emergenciaForm.style.display = 'block';
+        emergenciaForm.classList.remove('hidden-form');
+    } else {
+        emergenciaDisplay.style.display = 'block';
+        emergenciaForm.style.display = 'none';
+        emergenciaForm.classList.add('hidden-form');
+    }
 }
 
 // Ocultar mensajes de éxito después de 3.5 segundos

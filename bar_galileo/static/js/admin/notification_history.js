@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('[DEBUG] Script de notificaciones cargado');
-
   const icon      = document.getElementById('notification-icon');
   const badge     = document.getElementById('notification-badge');
   const panel     = document.getElementById('notifications-panel');
@@ -104,13 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const ws       = new WebSocket(wsPath);
 
   ws.onopen = () => {
-    console.log('[DEBUG][WS] Conectado');
     fetchNotifications();
     fetchPendingPopups();
   };
 
   ws.onmessage = e => {
-    console.log('[DEBUG][WS] Mensaje recibido:', e.data);
     let data = {};
     try {
       data = JSON.parse(e.data);
@@ -125,8 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  ws.onerror = e => console.error('[DEBUG][WS] Error:', e);
-  ws.onclose = () => console.log('[DEBUG][WS] Cerrado');
+  ws.onerror = e => { /* WebSocket error */ };
+  ws.onclose = () => { /* WebSocket cerrado */ };
 
   /* -----------  Eventos UI ----------- */
   if (icon) {

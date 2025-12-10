@@ -305,6 +305,17 @@ class DeleteDocumentView(View):
             collection = DocumentCollection.objects.get(id=collection_id)
 
             title = collection.title
+            
+            # Eliminar el archivo físico si existe
+            if collection.file:
+                try:
+                    file_path = collection.file.path
+                    if os.path.exists(file_path):
+                        os.remove(file_path)
+                        logger.info(f'Archivo eliminado: {file_path}')
+                except Exception as file_error:
+                    logger.warning(f'No se pudo eliminar el archivo: {file_error}')
+            
             collection.delete()  # Cascada elimina chunks también
 
             return JsonResponse({

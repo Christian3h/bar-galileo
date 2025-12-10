@@ -5,10 +5,7 @@
 @import "../../_variables/_colors.css";
 @import "../../_components/_buttons.css";
 @import "../../_components/_nav_admin.css";
-<<<<<<< HEAD
 @import "../../_components/_forms.css";
-=======
->>>>>>> f550aac13c0202e2f4652738b7d329dd256a899a
 
 /* =======================================
    BASE
@@ -199,6 +196,7 @@ body {
 @media (max-width: 700px) {
   .dashboard-charts {
     flex-direction: column;
+    overflow: scroll;
   }
   .chart-box{
     min-width: 100%;
