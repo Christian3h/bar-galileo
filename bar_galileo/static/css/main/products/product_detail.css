@@ -1,5 +1,47 @@
 @import '../../_variables/_colors.css';
 
+/* Galería de imágenes */
+.gallery-container {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.main-image-display {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: var(--color-light);
+    display: block;
+    margin: 0 auto;
+}
+
+.thumbnail-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.product-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.product-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.product-thumbnail.active {
+    border-color: var(--color-primary);
+}
+
 .detalle-container {
     max-width: 800px;
     margin: 80px auto 40px auto;
@@ -8,6 +50,7 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.18);
     padding: 32px 24px;
     color: var(--color-secondary);
+    overflow: hidden;
 }
 .detalle-img {
     width: 100%;
