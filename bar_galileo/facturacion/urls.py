@@ -13,4 +13,5 @@ urlpatterns = [
     path('exportar/csv/', views.exportar_facturas_csv, name='exportar_csv'),
     path('exportar/xlsx/', views.exportar_facturas_xlsx, name='exportar_xlsx'),
     path('exportar/pdf/', views.exportar_facturas_pdf, name='exportar_pdf'),
+    path('export/<str:fmt>/', views.export_facturas, name='export_facturas'),
 ]

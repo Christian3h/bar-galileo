@@ -11,6 +11,10 @@ from roles.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from decimal import InvalidOperation
 import logging
+from django.http import HttpResponse
+import csv
+from io import BytesIO
+from django.template.loader import render_to_string
 
 logger = logging.getLogger(__name__)
 
@@ -24,23 +28,23 @@ def lista_facturas(request):
     busqueda = request.GET.get('busqueda', '')
     fecha_inicio = request.GET.get('fecha_inicio', '')
     fecha_fin = request.GET.get('fecha_fin', '')
-    
+
     # Convertir fechas si existen
     fecha_inicio_obj = None
     fecha_fin_obj = None
-    
+
     if fecha_inicio:
         try:
             fecha_inicio_obj = datetime.strptime(fecha_inicio, '%Y-%m-%d')
         except ValueError:
             pass
-    
+
     if fecha_fin:
         try:
             fecha_fin_obj = datetime.strptime(fecha_fin, '%Y-%m-%d')
         except ValueError:
             pass
-    
+
     try:
         # Obtener facturas usando el nuevo manager
         facturas = FacturacionManager.obtener_facturas_con_filtros(
@@ -48,15 +52,15 @@ def lista_facturas(request):
             fecha_inicio=fecha_inicio_obj,
             fecha_fin=fecha_fin_obj
         )
-        
+
         # Paginación
         paginator = Paginator(facturas, 10)  # 10 facturas por página
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        
+
         # Estadísticas
         estadisticas = FacturacionManager.obtener_estadisticas()
-        
+
     except Exception as e:
         logger.error(f"Error en lista_facturas: {e}")
         messages.error(request, f"Error cargando facturas: {e}")
@@ -67,7 +71,7 @@ def lista_facturas(request):
             'facturas_hoy': 0,
             'ingresos_hoy': 0,
         }
-    
+
     context = {
         'page_obj': page_obj,
         'busqueda': busqueda,
@@ -75,7 +79,7 @@ def lista_facturas(request):
         'fecha_fin': fecha_fin,
         'estadisticas': estadisticas,
     }
-    
+
     return render(request, 'facturacion/lista_facturas.html', context)
 
 @login_required
@@ -86,23 +90,23 @@ def detalle_factura(request, factura_id):
     """
     try:
         factura = FacturacionManager.obtener_factura_por_id(factura_id)
-        
+
         # Si el método normal falla, intentamos con el método seguro
         if not factura:
             factura = FacturacionManager.obtener_factura_por_id_seguro(factura_id)
-            
+
             if factura:
                 messages.warning(request, 'Esta factura contiene algunos datos corruptos. Se muestra información limitada.')
             else:
                 messages.error(request, 'Factura no encontrada.')
                 return redirect('facturacion:lista_facturas')
-        
+
         context = {
             'factura': factura,
         }
-        
+
         return render(request, 'facturacion/detalle_factura.html', context)
-        
+
     except InvalidOperation as e:
         logger.error(f"Error de datos corruptos en factura {factura_id}: {e}")
         # Intentar con el método seguro
@@ -133,17 +137,17 @@ def eliminar_factura(request, factura_id):
     try:
         # Intentar obtener la factura con el método normal
         factura = FacturacionManager.obtener_factura_por_id(factura_id)
-        
+
         # Si falla, intentar con el método seguro
         if not factura:
             factura = FacturacionManager.obtener_factura_por_id_seguro(factura_id)
             if factura:
                 messages.warning(request, 'Esta factura contiene datos corruptos pero se puede eliminar.')
-        
+
         if not factura:
             messages.error(request, 'Factura no encontrada.')
             return redirect('facturacion:lista_facturas')
-            
+
     except InvalidOperation as e:
         logger.error(f"Error de datos corruptos al cargar factura {factura_id} para eliminar: {e}")
         # Intentar con el método seguro
@@ -161,7 +165,7 @@ def eliminar_factura(request, factura_id):
         logger.error(f"Error inesperado al cargar factura {factura_id} para eliminar: {e}")
         messages.error(request, f'Error al cargar la factura: {str(e)}')
         return redirect('facturacion:lista_facturas')
-    
+
     if request.method == 'POST':
         try:
             # Eliminar usando SQL directo para evitar problemas con datos corruptos
@@ -171,22 +175,22 @@ def eliminar_factura(request, factura_id):
                 cursor.execute("SELECT numero FROM tables_factura WHERE id = %s", [factura_id])
                 numero_result = cursor.fetchone()
                 numero_factura = numero_result[0] if numero_result else f"ID-{factura_id}"
-                
+
                 # Eliminar la factura
                 cursor.execute("DELETE FROM tables_factura WHERE id = %s", [factura_id])
-                
+
             messages.success(request, f'Factura #{numero_factura} eliminada exitosamente.')
             return redirect('facturacion:lista_facturas')
-            
+
         except Exception as e:
             logger.error(f"Error al eliminar factura {factura_id}: {e}")
             messages.error(request, f'Error al eliminar la factura: {str(e)}')
             return redirect('facturacion:lista_facturas')
-    
+
     context = {
         'factura': factura,
     }
-    
+
     return render(request, 'facturacion/confirmar_eliminar.html', context)
 
 @login_required
@@ -197,9 +201,9 @@ def buscar_facturas_ajax(request):
     """
     if request.method == 'GET':
         busqueda = request.GET.get('busqueda', '')
-        
+
         facturas = FacturacionManager.obtener_facturas_con_filtros(busqueda=busqueda)[:10]
-        
+
         resultados = []
         for factura in facturas:
             resultados.append({
@@ -209,9 +213,9 @@ def buscar_facturas_ajax(request):
                 'mesa': factura.pedido.mesa.nombre if factura.pedido.mesa else 'Sin mesa',
                 'total': str(factura.total),
             })
-        
+
         return JsonResponse({'facturas': resultados})
-    
+
     return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 @login_required
@@ -222,14 +226,14 @@ def diagnostico_facturas(request):
     """
     try:
         facturas_corruptas = FacturacionManager.verificar_facturas_corruptas()
-        
+
         context = {
             'facturas_corruptas': facturas_corruptas,
             'total_corruptas': len(facturas_corruptas),
         }
-        
+
         return render(request, 'facturacion/diagnostico_facturas.html', context)
-        
+
     except Exception as e:
         logger.error(f"Error en diagnostico_facturas: {e}")
         messages.error(request, f'Error al ejecutar diagnóstico: {str(e)}')
@@ -270,17 +274,17 @@ def exportar_facturas_csv(request):
     busqueda = request.GET.get('busqueda', '')
     fecha_inicio = request.GET.get('fecha_inicio', '')
     fecha_fin = request.GET.get('fecha_fin', '')
-    
+
     # Convertir fechas si existen
     fecha_inicio_obj = None
     fecha_fin_obj = None
-    
+
     if fecha_inicio:
         try:
             fecha_inicio_obj = datetime.strptime(fecha_inicio, '%Y-%m-%d')
         except ValueError:
             pass
-    
+
     if fecha_fin:
         try:
             fecha_fin_obj = datetime.strptime(fecha_fin, '%Y-%m-%d')
@@ -299,7 +303,7 @@ def exportar_facturas_csv(request):
     response['Content-Disposition'] = 'attachment; filename="facturas.csv"'
 
     writer = csv.writer(response)
-    
+
     # Escribir encabezados
     writer.writerow([
         'Número',
@@ -309,7 +313,7 @@ def exportar_facturas_csv(request):
         'Items',
         'Estado'
     ])
-    
+
     # Escribir datos
     for factura in facturas:
         try:
@@ -334,22 +338,40 @@ def exportar_facturas_xlsx(request):
     if not OPENPYXL_AVAILABLE:
         messages.error(request, 'La exportación a Excel no está disponible. Instale openpyxl.')
         return redirect('facturacion:lista_facturas')
-    
+
     # Obtener parámetros de filtro
     busqueda = request.GET.get('busqueda', '')
     fecha_inicio = request.GET.get('fecha_inicio', '')
     fecha_fin = request.GET.get('fecha_fin', '')
-    
+
     # Convertir fechas si existen
     fecha_inicio_obj = None
     fecha_fin_obj = None
-    
+
+
+
+@login_required
+@permission_required('facturacion', 'ver')
+def export_facturas(request, fmt):
+    """
+    Exportar facturas en formato CSV o PDF.
+    fmt: 'csv' o 'pdf'
+    Los filtros GET compatibles son los mismos que en lista_facturas (busqueda, fecha_inicio, fecha_fin)
+    """
+    # Recuperar filtros (misma lógica que lista_facturas)
+    busqueda = request.GET.get('busqueda', '')
+    fecha_inicio = request.GET.get('fecha_inicio', '')
+    fecha_fin = request.GET.get('fecha_fin', '')
+
+    fecha_inicio_obj = None
+    fecha_fin_obj = None
+    from datetime import datetime
     if fecha_inicio:
         try:
             fecha_inicio_obj = datetime.strptime(fecha_inicio, '%Y-%m-%d')
         except ValueError:
             pass
-    
+
     if fecha_fin:
         try:
             fecha_fin_obj = datetime.strptime(fecha_fin, '%Y-%m-%d')
@@ -413,22 +435,22 @@ def exportar_facturas_pdf(request):
     if not REPORTLAB_AVAILABLE:
         messages.error(request, 'La exportación a PDF no está disponible. Instale reportlab.')
         return redirect('facturacion:lista_facturas')
-    
+
     # Obtener parámetros de filtro
     busqueda = request.GET.get('busqueda', '')
     fecha_inicio = request.GET.get('fecha_inicio', '')
     fecha_fin = request.GET.get('fecha_fin', '')
-    
+
     # Convertir fechas si existen
     fecha_inicio_obj = None
     fecha_fin_obj = None
-    
+
     if fecha_inicio:
         try:
             fecha_inicio_obj = datetime.strptime(fecha_inicio, '%Y-%m-%d')
         except ValueError:
-            pass
-    
+            fecha_inicio_obj = None
+
     if fecha_fin:
         try:
             fecha_fin_obj = datetime.strptime(fecha_fin, '%Y-%m-%d')
@@ -449,7 +471,7 @@ def exportar_facturas_pdf(request):
     # Crear PDF
     doc = SimpleDocTemplate(response, pagesize=A4)
     elements = []
-    
+
     # Estilos
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
@@ -466,7 +488,7 @@ def exportar_facturas_pdf(request):
 
     # Preparar datos para la tabla
     data = [['Número', 'Fecha', 'Mesa', 'Total', 'Items']]
-    
+
     for factura in facturas:
         try:
             data.append([
@@ -494,7 +516,7 @@ def exportar_facturas_pdf(request):
     ]))
 
     elements.append(table)
-    
+
     # Construir PDF
     doc.build(elements)
     return response

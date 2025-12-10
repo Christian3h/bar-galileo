@@ -196,6 +196,7 @@ body {
 @media (max-width: 700px) {
   .dashboard-charts {
     flex-direction: column;
+    overflow: scroll;
   }
   .chart-box{
     min-width: 100%;
