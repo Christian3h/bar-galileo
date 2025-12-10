@@ -328,7 +328,7 @@ body {
 ======================================= */
 body {
   background-color: var(--color-light);
-  display: grid;
+  /* display: grid; */
   place-items: center;
   height: 100dvh;
   margin: 0;
