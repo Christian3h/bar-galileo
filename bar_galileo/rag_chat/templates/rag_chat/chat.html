@@ -12,11 +12,11 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
-            Chat con Documentos
+            Sistema de Ayuda
         </h1>
         <div class="chat-header-actions">
             <select id="collection-select" class="collection-select">
-                <option value="">Selecciona un manual...</option>
+                <option value="">Cargando...</option>
             </select>
             <button id="upload-btn" class="btn-primary" onclick="showUploadModal()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -37,8 +37,21 @@
                     <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
                     <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
                 </svg>
-                <h2>Bienvenido al Asistente RAG</h2>
-                <p>Selecciona un manual arriba y comienza a hacer preguntas sobre su contenido.</p>
+                <h2>Sistema de Ayuda</h2>
+                <p>Haz preguntas sobre cómo usar el sistema Bar Galileo:</p>
+                <ul style="text-align: left; max-width: 500px; margin: 20px auto;">
+                    <li>📖 Cómo usar el sistema y sus módulos</li>
+                    <li>🔍 Buscar procedimientos específicos</li>
+                    <li>❓ Resolver dudas sobre funcionalidades</li>
+                    <li>🛠️ Solucionar errores comunes</li>
+                </ul>
+                <p style="color: #666; font-size: 0.9em; margin-top: 20px;">
+                    {% if manual_disponible %}
+                        ✅ Manual de Usuario cargado y listo
+                    {% else %}
+                        ⚠️ No hay manual cargado. Sube el Manual de Usuario para comenzar.
+                    {% endif %}
+                </p>
             </div>
         </div>
 

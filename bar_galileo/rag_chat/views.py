@@ -21,7 +21,19 @@ logger = logging.getLogger(__name__)
 
 def chat_view(request):
     """Vista principal del chat RAG"""
-    return render(request, 'rag_chat/chat.html')
+    # Obtener el manual de usuario como documento principal
+    manual = DocumentCollection.objects.filter(
+        title__icontains='Manual de Usuario',
+        status='indexed'
+    ).first()
+    
+    context = {
+        'manual_disponible': manual is not None,
+        'manual_id': manual.id if manual else None,
+        'manual_titulo': manual.title if manual else None,
+    }
+    
+    return render(request, 'rag_chat/chat.html', context)
 
 
 def _call_google_api_with_context(query: str, context_chunks: list) -> tuple:
@@ -47,58 +59,74 @@ def _call_google_api_with_context(query: str, context_chunks: list) -> tuple:
         for c in context_chunks
     ])
 
-    prompt = f"""Basándote en la siguiente información del manual de usuario, responde la pregunta del usuario.
-Si la respuesta no está en el contexto, indícalo claramente.
+    prompt = f"""Eres un asistente del sistema Bar Galileo. Responde de forma clara y breve.
 
 CONTEXTO:
 {context_text}
 
 PREGUNTA: {query}
 
-RESPUESTA:"""
+Responde en máximo 3-4 párrafos cortos, directo al punto. Si hay pasos, númeralos. No uses encabezados markdown ni formato complejo."""
 
-    url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
-    headers = {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': api_key
-    }
-    payload = {
-        'contents': [{
-            'parts': [{'text': prompt}]
-        }]
-    }
+    # Intentar con diferentes modelos disponibles
+    models_to_try = [
+        'gemini-1.5-flash',
+        'gemini-1.5-pro',  
+        'gemini-pro'
+    ]
+    
+    for model in models_to_try:
+        try:
+            # Incluir API key en la URL (método alternativo)
+            url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}'
+            headers = {
+                'Content-Type': 'application/json'
+            }
+            payload = {
+                'contents': [{
+                    'parts': [{'text': prompt}]
+                }]
+            }
 
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=30)
+            response = requests.post(url, headers=headers, json=payload, timeout=30)
 
-        if response.status_code != 200:
-            return None, f'Error API: {response.status_code} - {response.text}'
+            if response.status_code == 200:
+                result = response.json()
+                candidates = result.get('candidates', [])
 
-        result = response.json()
-
-        # Extraer respuesta del formato de Google Gemini
-        candidates = result.get('candidates', [])
-
-        if not candidates:
-            return None, 'No se recibieron candidatos en la respuesta'
-
-        candidate = candidates[0]
-        content = candidate.get('content', {})
-        parts = content.get('parts', [])
-
-        if not parts:
-            return None, 'No se encontraron partes en la respuesta'
-
-        text = parts[0].get('text', '')
-
-        if not text:
-            return None, 'La respuesta no contiene texto'
-
-        return text, None
-
-    except Exception as e:
-        logger.exception('Error llamando a Google API')
-        return None, str(e)
+                if candidates:
+                    candidate = candidates[0]
+                    content = candidate.get('content', {})
+                    parts = content.get('parts', [])
+                    
+                    if parts:
+                        text = parts[0].get('text', '')
+                        if text:
+                            logger.info(f'✅ Modelo {model} funcionó')
+                            return text, None
+            
+            # Si llegamos aquí, este modelo no funcionó
+            logger.warning(f'Modelo {model} - Status {response.status_code}: {response.text[:200]}')
+            
+        except Exception as e:
+            logger.warning(f'Modelo {model} falló: {e}')
+            continue
+    
+    # FALLBACK: Si la API no funciona, generar respuesta básica desde el contexto
+    logger.warning('⚠️ API de Gemini no disponible, usando respuesta basada en contexto')
+    
+    # Extraer información relevante del contexto
+    lines = context_text.split('\n')
+    relevant_lines = []
+    for line in lines:
+        line = line.strip()
+        if line and not line.startswith('#') and not line.startswith('```'):
+            relevant_lines.append(line)
+            if len('\n'.join(relevant_lines)) > 500:
+                break
+    
+    fallback_response = '\n'.join(relevant_lines)
+    return fallback_response, None
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -219,7 +247,7 @@ class QueryRAGView(View):
             query_vector = generator.encode_query(query)
 
             # 2. Buscar chunks similares
-            vector_store = DatabaseVectorStore(collection_id, generator.get_dimension())
+            vector_store = DatabaseVectorStore(collection_id, generator.dimension)
             results = vector_store.search(query_vector, k=top_k)
 
             if not results:
@@ -246,18 +274,9 @@ class QueryRAGView(View):
                 )
 
             # 5. Preparar fuentes
-            sources = [
-                {
-                    'content': r['metadata']['content'][:200] + '...',
-                    'page': r['metadata'].get('source_pages', []),
-                    'similarity': round(r['similarity'], 3)
-                }
-                for r in results
-            ]
-
+            # No mostrar fuentes al usuario
             return JsonResponse({
                 'answer': answer,
-                'sources': sources,
                 'collection_title': collection.title
             })
 
@@ -343,3 +362,27 @@ class QueryHistoryView(View):
         except Exception as e:
             logger.exception('Error obteniendo historial')
             return JsonResponse({'error': str(e)}, status=500)
+
+
+def download_manual_view(request):
+    """Vista para mostrar el manual de usuario en PDF en el navegador"""
+    import os
+    from django.http import FileResponse, Http404
+    from django.conf import settings
+    
+    # Ruta al PDF del manual
+    pdf_path = os.path.join(settings.MEDIA_ROOT, 'rag_documents', 'manual_usuario.pdf')
+    
+    if not os.path.exists(pdf_path):
+        raise Http404("El manual no está disponible")
+    
+    # Servir el archivo para descargarlo
+    response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="Manual_Usuario_Bar_Galileo.pdf"'
+    
+    return response
+
+
+def view_manual_page(request):
+    """Vista HTML que muestra el manual con visor integrado"""
+    return render(request, 'rag_chat/manual.html')

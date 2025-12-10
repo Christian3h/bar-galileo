@@ -79,6 +79,8 @@ async function loadCollections() {
         const select = document.getElementById('collection-select');
         select.innerHTML = '<option value="">Selecciona un manual...</option>';
 
+        let manualUsuarioId = null;
+
         if (data.documents && data.documents.length > 0) {
             data.documents.forEach(doc => {
                 if (doc.status === 'indexed') {
@@ -86,8 +88,25 @@ async function loadCollections() {
                     option.value = doc.id;
                     option.textContent = `${doc.title} (${doc.page_count} páginas)`;
                     select.appendChild(option);
+                    
+                    // Detectar el Manual de Usuario
+                    if (doc.title.toLowerCase().includes('manual de usuario')) {
+                        manualUsuarioId = doc.id;
+                    }
                 }
             });
+            
+            // Seleccionar automáticamente el Manual de Usuario
+            if (manualUsuarioId) {
+                select.value = manualUsuarioId;
+                currentCollectionId = manualUsuarioId;
+                enableChat();
+                clearMessages();
+                addSystemMessage('📖 Manual de Usuario cargado. ¡Pregúntame lo que necesites!');
+            }
+        } else {
+            select.innerHTML = '<option value="">No hay manuales disponibles</option>';
+            addSystemMessage('⚠️ No hay documentos indexados. Sube el Manual de Usuario para comenzar.', 'warning');
         }
     } catch (error) {
         console.error('Error cargando colecciones:', error);

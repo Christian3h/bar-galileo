@@ -7,6 +7,12 @@ urlpatterns = [
     # Vista principal del chat
     path('', views.chat_view, name='chat'),
 
+    # Ver manual en página con visor
+    path('manual/', views.view_manual_page, name='view_manual'),
+    
+    # Descargar manual PDF
+    path('manual/descargar/', views.download_manual_view, name='download_manual'),
+
     # Subir y procesar documento
     path('api/upload/', views.UploadDocumentView.as_view(), name='upload_document'),
 

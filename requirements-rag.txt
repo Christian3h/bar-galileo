@@ -1,0 +1,19 @@
+# Dependencias adicionales para el Sistema RAG
+
+# Procesamiento de PDFs
+pypdf2>=3.0.0
+pdfplumber>=0.10.0
+
+# Conversión de Markdown a PDF
+markdown>=3.5.0
+weasyprint>=60.0
+
+# Embeddings y búsqueda vectorial
+sentence-transformers>=2.2.0
+numpy>=1.24.0
+
+# Cliente HTTP para Google API
+requests>=2.31.0
+
+# Procesamiento de texto
+nltk>=3.8.0
