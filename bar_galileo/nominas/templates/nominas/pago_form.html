@@ -22,7 +22,7 @@
         {% endif %}
     </div>
 
-    <form method="post" enctype="multipart/form-data" id="pago-form">
+    <form method="post" enctype="multipart/form-data" id="pago-form" novalidate>
         {% csrf_token %}
 
         <!-- Sección: Información del Pago -->

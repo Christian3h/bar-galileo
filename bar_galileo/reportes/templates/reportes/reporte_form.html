@@ -1,164 +1,96 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/reportes/reportes.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2 class="page-title">{% if object %}Editar Reporte{% else %}Crear Nuevo Reporte{% endif %}</h2>
-    
-        
-        <form method="post" enctype="multipart/form-data" id="reporteForm">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.nombre.id_for_label }}" class="required-field">{{ form.nombre.label }}</label>
-                {{ form.nombre }}
-                {% if form.nombre.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.nombre.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Reporte</h1>
 
-            <div class="form-group">
-                <label for="{{ form.tipo.id_for_label }}" class="required-field">{{ form.tipo.label }}</label>
-                {{ form.tipo }}
-                {% if form.tipo.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.tipo.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.periodo.id_for_label }}" class="required-field">{{ form.periodo.label }}</label>
-                {{ form.periodo }}
-                {% if form.periodo.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.periodo.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+<a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">Volver</a>
 
-            <div class="form-group">
-                <label for="{{ form.formato.id_for_label }}" class="required-field">{{ form.formato.label }}</label>
-                {{ form.formato }}
-                {% if form.formato.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.formato.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+<form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
 
-            <div class="form-group">
-                <label for="{{ form.descripcion.id_for_label }}">{{ form.descripcion.label }}</label>
-                {{ form.descripcion }}
-                {% if form.descripcion.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.descripcion.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.fecha_inicio.id_for_label }}" class="required-field">{{ form.fecha_inicio.label }}</label>
-                {{ form.fecha_inicio }}
-                {% if form.fecha_inicio.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.fecha_inicio.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.fecha_fin.id_for_label }}" class="required-field">{{ form.fecha_fin.label }}</label>
-                {{ form.fecha_fin }}
-                {% if form.fecha_fin.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.fecha_fin.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.archivo.id_for_label }}">{{ form.archivo.label }} (Opcional)</label>
-                <div class="file-input-wrapper">
-                    <input type="file" name="archivo" id="{{ form.archivo.id_for_label }}" accept=".pdf,.doc,.docx,.xls,.xlsx" onchange="updateFileName(this)">
-                    <label for="{{ form.archivo.id_for_label }}" class="file-input-label">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        <span>Seleccionar archivo</span>
-                    </label>
-                </div>
-                <span id="file-name-display" class="file-name hidden"></span>
-                {% if object and object.archivo %}
-                    <small class="help-text">📎 Archivo actual: <a href="{{ object.archivo.url }}" target="_blank">{{ object.archivo.name }}</a></small>
-                {% endif %}
-                <small class="help-text">Formatos permitidos: PDF, Excel, Word (opcional)</small>
-                {% if form.archivo.errors %}
-                    <ul class="errorlist">
-                        {% for error in form.archivo.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            
-            {% if form.non_field_errors %}
-                <ul class="errorlist">
-                    {% for error in form.non_field_errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-            
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">
-                    {% if object %}Actualizar Reporte{% else %}Crear Reporte{% endif %}
-                </button>
-                <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">
-                    Cancelar
-                </a>
-            </div>
-        </form>
+    {% if object and object.archivo %}
+        <div class="form-group">
+            <label>Archivo actual:</label>
+            <p>
+                📎 <a href="{{ object.archivo.url }}" target="_blank">{{ object.archivo.name|truncatewords:5 }}</a>
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="form-actions mt-3">
+        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Crear{% endif %} Reporte</button>
     </div>
-</div>
+</form>
 
+<!-- Modal para mensajes de error/éxito -->
+{% include 'components/simple_modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
 <script>
-function updateFileName(input) {
-    const fileNameDisplay = document.getElementById('file-name-display');
-    if (input.files && input.files[0]) {
-        const fileName = input.files[0].name;
-        fileNameDisplay.textContent = '📎 ' + fileName;
-        fileNameDisplay.classList.remove('hidden');
-    } else {
-        fileNameDisplay.textContent = '';
-        fileNameDisplay.classList.add('hidden');
-    }
-}
-
-// Prevenir que se muestre el texto "No se ha seleccionado ningún archivo"
 document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) {
-        // Asegurar que el input file tenga los estilos correctos aplicados
-        fileInput.classList.add('hidden');
+    // Elementos del modal de mensajes
+    const simpleModal = document.getElementById('simpleModal');
+    if (!simpleModal) return;
+    
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalFooter = simpleModal.querySelector('.modal-footer');
+    const closeModalButtons = simpleModal.querySelectorAll('.close-modal');
+
+    // Función para mostrar el modal de mensajes
+    function showSimpleModal(title, message, isConfirm = false, onConfirm = null) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalFooter.innerHTML = ''; // Limpiar botones anteriores
+
+        if (isConfirm) {
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.classList.add('btn', 'btn-danger', 'mt-3');
+            confirmBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+                if (onConfirm) onConfirm();
+            };
+            modalFooter.appendChild(confirmBtn);
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.classList.add('btn', 'btn-secondary', 'mt-3', 'ms-2');
+            cancelBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(cancelBtn);
+        } else {
+            const okBtn = document.createElement('button');
+            okBtn.textContent = 'Aceptar';
+            okBtn.classList.add('btn', 'btn-primary', 'mt-3');
+            okBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(okBtn);
+        }
+        simpleModal.style.display = 'block';
     }
+
+    // Event listeners para cerrar el modal de mensajes
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            simpleModal.style.display = 'none';
+        });
+    });
+    
+    window.addEventListener('click', function(event) {
+        if (event.target == simpleModal) {
+            simpleModal.style.display = 'none';
+        }
+    });
 });
 </script>
 {% endblock %}
