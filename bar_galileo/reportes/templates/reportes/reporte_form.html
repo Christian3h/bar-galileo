@@ -4,10 +4,6 @@
 <div class="container">
     <h2 class="page-title">{% if object %}Editar Reporte{% else %}Crear Nuevo Reporte{% endif %}</h2>
     
-    <div class="form-card">
-        <div class="form-header">
-            <h2>{% if object %}Modificar Información del Reporte{% else %}Información del Reporte{% endif %}</h2>
-        </div>
         
         <form method="post" enctype="multipart/form-data" id="reporteForm">
             {% csrf_token %}
@@ -23,7 +19,7 @@
                     </ul>
                 {% endif %}
             </div>
-            
+
             <div class="form-group">
                 <label for="{{ form.tipo.id_for_label }}" class="required-field">{{ form.tipo.label }}</label>
                 {{ form.tipo }}
