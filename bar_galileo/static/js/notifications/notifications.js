@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log('[DEBUG][Front] Script de notificaciones cargado');
-
     const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
     const ws_path = `${ws_scheme}://${window.location.host}/ws/notificaciones/`;
-    console.log("[DEBUG][Front] Intentando conectar al WebSocket:", ws_path);
 
     const socket = new WebSocket(ws_path);
     const notificacionesFlotantes = document.getElementById("notificaciones-flotantes");
@@ -14,8 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function mostrarNotificacion(mensaje) {
-        console.log('[DEBUG][Front] Mostrando notificación:', mensaje);
-
         const div = document.createElement("div");
         div.innerHTML = `
             <span>${mensaje}</span>
@@ -46,15 +41,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     socket.addEventListener("open", () => {
-        console.log("[DEBUG][Front] WebSocket de notificaciones conectado");
+        // WebSocket conectado
     });
 
     socket.addEventListener("message", (e) => {
-        console.log('[DEBUG][Front] Mensaje recibido por WebSocket:', e.data);
         let data = {};
         try {
             data = JSON.parse(e.data);
-            console.log('[DEBUG] JSON parseado correctamente:', data);
         } catch (error) {
             console.warn('[DEBUG] No se pudo parsear JSON:', error);
             data = { message: e.data };
@@ -70,6 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     socket.addEventListener("close", () => {
-        console.log("[DEBUG][Front] WebSocket de notificaciones cerrado");
+        // WebSocket cerrado
     });
 });
