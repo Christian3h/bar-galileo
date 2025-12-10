@@ -18,7 +18,7 @@
         </a>
         {% endif %}
     </div>
-    
+
     <!-- Estadísticas -->
     <div class="stats-container">
         <div class="stat-card">
@@ -32,7 +32,7 @@
         </div>
         {% endfor %}
     </div>
-    
+
     <!-- Filtros -->
     <div class="filter-section">
         <h4><i class="fas fa-filter"></i> Filtros de Búsqueda</h4>
@@ -65,13 +65,13 @@
             </div>
         </form>
     </div>
-    
+
     <!-- Tabla de reportes -->
     <div class="table-section">
         <div class="table-header">
             <h3><i class="fas fa-list"></i> Listado de Reportes</h3>
         </div>
-        
+
         <div class="table-contenedor">
             <div class="table-responsive">
                 <table id="reportes-table" class="table display">
@@ -137,22 +137,28 @@
     $(document).ready(function () {
         var sel = '#reportes-table';
         if (!$(sel).length) return;
-        if ($.fn.dataTable.isDataTable(sel)) {
-            $(sel).DataTable().destroy();
+
+        // Verificar si la tabla tiene datos reales (no solo el mensaje de vacío)
+        const hasData = $(sel + ' tbody tr').length > 0 && !$(sel + ' tbody tr td[colspan]').length;
+
+        if (hasData) {
+            if ($.fn.dataTable.isDataTable(sel)) {
+                $(sel).DataTable().destroy();
+            }
+            $(sel).DataTable({
+                dom: 'rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                columnDefs: [
+                    { targets: '_all', defaultContent: '' },
+                    { targets: 5, orderable: false } // Columna de acciones no ordenable
+                ],
+                language: {
+                    url: "{% static 'js/DataTables/es-ES.json' %}"
+                },
+                responsive: true,
+                pageLength: 15,
+                order: [[4, 'desc']] // Ordenar por fecha descendente
+            });
         }
-        $(sel).DataTable({
-            dom: 'rt<"d-flex justify-content-between align-items-center mt-3"ip>',
-            columnDefs: [
-                { targets: '_all', defaultContent: '' },
-                { targets: 5, orderable: false } // Columna de acciones no ordenable
-            ],
-            language: {
-                url: "{% static 'js/DataTables/es-ES.json' %}"
-            },
-            responsive: true,
-            pageLength: 15,
-            order: [[4, 'desc']] // Ordenar por fecha descendente
-        });
     });
 </script>
 {% endblock %}

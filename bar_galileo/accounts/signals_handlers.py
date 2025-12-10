@@ -64,6 +64,9 @@ def handle_user_logged_in(sender, request, user, **kwargs):
 
 @receiver(user_signed_up)
 def handle_user_signed_up(sender, request, user, **kwargs):
+    """
+    Notifica al usuario cuando se registra exitosamente.
+    """
     print(f"[DEBUG][Signals] Signal user_signed_up received for user: {user.username}")
     perfil, created = PerfilUsuario.objects.get_or_create(user=user)
     

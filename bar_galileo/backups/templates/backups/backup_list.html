@@ -553,27 +553,24 @@
             document.getElementById('btnRestaurar').disabled = true;
             return;
         }
-
         // Cargar backups según el tipo
         if (tipo === 'db') {
             {% for backup in db_backups %}
-            const optionDB{{ forloop.counter }
-        } = document.createElement('option');
-        optionDB{ { forloop.counter } }.value = '{{ backup.nombre }}';
-        optionDB{ { forloop.counter } }.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_kb|floatformat:2 }} KB)';
-        selectFile.appendChild(optionDB{{ forloop.counter }});
-    {% endfor %}
-    } else if (tipo === 'media') {
-        {% for backup in media_backups %}
-        const optionMedia{{ forloop.counter }
-    } = document.createElement('option');
-        optionMedia{ { forloop.counter } }.value = '{{ backup.nombre }}';
-        optionMedia{ { forloop.counter } }.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_mb|floatformat:2 }} MB)';
-    selectFile.appendChild(optionMedia{{ forloop.counter }});
-    {% endfor %}
-    }
+            const optionDB{{ forloop.counter }} = document.createElement('option');
+            optionDB{{ forloop.counter }}.value = '{{ backup.nombre }}';
+            optionDB{{ forloop.counter }}.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_kb|floatformat:2 }} KB)';
+            selectFile.appendChild(optionDB{{ forloop.counter }});
+            {% endfor %}
+        } else if (tipo === 'media') {
+            {% for backup in media_backups %}
+            const optionMedia{{ forloop.counter }} = document.createElement('option');
+            optionMedia{{ forloop.counter }}.value = '{{ backup.nombre }}';
+            optionMedia{{ forloop.counter }}.textContent = '{{ backup.nombre }} ({{ backup.fecha|date:"d/m/Y H:i" }} - {{ backup.tamanio_mb|floatformat:2 }} MB)';
+            selectFile.appendChild(optionMedia{{ forloop.counter }});
+            {% endfor %}
+        }
 
-    fileGroup.style.display = 'block';
+        fileGroup.style.display = 'block';
 
     // Habilitar botón cuando se seleccione archivo
     selectFile.onchange = function () {
@@ -689,5 +686,7 @@
         }
     }
 </script>
+
+<script src="{% static 'js/backups/backups.js' %}"></script>
 
 {% endblock %}

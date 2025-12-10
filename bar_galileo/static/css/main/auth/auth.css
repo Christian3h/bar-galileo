@@ -318,6 +318,25 @@ body {
 
 /* =======================================
    MENSAJES Y ALERTAS
+=======
+@import '../../_resets/_resets.css';
+@import '../../_variables/_colors.css';
+@import '../../_components/_buttons.css';
+
+/* =======================================
+   BASE
+======================================= */
+body {
+  background-color: var(--color-light);
+  display: grid;
+  place-items: center;
+  height: 100dvh;
+  margin: 0;
+}
+
+/* =======================================
+   ALERTAS Y MENSAJES
+>>>>>>>
 ======================================= */
 .container-messages {
   position: fixed;

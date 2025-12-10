@@ -9,11 +9,11 @@
         {% element h1 %}
             {% trans "Cambiar Correo Electrónico" %}
         {% endelement %}
-        
+
         {% if not emailaddresses %}
             {% include "account/snippets/warn_no_email.html" %}
         {% endif %}
-        
+
         <!-- Sección de correo actual -->
         <div class="form-section">
             <h2>Información Actual</h2>
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             {% endif %}
-            
+
             {% if new_emailaddress %}
                 <div class="email-info-item pending-email">
                     <label>Cambiando a:</label>
@@ -54,7 +54,7 @@
                 </div>
             {% endif %}
         </div>
-        
+
         <!-- Formulario para cambiar email -->
         <div class="form-section">
             <h2>{% if new_emailaddress %}Cambiar a Otro Correo{% else %}Nuevo Correo Electrónico{% endif %}</h2>
@@ -75,7 +75,7 @@
                 {% endslot %}
             {% endelement %}
         </div>
-        
+
         <!-- Formulario oculto para acciones de email pendiente -->
         {% if new_emailaddress %}
             <form style="display: none"
@@ -86,7 +86,6 @@
                 <input type="hidden" name="email" value="{{ new_emailaddress.email }}">
             </form>
         {% endif %}
-        
         <!-- Enlaces de navegación -->
         <div class="nav-links">
             <a href="{% url 'account_email' %}">Gestionar todos los correos</a>
@@ -95,4 +94,3 @@
         </div>
     </div>
 {% endblock content %}
- 
