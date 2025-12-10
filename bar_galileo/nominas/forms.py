@@ -92,14 +92,14 @@ class EmpleadoForm(forms.ModelForm):
             "estado", "tipo_contrato", "email", "telefono", "direccion"
         ]
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre completo'}),
-            'salario': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Salario base'}),
-            'fecha_contratacion': DateInput(attrs={'class': 'form-control'}),
-            'estado': forms.Select(attrs={'class': 'form-control'}),
-            'tipo_contrato': forms.Select(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correo@ejemplo.com'}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+123456789'}),
-            'direccion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Dirección completa'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre completo', 'required': True}),
+            'salario': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Salario base', 'required': True}),
+            'fecha_contratacion': DateInput(attrs={'class': 'form-control', 'required': True}),
+            'estado': forms.Select(attrs={'class': 'form-control', 'required': True}),
+            'tipo_contrato': forms.Select(attrs={'class': 'form-control', 'required': True}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correo@ejemplo.com', 'required': True}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+123456789', 'required': True}),
+            'direccion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Dirección completa', 'required': True}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -126,9 +126,35 @@ class EmpleadoForm(forms.ModelForm):
                 # Si no tiene usuario, actualizar queryset para excluir usuarios ya asignados
                 self.fields['usuario_existente'].queryset = User.objects.filter(empleado__isnull=True)
 
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre')
+        if not nombre or not nombre.strip():
+            raise forms.ValidationError('El nombre del empleado es obligatorio.')
+        return nombre.strip()
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not email or not email.strip():
+            raise forms.ValidationError('El email es obligatorio.')
+        return email.strip()
+    
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if not telefono or not telefono.strip():
+            raise forms.ValidationError('El teléfono es obligatorio.')
+        return telefono.strip()
+    
+    def clean_direccion(self):
+        direccion = self.cleaned_data.get('direccion')
+        if not direccion or not direccion.strip():
+            raise forms.ValidationError('La dirección es obligatoria.')
+        return direccion.strip()
+
     def clean_salario(self):
         salario = self.cleaned_data.get('salario')
-        if salario and salario <= 0:
+        if salario is None:
+            raise forms.ValidationError('El salario es obligatorio.')
+        if salario <= 0:
             raise forms.ValidationError("El salario debe ser mayor que cero.")
         return salario
 
