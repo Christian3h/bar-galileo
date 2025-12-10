@@ -32,21 +32,6 @@
         </div>
     </section>
 
-    <!-- Botón de exportar (PDF / Excel) -->
-    <div class="export-actions" style="margin: 16px 0;">
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary">Exportar</button>
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'pdf' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" target="_blank">Exportar PDF</a>
-                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'csv' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Exportar CSV</a>
-                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'xlsx' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Exportar Excel (.xlsx)</a>
-            </div>
-        </div>
-    </div>
-
     <!-- Filtros de búsqueda -->
     <div class="search-container">
         <form method="GET" class="search-form">
@@ -76,27 +61,6 @@
                 <a href="{% url 'facturacion:lista_facturas' %}" class="btn btn-secondary">Limpiar</a>
             </div>
         </form>
-    </div>
-
-    <!-- Botones de exportación -->
-    <div class="export-container mb-3">
-        <div class="btn-group" role="group" aria-label="Exportar datos">
-            <a href="{% url 'facturacion:exportar_csv' %}?{{ request.GET.urlencode }}" 
-               class="btn btn-outline-success">
-                <img src="{% static 'img/icons/download.svg' %}" alt="CSV" style="width:16px; height:16px;">
-                Exportar CSV
-            </a>
-            <a href="{% url 'facturacion:exportar_xlsx' %}?{{ request.GET.urlencode }}" 
-               class="btn btn-outline-primary">
-                <img src="{% static 'img/icons/download.svg' %}" alt="XLSX" style="width:16px; height:16px;">
-                Exportar Excel
-            </a>
-            <a href="{% url 'facturacion:exportar_pdf' %}?{{ request.GET.urlencode }}" 
-               class="btn btn-outline-danger">
-                <img src="{% static 'img/icons/download.svg' %}" alt="PDF" style="width:16px; height:16px;">
-                Exportar PDF
-            </a>
-        </div>
     </div>
 
     <!-- Lista de facturas -->
