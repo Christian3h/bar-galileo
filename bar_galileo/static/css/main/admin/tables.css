@@ -3,65 +3,203 @@
   margin: 0 auto !important;
 }
 
+/* Wrapper para tablas sin scroll horizontal */
+.table-contenedor {
+  width: 100%;
+  overflow-x: visible;
+  overflow-y: visible;
+  margin-bottom: 1rem;
+}
+
+/* Estilo para la tabla dentro del contenedor - que se ajuste automáticamente */
+.table-contenedor .table {
+  table-layout: auto; /* Las columnas se ajustan automáticamente al contenido */
+  margin: 0 auto; /* Centrar la tabla */
+}
+
+/* Ajustar contenido de celdas para que no se desborde */
+.table-contenedor .table th,
+.table-contenedor .table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.5rem 0.3rem;
+}
+
+/* Permitir que el texto de descripción haga wrap */
+.table-contenedor .table .col-6 {
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Ajustar tamaño de fuente en pantallas pequeñas */
+@media (max-width: 1400px) {
+  .table-contenedor .table {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .table-contenedor .table {
+    font-size: 0.8rem;
+  }
+  
+  .table-contenedor .table th,
+  .table-contenedor .table td {
+    padding: 0.4rem 0.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .table-contenedor .table {
+    font-size: 0.75rem;
+  }
+  
+  .table-contenedor .table th,
+  .table-contenedor .table td {
+    padding: 0.3rem 0.15rem;
+  }
+}
+
+/* Anchos específicos para columnas de productos - Auto width */
+.table-productos .col-imagen,
+.table-productos .col-nombre,
+.table-productos .col-precio-compra,
+.table-productos .col-precio-venta,
+.table-productos .col-stock,
+.table-productos .col-descripcion,
+.table-productos .col-categoria,
+.table-productos .col-proveedor,
+.table-productos .col-marca,
+.table-productos .col-acciones {
+  width: auto !important;
+}
+
 /* =======================================
  * ESTILOS DE TABLA RESPONSIVOS UNIVERSALES
  * ======================================= */
 
-/* Pantallas Extra Grandes (≥ 1400px) - MacBook M3, iMac, etc */
-@media (min-width: 1400px) {
-  /* En pantallas muy grandes, mostrar todas las columnas */
-  .table-productos .col-1,
-  .table-productos .col-2,
-  .table-productos .col-3,
-  .table-productos .col-4,
-  .table-productos .col-5,
-  .table-productos .col-6,
-  .table-productos .col-7,
-  .table-productos .col-8,
-  .table-productos .col-9 {
+/* Pantallas Extra Grandes (≥ 1920px) - Monitores 4K y grandes */
+@media (min-width: 1920px) {
+  .table-productos .col-imagen,
+  .table-productos .col-nombre,
+  .table-productos .col-precio-compra,
+  .table-productos .col-precio-venta,
+  .table-productos .col-stock,
+  .table-productos .col-descripcion,
+  .table-productos .col-categoria,
+  .table-productos .col-proveedor,
+  .table-productos .col-marca,
+  .table-productos .col-acciones {
     display: table-cell !important;
   }
 }
 
-/* Pantallas Grandes (1200px - 1399px) - Desktop estándar */
+/* Pantallas Grandes (1512px - 1919px) - MacBook Pro 14" y 16" M3 */
+@media (min-width: 1512px) and (max-width: 1919px) {
+  /* Ocultar Descripción para que quepa todo */
+  .col-descripcion {
+    display: none !important;
+  }
+  
+  .table-productos .col-nombre {
+    width: 12% !important;
+  }
+  
+  .table-productos .col-categoria {
+    width: 10% !important;
+  }
+  
+  .table-productos .col-proveedor {
+    width: 11% !important;
+  }
+  
+  .table-productos .col-marca {
+    width: 14% !important;
+  }
+}
+
+/* Pantallas MacBook (1400px - 1511px) - MacBook Air M3, MacBook Pro 13" */
+@media (min-width: 1400px) and (max-width: 1511px) {
+  /* Ocultar Descripción y Proveedor */
+  .col-descripcion, .col-proveedor {
+    display: none !important;
+  }
+  
+  .table-productos .col-nombre {
+    width: 13% !important;
+  }
+  
+  .table-productos .col-categoria {
+    width: 12% !important;
+  }
+  
+  .table-productos .col-marca {
+    width: 16% !important;
+  }
+}
+
+/* Pantallas Medianas (1200px - 1399px) - Laptop estándar */
 @media (min-width: 1200px) and (max-width: 1399px) {
-  /* Ocultar solo Proveedor y Marca para dar más espacio */
-  .col-8, .col-9 {
+  .col-descripcion {
+    display: none !important;
+  }
+  
+  .table-productos .col-nombre {
+    width: 13% !important;
+  }
+  
+  .table-productos .col-marca {
+    width: 15% !important;
+  }
+}
+
+/* Pantallas Desktop Pequeño (1024px - 1199px) - Laptop pequeño */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .col-descripcion, .col-proveedor {
+    display: none !important;
+  }
+  
+  .table-productos .col-nombre {
+    width: 15% !important;
+  }
+  
+  .table-productos .col-marca {
+    width: 18% !important;
+  }
+}
+
+/* Pantallas Pequeñas (992px - 1023px) */
+@media (max-width: 1023px) {
+  .col-descripcion, .col-marca, .col-proveedor {
     display: none !important;
   }
 }
 
-/* Pantallas Desktop Pequeño (992px - 1199px) */
-@media (max-width: 1199px) {
-  .col-7, .col-8, .col-9 {
-    display: none !important;
-  }
-}
-
-/* Pantallas medianas - Tablets Landscape (768px - 991px) */
+/* Tablets Landscape (768px - 991px) */
 @media (max-width: 991px) {
-  .col-5, .col-6 {
+  .col-descripcion, .col-marca, .col-proveedor, .col-categoria {
     display: none !important;
   }
 }
 
 /* Tablets Portrait (576px - 767px) */
 @media (max-width: 767px) {
-  .col-4, .col-image {
+  .col-precio-compra, .col-descripcion, .col-marca, .col-proveedor, .col-categoria {
     display: none !important;
   }
 }
 
 /* Móviles grandes (480px - 575px) */
 @media (max-width: 575px) {
-  .col-3 {
+  .col-precio-compra, .col-categoria, .col-descripcion, .col-marca, .col-proveedor {
     display: none !important;
   }
 }
 
 /* Móviles pequeños (< 480px) */
 @media (max-width: 479px) {
-  .col-2 {
+  .col-imagen, .col-precio-compra, .col-categoria, .col-descripcion, .col-marca, .col-proveedor {
     display: none !important;
   }
 }
