@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/main/reportes/reportes.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/reportes/reporte_form.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -10,7 +10,7 @@
 
 <a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">Volver</a>
 
-<form method="post" enctype="multipart/form-data" novalidate>
+<form method="post" enctype="multipart/form-data" novalidate class="reporte-form">
     {% csrf_token %}
     {{ form.as_p }}
 
