@@ -19,6 +19,61 @@ from .vector_store import DatabaseVectorStore
 logger = logging.getLogger(__name__)
 
 
+def _sincronizar_manual_pdf():
+    """
+    Sincroniza el PDF del manual con el archivo markdown.
+    Si el markdown es más nuevo que el PDF, regenera el PDF.
+    
+    Returns:
+        tuple: (pdf_path, fue_regenerado)
+    """
+    from django.conf import settings
+    from pathlib import Path
+    
+    md_path = Path(settings.BASE_DIR.parent) / 'docs' / 'manual_usuario.md'
+    pdf_path = Path(settings.MEDIA_ROOT) / 'rag_documents' / 'manual_usuario.pdf'
+    
+    # Verificar que el markdown existe
+    if not md_path.exists():
+        logger.error(f"Archivo markdown no encontrado: {md_path}")
+        return None, False
+    
+    # Crear directorio para PDF si no existe
+    pdf_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Verificar si necesita regenerarse
+    necesita_regenerar = False
+    
+    if not pdf_path.exists():
+        logger.info("PDF no existe, será generado")
+        necesita_regenerar = True
+    else:
+        # Comparar fechas de modificación
+        md_time = md_path.stat().st_mtime
+        pdf_time = pdf_path.stat().st_mtime
+        
+        if md_time > pdf_time:
+            logger.info("Markdown más reciente que PDF, regenerando...")
+            necesita_regenerar = True
+    
+    # Regenerar si es necesario
+    if necesita_regenerar:
+        try:
+            from bar_galileo.convert_manual_to_pdf import convert_markdown_to_pdf_simple
+            convert_markdown_to_pdf_simple(md_path, pdf_path)
+            logger.info(f"PDF regenerado exitosamente: {pdf_path}")
+            return str(pdf_path), True
+        except Exception as e:
+            logger.error(f"Error al regenerar PDF: {e}")
+            # Si falla la regeneración pero el PDF existe, usarlo
+            if pdf_path.exists():
+                logger.warning("Usando PDF desactualizado debido a error en regeneración")
+                return str(pdf_path), False
+            return None, False
+    
+    return str(pdf_path), False
+
+
 def chat_view(request):
     """Vista principal del chat RAG"""
     # Obtener el manual de usuario como documento principal
@@ -377,18 +432,39 @@ def view_manual_pdf(request):
     import os
     from django.http import FileResponse, Http404
     from django.conf import settings
+    from django.contrib.auth.decorators import login_required
     
-    # Ruta al PDF del manual
-    pdf_path = os.path.join(settings.MEDIA_ROOT, 'rag_documents', 'manual_usuario.pdf')
+    # Validar que el usuario esté autenticado
+    if not request.user.is_authenticated:
+        logger.warning(f"Usuario no autenticado intentó acceder al manual PDF")
+        raise Http404("Debes iniciar sesión para ver el manual")
     
-    if not os.path.exists(pdf_path):
-        raise Http404("El manual no está disponible")
+    # Sincronizar el PDF con el markdown
+    pdf_path, fue_regenerado = _sincronizar_manual_pdf()
     
-    # Servir el archivo para visualizarlo en el navegador
-    response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; filename="Manual_Usuario_Bar_Galileo.pdf"'
+    if not pdf_path or not os.path.exists(pdf_path):
+        logger.error(f"No se pudo obtener el PDF del manual")
+        raise Http404("El manual no está disponible. Por favor contacta al administrador.")
     
-    return response
+    # Validar que el archivo tiene contenido
+    if os.path.getsize(pdf_path) == 0:
+        logger.error(f"Manual PDF está vacío: {pdf_path}")
+        raise Http404("El archivo del manual está corrupto.")
+    
+    try:
+        # Servir el archivo para visualizarlo en el navegador
+        response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+        response['Content-Disposition'] = 'inline; filename="Manual_Usuario_Bar_Galileo.pdf"'
+        
+        if fue_regenerado:
+            logger.info(f"Usuario {request.user.username} visualizó el manual PDF (regenerado)")
+        else:
+            logger.info(f"Usuario {request.user.username} visualizó el manual PDF")
+        
+        return response
+    except Exception as e:
+        logger.error(f"Error al servir el manual PDF: {e}")
+        raise Http404("Error al cargar el manual. Intenta nuevamente.")
 
 
 def download_manual_view(request):
@@ -396,18 +472,39 @@ def download_manual_view(request):
     import os
     from django.http import FileResponse, Http404
     from django.conf import settings
+    from django.contrib.auth.decorators import login_required
     
-    # Ruta al PDF del manual
-    pdf_path = os.path.join(settings.MEDIA_ROOT, 'rag_documents', 'manual_usuario.pdf')
+    # Validar que el usuario esté autenticado
+    if not request.user.is_authenticated:
+        logger.warning(f"Usuario no autenticado intentó descargar el manual PDF")
+        raise Http404("Debes iniciar sesión para descargar el manual")
     
-    if not os.path.exists(pdf_path):
-        raise Http404("El manual no está disponible")
+    # Sincronizar el PDF con el markdown
+    pdf_path, fue_regenerado = _sincronizar_manual_pdf()
     
-    # Servir el archivo para descargarlo
-    response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="Manual_Usuario_Bar_Galileo.pdf"'
+    if not pdf_path or not os.path.exists(pdf_path):
+        logger.error(f"No se pudo obtener el PDF del manual para descarga")
+        raise Http404("El manual no está disponible. Por favor contacta al administrador.")
     
-    return response
+    # Validar que el archivo tiene contenido
+    if os.path.getsize(pdf_path) == 0:
+        logger.error(f"Manual PDF está vacío para descarga: {pdf_path}")
+        raise Http404("El archivo del manual está corrupto.")
+    
+    try:
+        # Servir el archivo para descargarlo
+        response = FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="Manual_Usuario_Bar_Galileo.pdf"'
+        
+        if fue_regenerado:
+            logger.info(f"Usuario {request.user.username} descargó el manual PDF (regenerado)")
+        else:
+            logger.info(f"Usuario {request.user.username} descargó el manual PDF")
+        
+        return response
+    except Exception as e:
+        logger.error(f"Error al servir el manual PDF para descarga: {e}")
+        raise Http404("Error al descargar el manual. Intenta nuevamente.")
 
 
 def view_manual_page(request):
@@ -415,9 +512,22 @@ def view_manual_page(request):
     import os
     import markdown
     from django.conf import settings
+    from django.contrib.auth.decorators import login_required
     
-    # Leer el archivo markdown
+    # Validar que el usuario esté autenticado
+    if not request.user.is_authenticated:
+        logger.warning(f"Usuario no autenticado intentó acceder al manual")
+        from django.shortcuts import redirect
+        from django.contrib import messages
+        messages.warning(request, 'Debes iniciar sesión para ver el manual.')
+        return redirect('accounts:login')
+    
+    # Leer el archivo markdown (fuente única de verdad)
     manual_path = os.path.join(settings.BASE_DIR.parent, 'docs', 'manual_usuario.md')
+    
+    # Sincronizar PDF (para saber si está disponible y actualizado)
+    pdf_path, fue_regenerado = _sincronizar_manual_pdf()
+    pdf_disponible = pdf_path and os.path.exists(pdf_path) and os.path.getsize(pdf_path) > 0
     
     try:
         with open(manual_path, 'r', encoding='utf-8') as f:
@@ -425,10 +535,26 @@ def view_manual_page(request):
         
         # Convertir markdown a HTML
         manual_html = markdown.markdown(manual_md, extensions=['extra', 'codehilite'])
+        logger.info(f"Usuario {request.user.username} accedió al manual HTML")
+        
+        if fue_regenerado:
+            logger.info("PDF fue regenerado automáticamente para mantener sincronización")
+            
     except FileNotFoundError:
+        logger.error(f"Archivo markdown del manual no encontrado: {manual_path}")
         manual_html = "<h1>Manual no disponible</h1><p>El archivo del manual no se encontró.</p>"
+    except Exception as e:
+        logger.error(f"Error al leer el manual markdown: {e}")
+        manual_html = "<h1>Error</h1><p>Hubo un error al cargar el manual.</p>"
     
-    return render(request, 'rag_chat/manual.html', {'manual_html': manual_html})
+    context = {
+        'manual_html': manual_html,
+        'pdf_disponible': pdf_disponible,
+        'usuario': request.user,
+        'es_staff': request.user.is_staff or request.user.is_superuser,
+    }
+    
+    return render(request, 'rag_chat/manual.html', context)
 
 
 def edit_manual(request):
