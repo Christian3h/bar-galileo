@@ -20,10 +20,19 @@
             {% element p %}
                 Si aún no tienes una cuenta, por favor {{ link }}regístrate{{ end_link }} primero.
             {% endelement %}
+
             {% url 'account_login' as login_url %}
             {% element form form=form method="post" action=login_url tags="entrance,login" %}
                 {% slot body %}
                     {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <ul class="errorlist" style="margin: 0; padding: 8px 12px; background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 4px;">
+                                {{ form.non_field_errors }}
+                            </ul>
+                        </div>
+                    {% endif %}
+
                     <div class="form-group">
                         {{ form.login.label_tag }}
                         {{ form.login }}
