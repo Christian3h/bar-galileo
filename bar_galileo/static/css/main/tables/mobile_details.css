@@ -1,8 +1,2 @@
-/* Archivo CSS generado automáticamente para evitar error 404. Personaliza el contenido según tus necesidades. */
-
-.mobile-details {
-    /* Estilos de ejemplo */
-    background: #f8f8f8;
-    color: #333;
-    padding: 10px;
-}
+/* Responsive details for tables (mobile) */
+@import url('../../table-mobile-details.css');

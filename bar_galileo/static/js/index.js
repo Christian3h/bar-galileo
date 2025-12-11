@@ -369,9 +369,10 @@ const initHeroCarousel = () => {
     slides = document.querySelectorAll('.hero-slide');
     dots = document.querySelectorAll('.hero-dot');
 
-
     if (slides.length === 0) {
-        console.warn('⚠️ No hero slides found!');
+        console.warn('⚠️ No hero slides found! Retrying in 100ms...');
+        // Retry after a short delay
+        setTimeout(initHeroCarousel, 100);
         return;
     }
 
