@@ -5,6 +5,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
 <link rel="stylesheet" href="{% static 'css/main/backups/backups.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/tables/backup_hide_columns.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -83,7 +84,7 @@
                     <td class="col-4 backup-size">{{ backup.tamanio_kb|floatformat:2 }} KB</td>
                     <td class="actions-cell">
                         {% if request.user|has_perm:"backups,crear" %}
-                        <a href="{% url 'backups:backup_download' 'db' backup.nombre %}" class="btn btn-sm"
+                        <a   href="{% url 'backups:backup_download' 'db' backup.nombre %}" class="btn btn-sm"
                             title="Descargar">
                             <img src="{% static 'img/icons/download.svg' %}" alt="Descargar"
                                 style="width: 16px; height: 16px;">
@@ -686,7 +687,5 @@
         }
     }
 </script>
-
-<script src="{% static 'js/backups/backups.js' %}"></script>
 
 {% endblock %}

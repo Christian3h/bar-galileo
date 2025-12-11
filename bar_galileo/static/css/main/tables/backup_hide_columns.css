@@ -1,0 +1,41 @@
+/* Ocultar columnas anchas en móvil para las tablas de backups */
+
+/* <=992px: ocultar tamaño */
+@media (max-width: 992px) {
+    /* Oculta columna Tamaño */
+    #tabla-backups-db th:nth-child(4),
+    #tabla-backups-db td:nth-child(4),
+    #tabla-backups-media th:nth-child(4),
+    #tabla-backups-media td:nth-child(4) {
+        display: none !important;
+    }
+}
+
+/* <=768px: ocultar fecha para ganar espacio extra */
+@media (max-width: 768px) {
+    #tabla-backups-db th:nth-child(3),
+    #tabla-backups-db td:nth-child(3),
+    #tabla-backups-media th:nth-child(3),
+    #tabla-backups-media td:nth-child(3) {
+        display: none !important;
+    }
+}
+
+/* <=620px: deja solo Tipo y Acciones (oculta Nombre y Tamaño) */
+@media (max-width: 620px) {
+    /* Nombre */
+    #tabla-backups-db th:nth-child(2),
+    #tabla-backups-db td:nth-child(2),
+    #tabla-backups-media th:nth-child(2),
+    #tabla-backups-media td:nth-child(2) {
+        display: none !important;
+    }
+
+    /* Tamaño (redundante por seguridad) */
+    #tabla-backups-db th:nth-child(4),
+    #tabla-backups-db td:nth-child(4),
+    #tabla-backups-media th:nth-child(4),
+    #tabla-backups-media td:nth-child(4) {
+        display: none !important;
+    }
+}
