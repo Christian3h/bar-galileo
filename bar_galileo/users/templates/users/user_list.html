@@ -1,13 +1,112 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load roles_tags %}
 
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        overflow-y: auto;
+    }
+    
+    .modal-content {
+        background-color: var(--card-bg, #262626);
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 10px;
+        max-width: 500px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        position: relative;
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(166, 137, 50, 0.3);
+    }
+    
+    .modal-header h3 {
+        margin: 0;
+        color: var(--primary-color, #d4af37);
+        font-size: 1.25rem;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .modal-footer {
+        padding: 15px 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(166, 137, 50, 0.3);
+    }
+    
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+    }
+    
+    .close-modal:hover {
+        color: var(--color-secondary, #A68932);
+    }
+    
+    .field-group {
+        margin-bottom: 15px;
+    }
+    
+    .field-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--text-color, #e0e0e0);
+        font-weight: 500;
+    }
+    
+    .field-group input,
+    .field-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border-color, #444);
+        border-radius: 6px;
+        background-color: var(--input-bg, #1a1a1a);
+        color: var(--text-color, #e0e0e0);
+        font-size: 14px;
+    }
+    
+    .field-group textarea {
+        resize: vertical;
+        font-family: inherit;
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">Usuarios</h2>
+    <h2 class="my-4">Gestión de Usuarios</h2>
+    
+    <div style="margin-bottom: 20px;">
+        {% if request.user|has_perm:"users,ver" %}
+            <a href="{% url 'users:historial_password' %}" class="btn btn-secondary">
+                Ver Historial de Cambios de Contraseña
+            </a>
+        {% endif %}
+    </div>
+    
     <div class="table-contenedor">
         <div class="table-responsive">
             <table id="users-table" class="table table-striped">
@@ -15,7 +114,8 @@
                     <tr>
                         <th class="col-1">Username</th>
                         <th class="col-2">Email</th>
-                        <th>Rol</th>
+                        <th class="col-3">Rol</th>
+                        <th class="col-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,10 +123,10 @@
                     <tr>
                         <td class="col-1">{{ user.username }}</td>
                         <td class="col-2">{{ user.email }}</td>
-                        <td class="actions-cell">
-                            <form method="post" style="margin:0;">
+                        <td class="col-3">
+                            <form method="post" action="{% url 'users:user_list' %}" style="margin:0; display: inline-block;">
                                 {% csrf_token %}
-                                <select name="rol_id">
+                                <select name="rol_id" style="padding: 5px; border-radius: 4px;">
                                     {% for rol in roles %}
                                         <option value="{{ rol.id }}"
                                             {% if user.userprofile and user.userprofile.rol and user.userprofile.rol.id == rol.id %}
@@ -39,13 +139,24 @@
                                     {% endfor %}
                                 </select>
                                 <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit" class="btn btn-sm btn-primary">Cambiar rol</button>
+                                <input type="hidden" name="action" value="change_role">
+                                <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
                             </form>
+                        </td>
+                        <td class="col-4 actions-cell">
+                            {% if request.user|has_perm:"users,editar" %}
+                                <button type="button" 
+                                        class="btn btn-sm btn-warning"
+                                        onclick="openPasswordModal('{{ user.id }}', '{{ user.username }}')"
+                                        title="Cambiar contraseña">
+                                    Cambiar Contraseña
+                                </button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center text-muted">No hay usuarios registrados.</td>
+                        <td colspan="4" class="text-center text-muted">No hay usuarios registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -53,6 +164,60 @@
         </div>
     </div>
 </div>
+
+<!-- Modal para cambiar contraseña -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closePasswordModal()">&times;</span>
+        <div class="modal-header">
+            <h3>Cambiar Contraseña de Usuario</h3>
+        </div>
+        <div class="modal-body">
+            <p style="color: #aaa; margin-bottom: 20px;">Usuario: <strong id="modalUsername"></strong></p>
+            
+            <form id="changePasswordForm" method="post" action="{% url 'users:cambiar_password' %}">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="modalUserId">
+                
+                <div class="field-group">
+                    <label for="new_password">Nueva Contraseña *</label>
+                    <input type="password" 
+                           id="new_password" 
+                           name="new_password" 
+                           required 
+                           minlength="8"
+                           placeholder="Mínimo 8 caracteres">
+                    <div id="passwordStrength" style="margin-top: 8px; font-size: 12px;"></div>
+                </div>
+                
+                <div class="field-group">
+                    <label for="confirm_password">Confirmar Contraseña *</label>
+                    <input type="password" 
+                           id="confirm_password" 
+                           name="confirm_password" 
+                           required 
+                           minlength="8"
+                           placeholder="Repetir contraseña">
+                    <span id="passwordMatch" style="font-size: 12px;"></span>
+                </div>
+                
+                <div class="field-group">
+                    <label for="motivo">Motivo del Cambio (Opcional)</label>
+                    <textarea id="motivo" 
+                              name="motivo" 
+                              placeholder="Ej: Usuario olvidó su contraseña, reseteo solicitado, etc."
+                              style="min-height: 80px; resize: vertical;"></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitPassword" disabled>Cambiar Contraseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
     var sel = '#users-table';
@@ -70,6 +235,95 @@ $(document).ready(function() {
         },
         responsive: true
     });
+});
+
+function openPasswordModal(userId, username) {
+    document.getElementById('passwordModal').style.display = 'block';
+    document.getElementById('modalUserId').value = userId;
+    document.getElementById('modalUsername').textContent = username;
+    document.getElementById('changePasswordForm').reset();
+    document.getElementById('passwordStrength').textContent = '';
+    document.getElementById('passwordMatch').textContent = '';
+    document.getElementById('btnSubmitPassword').disabled = true;
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('passwordModal');
+    if (event.target == modal) {
+        closePasswordModal();
+    }
+}
+
+// Validación de fortaleza de contraseña
+document.getElementById('new_password').addEventListener('input', function() {
+    const password = this.value;
+    const strengthDiv = document.getElementById('passwordStrength');
+    
+    if (password.length === 0) {
+        strengthDiv.textContent = '';
+        return;
+    }
+    
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^a-zA-Z\d]/.test(password)) strength++;
+    
+    if (strength <= 2) {
+        strengthDiv.style.color = '#dc3545';
+        strengthDiv.textContent = 'Contraseña débil';
+    } else if (strength <= 3) {
+        strengthDiv.style.color = '#ffc107';
+        strengthDiv.textContent = 'Contraseña media';
+    } else {
+        strengthDiv.style.color = '#28a745';
+        strengthDiv.textContent = 'Contraseña fuerte';
+    }
+    
+    checkPasswordMatch();
+});
+
+// Validación de coincidencia de contraseñas
+document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+
+function checkPasswordMatch() {
+    const password = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const matchSpan = document.getElementById('passwordMatch');
+    const submitBtn = document.getElementById('btnSubmitPassword');
+    
+    if (confirmPassword.length === 0) {
+        matchSpan.textContent = '';
+        submitBtn.disabled = true;
+        return;
+    }
+    
+    if (password === confirmPassword && password.length >= 8) {
+        matchSpan.style.color = '#28a745';
+        matchSpan.textContent = 'Las contraseñas coinciden';
+        submitBtn.disabled = false;
+    } else {
+        matchSpan.style.color = '#dc3545';
+        matchSpan.textContent = 'Las contraseñas no coinciden';
+        submitBtn.disabled = true;
+    }
+}
+
+// Confirmación antes de enviar
+document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('modalUsername').textContent;
+    if (confirm('¿Está seguro que desea cambiar la contraseña del usuario "' + username + '"?\n\nEsta acción será registrada en el sistema de auditoría.')) {
+        this.submit();
+    }
 });
 </script>
 {% endblock %}
