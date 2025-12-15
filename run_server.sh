@@ -3,8 +3,8 @@
 # Incluye vigilancia de archivos HTML, CSS y JS para reinicio automático
 
 # --- Detección de IP y muestra de URL ---
-# Obtener la IP local de la manera más fiable
-LOCAL_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+# Obtener la IP local de la manera más fiable (compatible macOS)
+LOCAL_IP=$(ipconfig getifaddr en0)
 
 # Limpiar la pantalla y mostrar información ótil
 clear
