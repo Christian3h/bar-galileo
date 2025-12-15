@@ -13,39 +13,39 @@
         <option value="all" {% if selected_period == 'all' %}selected{% endif %}>Todo el Historial</option>
       </select>
     </form>
-    
+
   </div>
 
   <section class="dashboard-cards">
-    <div class="card">
+    <div class="card" title="Suma del total de todas las facturas en el período. Se calcula sumando el campo 'total' de cada factura.">
       <h3>Ingresos Totales.</h3>
       <p>{{ ingresos_totales|format_price }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Ganancia bruta por producto vendido. Se calcula: (Precio de Venta - Precio de Compra) × Cantidad. Solo incluye ganancia por productos, NO incluye nóminas ni gastos.">
       <h3>Ganancia Total.</h3>
       <p>{{ ganancia_total|format_price }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Valor del inventario a precio de costo. Se calcula: Stock disponible × Precio de Compra de cada producto. Es lo que vale tu almacén en términos de inversión.">
       <h3>Valor Total del Stock.</h3>
       <p>{{ valor_total_stock|format_price }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Suma de todos los gastos operativos en el período. Incluye: compra de insumos, servicios, mantenimiento, reparaciones, suministros, etc. NO incluye nóminas.">
       <h3>Gastos Totales.</h3>
       <p>{{ gastos_totales|format_price }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Suma de los salarios y pagos de nómina realizados en el período. Se calcula sumando el campo 'monto' de todos los pagos (tipo='salario') en las fechas del período.">
       <h3>Nóminas Pagadas.</h3>
       <p>{{ nominas_pagadas|format_price }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Cantidad total de empleados activos en el sistema. NO se filtra por período, es un conteo general de empleados con estado='activo'.">
       <h3>Empleados Activos.</h3>
       <p>{{ total_empleados }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Suma de bonificaciones pagadas en el período. Se calcula sumando pagos con tipo='bono'. Si es $0, significa que no hubo pagos de bonos en este período.">
       <h3>Bonificaciones Pagadas.</h3>
       <p>{{ bonificaciones_pagadas|format_price }}</p>
     </div>
-    <div class="card">
+    <div class="card" title="Cantidad de bonificaciones configuradas como activas. NO se filtra por período, es un conteo general de todas las bonificaciones vigentes.">
       <h3>Bonificaciones Activas.</h3>
       <p>{{ bonificaciones_activas }}</p>
     </div>
