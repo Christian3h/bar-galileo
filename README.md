@@ -56,7 +56,59 @@ bar-galileo/
 └── requirements.txt       # Dependencias
 ```
 
-## 🚀 Instalación
+## 🚀 Despliegue con Docker
+
+### Archivos relevantes
+- `Dockerfile`: Construye la imagen con Python 3.12, instala dependencias y `flite` para audio del CAPTCHA.
+- `docker/entrypoint.sh`: Aplica migraciones y `collectstatic`, luego arranca Gunicorn.
+- `docker-compose.yml`: Orquesta `web` y `db` (MySQL 8).
+- `.dockerignore`: Excluye archivos innecesarios del build.
+
+### Levantar el entorno
+```bash
+# Construir la imagen
+docker compose build
+
+# Levantar servicios
+docker compose up -d
+
+# Ver logs del servicio web
+docker compose logs -f web
+```
+
+Abrir: http://localhost:8000
+
+### Comandos útiles
+```bash
+# Migraciones (entrypoint ya corre)
+docker compose exec web python bar_galileo/manage.py migrate
+
+# Crear superusuario
+docker compose exec web python bar_galileo/manage.py createsuperuser
+
+# Sembrar datos falsos
+docker compose exec web python bar_galileo/manage.py seed_fake_data
+```
+
+### Audio CAPTCHA (Flite)
+```bash
+# Verificar flite
+docker compose exec web which flite
+
+# Probar generación de audio
+docker compose exec web flite -t "prueba de audio captcha" -o /tmp/test.wav
+```
+
+### Reporte de Licencias
+```bash
+# Generar reporte en Markdown de paquetes Python
+docker compose exec web pip-licenses --with-authors --with-urls --format=markdown > /app/bar_galileo/docs/THIRD_PARTY_LICENSES.md
+
+# Ver el archivo generado en el host
+cat bar_galileo/docs/THIRD_PARTY_LICENSES.md
+```
+
+## 🚀 Instalación (modo manual)
 
 ### Requisitos previos
 

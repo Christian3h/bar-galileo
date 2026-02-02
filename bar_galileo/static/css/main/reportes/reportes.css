@@ -5,11 +5,11 @@
 @import "../../_variables/_colors.css";
 
 /* Oculta el buscador nativo de DataTables */
-.dataTables_filter { 
-  display: none !important; 
+.dataTables_filter {
+  display: none !important;
 }
-.dataTables_length { 
-  display: none !important; 
+.dataTables_length {
+  display: none !important;
 }
 
 /* Contenedor principal */
@@ -605,24 +605,24 @@
     .reporte-detail-page .export-buttons {
         flex-direction: column;
     }
-    
+
     .reporte-detail-page .export-buttons .btn {
         width: 100%;
     }
-    
+
     .reporte-detail-page .action-buttons {
         flex-direction: column;
     }
-    
+
     .reporte-detail-page .action-buttons .btn {
         width: 100%;
         justify-content: center;
     }
-    
+
     .reporte-detail-page .perfil-panel {
         padding: 1rem;
     }
-    
+
     .reporte-detail-page .reporte-identidad {
         flex-direction: column;
         align-items: flex-start;
@@ -633,13 +633,13 @@
     .reporte-detail-page .perfil-panel {
         padding: 0.75rem;
     }
-    
+
     .reporte-detail-page .perfil-datos li {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.25rem;
     }
-    
+
     .reporte-detail-page .info-row-box {
         flex-direction: column;
         text-align: center;
@@ -655,11 +655,11 @@
 /* Contenedor del formulario */
 form {
     display: flex;
+    align-items: center;
     flex-direction: column;
     gap: 1rem;
     padding: 1.5rem;
     border-radius: 8px;
-    align-items: flex-start;
 }
 
 form p {
@@ -875,20 +875,20 @@ small {
     form {
         padding: 1rem;
     }
-    
+
     form p {
         max-width: 100%;
     }
-    
+
     .form-group {
         max-width: 100%;
     }
-    
+
     .form-actions {
         flex-direction: column;
         max-width: 100%;
     }
-    
+
     .form-actions .btn {
         width: 100%;
         text-align: center;

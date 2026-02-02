@@ -237,22 +237,27 @@ def user_list(request):
         )
     ).order_by('is_user_role', 'username')
     roles = Role.objects.all()
+    
     if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        rol_id = request.POST.get('rol_id')
-        user = User.objects.get(id=user_id)
-        profile, _ = UserProfile.objects.get_or_create(user=user)
-        profile.rol_id = rol_id
-        profile.save()
+        action = request.POST.get('action', 'change_role')
+        
+        if action == 'change_role':
+            user_id = request.POST.get('user_id')
+            rol_id = request.POST.get('rol_id')
+            user = User.objects.get(id=user_id)
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+            profile.rol_id = rol_id
+            profile.save()
 
-        rol = Role.objects.get(id=rol_id)
-        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.nombre}'."
+            rol = Role.objects.get(id=rol_id)
+            mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.nombre}'."
 
-        # Solo notificar si el usuario está autenticado
-        if request.user.is_authenticated:
-            notificar_usuario(request.user, mensaje)
+            # Solo notificar si el usuario está autenticado
+            if request.user.is_authenticated:
+                notificar_usuario(request.user, mensaje)
 
-        return redirect('users:user_list')
+            return redirect('users:user_list')
+    
     return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
 
 from django.http import JsonResponse
@@ -261,3 +266,91 @@ def user_list_api(request):
     users = User.objects.all().order_by('username')
     data = [{'id': user.id, 'username': user.username, 'nombre': user.get_full_name() or user.username} for user in users]
     return JsonResponse(data, safe=False)
+
+
+@login_required
+@require_POST
+def cambiar_password(request):
+    """Vista para que el administrador cambie la contraseña de cualquier usuario"""
+    from .models import CambioPasswordAuditoria
+    
+    try:
+        # Obtener datos del formulario
+        user_id = request.POST.get('user_id')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        motivo = request.POST.get('motivo', '')
+        
+        # Validaciones
+        if not user_id or not new_password or not confirm_password:
+            notificar_usuario(request.user, 'Error: Todos los campos obligatorios deben ser completados.')
+            return redirect('users:user_list')
+        
+        if new_password != confirm_password:
+            notificar_usuario(request.user, 'Error: Las contraseñas no coinciden.')
+            return redirect('users:user_list')
+        
+        if len(new_password) < 8:
+            notificar_usuario(request.user, 'Error: La contraseña debe tener al menos 8 caracteres.')
+            return redirect('users:user_list')
+        
+        # Obtener el usuario a modificar
+        try:
+            usuario = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            notificar_usuario(request.user, 'Error: Usuario no encontrado.')
+            return redirect('users:user_list')
+        
+        # No permitir cambiar la contraseña del superusuario por seguridad
+        if usuario.is_superuser and not request.user.is_superuser:
+            notificar_usuario(request.user, 'Error: No tiene permisos para cambiar la contraseña de un superusuario.')
+            return redirect('users:user_list')
+        
+        # Cambiar la contraseña
+        usuario.set_password(new_password)
+        usuario.save()
+        
+        # Obtener la IP del administrador
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_address = x_forwarded_for.split(',')[0]
+        else:
+            ip_address = request.META.get('REMOTE_ADDR')
+        
+        # Registrar en auditoría
+        CambioPasswordAuditoria.objects.create(
+            usuario_modificado=usuario,
+            administrador=request.user,
+            ip_address=ip_address,
+            motivo=motivo
+        )
+        
+        # Notificar éxito
+        notificar_usuario(request.user, f'La contraseña de "{usuario.username}" ha sido cambiada exitosamente. Este cambio ha sido registrado en el sistema de auditoría.')
+        
+    except Exception as e:
+        notificar_usuario(request.user, f'Error al cambiar la contraseña: {str(e)}')
+    
+    return redirect('users:user_list')
+
+
+@login_required
+def historial_password(request):
+    """Vista para ver el historial de cambios de contraseña"""
+    from .models import CambioPasswordAuditoria
+    from django.core.paginator import Paginator
+    
+    # Obtener todos los cambios ordenados por fecha descendente
+    cambios = CambioPasswordAuditoria.objects.all().select_related(
+        'usuario_modificado', 'administrador'
+    ).order_by('-fecha_cambio')
+    
+    # Paginación
+    paginator = Paginator(cambios, 25)  # 25 registros por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'users/historial_password.html', {
+        'page_obj': page_obj,
+        'total_cambios': cambios.count()
+    })

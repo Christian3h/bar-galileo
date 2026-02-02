@@ -96,13 +96,11 @@
 .btn-warning {
   border-color: var(--color-secondary);
   color: var(--color-secondary);
-  border-style: dashed;
 }
 
 .btn-warning:hover {
   background-color: var(--color-secondary);
   color: white;
-  border-style: solid;
 }
 
 /* Variante primaria - mismo estilo que base */
