@@ -4,6 +4,386 @@
 
 {% block extra_css%}
     <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+    <!-- DataTables SearchBuilder CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css">
+    <!-- DataTables Buttons CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <style>
+        /* Estilos personalizados para DataTable usando las clases del proyecto */
+
+        /* Contenedor principal */
+        .table-contenedor {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .dt-container {
+            width: 100% !important;
+            max-width: 100%;
+        }
+
+        /* Controles superiores: SearchBuilder, Length, Filter */
+        .top-controls {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* SearchBuilder ocupa todo el ancho */
+        .top-controls .dt-search-builder,
+        .top-controls div[class*="dtsb"] {
+            width: 100%;
+        }
+
+        /* SearchBuilder: limitar ancho y permitir scroll horizontal si hiciera falta */
+        .dt-search-builder,
+        .dtsb-group {
+            max-width: 89dvw;
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+
+        /* Criterios en fila flexible para que no se rompa en móvil */
+        .dtsb-criteria {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        /* Dropdowns y selectores más compactos */
+        .dtsb-criteria select,
+        .dtsb-inputCont select,
+        .dtsb-inputCont input,
+        .dtsb-dropDown,
+        .dtsb-select {
+            min-width: 120px;
+            max-width: 180px;
+            width: auto;
+        }
+
+        /* Contenedor de lógica y botón clear ajustados y sin desplazamientos extremos */
+        .dtsb-logicContainer,
+        .dtsb-buttonContainer {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+            transform: none !important;
+            margin-left: 0.25rem;
+            border: none !important;
+            background: none !important;
+            margin-bottom: 20px;
+        }
+
+        /* Botón eliminar regla cerca del bloque */
+        .dtsb-buttonContainer {
+            display: inline-flex;
+            align-items: center;
+            height: auto;
+        }
+
+        /* Ajustes móviles */
+        @media (max-width: 768px) {
+            .dtsb-group {
+                max-width: 89dvw;
+                overflow-x: auto;
+            }
+            .dtsb-criteria select,
+            .dtsb-inputCont select,
+            .dtsb-inputCont input,
+            .dtsb-dropDown,
+            .dtsb-select {
+                width: 42vw;
+                max-width: 200px;
+            }
+            .dtsb-buttonContainer {
+                order: 99;
+                margin-left: 0;
+            }
+            .dtsb-logicContainer {
+                margin-left: 0;
+            }
+        }
+
+        /* Fila de Length y Filter */
+        .top-controls > div:not(.dt-search-builder):not([class*="dtsb"]) {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Controles inferiores: Info, Buttons, Pagination */
+        .bottom-controls {
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        /* Botones de DataTable heredan las clases .btn del proyecto */
+        .dt-buttons .dt-button,
+        .dt-button,
+        button.dt-button,
+        a.dt-button,
+        div.dt-button {
+            /* Resetear TODO */
+            all: initial;
+            font-family: sans-serif;
+            /* Aplicar estilos del proyecto */
+            display: inline-block !important;
+            padding: 0.5rem 1rem !important;
+            margin: 0.25rem !important;
+            border: 2px solid var(--color-secondary) !important;
+            border-radius: 4px !important;
+            background: none !important;
+            background-color: transparent !important;
+            color: var(--color-secondary) !important;
+            text-decoration: none !important;
+            text-align: center !important;
+            font-weight: 500 !important;
+            font-size: 0.9rem !important;
+            line-height: 1.2 !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-sizing: border-box !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            vertical-align: middle !important;
+        }
+
+        .dt-buttons .dt-button:hover,
+        .dt-button:hover,
+        button.dt-button:hover,
+        a.dt-button:hover,
+        div.dt-button:hover {
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .dt-buttons .dt-button:focus,
+        .dt-button:focus,
+        button.dt-button:focus,
+        a.dt-button:focus,
+        div.dt-button:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.3) !important;
+        }
+
+        .dt-buttons .dt-button:active,
+        .dt-button:active,
+        button.dt-button:active,
+        a.dt-button:active,
+        div.dt-button:active {
+            transform: translateY(0) !important;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+        }
+
+        /* Contenedor de botones */
+        .dt-buttons {
+            display: inline-flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Botón de añadir condición SearchBuilder */
+        .dtsb-button,
+        button.dtsb-button,
+        .dtsb-add {
+            display: inline-block !important;
+            padding: 0.5rem 1rem !important;
+            margin: 0.25rem !important;
+            border: 2px solid var(--color-secondary) !important;
+            border-radius: 4px !important;
+            background: none !important;
+            background-color: transparent !important;
+            color: var(--color-secondary) !important;
+            text-decoration: none !important;
+            text-align: center !important;
+            font-weight: 500 !important;
+            font-size: 0.9rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            box-sizing: border-box !important;
+        }
+
+        .dtsb-button:hover,
+        button.dtsb-button:hover,
+        .dtsb-add:hover {
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Selector de longitud */
+        .dt-length {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dt-length label {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+            font-weight: 500;
+        }
+
+        .dt-length select,
+        select.dt-input {
+            padding: 0.5rem 1rem !important;
+            border: 2px solid var(--color-secondary) !important;
+            border-radius: 4px !important;
+            background: none !important;
+            background-color: transparent !important;
+            color: var(--color-secondary) !important;
+            font-size: 0.9rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-weight: 500 !important;
+        }
+
+        .dt-length select:hover,
+        .dt-length select:focus,
+        select.dt-input:hover,
+        select.dt-input:focus {
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+            outline: none !important;
+        }
+
+        /* Campo de búsqueda */
+        .dt-search {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dt-search label {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+            font-weight: 500;
+        }
+
+        .dt-search input,
+        input.dt-input {
+            padding: 0.5rem 1rem !important;
+            border: 2px solid var(--color-secondary) !important;
+            border-radius: 4px !important;
+            background: none !important;
+            background-color: transparent !important;
+            color: var(--color-secondary) !important;
+            font-size: 0.9rem !important;
+            transition: all 0.3s ease !important;
+            font-weight: 500 !important;
+        }
+
+        .dt-search input:focus,
+        input.dt-input:focus {
+            outline: none !important;
+            background-color: rgba(166, 137, 50, 0.1) !important;
+            box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.3) !important;
+        }
+
+        .dt-search input::placeholder {
+            color: rgba(166, 137, 50, 0.5);
+        }
+
+        /* Info */
+        .dt-info {
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+            padding: 0.5rem 0;
+        }
+
+        /* Paginación */
+        .dt-paging {
+            padding: 0.5rem 0;
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .dt-paging .dt-paging-button,
+        .dt-paging button,
+        .dt-paging a {
+            display: inline-block !important;
+            padding: 0.5rem 1rem !important;
+            margin: 0.25rem !important;
+            border: 2px solid var(--color-secondary) !important;
+            border-radius: 4px !important;
+            background: none !important;
+            background-color: transparent !important;
+            color: var(--color-secondary) !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.9rem !important;
+            text-decoration: none !important;
+            font-weight: 500 !important;
+            box-sizing: border-box !important;
+        }
+
+        .dt-paging .dt-paging-button:hover:not(.disabled),
+        .dt-paging button:hover:not(.disabled),
+        .dt-paging a:hover:not(.disabled) {
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .dt-paging .dt-paging-button.current,
+        .dt-paging button.current,
+        .dt-paging a.current {
+            background-color: var(--color-secondary) !important;
+            color: white !important;
+        }
+
+        .dt-paging .dt-paging-button.disabled,
+        .dt-paging button.disabled,
+        .dt-paging a.disabled {
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-controls > div,
+            .bottom-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .dt-buttons,
+            .dt-search {
+                width: 100%;
+            }
+
+            .dt-search input {
+                width: 100%;
+            }
+
+            .dt-paging {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -14,7 +394,7 @@
             <a href="{% url 'products:products_archived_admin' %}" class="btn btn-success">Ver archivados</a>
         {% endif %}
 
-        <div class="table-contenedor">
+        <div id="ajax-table-container" class="table-contenedor">
             <div class="table-responsive">
                 <table id="tabla-productos" class="table table-striped table-bordered nowrap table-productos" style="width:100%">
                     <thead>
@@ -106,6 +486,18 @@
 {% endblock %}
 
 {% block extra_js %}
+    <!-- DataTables SearchBuilder -->
+    <script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.min.js"></script>
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <!-- JSZip para Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- pdfmake para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <!-- Botones de exportación -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
     <script>
     // Permisos del usuario
     const canEdit = {% if request.user|has_perm:"products,editar" %}true{% else %}false{% endif %};
@@ -167,13 +559,46 @@
         });
 
         function initializeAjaxTable() {
-            // Inicializar DataTables con la opción de responsividad
+            // Inicializar DataTables con SearchBuilder y Buttons
             const table = $(sel).DataTable({
                 processing: true,
                 serverSide: false,
                 responsive: false,
                 autoWidth: true,
                 scrollX: false,
+                // Configurar SearchBuilder
+                searchBuilder: true,
+                // Configurar DOM reorganizado:
+                // Q = SearchBuilder (arriba)
+                // l = Length (arriba)
+                // f = Filter/Search (arriba)
+                // r = processing
+                // t = Table
+                // i = Info (abajo)
+                // B = Buttons (abajo)
+                // p = Pagination (abajo)
+                dom: '<"top-controls"Qlf>rt<"bottom-controls"iBp>',
+                // Configurar botones de exportación
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: 'Exportar a Excel',
+                        className: 'btn btn-success',
+                        exportOptions: {
+                            modifier: { search: 'applied' }
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'Exportar a PDF',
+                        className: 'btn btn-success',
+                        exportOptions: {
+                            modifier: { search: 'applied' }
+                        },
+                        orientation: 'landscape',
+                        pageSize: 'LEGAL'
+                    }
+                ],
                 columnDefs: [
                     { targets: '_all', defaultContent: '' },
                     { targets: [0], orderable: false, className: 'col-imagen' }, // Imagen

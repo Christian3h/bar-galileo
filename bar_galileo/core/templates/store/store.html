@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load pagination_tags %}
 
 {% block title %}Tienda - {{ block.super }}{% endblock %}
 
@@ -57,8 +58,8 @@
             <div class="pagination">
                 <span class="step-links">
                     {% if page_obj.has_previous %}
-                        <a href="?page=1&{{ request.GET.urlencode }}">&laquo; primera</a>
-                        <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}">anterior</a>
+                        <a href="?{% url_replace request page=1 %}">&laquo; primera</a>
+                        <a href="?{% url_replace request page=page_obj.previous_page_number %}">anterior</a>
                     {% endif %}
 
                     <span class="current">
@@ -66,8 +67,8 @@
                     </span>
 
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}">siguiente</a>
-                        <a href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode }}">última &raquo;</a>
+                        <a href="?{% url_replace request page=page_obj.next_page_number %}">siguiente</a>
+                        <a href="?{% url_replace request page=page_obj.paginator.num_pages %}">última &raquo;</a>
                     {% endif %}
                 </span>
             </div>

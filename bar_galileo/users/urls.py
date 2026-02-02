@@ -5,6 +5,8 @@ app_name = 'users'
 
 urlpatterns = [
     path('usuarios/', views.user_list, name='user_list'),
+    path('usuarios/cambiar-password/', views.cambiar_password, name='cambiar_password'),
+    path('usuarios/historial-password/', views.historial_password, name='historial_password'),
     path('panel/', views.panel_usuario, name='panel_usuario'),
     path('panel/editar-info/', views.editar_info, name='editar_info'),
     path('panel/borrar-info/', views.borrar_info, name='borrar_info'),
