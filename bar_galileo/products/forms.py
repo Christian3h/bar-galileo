@@ -39,7 +39,22 @@ class ProductoForm(forms.ModelForm):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre del producto es obligatorio.')
-        return nombre.strip()
+        
+        nombre = nombre.strip()
+        
+        # Validar longitud máxima
+        if len(nombre) > 200:
+            raise forms.ValidationError('El nombre no puede exceder 200 caracteres.')
+        
+        # Advertencia de producto duplicado (case-insensitive)
+        if self.instance.pk:
+            if Producto.objects.exclude(pk=self.instance.pk).filter(nombre__iexact=nombre).exists():
+                raise forms.ValidationError('Ya existe un producto con este nombre. Verifica antes de continuar.')
+        else:
+            if Producto.objects.filter(nombre__iexact=nombre).exists():
+                raise forms.ValidationError('Ya existe un producto con este nombre. Verifica antes de continuar.')
+        
+        return nombre
     
     def clean_precio_compra(self):
         precio_compra = self.cleaned_data.get('precio_compra')
@@ -47,6 +62,8 @@ class ProductoForm(forms.ModelForm):
             raise forms.ValidationError('El precio de compra es obligatorio.')
         if precio_compra <= 0:
             raise forms.ValidationError('El precio de compra debe ser mayor que cero.')
+        if precio_compra > 1000000000:  # Límite razonable
+            raise forms.ValidationError('El precio de compra no puede superar $1,000,000,000.')
         return precio_compra
     
     def clean_precio_venta(self):
@@ -55,6 +72,8 @@ class ProductoForm(forms.ModelForm):
             raise forms.ValidationError('El precio de venta es obligatorio.')
         if precio_venta <= 0:
             raise forms.ValidationError('El precio de venta debe ser mayor que cero.')
+        if precio_venta > 1000000000:  # Límite razonable
+            raise forms.ValidationError('El precio de venta no puede superar $1,000,000,000.')
         return precio_venta
     
     def clean_stock(self):
@@ -67,6 +86,8 @@ class ProductoForm(forms.ModelForm):
             raise forms.ValidationError('El stock debe ser un número válido.')
         if stock <= 0:
             raise forms.ValidationError('El stock debe ser mayor a 0.')
+        if stock > 1000000:  # Límite razonable
+            raise forms.ValidationError('El stock no puede superar 1,000,000 unidades.')
         return stock
     
     def clean_id_categoria(self):
@@ -140,10 +161,20 @@ class ProveedorForm(forms.ModelForm):
         return nombre.strip()
     
     def clean_contacto(self):
+        import re
         contacto = self.cleaned_data.get('contacto')
         if not contacto or not contacto.strip():
             raise forms.ValidationError('El contacto es obligatorio.')
-        return contacto.strip()
+        
+        contacto = contacto.strip()
+        
+        # Si parece ser un email, validar formato
+        if '@' in contacto:
+            email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_regex, contacto):
+                raise forms.ValidationError('El formato del email no es válido.')
+        
+        return contacto
     
     def clean_direccion(self):
         direccion = self.cleaned_data.get('direccion')
