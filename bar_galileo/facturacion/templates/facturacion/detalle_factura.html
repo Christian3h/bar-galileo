@@ -85,8 +85,7 @@
 
         <div class="actions-section">
             <div class="action-buttons">
-                <a href="{% url 'facturacion:eliminar_factura' factura.id %}"
-                   class="btn btn-danger"
+                <a href="{% url 'facturacion:eliminar_factura' factura.id %}" class="btn btn-danger">
                     🗑️ Eliminar Factura
                 </a>
                 <button onclick="window.print()" class="btn btn-primary">
@@ -97,7 +96,7 @@
     </div>
 </div>
 
-
+<style>
 
 /* Detalle de factura */
 .factura-detail {
@@ -362,5 +361,7 @@
     .hide-mobile {
         display: table-cell !important;
     }
+}
+</style>
 
 {% endblock %}
