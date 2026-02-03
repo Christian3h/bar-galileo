@@ -66,7 +66,7 @@ class ProductoForm(forms.ModelForm):
         except (ValueError, TypeError):
             raise forms.ValidationError('El stock debe ser un número válido.')
         if stock <= 0:
-            raise forms.ValidationError('El stock debe ser mayor a 0.')
+            raise forms.ValidationError('El stock debe ser mayor que 0.')
         return stock
     
     def clean_id_categoria(self):
@@ -159,7 +159,7 @@ class ProveedorForm(forms.ModelForm):
             # Colombian phone number regex: starts with 3, 10 digits long
             colombian_phone_regex = r'^3\d{9}$'
             if not re.match(colombian_phone_regex, telefono_str):
-                raise forms.ValidationError('El número de teléfono debe ser colombiano (10 dígitos, empieza con 3).')
+                raise forms.ValidationError('El número de teléfono debe ser colombiano (10 dígitos, que empiece con 3).')
         return telefono
 
 class MarcaForm(forms.ModelForm):

@@ -164,7 +164,7 @@
             <span class="close-modal" onclick="cerrarModal()">&times;</span>
         </div>
         <div class="modal-body">
-            <p>¿Está seguro que desea eliminar este backup?</p>
+            <p>¿Estás seguro de que deseas eliminar este backup?</p>
             <p><strong id="deleteFileName"></strong></p>
             <p style="color: #ffc107; margin-top: 15px;">⚠️ Esta acción no se puede deshacer.</p>
         </div>
@@ -183,7 +183,7 @@
             <span class="close-modal" onclick="cerrarModalCrear()">&times;</span>
         </div>
         <div class="modal-body">
-            <p>¿Está seguro que desea crear una copia de seguridad?</p>
+            <p>¿Estás seguro de que deseas crear una copia de seguridad?</p>
             <p><strong id="createBackupType"></strong></p>
         </div>
         <div class="modal-footer">
@@ -201,7 +201,7 @@
             <span class="close-modal" onclick="cerrarModalRestaurar()">&times;</span>
         </div>
         <div class="modal-body">
-            <p>Seleccione cómo desea restaurar la copia de seguridad:</p>
+            <p>Selecciona cómo deseas restaurar la copia de seguridad:</p>
 
             <!-- Tabs para seleccionar modo -->
             <div
@@ -221,7 +221,7 @@
                 <div class="field-group">
                     <label for="restoreTipo">Tipo de Copia de Seguridad:</label>
                     <select id="restoreTipo" class="form-control" onchange="cargarBackupsDisponibles()">
-                        <option value="">-- Seleccione --</option>
+                        <option value="">-- Selecciona --</option>
                         <option value="db">Base de Datos</option>
                         <option value="media">Archivos Media</option>
                     </select>
@@ -230,7 +230,7 @@
                 <div class="field-group" id="restoreFileGroup" style="display: none;">
                     <label for="restoreFile">Archivo de Copia de Seguridad:</label>
                     <select id="restoreFile" class="form-control">
-                        <option value="">-- Seleccione un archivo --</option>
+                        <option value="">-- Selecciona un archivo --</option>
                     </select>
                 </div>
             </div>
@@ -546,7 +546,7 @@
         const fileGroup = document.getElementById('restoreFileGroup');
 
         // Limpiar opciones
-        selectFile.innerHTML = '<option value="">-- Seleccione un archivo --</option>';
+        selectFile.innerHTML = '<option value="">-- Selecciona un archivo --</option>';
 
         if (!tipo) {
             fileGroup.style.display = 'none';
