@@ -78,6 +78,41 @@ class ReporteForm(forms.ModelForm):
         if not formato:
             raise forms.ValidationError('El formato es obligatorio.')
         return formato
+    
+    def clean_archivo(self):
+        archivo = self.cleaned_data.get('archivo')
+        if archivo:
+            # Validar tamaño (máximo 10MB para reportes)
+            if archivo.size > 10 * 1024 * 1024:
+                raise forms.ValidationError('El archivo no puede superar 10MB.')
+            
+            # Validar tipo de archivo
+            allowed_types = ['application/pdf', 'application/vnd.ms-excel', 
+                           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                           'text/csv']
+            if archivo.content_type not in allowed_types:
+                raise forms.ValidationError('Solo se permiten archivos PDF, Excel o CSV.')
+        return archivo
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        fecha_inicio = cleaned_data.get('fecha_inicio')
+        fecha_fin = cleaned_data.get('fecha_fin')
+        
+        if fecha_inicio and fecha_fin:
+            if fecha_fin < fecha_inicio:
+                raise forms.ValidationError({
+                    'fecha_fin': 'La fecha de fin debe ser posterior a la fecha de inicio.'
+                })
+            
+            # Validar rango máximo (2 años)
+            diff = fecha_fin - fecha_inicio
+            if diff.days > 730:
+                raise forms.ValidationError(
+                    'El rango de fechas no puede ser mayor a 2 años.'
+                )
+        
+        return cleaned_data
 
 
 class ReporteFilterForm(forms.Form):
