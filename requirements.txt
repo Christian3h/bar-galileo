@@ -64,10 +64,10 @@ mysqlclient==2.2.7
 openpyxl==3.1.5
 reportlab==4.2.5
 
-# RAG Chat Dependencies
-pymupdf==1.24.13
-sentence-transformers==3.3.1
-faiss-cpu==1.9.0.post1
-numpy==1.26.4
-torch==2.5.1
-# Optional: pytesseract==0.3.13 (para OCR de PDFs escaneados)
+# RAG Chat Dependencies (Instaladas y actualizadas)
+pymupdf==1.26.7
+sentence-transformers==5.2.2
+faiss-cpu==1.13.2
+pytesseract==0.3.13
+transformers==5.0.0
+# Nota: numpy y torch ya están en las dependencias base
