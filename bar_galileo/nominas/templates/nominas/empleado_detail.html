@@ -40,7 +40,7 @@
                     </li>
                     <li>
                         <span class="label">Salario Base:</span>
-                        <strong class="value">${{ empleado.salario }}</strong>
+                        <strong class="value">{{ empleado.salario|format_price }} COP</strong>
                     </li>
                     <li>
                         <span class="label">Fecha de Contratación:</span>
@@ -152,7 +152,7 @@
 
                 <div class="info-row-box">
                     <span class="info-label">Total Pagado</span>
-                    <span class="info-value">${{ total_pagado }}</span>
+                    <span class="info-value">{{ total_pagado|format_price }} COP</span>
                 </div>
 
                 <div class="table-responsive">
@@ -171,7 +171,7 @@
                             <tr>
                                 <td>{{ pago.fecha_pago }}</td>
                                 <td>{{ pago.get_tipo_display }}</td>
-                                <td>${{ pago.monto }}</td>
+                                <td>{{ pago.monto|format_price }} COP</td>
                                 <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
                                 <td class="comprobanteCol">
                                     {% if pago.comprobante %}
@@ -219,7 +219,7 @@
                             {% for bonificacion in bonificaciones %}
                             <tr>
                                 <td>{{ bonificacion.nombre }}</td>
-                                <td>${{ bonificacion.monto }}</td>
+                                <td>{{ bonificacion.monto|format_price }} COP</td>
                                 <td>
                                     {% if bonificacion.recurrente %}
                                         <span class="badge bg-success">Sí</span>
