@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   db:
     image: mysql:8.0
@@ -9,7 +8,7 @@ services:
       MYSQL_USER: django
       MYSQL_PASSWORD: django
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     command: ["--default-authentication-plugin=mysql_native_password"]
@@ -25,14 +24,23 @@ services:
       DB_NAME: bar_galileo
       DB_USER: django
       DB_PASSWORD: django
-      DEBUG: "False"
+      DEBUG: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - ./bar_galileo:/app/bar_galileo:rw
       - static_volume:/app/bar_galileo/staticfiles
       - media_volume:/app/bar_galileo/media
-    command: ["gunicorn", "bar_galileo.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+    command:
+      [
+        "gunicorn",
+        "bar_galileo.wsgi:application",
+        "--bind",
+        "0.0.0.0:8000",
+        "--workers",
+        "3",
+      ]
 
 volumes:
   db_data:
