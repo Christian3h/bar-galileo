@@ -291,7 +291,7 @@ function cargarBackupsDisponibles() {
     const fileGroup = document.getElementById('restoreFileGroup');
 
     // Limpiar opciones
-    selectFile.innerHTML = '<option value="">-- Seleccione un archivo --</option>';
+    selectFile.innerHTML = '<option value="">-- Selecciona un archivo --</option>';
 
     if (!tipo) {
         fileGroup.style.display = 'none';
