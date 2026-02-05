@@ -5,6 +5,16 @@
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
     <link rel="stylesheet" href="{% static 'css/main/facturacion/facturacion.css' %}">
+    <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Número y Acciones */
+    @media (max-width: 768px) {
+      #tabla-facturas .col-2,
+      #tabla-facturas .col-3,
+      #tabla-facturas .col-4 {
+        display: none;
+      }
+    }
+    </style>
 {% endblock %}
 
 {% block content %}
