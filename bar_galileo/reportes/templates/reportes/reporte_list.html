@@ -5,6 +5,144 @@
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
   <link rel="stylesheet" href="{% static 'css/main/reportes/reportes.css' %}">
+  <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Nombre y Acciones */
+    @media (max-width: 768px) {
+      #reportes-table th:nth-child(2),
+      #reportes-table th:nth-child(3),
+      #reportes-table th:nth-child(4),
+      #reportes-table th:nth-child(5),
+      #reportes-table td:nth-child(2),
+      #reportes-table td:nth-child(3),
+      #reportes-table td:nth-child(4),
+      #reportes-table td:nth-child(5) {
+        display: none;
+      }
+      
+      /* Quitar scroll horizontal */
+      .table-responsive {
+        overflow-x: visible !important;
+      }
+      
+      /* Adaptar tabla al ancho de la pantalla */
+      #reportes-table {
+        width: 100% !important;
+        table-layout: fixed;
+      }
+      
+      /* Distribuir espacio entre Nombre y Acciones */
+      #reportes-table th:nth-child(1),
+      #reportes-table td:nth-child(1) {
+        width: 55%;
+        word-wrap: break-word;
+      }
+      
+      #reportes-table th:nth-child(6),
+      #reportes-table td:nth-child(6) {
+        width: 45%;
+        text-align: center;
+      }
+      
+      /* Ajustar botones de acción para móvil */
+      .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+      }
+      
+      .action-buttons .btn {
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+      
+      /* Adaptar contenedor principal */
+      .reportes-container {
+        padding: 10px;
+        width: 100%;
+        overflow-x: hidden;
+      }
+      
+      /* Adaptar encabezado */
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .page-header h2 {
+        font-size: 1.5rem;
+      }
+      
+      /* Adaptar tarjetas de estadísticas */
+      .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+        width: 100%;
+      }
+      
+      .stat-card {
+        padding: 15px;
+      }
+      
+      .stat-card h3 {
+        font-size: 1.5rem;
+      }
+      
+      .stat-card p {
+        font-size: 0.85rem;
+      }
+      
+      /* Adaptar sección de filtros */
+      .filter-section {
+        width: 100%;
+        padding: 15px;
+      }
+      
+      .filter-section h4 {
+        font-size: 1.1rem;
+      }
+      
+      .filter-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .filter-row > div {
+        width: 100%;
+      }
+      
+      .filter-row input,
+      .filter-row select {
+        width: 100%;
+        max-width: 100%;
+      }
+      
+      .filter-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      
+      .filter-actions .btn {
+        width: 100%;
+      }
+      
+      /* Adaptar sección de tabla */
+      .table-section {
+        width: 100%;
+        overflow-x: hidden;
+      }
+      
+      .table-contenedor {
+        width: 100%;
+        overflow-x: visible;
+      }
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
