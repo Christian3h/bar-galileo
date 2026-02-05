@@ -4,6 +4,16 @@
 
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Nombre y Acciones */
+    @media (max-width: 768px) {
+      #tabla-proveedores .col-2,
+      #tabla-proveedores .col-3,
+      #tabla-proveedores .col-4 {
+        display: none;
+      }
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
