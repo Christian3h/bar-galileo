@@ -116,7 +116,7 @@ class UploadDocumentView(View):
 
             # Validar tipo
             if not file.name.lower().endswith('.pdf'):
-                return JsonResponse({'error': 'Solo PDFs soportados'}, status=400)
+                return JsonResponse({'error': 'Solo se admiten archivos PDF'}, status=400)
 
             # Crear registro en BD
             collection = DocumentCollection.objects.create(
@@ -198,7 +198,7 @@ class QueryRAGView(View):
             top_k = data.get('top_k', 3)
 
             if not query:
-                return JsonResponse({'error': 'Query vacío'}, status=400)
+                return JsonResponse({'error': 'Consulta vacía'}, status=400)
 
             if not collection_id:
                 return JsonResponse({'error': 'collection_id requerido'}, status=400)

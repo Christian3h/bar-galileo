@@ -321,7 +321,7 @@ document.getElementById('changePasswordForm').addEventListener('submit', functio
     e.preventDefault();
     
     const username = document.getElementById('modalUsername').textContent;
-    if (confirm('¿Está seguro que desea cambiar la contraseña del usuario "' + username + '"?\n\nEsta acción será registrada en el sistema de auditoría.')) {
+    if (confirm('¿Estás seguro de que deseas cambiar la contraseña del usuario "' + username + '"?\n\nEsta acción será registrada en el sistema de auditoría.')) {
         this.submit();
     }
 });
