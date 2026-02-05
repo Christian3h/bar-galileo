@@ -303,3 +303,36 @@ DBBACKUP_COMPRESSION_LEVEL = 6  # 1-9, donde 9 es la máxima compresión
 DBBACKUP_ENCRYPTION = True
 DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
 
+
+# ==================== Configuraciones de Seguridad ====================
+# Configuraciones de seguridad adaptadas al entorno (desarrollo/producción)
+
+# Cookies de sesión seguras (solo HTTPS en producción)
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+
+# Cookies CSRF seguras (solo HTTPS en producción)
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Seguridad de contenido
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Configuraciones SSL/HTTPS (solo en producción)
+if not DEBUG:
+    # HTTP Strict Transport Security
+    SECURE_HSTS_SECONDS = 31536000  # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Redirección SSL
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Política de referencia
+    SECURE_REFERRER_POLICY = 'same-origin'
+

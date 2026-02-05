@@ -4,6 +4,407 @@
 
 {% block title %}Detalle de Factura #{{ factura.numero }}{% endblock %}
 
+{% block extra_css %}
+<style>
+/* Contenedor principal */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #a68932;
+}
+
+.dashboard-title {
+    color: #a68932;
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+/* Botones con estilo dorado */
+.btn {
+    padding: 10px 20px;
+    border: 2px solid #a68932;
+    background: transparent;
+    color: #a68932;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn:hover {
+    background: #a68932;
+    color: #1a1a1a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.3);
+}
+
+.btn-primary {
+    background: #a68932;
+    color: #1a1a1a;
+}
+
+.btn-primary:hover {
+    background: #d4af37;
+    border-color: #d4af37;
+}
+
+.btn-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #dc3545;
+    color: white;
+}
+
+/* Detalle de factura */
+.factura-detail {
+    background: #1a1a1a;
+    border: 2px solid #a68932;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(166, 137, 50, 0.2);
+}
+
+.info-section, .items-section {
+    margin-bottom: 2rem;
+}
+
+.info-section h3, .items-section h3 {
+    color: #a68932;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #a68932;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grid de información */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    background: transparent;
+    border: 2px solid #a68932;
+    padding: 1.25rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    background: rgba(166, 137, 50, 0.1);
+    transform: translateY(-2px);
+}
+
+.info-item label {
+    display: block;
+    font-weight: 700;
+    color: #a68932;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item span {
+    font-size: 1.1rem;
+    color: #d4af37;
+    word-break: break-word;
+    font-weight: 500;
+}
+
+.factura-numero {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: #d4af37;
+    font-size: 1.3rem !important;
+}
+
+/* Estados */
+.estado-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+
+.estado-en_proceso {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 2px solid #ffc107;
+}
+
+.estado-facturado {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
+    border: 2px solid #28a745;
+}
+
+.estado-cancelado {
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 2px solid #dc3545;
+}
+
+/* Tabla responsive */
+.table-responsive {
+    background: transparent;
+    border: 2px solid #a68932;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.table,
+.factura-detalle-table {
+    width: 100% !important;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+.table th,
+.factura-detalle-table th {
+    background: transparent;
+    color: #a68932;
+    font-weight: 700;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 2px solid #a68932;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.table td,
+.factura-detalle-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #a68932;
+    color: #a68932;
+    font-size: 15px;
+}
+
+.table tbody tr,
+.factura-detalle-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover,
+.factura-detalle-table tbody tr:hover {
+    background: rgba(166, 137, 50, 0.1);
+}
+
+.table tbody tr:last-child td,
+.factura-detalle-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.total-row {
+    background: transparent !important;
+    border-top: 2px solid #a68932 !important;
+}
+
+.total-row td {
+    color: #d4af37 !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    padding: 1.25rem 1rem !important;
+}
+
+/* Acciones */
+.actions-section {
+    background: rgba(166, 137, 50, 0.15);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 2px solid #a68932;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-muted {
+    color: #888;
+    font-style: italic;
+}
+
+.hide-mobile {
+    display: table-cell;
+}
+
+.show-mobile {
+    display: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .header-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .factura-detail {
+        padding: 1rem;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-section h3, .items-section h3 {
+        font-size: 1.1rem;
+    }
+
+    .hide-mobile {
+        display: none;
+    }
+
+    .show-mobile {
+        display: table-cell;
+    }
+
+    .table th,
+    .table td,
+    .factura-detalle-table th,
+    .factura-detalle-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-container {
+        padding: 10px;
+    }
+
+    .dashboard-title {
+        font-size: 1.3rem;
+    }
+
+    .info-item {
+        padding: 0.75rem;
+    }
+
+    .info-item label {
+        font-size: 0.75rem;
+    }
+
+    .info-item span {
+        font-size: 1rem;
+    }
+
+    .table th,
+    .table td,
+    .factura-detalle-table th,
+    .factura-detalle-table td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    .factura-numero {
+        font-size: 1.1rem !important;
+    }
+
+    .actions-section {
+        padding: 1rem;
+    }
+}
+
+/* Estilos para impresión */
+@media print {
+    body {
+        background: white;
+    }
+
+    .header-actions,
+    .actions-section {
+        display: none !important;
+    }
+
+    .factura-detail {
+        border: 2px solid #000;
+        box-shadow: none;
+        background: white;
+    }
+
+    .dashboard-title,
+    .info-section h3,
+    .items-section h3,
+    .info-item label,
+    .info-item span,
+    .table th,
+    .table td {
+        color: #000 !important;
+    }
+
+    .info-item {
+        border: 1px solid #000;
+    }
+
+    .table-responsive {
+        border: 2px solid #000;
+    }
+
+    .table th,
+    .table td,
+    .factura-detalle-table th,
+    .factura-detalle-table td {
+        border-bottom: 1px solid #000;
+    }
+
+    .hide-mobile {
+        display: table-cell !important;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="dashboard-container">
     <div class="header-section">
@@ -47,13 +448,13 @@
         <div class="items-section">
             <h3>Detalles del Pedido</h3>
             <div class="table-responsive">
-                <table class="table">
+                <table class="factura-detalle-table">
                     <thead>
                         <tr>
                             <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th class="hide-mobile">Precio Unitario</th>
-                            <th>Subtotal</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-right hide-mobile">Precio Unitario</th>
+                            <th class="text-right">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,8 +475,7 @@
                     </tbody>
                     <tfoot>
                         <tr class="total-row">
-                            <td colspan="3" class="hide-mobile"><strong>Total:</strong></td>
-                            <td colspan="2" class="show-mobile"><strong>Total:</strong></td>
+                            <td colspan="3" class="text-right"><strong>Total:</strong></td>
                             <td class="text-right"><strong>{{ factura.total|format_price }}</strong></td>
                         </tr>
                     </tfoot>
@@ -85,8 +485,7 @@
 
         <div class="actions-section">
             <div class="action-buttons">
-                <a href="{% url 'facturacion:eliminar_factura' factura.id %}"
-                   class="btn btn-danger"
+                <a href="{% url 'facturacion:eliminar_factura' factura.id %}" class="btn btn-danger">
                     🗑️ Eliminar Factura
                 </a>
                 <button onclick="window.print()" class="btn btn-primary">
@@ -96,271 +495,4 @@
         </div>
     </div>
 </div>
-
-
-
-/* Detalle de factura */
-.factura-detail {
-    background: transparent;
-    border: 2px solid var(--color-primary);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.info-section, .items-section {
-    margin-bottom: 2rem;
-}
-
-.info-section h3, .items-section h3 {
-    color: var(--color-secondary);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--color-primary);
-    font-size: 1.3rem;
-}
-
-/* Grid de información */
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.info-item {
-    background: transparent;
-    border: 1px solid var(--color-primary);
-    padding: 1rem;
-    border-radius: 8px;
-}
-
-.info-item label {
-    display: block;
-    font-weight: 600;
-    color: var(--color-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.info-item span {
-    font-size: 1rem;
-    color: var(--color-accent);
-    word-break: break-word;
-}
-
-.factura-numero {
-    font-family: monospace;
-    font-weight: bold;
-    color: var(--color-secondary);
-    font-size: 1.2rem !important;
-}
-
-/* Estados */
-.estado-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    display: inline-block;
-}
-
-.estado-en_proceso {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.estado-facturado {
-    background: #d1edff;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
-
-.estado-cancelado {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* Tabla responsive */
-.table-responsive {
-    background: transparent;
-    border: 2px solid var(--color-primary);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.table {
-    width: 100% !important;
-    margin: 0;
-}
-
-.table th {
-    background: var(--color-primary);
-    color: white;
-    font-weight: 600;
-    padding: 1rem;
-    text-align: left;
-}
-
-.table td {
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--color-primary);
-}
-
-.table tbody tr:hover {
-    background: rgba(162, 137, 50, 0.1);
-}
-
-.total-row {
-    background: var(--color-secondary) !important;
-    color: white;
-    font-weight: 600;
-}
-
-.total-row td {
-    border-top: 2px solid var(--color-primary);
-    padding: 1rem;
-}
-
-/* Acciones */
-.actions-section {
-    background: rgba(162, 137, 50, 0.1);
-    padding: 1.5rem;
-    border-radius: 8px;
-    border: 1px solid var(--color-primary);
-}
-
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.text-right {
-    text-align: right;
-}
-
-.text-muted {
-    color: var(--color-gray);
-    font-style: italic;
-}
-
-.hide-mobile {
-    display: table-cell;
-}
-
-.show-mobile {
-    display: none;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .header-section {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
-    }
-
-    .factura-detail {
-        padding: 1rem;
-    }
-
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .info-section h3, .items-section h3 {
-        font-size: 1.1rem;
-    }
-
-    .hide-mobile {
-        display: none;
-    }
-
-    .show-mobile {
-        display: table-cell;
-    }
-
-    .table th,
-    .table td {
-        padding: 0.5rem 0.25rem;
-        font-size: 0.9rem;
-    }
-
-    .action-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .action-buttons .btn {
-        width: 100%;
-        max-width: 250px;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-title {
-        font-size: 1.5rem;
-    }
-
-    .info-item {
-        padding: 0.75rem;
-    }
-
-    .info-item label {
-        font-size: 0.8rem;
-    }
-
-    .info-item span {
-        font-size: 0.9rem;
-    }
-
-    .table th,
-    .table td {
-        padding: 0.375rem 0.125rem;
-        font-size: 0.8rem;
-    }
-
-    .factura-numero {
-        font-size: 1rem !important;
-    }
-
-    .actions-section {
-        padding: 1rem;
-    }
-}
-
-/* Estilos para impresión */
-@media print {
-    .header-actions,
-    .actions-section {
-        display: none !important;
-    }
-
-    .factura-detail {
-        border: 1px solid #000;
-        box-shadow: none;
-    }
-
-    .info-item {
-        border: 1px solid #ccc;
-    }
-
-    .table-responsive {
-        border: 1px solid #000;
-    }
-
-    .hide-mobile {
-        display: table-cell !important;
-    }
-
 {% endblock %}
