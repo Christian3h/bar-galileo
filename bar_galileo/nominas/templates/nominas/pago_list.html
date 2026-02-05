@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load format_tags %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -36,7 +37,7 @@
                         </td>
                         <td class="col-2">{{ pago.fecha_pago }}</td>
                         <td class="col-3">{{ pago.get_tipo_display }}</td>
-                        <td class="col-4">${{ pago.monto }}</td>
+                        <td class="col-4">{{ pago.monto|format_price }} COP</td>
                         <td class="col-5">{{ pago.descripcion|default:"-" }}</td>
                         <td class="actions-cell">
                             {% if pago.comprobante %}
