@@ -5,6 +5,18 @@
 
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Fecha y Acciones */
+    @media (max-width: 768px) {
+      #expenses-table .col-2,
+      #expenses-table .col-3,
+      #expenses-table .col-4,
+      #expenses-table .col-5,
+      #expenses-table .col-6 {
+        display: none;
+      }
+    }
+  </style>
 {% endblock %}
 
 {% block content %}

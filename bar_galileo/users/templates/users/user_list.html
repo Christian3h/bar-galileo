@@ -5,6 +5,14 @@
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
   <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Nombre de Usuario y Acciones */
+    @media (max-width: 768px) {
+      #users-table .col-2,
+      #users-table .col-3 {
+        display: none;
+      }
+    }
+    
     /* Modal styles */
     .modal {
         display: none;
