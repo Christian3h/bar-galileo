@@ -279,18 +279,18 @@ CAPTCHA_FONT_SIZE = 40
 CAPTCHA_FLITE_PATH = '/usr/bin/flite'
 
 # ==================== Configuración de Django-DBBackup ====================
-# Usar el storage "dbbackup" definido en STORAGES para base de datos
-DBBACKUP_STORAGE = 'dbbackup'
-
-# Usar el storage "mediabackup" definido en STORAGES para archivos media
-DBBACKUP_MEDIA_STORAGE = 'mediabackup'
+# Configuración compatible con django-dbbackup 5.0.0+
+# No usar DBBACKUP_STORAGE ni DBBACKUP_STORAGE_OPTIONS (deprecados)
+# La librería usará automáticamente los storages del sistema Django
 
 # Ruta de los archivos media a respaldar
 DBBACKUP_MEDIA_PATH = MEDIA_ROOT
 
 # Formato de nombres de archivos de backup (formato: 2025-10-19-123456.psql.gpg)
 DBBACKUP_FILENAME_TEMPLATE = '{datetime}.psql'
-DBBACKUP_MEDIA_FILENAME_TEMPLATE = '{datetime}.media.zip'# Limpieza automática - mantener solo los últimos 10 backups
+DBBACKUP_MEDIA_FILENAME_TEMPLATE = '{datetime}.media.zip'
+
+# Limpieza automática - mantener solo los últimos 10 backups
 DBBACKUP_CLEANUP_KEEP = 10
 DBBACKUP_CLEANUP_KEEP_MEDIA = 10
 
