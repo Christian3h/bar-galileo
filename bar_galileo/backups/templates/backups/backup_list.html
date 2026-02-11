@@ -243,7 +243,7 @@
                     <input type="file" id="uploadFile" accept=".gpg" class="form-control"
                         onchange="validarArchivoSubida()">
                     <small style="color: #888; margin-top: 5px; display: block;">
-                        Formatos aceptados: .psql.gpg (Base de Datos) o .media.zip.gpg (Archivos Media)
+                        Formatos aceptados: archivos encriptados con GPG (.psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg)
                     </small>
                 </div>
 
@@ -517,15 +517,24 @@
         const file = fileInput.files[0];
         const filename = file.name;
 
-        // Validar extensión
-        if (!filename.endsWith('.psql.gpg') && !filename.endsWith('.media.zip.gpg')) {
+        // Validar extensión - aceptar diferentes formatos de backups GPG
+        const isDBBackup = filename.endsWith('.psql.gpg') || 
+                          filename.endsWith('.sql.gpg') || 
+                          filename.match(/\.mysql\.gpg$/i) ||
+                          (filename.includes('db') && filename.endsWith('.gpg'));
+        
+        const isMediaBackup = filename.endsWith('.media.zip.gpg') || 
+                             filename.endsWith('.zip.gpg') ||
+                             (filename.includes('media') && filename.endsWith('.gpg'));
+
+        if (!isDBBackup && !isMediaBackup) {
             fileInput.value = '';
             uploadInfo.style.display = 'none';
             btnRestaurar.disabled = true;
 
             // Mostrar error en el uploadInfo
-            document.getElementById('uploadFileName').textContent = '❌ Archivo no válido';
-            document.getElementById('uploadFileSize').textContent = 'Debe ser .psql.gpg o .media.zip.gpg';
+            document.getElementById('uploadFileName').textContent = '❌ Archivo no válido: ' + filename;
+            document.getElementById('uploadFileSize').textContent = 'Debe ser un backup encriptado: .psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg';
             uploadInfo.style.display = 'block';
             uploadInfo.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
             uploadInfo.style.borderLeft = '4px solid #e74c3c';
@@ -584,11 +593,15 @@
         btnRestaurar.disabled = true;
         btnRestaurar.textContent = 'Procesando...';
 
+        console.log('=== INICIO PROCESO DE RESTAURACIÓN ===');
+        console.log('Modo:', modoRestauracion);
+
         if (modoRestauracion === 'subir') {
             // Modo: Subir archivo
             const fileInput = document.getElementById('uploadFile');
 
             if (fileInput.files.length === 0) {
+                console.error('No se seleccionó ningún archivo');
                 btnRestaurar.disabled = false;
                 btnRestaurar.textContent = 'Restaurar';
                 return;
@@ -596,13 +609,15 @@
 
             const file = fileInput.files[0];
             const filename = file.name;
-            const tipoText = filename.endsWith('.psql.gpg') ? 'base de datos' : 'archivos media';
+            console.log('Archivo seleccionado:', filename);
+            console.log('Tamaño:', file.size, 'bytes');
 
             // Crear FormData para subir archivo
             const formData = new FormData();
             formData.append('backup_file', file);
 
             btnRestaurar.textContent = 'Subiendo...';
+            console.log('Subiendo archivo...');
 
             // Primero subir el archivo
             fetch('{% url "backups:backup_upload" %}', {
@@ -612,11 +627,17 @@
                 },
                 body: formData
             })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Respuesta de subida - Status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Respuesta de subida:', data);
                     if (data.success) {
                         // Archivo subido, ahora restaurar
                         btnRestaurar.textContent = 'Restaurando...';
+                        console.log('Archivo subido exitosamente. Iniciando restauración...');
+                        console.log('Tipo:', data.tipo, 'Filename:', data.filename);
                         return fetch('{% url "backups:backup_restore" %}', {
                             method: 'POST',
                             headers: {
@@ -629,19 +650,25 @@
                         throw new Error(data.error || 'Error al subir archivo');
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Respuesta de restauración - Status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Respuesta de restauración:', data);
                     if (data.success) {
+                        console.log('✅ Restauración exitosa, recargando página...');
+                        alert('✅ Backup restaurado exitosamente');
                         location.reload();
                     } else {
                         throw new Error(data.error || 'Error al restaurar');
                     }
                 })
                 .catch(error => {
-                    console.error('Error durante la restauración:', error.message);
+                    console.error('❌ Error durante la restauración:', error);
+                    alert('❌ Error: ' + error.message);
                     btnRestaurar.disabled = false;
                     btnRestaurar.textContent = 'Restaurar';
-                    location.reload();
                 });
 
         } else {
@@ -649,15 +676,18 @@
             const tipo = document.getElementById('restoreTipo').value;
             const filename = document.getElementById('restoreFile').value;
 
+            console.log('Tipo:', tipo);
+            console.log('Archivo:', filename);
+
             if (!tipo || !filename) {
+                console.error('Tipo o filename no están definidos');
                 btnRestaurar.disabled = false;
                 btnRestaurar.textContent = 'Restaurar';
                 return;
             }
 
-            const tipoText = tipo === 'db' ? 'base de datos' : 'archivos media';
-
             btnRestaurar.textContent = 'Restaurando...';
+            console.log('Enviando solicitud de restauración...');
 
             fetch('{% url "backups:backup_restore" %}', {
                 method: 'POST',
@@ -667,22 +697,28 @@
                 },
                 body: `tipo=${tipo}&filename=${filename}`
             })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Respuesta de restauración - Status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Respuesta de restauración:', data);
                     if (data.success) {
+                        console.log('✅ Restauración exitosa, recargando página...');
+                        alert('✅ Backup restaurado exitosamente');
                         location.reload();
                     } else {
                         console.error('Error al restaurar:', data.error);
+                        alert('❌ Error: ' + data.error);
                         btnRestaurar.disabled = false;
                         btnRestaurar.textContent = 'Restaurar';
-                        location.reload();
                     }
                 })
                 .catch(error => {
-                    console.error('Error al restaurar backup:', error);
+                    console.error('❌ Error al restaurar backup:', error);
+                    alert('❌ Error: ' + error.message);
                     btnRestaurar.disabled = false;
                     btnRestaurar.textContent = 'Restaurar';
-                    location.reload();
                 });
         }
     }

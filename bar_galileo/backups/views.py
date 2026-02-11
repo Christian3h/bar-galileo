@@ -302,17 +302,26 @@ class BackupRestoreView(View):
     """
     Vista para restaurar un backup (base de datos o media).
     Requiere permiso 'editar' ya que restaurar modifica datos del sistema.
+    Utiliza los comandos de django-dbbackup para restaurar correctamente.
     """
 
     def post(self, request):
         """
-        Restaura un backup específico.
+        Restaura un backup específico usando los comandos de django-dbbackup.
         """
+        import logging
+        logger = logging.getLogger(__name__)
+        
         try:
             tipo = request.POST.get('tipo')
             filename = request.POST.get('filename')
+            
+            logger.info(f"=== INICIO RESTAURACIÓN ===")
+            logger.info(f"Tipo: {tipo}")
+            logger.info(f"Archivo: {filename}")
 
             if not tipo or not filename:
+                logger.error("Parámetros incompletos")
                 return JsonResponse({
                     'success': False,
                     'error': 'Parámetros incompletos'
@@ -333,87 +342,71 @@ class BackupRestoreView(View):
 
             # Construir ruta del archivo
             file_path = backup_dir / filename
+            logger.info(f"Ruta del archivo: {file_path}")
+            logger.info(f"Existe: {file_path.exists()}")
 
             # Verificar que el archivo existe
             if not file_path.exists() or not file_path.is_file():
+                logger.error(f"Archivo no encontrado: {file_path}")
                 return JsonResponse({
                     'success': False,
-                    'error': 'Archivo no encontrado'
+                    'error': f'Archivo no encontrado: {filename}'
                 }, status=404)
 
             if not file_path.resolve().is_relative_to(backup_dir.resolve()):
+                logger.error("Acceso denegado")
                 return JsonResponse({
                     'success': False,
                     'error': 'Acceso denegado'
                 }, status=403)
 
-            # Restaurar el backup desencriptando primero
+            # Restaurar usando django-dbbackup
+            # Estos comandos manejan automáticamente la desencriptación GPG
+            # y la restauración correcta según el tipo de base de datos (MySQL)
             try:
-                import subprocess
+                # Configurar la passphrase de GPG en el entorno para la desencriptación
                 import os
-
+                gpg_passphrase = getattr(settings, 'DBBACKUP_GPG_PASSPHRASE', '')
+                if gpg_passphrase:
+                    os.environ['PASSPHRASE'] = gpg_passphrase
+                    logger.info("Passphrase GPG configurada")
+                else:
+                    logger.info("No hay passphrase GPG configurada (clave sin contraseña)")
+                
                 if tipo == 'db':
-                    # Desencriptar y restaurar base de datos
-                    db_path = Path(settings.BASE_DIR) / "db.sqlite3"
-                    import shutil
-
-                    # Crear backup de la BD actual
-                    backup_current = db_path.with_suffix('.sqlite3.backup')
-                    if db_path.exists():
-                        shutil.copy2(db_path, backup_current)
-                        # Eliminar el archivo actual para evitar pregunta de sobrescritura
-                        db_path.unlink()
-
-                    # Desencriptar el backup con GPG
-                    result = subprocess.run(
-                        ['gpg', '--output', str(db_path), '--decrypt', str(file_path)],
-                        capture_output=True,
-                        text=True
+                    # Restaurar base de datos
+                    logger.info(f"Ejecutando dbrestore con archivo: {filename}")
+                    call_command(
+                        'dbrestore',
+                        '--input-filename=' + filename,
+                        '--decrypt',
+                        '--noinput',  # No pedir confirmación
+                        verbosity=2
                     )
-
-                    if result.returncode != 0:
-                        # Restaurar backup anterior si falla
-                        if backup_current.exists():
-                            shutil.copy2(backup_current, db_path)
-                        raise Exception(f"Error al desencriptar: {result.stderr}")
-
-                    # Eliminar backup temporal si todo salió bien
-                    if backup_current.exists():
-                        backup_current.unlink()
-
+                    logger.info("dbrestore ejecutado exitosamente")
                 elif tipo == 'media':
-                    # Desencriptar y restaurar media
-                    media_root = Path(settings.MEDIA_ROOT)
-
-                    # Crear archivo temporal desencriptado
-                    import tempfile
-                    with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as tmp_file:
-                        tmp_path = Path(tmp_file.name)
-
-                    # Desencriptar el zip
-                    result = subprocess.run(
-                        ['gpg', '--output', str(tmp_path), '--decrypt', str(file_path)],
-                        capture_output=True,
-                        text=True
+                    # Restaurar archivos media
+                    logger.info(f"Ejecutando mediarestore con archivo: {filename}")
+                    call_command(
+                        'mediarestore',
+                        '--input-filename=' + filename,
+                        '--decrypt',
+                        '--noinput',  # No pedir confirmación
+                        verbosity=2
                     )
+                    logger.info("mediarestore ejecutado exitosamente")
+                
+                # Limpiar la passphrase del entorno por seguridad
+                if 'PASSPHRASE' in os.environ:
+                    del os.environ['PASSPHRASE']
 
-                    if result.returncode != 0:
-                        tmp_path.unlink()
-                        raise Exception(f"Error al desencriptar: {result.stderr}")
-
-                    # Extraer el zip
-                    import zipfile
-                    with zipfile.ZipFile(tmp_path, 'r') as zip_ref:
-                        zip_ref.extractall(media_root)
-
-                    # Eliminar archivo temporal
-                    tmp_path.unlink()
-
-            except subprocess.CalledProcessError as e:
-                raise Exception(f"Error en el proceso de restauración: {str(e)}")
             except Exception as e:
+                logger.error(f"Error durante la ejecución del comando: {str(e)}")
+                import traceback
+                logger.error(traceback.format_exc())
                 raise Exception(f"Error durante la restauración: {str(e)}")
 
+            logger.info(f"=== RESTAURACIÓN COMPLETADA ===")
             messages.success(request, f'✅ Backup restaurado exitosamente: {filename}')
             return JsonResponse({
                 'success': True,
@@ -421,6 +414,9 @@ class BackupRestoreView(View):
             })
 
         except Exception as e:
+            logger.error(f"Error general al restaurar backup: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             messages.error(request, f'❌ Error al restaurar backup: {str(e)}')
             return JsonResponse({
                 'success': False,
@@ -449,17 +445,23 @@ class BackupUploadView(View):
             backup_file = request.FILES['backup_file']
             filename = backup_file.name
 
-            # Validar extensión
-            if filename.endswith('.psql.gpg'):
+            # Validar extensión - aceptar diferentes formatos de backups GPG
+            if filename.endswith('.psql.gpg') or filename.endswith('.sql.gpg') or \
+               filename.endswith('.mysql.gpg') or (filename.endswith('.gpg') and 'db' in filename.lower()):
                 tipo = 'db'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "db"
-            elif filename.endswith('.media.zip.gpg'):
+                # Normalizar nombre del archivo a formato estándar
+                if not filename.endswith('.psql.gpg'):
+                    # Mantener el nombre original pero en la carpeta correcta
+                    pass
+            elif filename.endswith('.media.zip.gpg') or filename.endswith('.zip.gpg') or \
+                 (filename.endswith('.gpg') and 'media' in filename.lower()):
                 tipo = 'media'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "media"
             else:
                 return JsonResponse({
                     'success': False,
-                    'error': 'Tipo de archivo no válido. Debe ser .psql.gpg o .media.zip.gpg'
+                    'error': 'Tipo de archivo no válido. Debe ser un backup encriptado (.psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg)'
                 }, status=400)
 
             # Crear directorio si no existe

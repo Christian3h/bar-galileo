@@ -302,6 +302,8 @@ DBBACKUP_COMPRESSION_LEVEL = 6  # 1-9, donde 9 es la máxima compresión
 # IMPORTANTE: Los backups SIEMPRE están encriptados para mayor seguridad
 DBBACKUP_ENCRYPTION = True
 DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+# Passphrase de GPG (necesaria para desencriptación automática)
+DBBACKUP_GPG_PASSPHRASE = os.getenv('DBBACKUP_GPG_PASSPHRASE', '')
 
 
 # ==================== Configuraciones de Seguridad ====================
