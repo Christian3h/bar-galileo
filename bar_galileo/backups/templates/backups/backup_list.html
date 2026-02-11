@@ -611,12 +611,8 @@
 
             const file = fileInput.files[0];
             const filename = file.name;
-<<<<<<< HEAD
             console.log('Archivo seleccionado:', filename);
             console.log('Tamaño:', file.size, 'bytes');
-=======
-            const tipoText = (filename.endsWith('.psql.gpg') || filename.endsWith('.psql')) ? 'base de datos' : 'archivos media';
->>>>>>> b178369 (fix: Solucionar problema de creación de copias de seguridad)
 
             // Crear FormData para subir archivo
             const formData = new FormData();
@@ -624,8 +620,11 @@
 
             btnRestaurar.textContent = 'Subiendo...';
             console.log('Subiendo archivo...');
-            console.log('Archivo seleccionado:', filename);
-            console.log('Tamaño:', file.size, 'bytes');
+
+            fetch('{% url "backups:backup_upload" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
                 },
                 body: formData
             })
