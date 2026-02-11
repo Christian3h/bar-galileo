@@ -299,11 +299,14 @@ DBBACKUP_COMPRESS = True
 DBBACKUP_COMPRESSION_LEVEL = 6  # 1-9, donde 9 es la máxima compresión
 
 # Encriptación de backups con GNU Privacy Guard (GPG)
-# IMPORTANTE: Los backups SIEMPRE están encriptados para mayor seguridad
-DBBACKUP_ENCRYPTION = True
-DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
-# Passphrase de GPG (necesaria para desencriptación automática)
-DBBACKUP_GPG_PASSPHRASE = os.getenv('DBBACKUP_GPG_PASSPHRASE', '')
+# DESHABILITADO por defecto para evitar problemas con GPG
+# Si deseas habilitar encriptación, configura GPG primero:
+# 1. gpg --gen-key (selecciona email: bargalileo07@gmail.com)
+# 2. Cambia DBBACKUP_ENCRYPTION a True
+# 3. Configura DBBACKUP_GPG_PASSPHRASE en el archivo .env si es necesario
+DBBACKUP_ENCRYPTION = False
+# DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+# DBBACKUP_GPG_PASSPHRASE = os.getenv('DBBACKUP_GPG_PASSPHRASE', '')
 
 
 # ==================== Configuraciones de Seguridad ====================

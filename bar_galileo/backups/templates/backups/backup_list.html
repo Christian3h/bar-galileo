@@ -240,10 +240,10 @@
             <div id="contenidoSubir" style="display: none;">
                 <div class="field-group">
                     <label for="uploadFile">Archivo de Backup:</label>
-                    <input type="file" id="uploadFile" accept=".gpg" class="form-control"
+                    <input type="file" id="uploadFile" accept=".gpg,.psql,.zip" class="form-control"
                         onchange="validarArchivoSubida()">
                     <small style="color: #888; margin-top: 5px; display: block;">
-                        Formatos aceptados: archivos encriptados con GPG (.psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg)
+                        Formatos aceptados: Con/sin encriptación (.psql, .psql.gpg, .sql.gpg, .media.zip, .media.zip.gpg, .zip.gpg)
                     </small>
                 </div>
 
@@ -517,13 +517,15 @@
         const file = fileInput.files[0];
         const filename = file.name;
 
-        // Validar extensión - aceptar diferentes formatos de backups GPG
+        // Validar extensión - aceptar diferentes formatos de backups (con y sin GPG)
         const isDBBackup = filename.endsWith('.psql.gpg') || 
+                          filename.endsWith('.psql') ||
                           filename.endsWith('.sql.gpg') || 
                           filename.match(/\.mysql\.gpg$/i) ||
                           (filename.includes('db') && filename.endsWith('.gpg'));
         
         const isMediaBackup = filename.endsWith('.media.zip.gpg') || 
+                             filename.endsWith('.media.zip') ||
                              filename.endsWith('.zip.gpg') ||
                              (filename.includes('media') && filename.endsWith('.gpg'));
 
@@ -534,7 +536,7 @@
 
             // Mostrar error en el uploadInfo
             document.getElementById('uploadFileName').textContent = '❌ Archivo no válido: ' + filename;
-            document.getElementById('uploadFileSize').textContent = 'Debe ser un backup encriptado: .psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg';
+            document.getElementById('uploadFileSize').textContent = 'Formatos aceptados: .psql, .psql.gpg, .sql.gpg, .media.zip, .media.zip.gpg, .zip.gpg';
             uploadInfo.style.display = 'block';
             uploadInfo.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
             uploadInfo.style.borderLeft = '4px solid #e74c3c';
@@ -609,8 +611,12 @@
 
             const file = fileInput.files[0];
             const filename = file.name;
+<<<<<<< HEAD
             console.log('Archivo seleccionado:', filename);
             console.log('Tamaño:', file.size, 'bytes');
+=======
+            const tipoText = (filename.endsWith('.psql.gpg') || filename.endsWith('.psql')) ? 'base de datos' : 'archivos media';
+>>>>>>> b178369 (fix: Solucionar problema de creación de copias de seguridad)
 
             // Crear FormData para subir archivo
             const formData = new FormData();
@@ -618,12 +624,8 @@
 
             btnRestaurar.textContent = 'Subiendo...';
             console.log('Subiendo archivo...');
-
-            // Primero subir el archivo
-            fetch('{% url "backups:backup_upload" %}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
+            console.log('Archivo seleccionado:', filename);
+            console.log('Tamaño:', file.size, 'bytes');
                 },
                 body: formData
             })
