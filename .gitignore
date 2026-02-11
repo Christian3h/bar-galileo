@@ -125,4 +125,7 @@ cython_debug/
 
 # Collected static files (Django collectstatic output)
 **/staticfiles/
-dump-bar_galileo-202602021131.sql
+
+# Database dumps
+dump-*.sql
+*.sql
