@@ -336,7 +336,7 @@ def exportar_facturas_csv(request):
 def exportar_facturas_xlsx(request):
     """Exportar facturas a Excel (XLSX)"""
     if not OPENPYXL_AVAILABLE:
-        messages.error(request, 'La exportación a Excel no está disponible. Instale openpyxl.')
+        messages.error(request, 'La exportación a Excel no está disponible. Instala openpyxl.')
         return redirect('facturacion:lista_facturas')
 
     # Obtener parámetros de filtro
@@ -433,7 +433,7 @@ def export_facturas(request, fmt):
 def exportar_facturas_pdf(request):
     """Exportar facturas a PDF"""
     if not REPORTLAB_AVAILABLE:
-        messages.error(request, 'La exportación a PDF no está disponible. Instale reportlab.')
+        messages.error(request, 'La exportación a PDF no está disponible. Instala reportlab.')
         return redirect('facturacion:lista_facturas')
 
     # Obtener parámetros de filtro
