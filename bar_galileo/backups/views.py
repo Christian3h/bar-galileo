@@ -112,11 +112,19 @@ class BackupCreateView(View):
                 'tipo': tipo
             })
 
-        except Exception as e:
-            messages.error(request, f'❌ Error al crear backup: {str(e)}')
+        except ModuleNotFoundError as e:
+            error_msg = f'❌ Error: Falta el módulo {str(e)}. Asegúrate de que el servidor esté usando el entorno virtual correcto.'
+            messages.error(request, error_msg)
             return JsonResponse({
                 'success': False,
-                'error': str(e)
+                'error': error_msg
+            }, status=500)
+        except Exception as e:
+            error_msg = f'❌ Error al crear backup: {str(e)}'
+            messages.error(request, error_msg)
+            return JsonResponse({
+                'success': False,
+                'error': error_msg
             }, status=500)
 
 
