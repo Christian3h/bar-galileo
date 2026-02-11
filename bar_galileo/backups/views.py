@@ -41,7 +41,8 @@ class BackupListView(TemplateView):
         # Listar backups de DB
         db_backups = []
         if db_backup_dir.exists():
-            for backup_file in sorted(db_backup_dir.glob('*.psql.gpg'), reverse=True):
+            # Buscar archivos con y sin encriptación (.psql y .psql.gpg)
+            for backup_file in sorted(db_backup_dir.glob('*.psql*'), reverse=True):
                 db_backups.append({
                     'nombre': backup_file.name,
                     'fecha': datetime.fromtimestamp(backup_file.stat().st_mtime),
@@ -54,7 +55,8 @@ class BackupListView(TemplateView):
         # Listar backups de Media
         media_backups = []
         if media_backup_dir.exists():
-            for backup_file in sorted(media_backup_dir.glob('*.media.zip.gpg'), reverse=True):
+            # Buscar archivos con y sin encriptación (.media.zip y .media.zip.gpg)
+            for backup_file in sorted(media_backup_dir.glob('*.media.zip*'), reverse=True):
                 media_backups.append({
                     'nombre': backup_file.name,
                     'fecha': datetime.fromtimestamp(backup_file.stat().st_mtime),

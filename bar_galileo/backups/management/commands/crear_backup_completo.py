@@ -49,10 +49,18 @@ class Command(BaseCommand):
         if not options['sin_db']:
             self.stdout.write(self.style.WARNING('📊 Creando backup de base de datos...'))
             try:
-                call_command('dbbackup', '--encrypt', verbosity=1)
+                # Verificar si la encriptación está habilitada en settings
+                encrypt_flag = '--encrypt' if settings.DBBACKUP_ENCRYPTION else ''
+                
+                if encrypt_flag:
+                    call_command('dbbackup', '--encrypt', verbosity=1)
+                else:
+                    call_command('dbbackup', verbosity=1)
 
                 # Verificar que se creó en la carpeta correcta
-                db_files = sorted(db_backup_dir.glob('*.psql.gpg'))
+                # Buscar con o sin .gpg según la encriptación
+                pattern = '*.psql.gpg' if settings.DBBACKUP_ENCRYPTION else '*.psql'
+                db_files = sorted(db_backup_dir.glob(pattern))
                 if db_files:
                     ultimo_db = db_files[-1]
                     self.stdout.write(self.style.SUCCESS(f'✅ Backup de DB creado: {ultimo_db.name}'))
@@ -71,11 +79,15 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING('📁 Creando backup de archivos media...'))
             try:
                 # Crear el backup de media
-                call_command('mediabackup', '--encrypt', verbosity=1)
+                if settings.DBBACKUP_ENCRYPTION:
+                    call_command('mediabackup', '--encrypt', verbosity=1)
+                else:
+                    call_command('mediabackup', verbosity=1)
 
                 # WORKAROUND: Mover el archivo de media de db/ a media/ si es necesario
                 # debido al bug en django-dbbackup 5.0.0
-                media_files_in_db = sorted(db_backup_dir.glob('*.media.zip.gpg'))
+                pattern = '*.media.zip.gpg' if settings.DBBACKUP_ENCRYPTION else '*.media.zip'
+                media_files_in_db = sorted(db_backup_dir.glob(pattern))
                 if media_files_in_db:
                     for media_file in media_files_in_db:
                         destino = media_backup_dir / media_file.name
@@ -85,7 +97,7 @@ class Command(BaseCommand):
                         self.stdout.write(f'   📂 Movido a: backups/backup_files/media/')
                 else:
                     # Verificar si ya está en la carpeta correcta
-                    media_files = sorted(media_backup_dir.glob('*.media.zip.gpg'))
+                    media_files = sorted(media_backup_dir.glob(pattern))
                     if media_files:
                         ultimo_media = media_files[-1]
                         self.stdout.write(self.style.SUCCESS(f'✅ Backup de Media: {ultimo_media.name}'))
@@ -106,8 +118,8 @@ class Command(BaseCommand):
         # Resumen de backups
         self.stdout.write(self.style.WARNING('📋 RESUMEN DE BACKUPS DISPONIBLES:'))
         self.stdout.write('')
-
-        db_backups = sorted(db_backup_dir.glob('*.psql.gpg'))
+# Buscar backups con ambos patrones (encriptados y sin encriptar)
+        db_backups = sorted(db_backup_dir.glob('*.psql*'))
         if db_backups:
             self.stdout.write(f'  🗄️  Backups de Base de Datos ({len(db_backups)}):')
             for backup in db_backups[-3:]:  # Mostrar últimos 3
@@ -117,7 +129,7 @@ class Command(BaseCommand):
 
         self.stdout.write('')
 
-        media_backups = sorted(media_backup_dir.glob('*.media.zip.gpg'))
+        media_backups = sorted(media_backup_dir.glob('*.media.zip*'))
         if media_backups:
             self.stdout.write(f'  📸 Backups de Media ({len(media_backups)}):')
             for backup in media_backups[-3:]:  # Mostrar últimos 3
