@@ -309,10 +309,17 @@ class BackupRestoreView(View):
 
     def post(self, request):
         """
-        Restaura un backup específico usando los comandos de django-dbbackup.
+        Restaura un backup específico desencriptando manualmente antes de restaurar.
+        
+        Esta implementación evita el problema de passphrase interactiva de GPG
+        desencriptando manualmente el archivo antes de pasarlo a django-dbbackup.
         """
         import logging
+        import subprocess
+        import os
+        
         logger = logging.getLogger(__name__)
+        decrypted_file_path = None  # Para limpieza posterior
         
         try:
             tipo = request.POST.get('tipo')
@@ -362,51 +369,100 @@ class BackupRestoreView(View):
                     'error': 'Acceso denegado'
                 }, status=403)
 
-            # Restaurar usando django-dbbackup
-            # Estos comandos manejan automáticamente la desencriptación GPG
-            # y la restauración correcta según el tipo de base de datos (MySQL)
-            try:
-                # Configurar la passphrase de GPG en el entorno para la desencriptación
-                import os
-                gpg_passphrase = getattr(settings, 'DBBACKUP_GPG_PASSPHRASE', '')
-                if gpg_passphrase:
-                    os.environ['PASSPHRASE'] = gpg_passphrase
-                    logger.info("Passphrase GPG configurada")
-                else:
-                    logger.info("No hay passphrase GPG configurada (clave sin contraseña)")
+            # PASO 1: Desencriptar manualmente si el archivo está encriptado
+            if filename.endswith('.gpg'):
+                logger.info("Archivo encriptado detectado, desencriptando manualmente...")
                 
+                # Nombre del archivo desencriptado
+                decrypted_filename = filename[:-4]  # Remover .gpg
+                decrypted_file_path = backup_dir / decrypted_filename
+                
+                # Comando GPG en modo batch (sin interacción)
+                gpg_command = [
+                    'gpg',
+                    '--batch',              # Modo no interactivo
+                    '--yes',                # Responder sí automáticamente
+                    '--quiet',              # Silencioso
+                    '--no-tty',             # Sin terminal
+                    '--passphrase', '',     # Passphrase vacía (clave sin contraseña)
+                    '--pinentry-mode', 'loopback',  # Sin pinentry interactivo
+                    '--decrypt',
+                    '--output', str(decrypted_file_path),
+                    str(file_path)
+                ]
+                
+                logger.info(f"Ejecutando GPG desencriptación: gpg --decrypt {file_path}")
+                
+                try:
+                    result = subprocess.run(
+                        gpg_command,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                        timeout=60,  # Timeout de 60 segundos
+                        stdin=subprocess.DEVNULL  # No leer de stdin
+                    )
+                    logger.info(f"Desencriptación exitosa: {decrypted_file_path}")
+                    
+                    # Verificar que el archivo desencriptado existe
+                    if not decrypted_file_path.exists():
+                        raise Exception("El archivo desencriptado no se creó correctamente")
+                    
+                except subprocess.TimeoutExpired:
+                    logger.error("Timeout en desencriptación GPG")
+                    raise Exception("La desencriptación GPG excedió el tiempo límite de 60 segundos")
+                    
+                except subprocess.CalledProcessError as e:
+                    logger.error(f"Error en desencriptación GPG: {e.stderr}")
+                    raise Exception(f"Error al desencriptar con GPG: {e.stderr}")
+                
+                # Usar el archivo desencriptado para la restauración
+                restore_filename = decrypted_filename
+                
+            else:
+                # Archivo no encriptado, usar directamente
+                logger.info("Archivo no encriptado, restaurando directamente...")
+                restore_filename = filename
+
+            # PASO 2: Restaurar usando django-dbbackup SIN --decrypt
+            logger.info(f"Iniciando restauración con archivo: {restore_filename}")
+            
+            try:
                 if tipo == 'db':
-                    # Restaurar base de datos
-                    logger.info(f"Ejecutando dbrestore con archivo: {filename}")
+                    # Restaurar base de datos SIN --decrypt
+                    logger.info(f"Ejecutando dbrestore con archivo desencriptado: {restore_filename}")
                     call_command(
                         'dbrestore',
-                        '--input-filename=' + filename,
-                        '--decrypt',
+                        '--input-filename=' + restore_filename,
+                        # NO incluir --decrypt porque ya desencriptamos manualmente
                         '--noinput',  # No pedir confirmación
                         verbosity=2
                     )
                     logger.info("dbrestore ejecutado exitosamente")
+                    
                 elif tipo == 'media':
-                    # Restaurar archivos media
-                    logger.info(f"Ejecutando mediarestore con archivo: {filename}")
+                    # Restaurar archivos media SIN --decrypt
+                    logger.info(f"Ejecutando mediarestore con archivo desencriptado: {restore_filename}")
                     call_command(
                         'mediarestore',
-                        '--input-filename=' + filename,
-                        '--decrypt',
+                        '--input-filename=' + restore_filename,
+                        # NO incluir --decrypt porque ya desencriptamos manualmente
                         '--noinput',  # No pedir confirmación
                         verbosity=2
                     )
                     logger.info("mediarestore ejecutado exitosamente")
-                
-                # Limpiar la passphrase del entorno por seguridad
-                if 'PASSPHRASE' in os.environ:
-                    del os.environ['PASSPHRASE']
 
             except Exception as e:
                 logger.error(f"Error durante la ejecución del comando: {str(e)}")
                 import traceback
                 logger.error(traceback.format_exc())
                 raise Exception(f"Error durante la restauración: {str(e)}")
+
+            # PASO 3: Limpiar archivo desencriptado por seguridad
+            if decrypted_file_path and decrypted_file_path.exists():
+                logger.info(f"Eliminando archivo desencriptado temporal: {decrypted_file_path}")
+                decrypted_file_path.unlink()
+                logger.info("Archivo temporal eliminado exitosamente")
 
             logger.info(f"=== RESTAURACIÓN COMPLETADA ===")
             messages.success(request, f'✅ Backup restaurado exitosamente: {filename}')
@@ -416,6 +472,14 @@ class BackupRestoreView(View):
             })
 
         except Exception as e:
+            # Limpiar archivo desencriptado en caso de error
+            if decrypted_file_path and decrypted_file_path.exists():
+                logger.warning(f"Limpiando archivo desencriptado debido a error: {decrypted_file_path}")
+                try:
+                    decrypted_file_path.unlink()
+                except:
+                    pass
+            
             logger.error(f"Error general al restaurar backup: {str(e)}")
             import traceback
             logger.error(traceback.format_exc())
