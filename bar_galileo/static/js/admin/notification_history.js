@@ -6,11 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const markAllBtn= document.getElementById('mark-all-as-read');
   const floater   = document.getElementById('notificaciones-flotantes');
 
-  if (!floater) {
-    console.error('[DEBUG] No se encontró el contenedor de notificaciones flotantes');
-    return;
-  }
-
   let lastPopupMessage = '';
   let lastPopupTime = 0;
 
@@ -57,43 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* -----------  Pop-ups flotantes ----------- */
   const showPopup = (msg, level = 'info') => {
-    if (!floater) return;
-
+    if (!msg) return;
     const now = Date.now();
     if (msg === lastPopupMessage && now - lastPopupTime < 2000) return;
 
     lastPopupMessage = msg;
     lastPopupTime = now;
-
-    const div = document.createElement('div');
-    div.className = `alert-message ${level}`;
-    div.innerHTML = `
-      <span class="message-text">${msg}</span>
-      <button class="close-btn" style="margin-left:10px;background:none;color:#fff;border:none;cursor:pointer;font-weight:bold;">✕</button>`;
-
-    div.style.background = '#323232';
-    div.style.color = '#fff';
-    div.style.marginBottom = '12px';
-    div.style.padding = '14px 22px';
-    div.style.borderRadius = '8px';
-    div.style.boxShadow = '0 2px 8px rgba(0,0,0,0.18)';
-    div.style.opacity = '0.95';
-    div.style.fontSize = '1rem';
-    div.style.display = 'flex';
-    div.style.justifyContent = 'space-between';
-    div.style.alignItems = 'center';
-    div.style.transition = 'opacity 0.5s';
-
-    div.querySelector('.close-btn').onclick = () => {
-      div.style.opacity = '0';
-      setTimeout(() => div.remove(), 500);
-    };
-
-    floater.prepend(div);
-    setTimeout(() => {
-      div.style.opacity = '0';
-      setTimeout(() => div.remove(), 500);
-    }, 5000);
+    if (window.AppFeedback) {
+      AppFeedback.show(msg, {
+        variant: level,
+        duration: 6500
+      });
+    } else if (floater) {
+      const fallback = document.createElement('div');
+      fallback.className = `alert-message ${level}`;
+      fallback.textContent = msg;
+      floater.prepend(fallback);
+      setTimeout(() => fallback.remove(), 5000);
+    } else {
+      console.info('[Notificaciones]', msg);
+    }
   };
 
   /* -----------  WebSocket ----------- */

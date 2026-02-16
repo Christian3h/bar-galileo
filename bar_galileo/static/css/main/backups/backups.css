@@ -146,18 +146,6 @@
     font-size: 14px;
 }
 
-.alert-warning {
-    background-color: rgba(255, 193, 7, 0.1);
-    border-left: 4px solid #ffc107;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-}
-
-.alert-warning strong {
-    color: #ffc107;
-}
-
 /* Tabs del modal de restauración */
 .tab-btn {
     flex: 1;
