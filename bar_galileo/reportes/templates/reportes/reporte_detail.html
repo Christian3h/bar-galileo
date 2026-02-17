@@ -216,36 +216,43 @@
 </div>
 
 <script>
-function generarReporte(reporteId) {
-    if (confirm('¿Desea generar/actualizar los datos de este reporte?')) {
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
-        btn.disabled = true;
+async function generarReporte(reporteId) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Generar Reporte',
+        message: '¿Desea generar/actualizar los datos de este reporte?',
+        confirmLabel: 'Generar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (!confirmed) return;
+    
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+    btn.disabled = true;
 
-        fetch(`/reportes/generar/${reporteId}/`, {
+    try {
+        const response = await fetch(`/reportes/generar/${reporteId}/`, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('✅ Reporte generado exitosamente');
-                location.reload();
-            } else {
-                alert('❌ Error al generar reporte: ' + data.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        })
-        .catch(error => {
-            alert('❌ Error al generar reporte');
-            console.error('Error:', error);
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            AppFeedback.success('Reporte generado exitosamente');
+            location.reload();
+        } else {
+            AppFeedback.error('Error al generar reporte: ' + data.message);
             btn.innerHTML = originalText;
             btn.disabled = false;
-        });
+        }
+    } catch (error) {
+        AppFeedback.error('Error al generar reporte');
+        console.error('Error:', error);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
     }
 }
 </script>

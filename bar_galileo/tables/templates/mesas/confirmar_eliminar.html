@@ -104,9 +104,13 @@
                         <i class="fas fa-exclamation-triangle"></i> Para eliminar esta mesa, primero debe facturar o liberar todos los pedidos pendientes.
                     </div>
                 {% else %}
-                    <form method="post" action="{% url 'tables:eliminar_mesa' mesa.id %}">
+                    <form method="post" action="{% url 'tables:eliminar_mesa' mesa.id %}" id="delete-mesa-form">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-lg" onclick="return confirm('¿Confirma que desea eliminar esta mesa?')">
+                        <button type="submit" class="btn btn-danger btn-lg"
+                            data-feedback-confirm="¿Confirma que desea eliminar esta mesa? Esta acción no se puede deshacer."
+                            data-feedback-confirm-title="Eliminar Mesa"
+                            data-feedback-confirm-ok="Eliminar"
+                            data-feedback-confirm-cancel="Cancelar">
                             <i class="fas fa-trash"></i> Eliminar Mesa
                         </button>
                     </form>
