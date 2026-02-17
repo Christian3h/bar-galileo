@@ -27,12 +27,12 @@
 /* Shared styles for inline alerts and floating messages */
 :is(.alert-message, .alert) {
   --alert-bg: var(--color-accent);
-  --alert-border: var(--color-border-muted);
+  --alert-border: var(--color-secondary);
   --alert-color: var(--color-secondary);
   background: var(--alert-bg);
   border: 1px solid var(--alert-border);
   border-left-width: 4px;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 0.95rem 1.15rem;
   color: var(--alert-color);
   display: flex;
@@ -197,8 +197,8 @@
 .app-confirm {
   width: min(440px, 100%);
   background: var(--color-surface-alt);
-  border: 1px solid var(--color-border-muted);
-  border-radius: 18px;
+  border: 2px solid var(--color-secondary);
+  border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35);
   color: var(--color-secondary);
@@ -257,6 +257,31 @@
 }
 
 /* ================================
+   TOPBAR (admin main-content header)
+================================ */
+
+.topbar-admin {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1050;
+}
+
+.topbar-admin__actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ================================
    BELL ICON + DROPDOWN PANEL
 ================================ */
 
@@ -266,11 +291,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: background 0.2s ease;
 }
 
-#icono-notification {
-  font-size: 2.75rem;
-  color: var(--color-secondary);
+.notification-icon:hover {
+  background: var(--color-border-muted);
+}
+
+.notification-icon__svg {
+  width: 32px;
+  height: 32px;
+  fill: var(--color-warning);
+  transition: fill 0.2s ease;
 }
 
 .notifications-panel a {
@@ -280,20 +315,23 @@
 
 .notification-badge {
   position: absolute;
-  top: -6px;
-  right: -4px;
+  top: 2px;
+  right: 0;
   background: var(--color-danger);
-  color: #fff;
+  color: #ffffff !important;
   border-radius: 999px;
-  width: 20px;
-  height: 20px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   transform: scale(0);
   transition: transform 0.25s ease;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
 .notification-badge.show {
@@ -302,21 +340,22 @@
 
 .notifications-panel {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 8px);
   right: 0;
-  width: 350px;
+  width: min(350px, calc(100vw - 32px));
   max-height: 420px;
   background: var(--color-surface-alt);
-  border-radius: 16px;
-  box-shadow: 0 30px 65px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  box-shadow: var(--feedback-shadow);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: all 0.25s ease;
+  transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
   z-index: 2100;
   overflow: hidden;
-  border: 1px solid var(--color-border-muted);
-  margin-top: 10px;
+  border: 2px solid var(--color-secondary);
+  display: flex;
+  flex-direction: column;
 }
 
 .notifications-panel.show {
@@ -326,16 +365,17 @@
 }
 
 .notification-header {
-  padding: 16px 20px 8px;
+  padding: 16px 20px 10px;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   border-bottom: 1px solid var(--color-border-muted);
+  flex-shrink: 0;
 }
 
 .notification-header h4 {
   margin: 0;
-  color: var(--color-primary);
+  color: var(--color-secondary);
   font-size: 1rem;
   font-weight: 600;
 }
@@ -349,6 +389,7 @@
   padding: 4px 0;
   opacity: 0.8;
   text-align: left;
+  transition: opacity 0.2s ease;
 }
 
 #mark-all-as-read:hover {
@@ -361,6 +402,7 @@
   margin: 0;
   max-height: 320px;
   overflow-y: auto;
+  flex: 1;
 }
 
 .notification-list::-webkit-scrollbar {
@@ -384,17 +426,19 @@
 
 .notification-item.unread {
   background: var(--color-surface);
-  border-left: 3px solid var(--color-primary);
+  border-left: 3px solid var(--color-secondary);
 }
 
 .notification-item:hover {
-  background: rgba(0, 0, 0, 0.035);
+  background: var(--color-border-muted);
 }
 
 .notification-item p {
   margin: 0 0 4px;
   color: var(--color-secondary);
   font-weight: 500;
+  font-size: 0.88rem;
+  line-height: 1.4;
 }
 
 .notification-item .timestamp {
@@ -407,4 +451,14 @@
   padding: 30px 20px;
   color: var(--color-gray);
   font-size: 0.88rem;
+}
+
+@media (max-width: 480px) {
+  .topbar-admin {
+    padding: 0.35rem 0;
+  }
+
+  .topbar-admin__actions {
+    top: 0.35rem;
+  }
 }

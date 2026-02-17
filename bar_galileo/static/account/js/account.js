@@ -415,7 +415,18 @@ const AccountManager = {
      * Logout con confirmación
      */
     logout: function(confirmMessage = '¿Estás seguro de que quieres cerrar sesión?') {
-        if (confirm(confirmMessage)) {
+        if (typeof AppFeedback !== 'undefined' && AppFeedback.confirm) {
+            AppFeedback.confirm({
+                title: 'Cerrar Sesión',
+                message: confirmMessage,
+                confirmLabel: 'Cerrar Sesión',
+                cancelLabel: 'Cancelar'
+            }).then(function(accepted) {
+                if (accepted) {
+                    window.location.href = '/accounts/logout/';
+                }
+            });
+        } else if (confirm(confirmMessage)) {
             window.location.href = '/accounts/logout/';
         }
     }
