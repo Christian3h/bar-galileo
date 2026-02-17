@@ -1,0 +1,419 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Editar{% else %}Agregar{% endif %} Imagen del Carrusel - Admin
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #3498db;
+    }
+
+    .form-header h1 {
+        color: #2c3e50;
+        margin: 0 0 10px 0;
+    }
+
+    .form-header p {
+        color: #7f8c8d;
+        margin: 0;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-group label .required {
+        color: #e74c3c;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .help-text {
+        display: block;
+        margin-top: 5px;
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+
+    .error-list {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+    }
+
+    .error-list li {
+        color: #e74c3c;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+    .form-group.error .form-control {
+        border-color: #e74c3c;
+    }
+
+    .image-preview-container {
+        margin-top: 15px;
+        display: none;
+    }
+
+    .image-preview-container img {
+        max-width: 100%;
+        max-height: 400px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .current-image {
+        margin-top: 10px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .current-image img {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 5px;
+    }
+
+    .current-image p {
+        margin: 10px 0 0 0;
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+
+    .btn-secondary {
+        background: #95a5a6;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #7f8c8d;
+    }
+
+    .validation-requirements {
+        background: #d6eaf8;
+        border-left: 4px solid #2980b9;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .validation-requirements h4 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .validation-requirements ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .validation-requirements li {
+        color: #2980b9;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>
+            {% if object %}
+                ✏️ Editar Imagen del Carrusel
+            {% else %}
+                ➕ Agregar Imagen al Carrusel
+            {% endif %}
+        </h1>
+        <p>
+            {% if object %}
+                Actualiza la información de la imagen del carrusel
+            {% else %}
+                Agrega una nueva imagen al carrusel principal de tu sitio
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="validation-requirements">
+        <h4>📋 Requisitos de la imagen:</h4>
+        <ul>
+            <li>Formatos permitidos: JPG, JPEG, PNG, WebP</li>
+            <li>Tamaño máximo: 10MB</li>
+            <li>Dimensiones recomendadas: 1920x1080px (se optimizará automáticamente)</li>
+            <li>La imagen se comprimirá automáticamente para mejor rendimiento</li>
+        </ul>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="carousel-form">
+        {% csrf_token %}
+        
+        <div class="form-group {% if form.title.errors %}error{% endif %}">
+            <label for="{{ form.title.id_for_label }}">
+                Título <span class="required">*</span>
+            </label>
+            {{ form.title }}
+            {% if form.title.help_text %}
+                <span class="help-text">{{ form.title.help_text }}</span>
+            {% endif %}
+            {% if form.title.errors %}
+                <ul class="error-list">
+                    {% for error in form.title.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.image.errors %}error{% endif %}">
+            <label for="{{ form.image.id_for_label }}">
+                Imagen <span class="required">*</span>
+            </label>
+            {{ form.image }}
+            {% if form.image.help_text %}
+                <span class="help-text">{{ form.image.help_text }}</span>
+            {% endif %}
+            {% if form.image.errors %}
+                <ul class="error-list">
+                    {% for error in form.image.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            
+            {% if object and object.image %}
+                <div class="current-image">
+                    <p><strong>Imagen actual:</strong></p>
+                    <img src="{{ object.image.url }}" alt="{{ object.alt_text }}">
+                    <p>{{ object.width }}x{{ object.height }}px - {{ object.get_file_size_display }}</p>
+                </div>
+            {% endif %}
+
+            <div class="image-preview-container" id="image-preview">
+                <p><strong>Vista previa:</strong></p>
+                <img id="preview-img" src="" alt="Vista previa">
+            </div>
+        </div>
+
+        <div class="form-group {% if form.alt_text.errors %}error{% endif %}">
+            <label for="{{ form.alt_text.id_for_label }}">
+                Texto alternativo
+            </label>
+            {{ form.alt_text }}
+            <span class="help-text">Descripción de la imagen para accesibilidad (lectores de pantalla)</span>
+            {% if form.alt_text.errors %}
+                <ul class="error-list">
+                    {% for error in form.alt_text.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.caption.errors %}error{% endif %}">
+            <label for="{{ form.caption.id_for_label }}">
+                Texto descriptivo
+            </label>
+            {{ form.caption }}
+            <span class="help-text">Texto que se mostrará sobre la imagen (opcional)</span>
+            {% if form.caption.errors %}
+                <ul class="error-list">
+                    {% for error in form.caption.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.link_url.errors %}error{% endif %}">
+            <label for="{{ form.link_url.id_for_label }}">
+                URL de enlace
+            </label>
+            {{ form.link_url }}
+            <span class="help-text">URL a la que llevará al hacer clic en la imagen (opcional)</span>
+            {% if form.link_url.errors %}
+                <ul class="error-list">
+                    {% for error in form.link_url.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.order.errors %}error{% endif %}">
+            <label for="{{ form.order.id_for_label }}">
+                Orden
+            </label>
+            {{ form.order }}
+            <span class="help-text">Posición en el carrusel (puedes cambiarlo después arrastrando)</span>
+            {% if form.order.errors %}
+                <ul class="error-list">
+                    {% for error in form.order.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.is_active.errors %}error{% endif %}">
+            <div class="form-check">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}">
+                    Imagen activa (se mostrará en el carrusel)
+                </label>
+            </div>
+            {% if form.is_active.errors %}
+                <ul class="error-list">
+                    {% for error in form.is_active.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if object %}💾 Guardar Cambios{% else %}➕ Agregar Imagen{% endif %}
+            </button>
+            <a href="{% url 'admin_dashboard:image_management' %}" class="btn btn-secondary">
+                ❌ Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    const previewContainer = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                // Validar tamaño
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                if (file.size > maxSize) {
+                    alert('El archivo es demasiado grande. El tamaño máximo es 10MB.');
+                    imageInput.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Validar tipo
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Formato de archivo no válido. Usa JPG, PNG o WebP.');
+                    imageInput.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+                
+                // Mostrar preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+    }
+    
+    // Auto-fill alt text from title if empty
+    const titleInput = document.querySelector('input[name="title"]');
+    const altTextInput = document.querySelector('input[name="alt_text"]');
+    
+    if (titleInput && altTextInput) {
+        titleInput.addEventListener('blur', function() {
+            if (!altTextInput.value && titleInput.value) {
+                altTextInput.value = titleInput.value;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

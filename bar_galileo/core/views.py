@@ -20,6 +20,24 @@ class indexView(ListView):
         context = super().get_context_data(**kwargs)
         context['productos_iniciales'] = Producto.objects.filter(activo=True)[:3]
         context['total_productos'] = Producto.objects.filter(activo=True).count()
+        
+        # Agregar imágenes del carrusel desde la base de datos
+        try:
+            from admin_dashboard.models import CarouselImage, SiteImage, SiteImageSection
+            context['carousel_images'] = CarouselImage.objects.filter(is_active=True).order_by('order')
+            
+            # Agregar imagen de la sección "About" si existe
+            try:
+                about_section = SiteImageSection.objects.get(section_type='about')
+                about_images = SiteImage.objects.filter(section=about_section, is_active=True)
+                if about_images.exists():
+                    context['about_image'] = about_images.first()
+            except SiteImageSection.DoesNotExist:
+                pass
+        except Exception:
+            # Si aún no existen las tablas (antes de migrar), continuar sin error
+            pass
+        
         return context
 
 class ProductosAjaxView(View):

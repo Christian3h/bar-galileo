@@ -1,0 +1,129 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Editar{% else %}Nueva{% endif %} Sección - Admin
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #3498db;
+    }
+
+    .form-header h1 {
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+    }
+
+    .error-list {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+        color: #e74c3c;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #95a5a6;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>{% if object %}✏️ Editar{% else %}➕ Nueva{% endif %} Sección</h1>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Nombre <span style="color:red">*</span></label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <ul class="error-list">{% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.section_type.id_for_label }}">Tipo <span style="color:red">*</span></label>
+            {{ form.section_type }}
+            {% if form.section_type.errors %}
+                <ul class="error-list">{% for error in form.section_type.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Descripción</label>
+            {{ form.description }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if object %}💾 Guardar{% else %}➕ Crear{% endif %}
+            </button>
+            <a href="{% url 'admin_dashboard:image_management' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
