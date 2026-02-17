@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from products.models import Producto, Categoria
 from tables.models import Mesa, Pedido, PedidoItem, Factura
 from expenses.models import Expense
@@ -11,11 +11,16 @@ from django.db.models import Sum, Count, F, ExpressionWrapper, DecimalField
 from django.db.models.functions import TruncDay, TruncDate
 from datetime import datetime, date, time, timedelta
 from decimal import Decimal
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from django.urls import reverse_lazy
 import csv
 from io import BytesIO
 from django.template.loader import render_to_string
 from django.utils import timezone
+import json
+from .models import SiteImage, CarouselImage, SiteImageSection
+from .forms import SiteImageForm, CarouselImageForm, SiteImageSectionForm
 try:
     import openpyxl
     from openpyxl.utils import get_column_letter
@@ -341,3 +346,206 @@ def export_dashboard(request, fmt):
 
     else:
         return HttpResponse('Formato no soportado', status=400)
+
+
+# ==================== GESTIÓN DE IMÁGENES ====================
+
+@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+class ImageManagementView(TemplateView):
+    """Vista principal de gestión de imágenes"""
+    template_name = 'admin_dashboard/image_management.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['carousel_images'] = CarouselImage.objects.all().order_by('order')
+        context['sections'] = SiteImageSection.objects.all()
+        context['site_images'] = SiteImage.objects.select_related('section').all()
+        return context
+
+
+@method_decorator(permission_required('dashboard', 'crear'), name='dispatch')
+class CarouselImageCreateView(CreateView):
+    """Vista para crear una nueva imagen del carrusel"""
+    model = CarouselImage
+    form_class = CarouselImageForm
+    template_name = 'admin_dashboard/carousel_image_form.html'
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    
+    def form_valid(self, form):
+        messages.success(self.request, '¡Imagen del carrusel agregada exitosamente!')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error al agregar la imagen. Por favor, verifica los datos.')
+        return super().form_invalid(form)
+
+
+@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+class CarouselImageUpdateView(UpdateView):
+    """Vista para editar una imagen del carrusel"""
+    model = CarouselImage
+    form_class = CarouselImageForm
+    template_name = 'admin_dashboard/carousel_image_form.html'
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    pk_url_kwarg = 'pk'
+    
+    def form_valid(self, form):
+        messages.success(self.request, '¡Imagen del carrusel actualizada exitosamente!')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error al actualizar la imagen. Por favor, verifica los datos.')
+        return super().form_invalid(form)
+
+
+@method_decorator(permission_required('dashboard', 'eliminar'), name='dispatch')
+class CarouselImageDeleteView(DeleteView):
+    """Vista para eliminar una imagen del carrusel"""
+    model = CarouselImage
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    pk_url_kwarg = 'pk'
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, '¡Imagen del carrusel eliminada exitosamente!')
+        return super().delete(request, *args, **kwargs)
+
+
+@permission_required('dashboard', 'editar')
+def carousel_reorder_ajax(request):
+    """Vista AJAX para reordenar imágenes del carrusel"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            image_orders = data.get('image_orders', [])
+            
+            for item in image_orders:
+                image_id = item.get('id')
+                new_order = item.get('order')
+                
+                if image_id and new_order is not None:
+                    CarouselImage.objects.filter(id=image_id).update(order=new_order)
+            
+            return JsonResponse({'success': True, 'message': 'Orden actualizado correctamente'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
+
+@permission_required('dashboard', 'editar')
+def carousel_toggle_active(request, pk):
+    """Vista AJAX para activar/desactivar una imagen del carrusel"""
+    if request.method == 'POST':
+        try:
+            image = get_object_or_404(CarouselImage, pk=pk)
+            image.is_active = not image.is_active
+            image.save()
+            
+            return JsonResponse({
+                'success': True,
+                'is_active': image.is_active,
+                'message': 'Estado actualizado correctamente'
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
+
+# ==================== GESTIÓN DE SECCIONES ====================
+
+@method_decorator(permission_required('dashboard', 'crear'), name='dispatch')
+class SiteImageSectionCreateView(CreateView):
+    """Vista para crear una nueva sección de imágenes"""
+    model = SiteImageSection
+    form_class = SiteImageSectionForm
+    template_name = 'admin_dashboard/site_image_section_form.html'
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    
+    def form_valid(self, form):
+        messages.success(self.request, '¡Sección creada exitosamente!')
+        return super().form_valid(form)
+
+
+@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+class SiteImageSectionUpdateView(UpdateView):
+    """Vista para editar una sección de imágenes"""
+    model = SiteImageSection
+    form_class = SiteImageSectionForm
+    template_name = 'admin_dashboard/site_image_section_form.html'
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    pk_url_kwarg = 'pk'
+    
+    def form_valid(self, form):
+        messages.success(self.request, '¡Sección actualizada exitosamente!')
+        return super().form_valid(form)
+
+
+# ==================== GESTIÓN DE IMÁGENES DEL SITIO ====================
+
+@method_decorator(permission_required('dashboard', 'crear'), name='dispatch')
+class SiteImageCreateView(CreateView):
+    """Vista para crear una nueva imagen del sitio"""
+    model = SiteImage
+    form_class = SiteImageForm
+    template_name = 'admin_dashboard/site_image_form.html'
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    
+    def form_valid(self, form):
+        messages.success(self.request, '¡Imagen agregada exitosamente!')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error al agregar la imagen. Por favor, verifica los datos.')
+        return super().form_invalid(form)
+
+
+@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+class SiteImageUpdateView(UpdateView):
+    """Vista para editar una imagen del sitio"""
+    model = SiteImage
+    form_class = SiteImageForm
+    template_name = 'admin_dashboard/site_image_form.html'
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    pk_url_kwarg = 'pk'
+    
+    def form_valid(self, form):
+        messages.success(self.request, '¡Imagen actualizada exitosamente!')
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error al actualizar la imagen. Por favor, verifica los datos.')
+        return super().form_invalid(form)
+
+
+@method_decorator(permission_required('dashboard', 'eliminar'), name='dispatch')
+class SiteImageDeleteView(DeleteView):
+    """Vista para eliminar una imagen del sitio"""
+    model = SiteImage
+    success_url = reverse_lazy('admin_dashboard:image_management')
+    pk_url_kwarg = 'pk'
+    
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, '¡Imagen eliminada exitosamente!')
+        return super().delete(request, *args, **kwargs)
+
+
+@permission_required('dashboard', 'editar')
+def site_image_toggle_active(request, pk):
+    """Vista AJAX para activar/desactivar una imagen del sitio"""
+    if request.method == 'POST':
+        try:
+            image = get_object_or_404(SiteImage, pk=pk)
+            image.is_active = not image.is_active
+            image.save()
+            
+            return JsonResponse({
+                'success': True,
+                'is_active': image.is_active,
+                'message': 'Estado actualizado correctamente'
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+

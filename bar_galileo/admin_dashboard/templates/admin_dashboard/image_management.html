@@ -1,0 +1,629 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestión de Imágenes - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .image-management-container {
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+
+    .btn-success {
+        background: #27ae60;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #229954;
+    }
+
+    .btn-danger {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c0392b;
+    }
+
+    .btn-warning {
+        background: #f39c12;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d68910;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+
+    .section-card h2 {
+        font-size: 1.5rem;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #3498db;
+    }
+
+    .carousel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .image-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .image-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .image-card.inactive {
+        opacity: 0.6;
+    }
+
+    .image-preview {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: #ddd;
+    }
+
+    .image-info {
+        padding: 15px;
+    }
+
+    .image-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .image-meta {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+    }
+
+    .image-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .badge-active {
+        background: #d5f4e6;
+        color: #27ae60;
+    }
+
+    .badge-inactive {
+        background: #fadbd8;
+        color: #e74c3c;
+    }
+
+    .image-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .drag-handle {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        padding: 8px;
+        border-radius: 5px;
+        cursor: move;
+        font-size: 18px;
+    }
+
+    .order-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(52, 152, 219, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #95a5a6;
+    }
+
+    .empty-state img {
+        max-width: 200px;
+        opacity: 0.5;
+        margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+        font-size: 20px;
+        color: #7f8c8d;
+        margin-bottom: 10px;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .sections-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .section-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+    }
+
+    .section-item h4 {
+        margin: 0 0 5px 0;
+        color: #2c3e50;
+    }
+
+    .section-item p {
+        margin: 0;
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+
+    .section-item .image-count {
+        display: inline-block;
+        background: #3498db;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        margin-top: 8px;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background: #d5f4e6;
+        color: #27ae60;
+        border-left: 4px solid #27ae60;
+    }
+
+    .alert-error {
+        background: #fadbd8;
+        color: #e74c3c;
+        border-left: 4px solid #e74c3c;
+    }
+
+    .alert-info {
+        background: #d6eaf8;
+        color: #2980b9;
+        border-left: 4px solid #2980b9;
+    }
+
+    @media (max-width: 768px) {
+        .carousel-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    /* Sortable styles */
+    .sortable-ghost {
+        opacity: 0.4;
+    }
+
+    .sortable-drag {
+        cursor: grabbing;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="image-management-container">
+    <div class="page-header">
+        <h1>🖼️ Gestión de Imágenes</h1>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- CARRUSEL PRINCIPAL -->
+    <div class="section-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>🎠 Carrusel Principal</h2>
+            <a href="{% url 'admin_dashboard:carousel_image_create' %}" class="btn btn-success">
+                ➕ Agregar Imagen al Carrusel
+            </a>
+        </div>
+
+        {% if carousel_images %}
+            <div class="alert alert-info">
+                <strong>💡 Tip:</strong> Arrastra las imágenes para cambiar su orden. Los cambios se guardan automáticamente.
+            </div>
+            
+            <div class="carousel-grid" id="carousel-sortable">
+                {% for image in carousel_images %}
+                <div class="image-card {% if not image.is_active %}inactive{% endif %}" data-id="{{ image.id }}">
+                    <span class="drag-handle">⋮⋮</span>
+                    <span class="order-badge">{{ image.order }}</span>
+                    
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="image-preview">
+                    
+                    <div class="image-info">
+                        <span class="image-badge {% if image.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {% if image.is_active %}✓ Activa{% else %}✗ Inactiva{% endif %}
+                        </span>
+                        
+                        <h3 class="image-title">{{ image.title }}</h3>
+                        
+                        <div class="image-meta">
+                            📏 {{ image.width }}x{{ image.height }}px
+                        </div>
+                        <div class="image-meta">
+                            💾 {{ image.get_file_size_display }}
+                        </div>
+                        {% if image.caption %}
+                        <div class="image-meta">
+                            💬 {{ image.caption|truncatewords:10 }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="image-actions">
+                            <a href="{% url 'admin_dashboard:carousel_image_edit' image.id %}" class="btn btn-primary btn-sm">
+                                ✏️ Editar
+                            </a>
+                            <button class="btn btn-warning btn-sm toggle-active" data-id="{{ image.id }}" data-type="carousel">
+                                {% if image.is_active %}👁️ Ocultar{% else %}👁️ Mostrar{% endif %}
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="carousel">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No hay imágenes en el carrusel</h3>
+                <p>Agrega tu primera imagen para comenzar</p>
+                <a href="{% url 'admin_dashboard:carousel_image_create' %}" class="btn btn-success">
+                    ➕ Agregar Primera Imagen
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- SECCIONES DE IMÁGENES -->
+    <div class="section-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>📂 Secciones de Imágenes</h2>
+            <div>
+                <a href="{% url 'admin_dashboard:site_image_section_create' %}" class="btn btn-primary">
+                    ➕ Nueva Sección
+                </a>
+                <a href="{% url 'admin_dashboard:site_image_create' %}" class="btn btn-success">
+                    🖼️ Agregar Imagen
+                </a>
+            </div>
+        </div>
+
+        {% if sections %}
+            <div class="sections-list">
+                {% for section in sections %}
+                <div class="section-item">
+                    <h4>{{ section.name }}</h4>
+                    <p>{{ section.get_section_type_display }}</p>
+                    {% if section.description %}
+                    <p style="margin-top: 8px;">{{ section.description|truncatewords:15 }}</p>
+                    {% endif %}
+                    <span class="image-count">{{ section.images.count }} imagen{{ section.images.count|pluralize:"es" }}</span>
+                    <div style="margin-top: 10px;">
+                        <a href="{% url 'admin_dashboard:site_image_section_edit' section.id %}" class="btn btn-primary btn-sm">
+                            ✏️ Editar
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No hay secciones creadas</h3>
+                <p>Crea secciones para organizar las imágenes de tu sitio</p>
+                <a href="{% url 'admin_dashboard:site_image_section_create' %}" class="btn btn-primary">
+                    ➕ Crear Primera Sección
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- IMÁGENES DEL SITIO -->
+    {% if site_images %}
+    <div class="section-card">
+        <h2>🖼️ Todas las Imágenes del Sitio</h2>
+        
+        <div class="carousel-grid">
+            {% for image in site_images %}
+            <div class="image-card {% if not image.is_active %}inactive{% endif %}">
+                <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="image-preview">
+                
+                <div class="image-info">
+                    <span class="image-badge {% if image.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                        {% if image.is_active %}✓ Activa{% else %}✗ Inactiva{% endif %}
+                    </span>
+                    
+                    <h3 class="image-title">{{ image.title }}</h3>
+                    
+                    <div class="image-meta">
+                        📁 {{ image.section.name }}
+                    </div>
+                    <div class="image-meta">
+                        📏 {{ image.width }}x{{ image.height }}px
+                    </div>
+                    <div class="image-meta">
+                        💾 {{ image.get_file_size_display }}
+                    </div>
+                    
+                    <div class="image-actions">
+                        <a href="{% url 'admin_dashboard:site_image_edit' image.id %}" class="btn btn-primary btn-sm">
+                            ✏️ Editar
+                        </a>
+                        <button class="btn btn-warning btn-sm toggle-active" data-id="{{ image.id }}" data-type="site">
+                            {% if image.is_active %}👁️ Ocultar{% else %}👁️ Mostrar{% endif %}
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="site">
+                            🗑️ Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Sortable para el carrusel
+    const carouselGrid = document.getElementById('carousel-sortable');
+    
+    if (carouselGrid) {
+        new Sortable(carouselGrid, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: function(evt) {
+                // Actualizar el orden en el servidor
+                const items = carouselGrid.querySelectorAll('.image-card');
+                const imageOrders = Array.from(items).map((item, index) => ({
+                    id: parseInt(item.dataset.id),
+                    order: index
+                }));
+                
+                // Actualizar badges visualmente
+                items.forEach((item, index) => {
+                    const badge = item.querySelector('.order-badge');
+                    if (badge) badge.textContent = index;
+                });
+                
+                // Enviar al servidor
+                fetch('{% url "admin_dashboard:carousel_reorder" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ image_orders: imageOrders })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('✅ Orden actualizado correctamente', 'success');
+                    } else {
+                        showNotification('❌ Error al actualizar el orden', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('❌ Error al actualizar el orden', 'error');
+                });
+            }
+        });
+    }
+    
+    // Toggle active/inactive
+    document.querySelectorAll('.toggle-active').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const type = this.dataset.type;
+            
+            // Construir URL basada en el tipo
+            let url;
+            if (type === 'carousel') {
+                url = '{% url "admin_dashboard:carousel_toggle_active" 0 %}'.replace('0', id);
+            } else {
+                url = '{% url "admin_dashboard:site_image_toggle_active" 0 %}'.replace('0', id);
+            }
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showNotification('❌ Error al cambiar el estado', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('❌ Error al cambiar el estado', 'error');
+            });
+        });
+    });
+    
+    // Delete confirmation
+    document.querySelectorAll('.delete-image').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const type = this.dataset.type;
+            
+            if (confirm(`¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`)) {
+                // Construir URL basada en el tipo
+                let url;
+                if (type === 'carousel') {
+                    url = '{% url "admin_dashboard:carousel_image_delete" 0 %}'.replace('0', id);
+                } else {
+                    url = '{% url "admin_dashboard:site_image_delete" 0 %}'.replace('0', id);
+                }
+                
+                // Crear un formulario temporal para enviar DELETE
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+                
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = getCookie('csrftoken');
+                form.appendChild(csrfInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+    
+    // Helper functions
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showNotification(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.style.minWidth = '250px';
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}

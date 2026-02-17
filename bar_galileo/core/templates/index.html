@@ -8,12 +8,18 @@
   <!-- Hero Section -->
   <section class="hero" id="experiencia-section">
     <div class="hero-carousel">
-      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      {% if carousel_images %}
+        {% for image in carousel_images %}
+          <div class="hero-slide {% if forloop.first %}active{% endif %}" 
+               style="background-image: url('{{ image.image.url }}')">
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Imágenes por defecto si no hay en la BD -->
+        <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80')"></div>
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      {% endif %}
     </div>
 
     <div class="hero-content">
@@ -26,12 +32,15 @@
     </div>
 
     <div class="hero-dots">
-      <span class="hero-dot active" data-slide="0"></span>
-      <span class="hero-dot" data-slide="1"></span>
-      <span class="hero-dot" data-slide="2"></span>
-      <span class="hero-dot" data-slide="3"></span>
-      <span class="hero-dot" data-slide="4"></span>
-      <span class="hero-dot" data-slide="5"></span>
+      {% if carousel_images %}
+        {% for image in carousel_images %}
+          <span class="hero-dot {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}"></span>
+        {% endfor %}
+      {% else %}
+        <span class="hero-dot active" data-slide="0"></span>
+        <span class="hero-dot" data-slide="1"></span>
+        <span class="hero-dot" data-slide="2"></span>
+      {% endif %}
     </div>
 
     <!-- Scroll Indicator -->
@@ -54,7 +63,11 @@
           <p>Únete a nosotros y descubre por qué Bar Galileo se ha convertido en el destino preferido para los amantes de la buena coctelería en la ciudad.</p>
         </div>
         <div class="about-image">
-          <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Interior de Bar Galileo">
+          {% if about_image %}
+            <img src="{{ about_image.image.url }}" alt="{{ about_image.alt_text|default:'Interior de Bar Galileo' }}">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Interior de Bar Galileo">
+          {% endif %}
         </div>
       </div>
     </div>
