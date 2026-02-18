@@ -319,8 +319,23 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Cookies CSRF seguras (solo HTTPS en producción)
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Debe ser False para que JavaScript pueda leer el token CSRF en solicitudes AJAX
 CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Orígenes confiables para CSRF (necesario para AJAX y solicitudes cross-origin)
+# En desarrollo, permitir localhost y 127.0.0.1
+# En producción, agregar los dominios desde variables de entorno
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+        'http://localhost',
+        'http://127.0.0.1',
+    ]
+else:
+    # En producción, leer desde variable de entorno
+    trusted_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in trusted_origins.split(',') if origin.strip()]
 
 # Seguridad de contenido
 SECURE_CONTENT_TYPE_NOSNIFF = True
