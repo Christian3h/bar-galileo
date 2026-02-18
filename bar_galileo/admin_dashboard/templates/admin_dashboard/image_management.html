@@ -382,93 +382,65 @@
         {% endif %}
     </div>
 
-    <!-- SECCIONES DE IMÁGENES -->
+    <!-- SECCIÓN ACERCA DE -->
     <div class="section-card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2>📂 Secciones de Imágenes</h2>
-            <div>
-                <a href="{% url 'admin_dashboard:site_image_section_create' %}" class="btn btn-primary">
-                    ➕ Nueva Sección
-                </a>
-                <a href="{% url 'admin_dashboard:site_image_create' %}" class="btn btn-success">
-                    🖼️ Agregar Imagen
-                </a>
-            </div>
+            <h2>📖 Acerca de</h2>
+            <a href="{% url 'admin_dashboard:site_image_create' %}" class="btn btn-success">
+                🖼️ Agregar Imagen
+            </a>
         </div>
 
-        {% if sections %}
-            <div class="sections-list">
-                {% for section in sections %}
-                <div class="section-item">
-                    <h4>{{ section.name }}</h4>
-                    <p>{{ section.get_section_type_display }}</p>
-                    {% if section.description %}
-                    <p style="margin-top: 8px;">{{ section.description|truncatewords:15 }}</p>
-                    {% endif %}
-                    <span class="image-count">{{ section.images.count }} imagen{{ section.images.count|pluralize:"es" }}</span>
-                    <div style="margin-top: 10px;">
-                        <a href="{% url 'admin_dashboard:site_image_section_edit' section.id %}" class="btn btn-primary btn-sm">
-                            ✏️ Editar
-                        </a>
+        {% if about_images %}
+            <div class="carousel-grid">
+                {% for image in about_images %}
+                <div class="image-card {% if not image.is_active %}inactive{% endif %}">
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="image-preview">
+                    
+                    <div class="image-info">
+                        <span class="image-badge {% if image.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {% if image.is_active %}✓ Activa{% else %}✗ Inactiva{% endif %}
+                        </span>
+                        
+                        <h3 class="image-title">{{ image.title }}</h3>
+                        
+                        <div class="image-meta">
+                            📏 {{ image.width }}x{{ image.height }}px
+                        </div>
+                        <div class="image-meta">
+                            💾 {{ image.get_file_size_display }}
+                        </div>
+                        {% if image.alt_text %}
+                        <div class="image-meta">
+                            🏷️ {{ image.alt_text|truncatewords:10 }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="image-actions">
+                            <a href="{% url 'admin_dashboard:site_image_edit' image.id %}" class="btn btn-primary btn-sm">
+                                ✏️ Editar
+                            </a>
+                            <button class="btn btn-warning btn-sm toggle-active" data-id="{{ image.id }}" data-type="site">
+                                {% if image.is_active %}👁️ Ocultar{% else %}👁️ Mostrar{% endif %}
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="site">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
             <div class="empty-state">
-                <h3>No hay secciones creadas</h3>
-                <p>Crea secciones para organizar las imágenes de tu sitio</p>
-                <a href="{% url 'admin_dashboard:site_image_section_create' %}" class="btn btn-primary">
-                    ➕ Crear Primera Sección
+                <h3>No hay imágenes en Acerca de</h3>
+                <p>Agrega imágenes para la sección Acerca de</p>
+                <a href="{% url 'admin_dashboard:site_image_create' %}" class="btn btn-success">
+                    ➕ Agregar Primera Imagen
                 </a>
             </div>
         {% endif %}
     </div>
-
-    <!-- IMÁGENES DEL SITIO -->
-    {% if site_images %}
-    <div class="section-card">
-        <h2>🖼️ Todas las Imágenes del Sitio</h2>
-        
-        <div class="carousel-grid">
-            {% for image in site_images %}
-            <div class="image-card {% if not image.is_active %}inactive{% endif %}">
-                <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="image-preview">
-                
-                <div class="image-info">
-                    <span class="image-badge {% if image.is_active %}badge-active{% else %}badge-inactive{% endif %}">
-                        {% if image.is_active %}✓ Activa{% else %}✗ Inactiva{% endif %}
-                    </span>
-                    
-                    <h3 class="image-title">{{ image.title }}</h3>
-                    
-                    <div class="image-meta">
-                        📁 {{ image.section.name }}
-                    </div>
-                    <div class="image-meta">
-                        📏 {{ image.width }}x{{ image.height }}px
-                    </div>
-                    <div class="image-meta">
-                        💾 {{ image.get_file_size_display }}
-                    </div>
-                    
-                    <div class="image-actions">
-                        <a href="{% url 'admin_dashboard:site_image_edit' image.id %}" class="btn btn-primary btn-sm">
-                            ✏️ Editar
-                        </a>
-                        <button class="btn btn-warning btn-sm toggle-active" data-id="{{ image.id }}" data-type="site">
-                            {% if image.is_active %}👁️ Ocultar{% else %}👁️ Mostrar{% endif %}
-                        </button>
-                        <button class="btn btn-danger btn-sm delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="site">
-                            🗑️ Eliminar
-                        </button>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}
 
