@@ -13,12 +13,12 @@
     <!-- CABECERA -->
     <div class="page-header">
         <div class="page-header-left">
-            <h1>✏️ Contenido de la Página de Inicio</h1>
+            <h1> Contenido de la Página de Inicio</h1>
             <p class="page-subtitle">Edita los textos e imágenes de cada sección que se muestran en la home del sitio.</p>
         </div>
         <div class="page-header-actions">
             <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">
-                🖼️ Gestión de imágenes
+                 Gestión de imágenes
             </a>
         </div>
     </div>
@@ -43,11 +43,11 @@
             <div class="csc-header">
                 <div class="csc-title-group">
                     <span class="csc-icon">
-                        {% if section.section == 'hero' %}🏠
-                        {% elif section.section == 'about' %}📖
-                        {% elif section.section == 'cocktails' %}🍹
-                        {% elif section.section == 'services' %}⭐
-                        {% else %}📞{% endif %}
+                        {% if section.section == 'hero' %}
+                        {% elif section.section == 'about' %}
+                        {% elif section.section == 'cocktails' %}
+                        {% elif section.section == 'services' %}
+                        {% else %}{% endif %}
                     </span>
                     <div>
                         <h2 class="csc-title">{{ section.get_section_display }}</h2>
