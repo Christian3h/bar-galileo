@@ -1,6 +1,7 @@
 from django import forms
 from .models import SiteImage, CarouselImage, SiteImageSection
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 
 
 class SiteImageSectionForm(forms.ModelForm):
@@ -58,7 +59,8 @@ class SiteImageForm(forms.ModelForm):
     def clean_image(self):
         image = self.cleaned_data.get('image')
         
-        if image:
+        # Solo validar si es un archivo recién subido (no el ImageFieldFile existente)
+        if image and isinstance(image, UploadedFile):
             # Validar tamaño del archivo (máximo 5MB)
             max_size = 5 * 1024 * 1024  # 5MB en bytes
             if image.size > max_size:
@@ -117,7 +119,8 @@ class CarouselImageForm(forms.ModelForm):
     def clean_image(self):
         image = self.cleaned_data.get('image')
         
-        if image:
+        # Solo validar si es un archivo recién subido (no el ImageFieldFile existente)
+        if image and isinstance(image, UploadedFile):
             # Validar tamaño del archivo (máximo 10MB para carrusel)
             max_size = 10 * 1024 * 1024  # 10MB en bytes
             if image.size > max_size:

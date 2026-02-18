@@ -14,6 +14,8 @@ from decimal import Decimal
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 import csv
 from io import BytesIO
 from django.template.loader import render_to_string
@@ -350,7 +352,7 @@ def export_dashboard(request, fmt):
 
 # ==================== GESTIÓN DE IMÁGENES ====================
 
-@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+@method_decorator([permission_required('dashboard', 'editar'), ensure_csrf_cookie], name='dispatch')
 class ImageManagementView(TemplateView):
     """Vista principal de gestión de imágenes"""
     template_name = 'admin_dashboard/image_management.html'
@@ -410,46 +412,42 @@ class CarouselImageDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+@require_POST
 @permission_required('dashboard', 'editar')
 def carousel_reorder_ajax(request):
     """Vista AJAX para reordenar imágenes del carrusel"""
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            image_orders = data.get('image_orders', [])
+    try:
+        data = json.loads(request.body)
+        image_orders = data.get('image_orders', [])
+        
+        for item in image_orders:
+            image_id = item.get('id')
+            new_order = item.get('order')
             
-            for item in image_orders:
-                image_id = item.get('id')
-                new_order = item.get('order')
-                
-                if image_id and new_order is not None:
-                    CarouselImage.objects.filter(id=image_id).update(order=new_order)
-            
-            return JsonResponse({'success': True, 'message': 'Orden actualizado correctamente'})
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)}, status=400)
-    
-    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+            if image_id and new_order is not None:
+                CarouselImage.objects.filter(id=image_id).update(order=new_order)
+        
+        return JsonResponse({'success': True, 'message': 'Orden actualizado correctamente'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 
+@require_POST
 @permission_required('dashboard', 'editar')
 def carousel_toggle_active(request, pk):
     """Vista AJAX para activar/desactivar una imagen del carrusel"""
-    if request.method == 'POST':
-        try:
-            image = get_object_or_404(CarouselImage, pk=pk)
-            image.is_active = not image.is_active
-            image.save()
-            
-            return JsonResponse({
-                'success': True,
-                'is_active': image.is_active,
-                'message': 'Estado actualizado correctamente'
-            })
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)}, status=400)
-    
-    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+    try:
+        image = get_object_or_404(CarouselImage, pk=pk)
+        image.is_active = not image.is_active
+        image.save()
+        
+        return JsonResponse({
+            'success': True,
+            'is_active': image.is_active,
+            'message': 'Estado actualizado correctamente'
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
 
 # ==================== GESTIÓN DE SECCIONES ====================
@@ -530,22 +528,20 @@ class SiteImageDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+@require_POST
 @permission_required('dashboard', 'editar')
 def site_image_toggle_active(request, pk):
     """Vista AJAX para activar/desactivar una imagen del sitio"""
-    if request.method == 'POST':
-        try:
-            image = get_object_or_404(SiteImage, pk=pk)
-            image.is_active = not image.is_active
-            image.save()
-            
-            return JsonResponse({
-                'success': True,
-                'is_active': image.is_active,
-                'message': 'Estado actualizado correctamente'
-            })
-        except Exception as e:
-            return JsonResponse({'success': False, 'message': str(e)}, status=400)
-    
-    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+    try:
+        image = get_object_or_404(SiteImage, pk=pk)
+        image.is_active = not image.is_active
+        image.save()
+        
+        return JsonResponse({
+            'success': True,
+            'is_active': image.is_active,
+            'message': 'Estado actualizado correctamente'
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
 
