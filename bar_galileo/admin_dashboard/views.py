@@ -360,8 +360,7 @@ class ImageManagementView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['carousel_images'] = CarouselImage.objects.all().order_by('order')
-        context['sections'] = SiteImageSection.objects.all()
-        context['site_images'] = SiteImage.objects.select_related('section').all()
+        context['about_images'] = SiteImage.objects.select_related('section').filter(section__section_type='about')
         return context
 
 
