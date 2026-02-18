@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'nominas',
     #app para el dashboard
     'admin_dashboard',
+    #app para gestión de imágenes del sitio
+    'site_images',
     #app para facturación
     'facturacion',
     #apps necesarias para la libreria django-allauth

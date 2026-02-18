@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Iniciando creación de secciones predefinidas...'))
-        
+
         sections_data = [
             {
                 'name': 'Carrusel Principal - Hero',
@@ -45,10 +45,10 @@ class Command(BaseCommand):
                 'description': 'Imágenes y logos del pie de página'
             },
         ]
-        
+
         created_count = 0
         skipped_count = 0
-        
+
         for section_data in sections_data:
             section, created = SiteImageSection.objects.get_or_create(
                 name=section_data['name'],
@@ -57,7 +57,7 @@ class Command(BaseCommand):
                     'description': section_data['description']
                 }
             )
-            
+
             if created:
                 created_count += 1
                 self.stdout.write(
@@ -68,9 +68,9 @@ class Command(BaseCommand):
                 self.stdout.write(
                     self.style.WARNING(f'○ Sección ya existe: {section.name}')
                 )
-        
-        self.stdout.write('\n' + '='*50)
+
+        self.stdout.write('\n' + '=' * 50)
         self.stdout.write(self.style.SUCCESS(f'Secciones creadas: {created_count}'))
         self.stdout.write(self.style.WARNING(f'Secciones existentes: {skipped_count}'))
         self.stdout.write(self.style.SUCCESS('¡Inicialización completada!'))
-        self.stdout.write('='*50 + '\n')
+        self.stdout.write('=' * 50 + '\n')
