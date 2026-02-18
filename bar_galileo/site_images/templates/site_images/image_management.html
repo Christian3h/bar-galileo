@@ -13,18 +13,18 @@
     <!-- CABECERA -->
     <div class="page-header">
         <div class="page-header-left">
-            <h1>🖼️ Gestión de Imágenes</h1>
+            <h1> Gestión de Imágenes</h1>
             <p class="page-subtitle">Administra el carrusel y las imágenes de cada sección del sitio.</p>
         </div>
         <div class="page-header-actions">
             <a href="{% url 'site_images:site_content_list' %}" class="btn btn-secondary">
-                ✏️ Editar textos de la home
+                 Editar textos de la home
             </a>
             <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success">
-                ➕ Nueva imagen de carrusel
+                 Nueva imagen de carrusel
             </a>
             <a href="{% url 'site_images:site_image_create' %}" class="btn btn-primary">
-                🖼️ Nueva imagen del sitio
+                 Nueva imagen del sitio
             </a>
         </div>
     </div>
@@ -37,8 +37,8 @@
 
     <!-- TABS DE NAVEGACIÓN -->
     <div class="img-tabs">
-        <button class="img-tab active" data-target="tab-carousel">🎠 Carrusel principal</button>
-        <button class="img-tab" data-target="tab-sections">📁 Imágenes por sección</button>
+        <button class="img-tab active" data-target="tab-carousel"> Carrusel principal</button>
+        <button class="img-tab" data-target="tab-sections"> Imágenes por sección</button>
     </div>
 
     <!-- ==================== TAB CARRUSEL ==================== -->
@@ -46,11 +46,11 @@
         <div class="section-card">
             <div class="section-card-header">
                 <div>
-                    <h2>🎠 Carrusel Principal</h2>
+                    <h2> Carrusel Principal</h2>
                     <p class="section-desc">Arrastra las tarjetas para reordenar. El primer elemento visible se muestra primero en el sitio.</p>
                 </div>
                 <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success btn-sm">
-                    ➕ Agregar imagen
+                     Agregar imagen
                 </a>
             </div>
 
@@ -88,10 +88,10 @@
             </div>
             {% else %}
             <div class="empty-state">
-                <div class="empty-state-icon">🎠</div>
+                <div class="empty-state-icon"></div>
                 <h3>El carrusel está vacío</h3>
                 <p>Agrega la primera imagen para que aparezca en la portada del sitio.</p>
-                <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success">➕ Agregar primera imagen</a>
+                <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success"> Agregar primera imagen</a>
             </div>
             {% endif %}
         </div>
@@ -105,7 +105,7 @@
             <div class="section-card">
                 <div class="section-card-header">
                     <div>
-                        <h2>📁 {{ section.name }}</h2>
+                        <h2> {{ section.name }}</h2>
                         {% if section.description %}
                         <p class="section-desc">{{ section.description }}</p>
                         {% endif %}
@@ -135,7 +135,7 @@
                                 <span>{{ image.get_file_size_display }}</span>
                             </div>
                             {% if image.alt_text %}
-                            <p class="image-caption">🏷️ {{ image.alt_text|truncatewords:10 }}</p>
+                            <p class="image-caption"> {{ image.alt_text|truncatewords:10 }}</p>
                             {% endif %}
                             <div class="image-actions">
                                 <a href="{% url 'site_images:site_image_edit' image.id %}" class="btn btn-primary btn-xs">✏️ Editar</a>
