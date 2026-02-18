@@ -484,9 +484,10 @@
                                         </a>
                                     {% endif %}
                                     {% if request.user|has_perm:"products,eliminar" %}
-                                        <a href="{% url 'products:producto_eliminar' producto.id_producto %}" class="btn btn-sm btn-danger" title="Eliminar {{ producto.nombre }}">
+                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar {{ producto.nombre }}"
+                                            onclick="confirmarEliminarProducto({{ producto.id_producto }}, '{{ producto.nombre|escapejs }}')">
                                             <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width:16px; height:16px;">
-                                        </a>
+                                        </button>
                                     {% endif %}
                                 </div>
                             </td>
@@ -502,6 +503,10 @@
         </div>
     </div>
 
+    <!-- Formulario oculto para eliminación de producto -->
+    <form id="delete-producto-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
 
 {% endblock %}
 
@@ -524,6 +529,24 @@
     const canDelete = {% if request.user|has_perm:"products,eliminar" %}true{% else %}false{% endif %};
     const editIconUrl = "{% static 'img/icons/edit.svg' %}";
     const deleteIconUrl = "{% static 'img/icons/delete.svg' %}";
+
+    async function confirmarEliminarProducto(productoId, productoNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Producto',
+            message: `¿Estás seguro de que deseas eliminar el producto "${productoNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-producto-form');
+            form.action = `/adminD/products/${productoId}/delete/`;
+            form.submit();
+        }
+    }
+
+    // Hacer la función global para DataTables
+    window.confirmarEliminarProducto = confirmarEliminarProducto;
 
     $(document).ready(function() {
         var sel = '#tabla-productos';
@@ -710,8 +733,8 @@
                                 buttons += '<a href="' + editUrl + '" class="btn btn-sm btn-warning" title="Editar"><img src="' + editIconUrl + '" alt="Editar" style="width:14px; height:14px;"></a>';
                             }
                             if (canDelete) {
-                                var deleteUrl = "{% url 'products:producto_eliminar' 0 %}".replace('0', row.id);
-                                buttons += '<a href="' + deleteUrl + '" class="btn btn-sm btn-danger" title="Eliminar"><img src="' + deleteIconUrl + '" alt="Eliminar" style="width:14px; height:14px;"></a>';
+                                var escapedName = (row.nombre || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                                buttons += '<button type="button" class="btn btn-sm btn-danger" title="Eliminar" onclick="confirmarEliminarProducto(' + row.id + ', \'' + escapedName + '\')"><img src="' + deleteIconUrl + '" alt="Eliminar" style="width:14px; height:14px;"></button>';
                             }
                             buttons += '</div>';
                             return buttons;

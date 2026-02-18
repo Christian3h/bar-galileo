@@ -126,6 +126,12 @@ class Producto(models.Model):
         if not self.nombre or not self.nombre.strip():
             raise ValidationError({'nombre': 'El nombre no puede estar vacío.'})
 
+        # Validar que los precios no sean None
+        if self.precio_venta is None:
+            raise ValidationError({'precio_venta': 'El precio de venta es obligatorio.'})
+        if self.precio_compra is None:
+            raise ValidationError({'precio_compra': 'El precio de compra es obligatorio.'})
+
         # Validar que el precio de venta sea mayor que el de compra
         if self.precio_venta <= self.precio_compra:
             raise ValidationError({
