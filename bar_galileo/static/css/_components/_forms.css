@@ -5,27 +5,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #262626;
-    border: 2px solid #A68932;
+    background: var(--color-light);
+    border: 2px solid var(--color-secondary);
     border-radius: 12px;
     padding: 10px 24px;
     margin-bottom: 16px;
-    color: #A68932;
+    color: var(--color-secondary);
     font-size: 1.1em;
     font-weight: 500;
 }
 .info-row-box .info-label {
     font-weight: bold;
-    color: #A68932;
+    color: var(--color-secondary);
 }
 .info-row-box .info-value {
-    color: #A68932;
+    color: var(--color-secondary);
     text-align: right;
 }
-/* Label destacado en cuadro amarillo y campo en fondo gris oscuro */
+/* Label destacado en cuadro y campo en fondo */
 .form-label-box {
-    background: #A68932;
-    color: #181818;
+    background: var(--color-secondary);
+    color: var(--color-accent);
     font-weight: bold;
     padding: 8px 18px;
     border-radius: 6px 6px 0 0;
@@ -36,9 +36,9 @@
     text-align: left;
 }
 .form-input-box {
-    background: #262626;
-    color: #A68932;
-    border: 2px solid #A68932;
+    background: var(--color-light);
+    color: var(--color-secondary);
+    border: 2px solid var(--color-secondary);
     border-radius: 0 0 6px 6px;
     padding: 10px 16px;
     font-size: 1.1em;
