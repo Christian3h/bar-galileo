@@ -102,10 +102,11 @@
                                 <a href="{% url 'facturacion:detalle_factura' factura.id %}"
                                     class="btn btn-sm btn-primary btn-view"
                                     title="Ver detalles">Ver</a>
-                                <a href="{% url 'facturacion:eliminar_factura' factura.id %}"
+                                <button type="button"
                                     class="btn btn-sm btn-danger btn-delete"
                                     title="Eliminar factura"
-                                    ><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    onclick="confirmarEliminarFactura({{ factura.id }}, '{{ factura.numero|escapejs }}')"
+                                    ><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -114,7 +115,27 @@
     </div>
 </div>
 
+<!-- Formulario oculto para eliminación de factura -->
+<form id="delete-factura-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
+async function confirmarEliminarFactura(facturaId, facturaNumero) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Factura',
+        message: `¿Estás seguro de que deseas eliminar la factura #${facturaNumero}? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-factura-form');
+        form.action = `/facturacion/factura/${facturaId}/eliminar/`;
+        form.submit();
+    }
+}
+
 $(document).ready(function() {
     var sel = '#tabla-facturas';
     if (!document.querySelector(sel)) return;

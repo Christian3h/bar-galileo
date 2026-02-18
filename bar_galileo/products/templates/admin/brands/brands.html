@@ -26,7 +26,8 @@
                         <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning" title="Editar marca"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                         {% endif %}
                         {% if request.user|has_perm:"brands,eliminar" %}
-                        <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger" title="Eliminar marca"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar marca"
+                            onclick="confirmarEliminarMarca({{ brand.id_marca }}, '{{ brand.marca|escapejs }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                         {% endif %}
                     </td>
                 </tr>
@@ -36,7 +37,27 @@
     </div>
 </div>
 
+<!-- Formulario oculto para eliminación de marca -->
+<form id="delete-marca-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
+async function confirmarEliminarMarca(marcaId, marcaNombre) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Marca',
+        message: `¿Estás seguro de que deseas eliminar la marca "${marcaNombre}"? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-marca-form');
+        form.action = `/admin/products/brands/${marcaId}/delete/`;
+        form.submit();
+    }
+}
+
 $(document).ready(function() {
     var sel = '#brands-table';
     if (!$(sel).length) return;

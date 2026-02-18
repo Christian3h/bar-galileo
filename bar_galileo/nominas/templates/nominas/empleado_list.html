@@ -107,9 +107,10 @@
                             <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary" title="Editar empleado">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger" title="Eliminar empleado">
+                            <button type="button" class="btn btn-sm btn-danger" title="Eliminar empleado"
+                                onclick="confirmarEliminarEmpleado({{ empleado.pk }}, '{{ empleado.nombre|escapejs }} {{ empleado.apellido|escapejs }}')">
                                 <i class="fa fa-trash"></i>
-                            </a>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -123,8 +124,28 @@
     </div>
 </div>
 
+<!-- Formulario oculto para eliminación de empleado -->
+<form id="delete-empleado-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 {% load static %}
 <script>
+    async function confirmarEliminarEmpleado(empleadoId, empleadoNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Empleado',
+            message: `¿Estás seguro de que deseas eliminar al empleado "${empleadoNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-empleado-form');
+            form.action = `/nominas/empleados/${empleadoId}/eliminar/`;
+            form.submit();
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Inicializar solo si existe la tabla en el DOM
         if (!document.querySelector('#tabla-empleados')) return;

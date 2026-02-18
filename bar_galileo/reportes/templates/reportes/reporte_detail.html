@@ -144,9 +144,9 @@
                     {% endif %}
                     
                     {% if request.user|has_perm:"reportes,eliminar" %}
-                    <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger" onclick="confirmarEliminarReporteDetail()">
                         <i class="fas fa-trash-alt"></i> Eliminar
-                    </a>
+                    </button>
                     {% endif %}
                 </div>
             </section>
@@ -215,6 +215,11 @@
     </div>
 </div>
 
+<!-- Formulario oculto para eliminación de reporte -->
+<form id="delete-reporte-detail-form" method="post" action="{% url 'reportes:reporte_delete' reporte.pk %}" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
 async function generarReporte(reporteId) {
     const confirmed = await AppFeedback.confirm({
@@ -253,6 +258,20 @@ async function generarReporte(reporteId) {
         console.error('Error:', error);
         btn.innerHTML = originalText;
         btn.disabled = false;
+    }
+}
+
+async function confirmarEliminarReporteDetail() {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Reporte',
+        message: '¿Estás seguro de que deseas eliminar este reporte? Esta acción no se puede deshacer.',
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-reporte-detail-form');
+        form.submit();
     }
 }
 </script>

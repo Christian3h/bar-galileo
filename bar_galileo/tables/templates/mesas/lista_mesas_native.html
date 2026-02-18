@@ -80,9 +80,10 @@
         </button>
         {% endif %}
         {% if request.user|has_perm:"tables,eliminar" %}
-        <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm" title="Eliminar mesa">
+        <button type="button" class="btn btn-danger btn-sm" title="Eliminar mesa"
+            onclick="confirmarEliminarMesa('{{ mesa.id }}', '{{ mesa.nombre }}')">
           <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
-        </a>
+        </button>
         {% if request.user|has_perm:"tables,eliminar" %}
         <button class="btn btn-info btn-sm" onclick="liberarMesa('{{ mesa.id }}', {{ mesa.tiene_pedidos_en_proceso|yesno:'true,false' }})" title="Liberar mesa">
           Liberar
@@ -165,6 +166,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Formulario oculto para eliminación de mesa -->
+  <form id="delete-mesa-form" method="post" style="display: none;">
+      {% csrf_token %}
+  </form>
+
+  <script>
+  async function confirmarEliminarMesa(mesaId, mesaNombre) {
+      const confirmed = await AppFeedback.confirm({
+          title: 'Eliminar Mesa',
+          message: `¿Estás seguro de que deseas eliminar la mesa "${mesaNombre}"? Esta acción no se puede deshacer.`,
+          confirmLabel: 'Eliminar',
+          cancelLabel: 'Cancelar'
+      });
+      
+      if (confirmed) {
+          const form = document.getElementById('delete-mesa-form');
+          form.action = `/mesas/${mesaId}/eliminar/`;
+          form.submit();
+      }
+  }
+  </script>
 
   <script src="{% static 'js/tables/tables.js' %}"></script>
 
