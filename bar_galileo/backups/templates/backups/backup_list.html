@@ -157,24 +157,7 @@
     </div>
 </div>
 
-<!-- Modal de confirmación de eliminación -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>🗑️ Confirmar Eliminación</h3>
-            <span class="close-modal" onclick="cerrarModal()">&times;</span>
-        </div>
-        <div class="modal-body">
-            <p>¿Estás seguro de que deseas eliminar este backup?</p>
-            <p><strong id="deleteFileName"></strong></p>
-            <p style="color: #ffc107; margin-top: 15px;">⚠️ Esta acción no se puede deshacer.</p>
-        </div>
-        <div class="modal-footer">
-            <button onclick="cerrarModal()" class="btn btn-secondary">Cancelar</button>
-            <button onclick="eliminarBackup()" class="btn btn-danger">Eliminar</button>
-        </div>
-    </div>
-</div>
+<!-- Modal de confirmación de eliminación removido — se usa AppFeedback.confirm() -->
 
 <!-- Modal de confirmación de creación de backup -->
 <div id="createModal" class="modal">
@@ -268,8 +251,6 @@
     </div>
 </div>
 <script>
-    let deleteType = '';
-    let deleteFilename = '';
     let createBackupTipo = '';
 
     // Inicializar DataTables
@@ -416,45 +397,37 @@
             });
     }
 
-    // Confirmar eliminación
-    function confirmarEliminar(tipo, filename) {
-        deleteType = tipo;
-        deleteFilename = filename;
-        document.getElementById('deleteFileName').textContent = filename;
-        document.getElementById('deleteModal').classList.add('active');
-    }
-
-    // Cerrar modal
-    function cerrarModal() {
-        document.getElementById('deleteModal').classList.remove('active');
-        deleteType = '';
-        deleteFilename = '';
-    }
-
-    // Eliminar backup
-    function eliminarBackup() {
-        fetch('{% url "backups:backup_delete" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: `tipo=${deleteType}&filename=${deleteFilename}`
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    console.error('Error al eliminar backup:', data.error);
-                }
-                cerrarModal();
+    // Confirmar eliminación con AppFeedback
+    async function confirmarEliminar(tipo, filename) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Backup',
+            message: `¿Estás seguro de que deseas eliminar el backup "${filename}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        if (confirmed) {
+            fetch('{% url "backups:backup_delete" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `tipo=${tipo}&filename=${filename}`
             })
-            .catch(error => {
-                console.error('Error al eliminar backup:', error);
-                cerrarModal();
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        console.error('Error al eliminar backup:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al eliminar backup:', error);
+                });
+        }
     }
+    window.confirmarEliminar = confirmarEliminar;
 
     // Funciones para modal de restauración
     let modoRestauracion = 'existente'; // 'existente' o 'subir'
