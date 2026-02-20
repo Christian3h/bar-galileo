@@ -485,9 +485,9 @@
 
         <div class="actions-section">
             <div class="action-buttons">
-                <a href="{% url 'facturacion:eliminar_factura' factura.id %}" class="btn btn-danger">
+                <button type="button" class="btn btn-danger" onclick="confirmarEliminarFactura({{ factura.id }}, '{{ factura.numero|escapejs }}')">
                     🗑️ Eliminar Factura
-                </a>
+                </button>
                 <button onclick="window.print()" class="btn btn-primary">
                     🖨️ Imprimir
                 </button>
@@ -495,4 +495,26 @@
         </div>
     </div>
 </div>
+
+<!-- Formulario oculto para eliminación de factura -->
+<form id="delete-factura-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
+<script>
+async function confirmarEliminarFactura(facturaId, facturaNumero) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Factura',
+        message: `¿Estás seguro de que deseas eliminar la factura #${facturaNumero}? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-factura-form');
+        form.action = `/facturacion/factura/${facturaId}/eliminar/`;
+        form.submit();
+    }
+}
+</script>
 {% endblock %}

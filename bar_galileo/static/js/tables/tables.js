@@ -32,30 +32,22 @@ const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]")?.value ||
 
 // ===== COMPONENTES DE UI (TOAST Y CONFIRM) =====
 
-function showToast(message, type = 'error') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  container.appendChild(toast);
-  setTimeout(() => { toast.remove(); }, 5000);
-}
+const notify = (message, variant = 'error') => {
+  if (window.AppFeedback && typeof AppFeedback.show === 'function') {
+    AppFeedback.show(message, { variant });
+  } else {
+    const logger = variant === 'error' ? console.error : console.log;
+    logger(`[Mesas] ${message}`);
+  }
+};
 
-function showConfirm(title, message) {
-  return new Promise(resolve => {
-    const modal = document.getElementById('confirmModal');
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').textContent = message;
-    const [confirmBtn, cancelBtn, closeBtn] = ['confirmOk', 'confirmCancel', 'confirmClose'].map(id => document.getElementById(id));
-    const cleanup = () => {
-      modal.style.display = 'none';
-      confirmBtn.onclick = cancelBtn.onclick = closeBtn.onclick = null;
-    };
-    confirmBtn.onclick = () => { cleanup(); resolve(true); };
-    cancelBtn.onclick = closeBtn.onclick = () => { cleanup(); resolve(false); };
-    modal.style.display = 'flex';
-  });
-}
+const confirmAction = (title, message) => {
+  if (window.AppFeedback && typeof AppFeedback.confirm === 'function') {
+    return AppFeedback.confirm({ title, message });
+  }
+  const fallbackMessage = title ? `${title}\n\n${message}` : message;
+  return Promise.resolve(window.confirm(fallbackMessage));
+};
 
 // ===== WEBSOCKETS PARA STOCK EN TIEMPO REAL =====
 
@@ -128,7 +120,7 @@ async function gestionarPedido(mesaId) {
     document.getElementById("pedidoModal").style.display = "block";
   } catch (error) {
     console.error("Error al obtener datos del pedido o usuarios:", error);
-    showToast(error.message);
+    notify(error.message);
   }
 }
 
@@ -238,7 +230,7 @@ async function gestionarUsuarioEnPedido(userId, action) {
 
     } catch (error) {
         console.error(`Error al ${action === 'add' ? 'agregar' : 'eliminar'} usuario:`, error);
-        showToast(error.message);
+        notify(error.message);
     }
 }
 
@@ -248,7 +240,7 @@ function mostrarControlCantidad(productoId) {
   const producto = listaCompletaProductos.find(p => p.id_producto === productoId);
   const stock = virtualStock[productoId] || 0;
   if (stock <= 0) {
-    showToast("No hay stock disponible para este producto.");
+    notify("No hay stock disponible para este producto.");
     return;
   }
 
@@ -300,7 +292,7 @@ async function confirmarAgregarProducto(productoId) {
   const cantidadPrevia = itemExistente ? itemExistente.cantidad : 0;
 
   if (stock < cantidadPrevia + cantidad) {
-    showToast(`Stock insuficiente. Solo puedes agregar ${stock - cantidadPrevia} más.`);
+    notify(`Stock insuficiente. Solo puedes agregar ${stock - cantidadPrevia} más.`);
     return;
   }
 
@@ -317,7 +309,7 @@ async function confirmarAgregarProducto(productoId) {
     cerrarModalCantidad();
   } catch (error) {
     console.error('Error al agregar producto:', error);
-    showToast(error.message);
+    notify(error.message);
   }
 }
 
@@ -329,7 +321,7 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
 
   const stock = virtualStock[item.producto.id] + old_cantidad;
   if (stock < nuevaCantidad) {
-    showToast(`Stock insuficiente. Disponible: ${stock}`);
+    notify(`Stock insuficiente. Disponible: ${stock}`);
     return;
   }
 
@@ -346,12 +338,12 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
     actualizarListaProductosUI();
   } catch (error) {
     console.error('Error al actualizar cantidad:', error);
-    showToast(error.message);
+    notify(error.message);
   }
 }
 
 async function eliminarItem(itemId) {
-  const confirmado = await showConfirm('Eliminar Item', '¿Estás seguro de que deseas eliminar este item del pedido?');
+  const confirmado = await confirmAction('Eliminar Item', '¿Estás seguro de que deseas eliminar este item del pedido?');
   if (!confirmado) return;
 
   const item = pedidoActual.items.find(i => i.id === itemId);
@@ -371,10 +363,10 @@ async function eliminarItem(itemId) {
     pedidoActual = data.pedido;
     actualizarPedidoItemsUI();
     actualizarListaProductosUI();
-    showToast('Item eliminado correctamente', 'success');
+    notify('Item eliminado correctamente', 'success');
   } catch (error) {
     console.error('Error al eliminar item:', error);
-    showToast(error.message);
+    notify(error.message);
   }
 }
 
@@ -382,9 +374,9 @@ async function eliminarItem(itemId) {
 
 async function facturarPedido() {
   if (!pedidoActual || !pedidoActual.items || !pedidoActual.items.length) {
-    return showToast("No hay items en el pedido para facturar.");
+    return notify("No hay items en el pedido para facturar.");
   }
-  const confirmado = await showConfirm('Facturar Pedido', '¿Estás seguro de que deseas facturar este pedido? Esta acción actualizará el inventario.');
+  const confirmado = await confirmAction('Facturar Pedido', '¿Estás seguro de que deseas facturar este pedido? Esta acción actualizará el inventario.');
   if (confirmado) {
     try {
       const data = await apiFetch(`/api/pedidos/${pedidoActual.id}/facturar/`, {
@@ -392,12 +384,12 @@ async function facturarPedido() {
         headers: { "X-CSRFToken": csrfToken },
       });
       if (data.success) {
-        showToast('Pedido facturado exitosamente', 'success');
+        notify('Pedido facturado exitosamente', 'success');
         window.location.href = data.factura_url;
       }
     } catch (error) {
       console.error('Error al facturar:', error);
-      showToast(error.message);
+      notify(error.message);
     }
   }
 }
@@ -414,7 +406,7 @@ function liberarMesa(mesaId, tienePedidos) {
     };
 
     if (tienePedidos) {
-        showConfirm(
+        confirmAction(
             'Liberar Mesa',
             'Esta mesa tiene pedidos sin facturar. ¿Estás seguro de que deseas liberarla? Los pedidos serán eliminados.'
         ).then(confirmed => {

@@ -268,7 +268,14 @@ function escapeHtmlLocal(text) {
 }
 
 async function deleteDocument(docId, docTitle) {
-    if (!confirm(`¿Estás seguro de que deseas eliminar el documento "${docTitle}"?\n\nEsta acción eliminará el documento y todos sus fragmentos indexados.`)) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Documento',
+        message: `¿Estás seguro de que deseas eliminar el documento "${docTitle}"?\n\nEsta acción eliminará el documento y todos sus fragmentos indexados.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (!confirmed) {
         return;
     }
 

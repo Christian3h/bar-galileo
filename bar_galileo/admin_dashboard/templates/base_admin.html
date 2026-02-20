@@ -35,25 +35,32 @@
     {% include "components/nav-admin.html" %}
 
     <main class="main-content">
-        <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <div class="notification-icon" id="notification-icon">
-            <span id="icono-notification" > <img width="50px" src=" {% static 'img/icons/notifications.svg' %} " alt=""> </span>
-            <span class="notification-badge" id="notification-badge">0</span>
-            <div class="notifications-panel" id="notifications-panel">
-                <div class="notification-header">
-                    <h4>Notificaciones</h4>
-                    <button id="mark-all-as-read">Marcar todas como leídas</button>
+        <div class="topbar-admin">
+            <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
-                    <ul class="notification-list" id="notification-list">
-                    <!-- Las notificaciones se cargarán aquí -->
-                    </ul>
+            <div class="topbar-admin__actions">
+                <div class="notification-icon" id="notification-icon">
+                    <svg class="notification-icon__svg" xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" aria-hidden="true">
+                        <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/>
+                    </svg>
+                    <span class="notification-badge" id="notification-badge">0</span>
+                    <div class="notifications-panel" id="notifications-panel">
+                        <div class="notification-header">
+                            <h4>Notificaciones</h4>
+                            <button id="mark-all-as-read">Marcar todas como leídas</button>
+                        </div>
+                        <ul class="notification-list" id="notification-list">
+                            <!-- Las notificaciones se cargarán aquí -->
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
+
         {% block content %}
 
         {% endblock %}
@@ -63,10 +70,9 @@
 
     {% include "components/footer.html" %}
 
+    <script src="{% static 'js/ui/feedback.js' %}"></script>
     <script src="{% static 'js/admin/nav_admin.js' %}"></script>
-    <script src="{% static 'js/notifications/notifications.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
-    <script src="{% static 'js/admin/notification_button.js' %}"></script>
     <script src="{% static 'js/admin/home-navigation.js' %}"></script>
     <script src="{% static 'js/table-mobile-details.js' %}"></script>
     {% block extra_js %}{% endblock %}

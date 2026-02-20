@@ -136,7 +136,11 @@
                   <label for="avatar-upload" class="edit-btn">Subir/Cambiar Foto</label>
                   <input id="avatar-upload" type="file" name="avatar" accept="image/*" class="hidden-input" onchange="this.form.submit()">
                   {% if datos.avatar_url %}
-                      <button type="submit" name="delete_avatar" value="1" class="edit-btn" onclick="return confirm('¿Seguro que quieres eliminar tu foto de perfil?');">Eliminar Foto</button>
+                      <button type="submit" name="delete_avatar" value="1" class="edit-btn"
+                          data-feedback-confirm="¿Seguro que quieres eliminar tu foto de perfil?"
+                          data-feedback-confirm-title="Eliminar Foto"
+                          data-feedback-confirm-ok="Eliminar"
+                          data-feedback-confirm-cancel="Cancelar">Eliminar Foto</button>
                   {% endif %}
               </form>
           </div>
@@ -188,7 +192,11 @@
             </div>
 
             <button type="submit">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_info' %}" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
+            <button type="submit" formaction="{% url 'users:borrar_info' %}"
+                data-feedback-confirm="¿Seguro que deseas borrar tu información personal?"
+                data-feedback-confirm-title="Borrar Información"
+                data-feedback-confirm-ok="Borrar"
+                data-feedback-confirm-cancel="Cancelar">Borrar Información</button>
             <button type="button" onclick="toggleInfoForm(false)">Cancelar</button>
           </form>
         </div>
@@ -267,7 +275,11 @@
               <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input">
             </div>
             <button type="submit">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
+            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}"
+                data-feedback-confirm="¿Seguro que deseas borrar el contacto de emergencia?"
+                data-feedback-confirm-title="Borrar Contacto"
+                data-feedback-confirm-ok="Borrar"
+                data-feedback-confirm-cancel="Cancelar">Borrar Contacto</button>
             <button type="button" onclick="toggleEmergenciaForm(false)">Cancelar</button>
           </form>
         </div>
@@ -344,6 +356,7 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="{% static 'js/ui/feedback.js' %}"></script>
     <script src="{% static 'js/panel_usuario.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
     <script src="{% static 'accessibility/sienna.js' %}"></script>

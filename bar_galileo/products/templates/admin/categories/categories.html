@@ -29,7 +29,8 @@
                                     <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning" title="Editar categoría"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                                 {% endif %}
                                 {% if request.user|has_perm:"categories,eliminar" %}
-                                    <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger" title="Eliminar categoría"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar categoría"
+                                        onclick="confirmarEliminarCategoria({{ categoria.id_categoria }}, '{{ categoria.nombre_categoria }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -40,8 +41,28 @@
         </div>
     </div>
 
+    <!-- Formulario oculto para eliminación -->
+    <form id="delete-categoria-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+
     <!-- Activación de DataTable -->
     <script>
+    async function confirmarEliminarCategoria(categoriaId, categoriaNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Categoría',
+            message: `¿Estás seguro de que deseas eliminar la categoría "${categoriaNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-categoria-form');
+            form.action = `/admin/products/categories/${categoriaId}/delete/`;
+            form.submit();
+        }
+    }
+
     $(document).ready(function() {
         var sel = '#tabla-categorias';
         if (!$(sel).length) return;
