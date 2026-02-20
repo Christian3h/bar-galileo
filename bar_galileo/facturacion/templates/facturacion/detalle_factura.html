@@ -512,7 +512,7 @@ async function confirmarEliminarFactura(facturaId, facturaNumero) {
     
     if (confirmed) {
         const form = document.getElementById('delete-factura-form');
-        form.action = `/facturacion/factura/${facturaId}/eliminar/`;
+        form.action = `/facturacion/eliminar/${facturaId}/`;
         form.submit();
     }
 }
