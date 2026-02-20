@@ -129,3 +129,6 @@ cython_debug/
 # Database dumps
 dump-*.sql
 *.sql
+
+# Backup files
+bar_galileo/backups/backup_files/

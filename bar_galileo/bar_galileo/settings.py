@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'nominas',
     #app para el dashboard
     'admin_dashboard',
+    #app para gestión de imágenes del sitio
+    'site_images',
     #app para facturación
     'facturacion',
     #apps necesarias para la libreria django-allauth
@@ -279,18 +281,18 @@ CAPTCHA_FONT_SIZE = 40
 CAPTCHA_FLITE_PATH = '/usr/bin/flite'
 
 # ==================== Configuración de Django-DBBackup ====================
-# Usar el storage "dbbackup" definido en STORAGES para base de datos
-DBBACKUP_STORAGE = 'dbbackup'
-
-# Usar el storage "mediabackup" definido en STORAGES para archivos media
-DBBACKUP_MEDIA_STORAGE = 'mediabackup'
+# Configuración compatible con django-dbbackup 5.0.0+
+# No usar DBBACKUP_STORAGE ni DBBACKUP_STORAGE_OPTIONS (deprecados)
+# La librería usará automáticamente los storages del sistema Django
 
 # Ruta de los archivos media a respaldar
 DBBACKUP_MEDIA_PATH = MEDIA_ROOT
 
 # Formato de nombres de archivos de backup (formato: 2025-10-19-123456.psql.gpg)
 DBBACKUP_FILENAME_TEMPLATE = '{datetime}.psql'
-DBBACKUP_MEDIA_FILENAME_TEMPLATE = '{datetime}.media.zip'# Limpieza automática - mantener solo los últimos 10 backups
+DBBACKUP_MEDIA_FILENAME_TEMPLATE = '{datetime}.media.zip'
+
+# Limpieza automática - mantener solo los últimos 10 backups
 DBBACKUP_CLEANUP_KEEP = 10
 DBBACKUP_CLEANUP_KEEP_MEDIA = 10
 
@@ -299,9 +301,14 @@ DBBACKUP_COMPRESS = True
 DBBACKUP_COMPRESSION_LEVEL = 6  # 1-9, donde 9 es la máxima compresión
 
 # Encriptación de backups con GNU Privacy Guard (GPG)
-# IMPORTANTE: Los backups SIEMPRE están encriptados para mayor seguridad
-DBBACKUP_ENCRYPTION = True
-DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+# DESHABILITADO por defecto para evitar problemas con GPG
+# Si deseas habilitar encriptación, configura GPG primero:
+# 1. gpg --gen-key (selecciona email: bargalileo07@gmail.com)
+# 2. Cambia DBBACKUP_ENCRYPTION a True
+# 3. Configura DBBACKUP_GPG_PASSPHRASE en el archivo .env si es necesario
+DBBACKUP_ENCRYPTION = False
+# DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+# DBBACKUP_GPG_PASSPHRASE = os.getenv('DBBACKUP_GPG_PASSPHRASE', '')
 
 
 # ==================== Configuraciones de Seguridad ====================
@@ -314,8 +321,23 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 
 # Cookies CSRF seguras (solo HTTPS en producción)
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Debe ser False para que JavaScript pueda leer el token CSRF en solicitudes AJAX
 CSRF_COOKIE_SAMESITE = 'Lax'
+
+# Orígenes confiables para CSRF (necesario para AJAX y solicitudes cross-origin)
+# En desarrollo, permitir localhost y 127.0.0.1
+# En producción, agregar los dominios desde variables de entorno
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+        'http://localhost',
+        'http://127.0.0.1',
+    ]
+else:
+    # En producción, leer desde variable de entorno
+    trusted_origins = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in trusted_origins.split(',') if origin.strip()]
 
 # Seguridad de contenido
 SECURE_CONTENT_TYPE_NOSNIFF = True

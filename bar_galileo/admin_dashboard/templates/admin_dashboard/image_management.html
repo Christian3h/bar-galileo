@@ -1,0 +1,307 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Gestión de Imágenes - Admin{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/image_management.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="image-management-container">
+    <div class="page-header">
+        <h1>🖼️ Gestión de Imágenes</h1>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- CARRUSEL PRINCIPAL -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <h2>🎠 Carrusel Principal</h2>
+            <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success">
+                ➕ Agregar Imagen al Carrusel
+            </a>
+        </div>
+
+        {% if carousel_images %}
+            <div class="alert alert-info">
+                <strong>💡 Tip:</strong> Arrastra las imágenes para cambiar su orden. Los cambios se guardan automáticamente.
+            </div>
+            
+            <div class="carousel-grid" id="carousel-sortable">
+                {% for image in carousel_images %}
+                <div class="image-card {% if not image.is_active %}inactive{% endif %}" data-id="{{ image.id }}">
+                    <span class="drag-handle">⋮⋮</span>
+                    <span class="order-badge">{{ image.order }}</span>
+                    
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="image-preview">
+                    
+                    <div class="image-info">
+                        <span class="image-badge {% if image.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {% if image.is_active %}✓ Activa{% else %}✗ Inactiva{% endif %}
+                        </span>
+                        
+                        <h3 class="image-title">{{ image.title }}</h3>
+                        
+                        <div class="image-meta">
+                            📏 {{ image.width }}x{{ image.height }}px
+                        </div>
+                        <div class="image-meta">
+                            💾 {{ image.get_file_size_display }}
+                        </div>
+                        {% if image.caption %}
+                        <div class="image-meta">
+                            💬 {{ image.caption|truncatewords:10 }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="image-actions">
+                            <a href="{% url 'site_images:carousel_image_edit' image.id %}" class="btn btn-primary btn-sm">
+                                ✏️ Editar
+                            </a>
+                            <button class="btn btn-warning btn-sm toggle-active" data-id="{{ image.id }}" data-type="carousel">
+                                {% if image.is_active %}👁️ Ocultar{% else %}👁️ Mostrar{% endif %}
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="carousel">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No hay imágenes en el carrusel</h3>
+                <p>Agrega tu primera imagen para comenzar</p>
+                <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success">
+                    ➕ Agregar Primera Imagen
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- SECCIÓN ACERCA DE -->
+    <div class="section-card">
+        <div class="section-card-header">
+            <h2>📖 Acerca de</h2>
+            <a href="{% url 'site_images:site_image_create' %}" class="btn btn-success">
+                🖼️ Agregar Imagen
+            </a>
+        </div>
+
+        {% if about_images %}
+            <div class="carousel-grid">
+                {% for image in about_images %}
+                <div class="image-card {% if not image.is_active %}inactive{% endif %}">
+                    <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="image-preview">
+                    
+                    <div class="image-info">
+                        <span class="image-badge {% if image.is_active %}badge-active{% else %}badge-inactive{% endif %}">
+                            {% if image.is_active %}✓ Activa{% else %}✗ Inactiva{% endif %}
+                        </span>
+                        
+                        <h3 class="image-title">{{ image.title }}</h3>
+                        
+                        <div class="image-meta">
+                            📏 {{ image.width }}x{{ image.height }}px
+                        </div>
+                        <div class="image-meta">
+                            💾 {{ image.get_file_size_display }}
+                        </div>
+                        {% if image.alt_text %}
+                        <div class="image-meta">
+                            🏷️ {{ image.alt_text|truncatewords:10 }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="image-actions">
+                            <a href="{% url 'site_images:site_image_edit' image.id %}" class="btn btn-primary btn-sm">
+                                ✏️ Editar
+                            </a>
+                            <button class="btn btn-warning btn-sm toggle-active" data-id="{{ image.id }}" data-type="site">
+                                {% if image.is_active %}👁️ Ocultar{% else %}👁️ Mostrar{% endif %}
+                            </button>
+                            <button class="btn btn-danger btn-sm delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="site">
+                                🗑️ Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>No hay imágenes en Acerca de</h3>
+                <p>Agrega imágenes para la sección Acerca de</p>
+                <a href="{% url 'site_images:site_image_create' %}" class="btn btn-success">
+                    ➕ Agregar Primera Imagen
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Sortable para el carrusel
+    const carouselGrid = document.getElementById('carousel-sortable');
+    
+    if (carouselGrid) {
+        new Sortable(carouselGrid, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: function(evt) {
+                // Actualizar el orden en el servidor
+                const items = carouselGrid.querySelectorAll('.image-card');
+                const imageOrders = Array.from(items).map((item, index) => ({
+                    id: parseInt(item.dataset.id),
+                    order: index
+                }));
+                
+                // Actualizar badges visualmente
+                items.forEach((item, index) => {
+                    const badge = item.querySelector('.order-badge');
+                    if (badge) badge.textContent = index;
+                });
+                
+                // Enviar al servidor
+                fetch('{% url "site_images:carousel_reorder" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({ image_orders: imageOrders })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('✅ Orden actualizado correctamente', 'success');
+                    } else {
+                        showNotification('❌ Error al actualizar el orden', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('❌ Error al actualizar el orden', 'error');
+                });
+            }
+        });
+    }
+    
+    // Toggle active/inactive
+    document.querySelectorAll('.toggle-active').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const type = this.dataset.type;
+            
+            // Construir URL basada en el tipo
+            let url;
+            if (type === 'carousel') {
+                url = '{% url "site_images:carousel_toggle_active" 0 %}'.replace('0', id);
+            } else {
+                url = '{% url "site_images:site_image_toggle_active" 0 %}'.replace('0', id);
+            }
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showNotification('❌ Error al cambiar el estado', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('❌ Error al cambiar el estado', 'error');
+            });
+        });
+    });
+    
+    // Delete confirmation
+    document.querySelectorAll('.delete-image').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const type = this.dataset.type;
+            
+            if (confirm(`¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`)) {
+                // Construir URL basada en el tipo
+                let url;
+                if (type === 'carousel') {
+                    url = '{% url "site_images:carousel_image_delete" 0 %}'.replace('0', id);
+                } else {
+                    url = '{% url "site_images:site_image_delete" 0 %}'.replace('0', id);
+                }
+                
+                // Crear un formulario temporal para enviar DELETE
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+                
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = getCookie('csrftoken');
+                form.appendChild(csrfInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    });
+    
+    // Helper functions
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function showNotification(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.top = '20px';
+        alertDiv.style.right = '20px';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.style.minWidth = '250px';
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 3000);
+    }
+});
+</script>
+{% endblock %}
