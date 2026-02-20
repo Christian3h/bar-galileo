@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css">
     <!-- DataTables Buttons CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <!-- DataTables Responsive CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.min.css">
     <style>
         /* =======================================
          * ESTILOS RESPONSIVOS MÓVIL - PRODUCTOS
@@ -20,17 +22,15 @@
             padding: 0 10px;
         }
         
-        /* Hacer la tabla scroll horizontal */
+        /* DataTables Responsive gestiona el comportamiento — no forzar scroll horizontal */
         .table-responsive {
             width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            overflow-x: visible;
         }
         
         /* Tabla base */
         #tabla-productos {
             width: 100% !important;
-            min-width: 800px;
         }
         
         /* =======================================
@@ -284,113 +284,47 @@
             .container h1 {
                 font-size: 1.25rem;
             }
-            
+
             .dt-paging .dt-paging-button {
                 padding: 0.3rem 0.5rem !important;
                 font-size: 0.8rem !important;
             }
-            
+
             .dt-buttons .dt-button {
                 padding: 0.35rem 0.6rem !important;
                 font-size: 0.8rem !important;
             }
-            
-            /* Fila de detalles más compacta */
-            table.dataTable > tbody > tr.child ul.dtr-details > li {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            table.dataTable > tbody > tr.child span.dtr-data {
-                text-align: left;
-                margin-top: 0.25rem;
-            }
-
-            /* Ocultar columnas en móvil excepto Imagen, Nombre y Acciones */
-            .col-precio-compra,
-            .col-precio-venta,
-            .col-stock,
-            .col-descripcion,
-            .col-categoria,
-            .col-proveedor,
-            .col-marca {
-                display: none !important;
-            }
-
-            /* Ajustar ancho de columnas visibles en móvil */
-            .col-imagen {
-                width: 15% !important;
-            }
-
-            .col-nombre {
-                width: 50% !important;
-            }
-
-            .col-acciones {
-                width: 35% !important;
-            }
-
-            /* Ajustar tamaño de imagen en móvil */
-            .col-imagen img,
-            .col-imagen div {
-                max-width: 50px !important;
-                max-height: 50px !important;
-                width: 50px !important;
-                height: 50px !important;
-            }
-
-            /* Ajustar botones de acción en móvil */
-            .col-acciones .btn-group {
-                display: flex;
-                gap: 0.25rem;
-            }
-
-            .col-acciones .btn {
-                padding: 0.4rem !important;
-            }
-
-            /* Asegurar que la tabla use todo el ancho disponible */
-            #tabla-productos {
-                width: 100% !important;
-            }
-
-            /* Ajustar el contenedor de la tabla */
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            /* Ajustar texto en columna de nombre para que no se desborde */
-            .col-nombre {
-                word-wrap: break-word;
-                word-break: break-word;
-                white-space: normal !important;
-            }
         }
 
-        /* Media query adicional para pantallas muy pequeñas */
-        @media (max-width: 480px) {
-            .col-imagen {
-                width: 20% !important;
-            }
+        /* =======================================
+         * DATATABLES RESPONSIVE — filas child
+         * ======================================= */
+        table.dataTable > tbody > tr.child ul.dtr-details {
+            padding: 0;
+        }
 
-            .col-nombre {
-                width: 45% !important;
-                font-size: 0.85rem;
-            }
+        table.dataTable > tbody > tr.child ul.dtr-details > li {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
 
-            .col-acciones {
-                width: 35% !important;
-            }
+        table.dataTable > tbody > tr.child span.dtr-title {
+            font-weight: 600;
+            min-width: 110px;
+            color: var(--color-secondary, #a68932);
+        }
 
-            .col-acciones .btn {
-                padding: 0.3rem !important;
-            }
+        table.dataTable > tbody > tr.child span.dtr-data {
+            flex: 1;
+        }
 
-            .col-acciones .btn img {
-                width: 14px !important;
-                height: 14px !important;
-            }
+        /* Nombre no desborde */
+        #tabla-productos td:nth-child(2) {
+            word-break: break-word;
+            white-space: normal;
         }
         
         /* Hover en filas */
@@ -511,6 +445,8 @@
 {% endblock %}
 
 {% block extra_js %}
+    <!-- DataTables Responsive -->
+    <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
     <!-- DataTables SearchBuilder -->
     <script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.min.js"></script>
     <!-- DataTables Buttons -->
@@ -568,7 +504,9 @@
             const staticTable = staticContainer.find('table');
             if (staticTable.length && !$.fn.dataTable.isDataTable(staticTable)) {
                 staticTable.DataTable({
-                    responsive: false,
+                    responsive: {
+                        details: { type: 'inline' }
+                    },
                     autoWidth: false,
                     language: {
                         url: "{% static 'js/DataTables/es-ES.json' %}"
@@ -576,12 +514,12 @@
                     pageLength: 25,
                     order: [[1, 'asc']],
                     columnDefs: [
-                        { targets: [0], orderable: false, className: 'col-imagen' },
-                        { targets: [1], className: 'col-nombre' },
-                        { targets: [2], className: 'col-precio-venta' },
-                        { targets: [3], className: 'col-stock' },
-                        { targets: [4], className: 'col-categoria' },
-                        { targets: [5], orderable: false, className: 'col-acciones' }
+                        { targets: [0], orderable: false, responsivePriority: 3 },
+                        { targets: [1], responsivePriority: 1 },
+                        { targets: [2], responsivePriority: 4 },
+                        { targets: [3], responsivePriority: 5 },
+                        { targets: [4], responsivePriority: 6 },
+                        { targets: [5], orderable: false, responsivePriority: 2 }
                     ]
                 });
             }
@@ -610,9 +548,12 @@
             const table = $(sel).DataTable({
                 processing: true,
                 serverSide: false,
-                responsive: false,
+                responsive: {
+                    details: {
+                        type: 'inline'
+                    }
+                },
                 autoWidth: false,
-                scrollX: false,
                 // Configurar SearchBuilder
                 searchBuilder: true,
                 dom: '<"top-controls"Qlf>rt<"bottom-controls"iBp>',
@@ -640,7 +581,18 @@
                 ],
                 columnDefs: [
                     { targets: '_all', defaultContent: '' },
-                    { targets: [0, 9], orderable: false }
+                    { targets: [0, 9], orderable: false },
+                    // Prioridad responsive: 1=siempre visible, mayor=se oculta primero
+                    { targets: 0, responsivePriority: 3 },   // Imagen
+                    { targets: 1, responsivePriority: 1 },   // Nombre — siempre visible
+                    { targets: 2, responsivePriority: 8 },   // Precio Compra — ocultar primero
+                    { targets: 3, responsivePriority: 4 },   // Precio Venta
+                    { targets: 4, responsivePriority: 5 },   // Stock
+                    { targets: 5, responsivePriority: 9 },   // Descripción — ocultar primero
+                    { targets: 6, responsivePriority: 6 },   // Categoría
+                    { targets: 7, responsivePriority: 7 },   // Proveedor
+                    { targets: 8, responsivePriority: 10 },  // Marca — ocultar primero
+                    { targets: 9, responsivePriority: 2 }    // Acciones — siempre visible
                 ],
                 ajax: {
                     url: "{% url 'products:productos_json' %}",
