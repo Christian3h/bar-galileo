@@ -49,7 +49,7 @@ SECTIONS_DEFAULT = {
 
 # ==================== VISTA PRINCIPAL ====================
 
-@method_decorator([permission_required('dashboard', 'editar'), ensure_csrf_cookie], name='dispatch')
+@method_decorator([permission_required('site_images', 'ver'), ensure_csrf_cookie], name='dispatch')
 class ImageManagementView(TemplateView):
     """Vista principal de gestión de imágenes"""
     template_name = 'site_images/image_management.html'
@@ -69,7 +69,7 @@ class ImageManagementView(TemplateView):
 
 # ==================== CARRUSEL ====================
 
-@method_decorator(permission_required('dashboard', 'crear'), name='dispatch')
+@method_decorator(permission_required('site_images', 'crear'), name='dispatch')
 class CarouselImageCreateView(CreateView):
     """Vista para crear una nueva imagen del carrusel"""
     model = CarouselImage
@@ -86,7 +86,7 @@ class CarouselImageCreateView(CreateView):
         return super().form_invalid(form)
 
 
-@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'editar'), name='dispatch')
 class CarouselImageUpdateView(UpdateView):
     """Vista para editar una imagen del carrusel"""
     model = CarouselImage
@@ -104,7 +104,7 @@ class CarouselImageUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-@method_decorator(permission_required('dashboard', 'eliminar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'eliminar'), name='dispatch')
 class CarouselImageDeleteView(DeleteView):
     """Vista para eliminar una imagen del carrusel"""
     model = CarouselImage
@@ -117,7 +117,7 @@ class CarouselImageDeleteView(DeleteView):
 
 
 @require_POST
-@permission_required('dashboard', 'editar')
+@permission_required('site_images', 'editar')
 def carousel_reorder_ajax(request):
     """Vista AJAX para reordenar imágenes del carrusel"""
     try:
@@ -137,7 +137,7 @@ def carousel_reorder_ajax(request):
 
 
 @require_POST
-@permission_required('dashboard', 'editar')
+@permission_required('site_images', 'editar')
 def carousel_toggle_active(request, pk):
     """Vista AJAX para activar/desactivar una imagen del carrusel"""
     try:
@@ -156,7 +156,7 @@ def carousel_toggle_active(request, pk):
 
 # ==================== SECCIONES ====================
 
-@method_decorator(permission_required('dashboard', 'crear'), name='dispatch')
+@method_decorator(permission_required('site_images', 'crear'), name='dispatch')
 class SiteImageSectionCreateView(CreateView):
     """Vista para crear una nueva sección de imágenes"""
     model = SiteImageSection
@@ -169,7 +169,7 @@ class SiteImageSectionCreateView(CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'editar'), name='dispatch')
 class SiteImageSectionUpdateView(UpdateView):
     """Vista para editar una sección de imágenes"""
     model = SiteImageSection
@@ -185,7 +185,7 @@ class SiteImageSectionUpdateView(UpdateView):
 
 # ==================== IMÁGENES DEL SITIO ====================
 
-@method_decorator(permission_required('dashboard', 'crear'), name='dispatch')
+@method_decorator(permission_required('site_images', 'crear'), name='dispatch')
 class SiteImageCreateView(CreateView):
     """Vista para crear una nueva imagen del sitio"""
     model = SiteImage
@@ -213,7 +213,7 @@ class SiteImageCreateView(CreateView):
         return super().form_invalid(form)
 
 
-@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'editar'), name='dispatch')
 class SiteImageUpdateView(UpdateView):
     """Vista para editar una imagen del sitio"""
     model = SiteImage
@@ -231,7 +231,7 @@ class SiteImageUpdateView(UpdateView):
         return super().form_invalid(form)
 
 
-@method_decorator(permission_required('dashboard', 'eliminar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'eliminar'), name='dispatch')
 class SiteImageDeleteView(DeleteView):
     """Vista para eliminar una imagen del sitio"""
     model = SiteImage
@@ -244,7 +244,7 @@ class SiteImageDeleteView(DeleteView):
 
 
 @require_POST
-@permission_required('dashboard', 'editar')
+@permission_required('site_images', 'editar')
 def site_image_toggle_active(request, pk):
     """Vista AJAX para activar/desactivar una imagen del sitio"""
     try:
@@ -263,7 +263,7 @@ def site_image_toggle_active(request, pk):
 
 # ==================== CONTENIDO DE LA HOME ====================
 
-@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'ver'), name='dispatch')
 class SiteContentListView(TemplateView):
     """Vista que muestra todas las secciones editables de la home"""
     template_name = 'site_images/site_content_list.html'
@@ -281,7 +281,7 @@ class SiteContentListView(TemplateView):
         return context
 
 
-@method_decorator(permission_required('dashboard', 'editar'), name='dispatch')
+@method_decorator(permission_required('site_images', 'editar'), name='dispatch')
 class SiteContentEditView(UpdateView):
     """Vista para editar el contenido de una sección de la home"""
     model = SiteContent

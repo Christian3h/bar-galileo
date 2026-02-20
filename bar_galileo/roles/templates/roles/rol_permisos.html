@@ -19,7 +19,7 @@
            {% for modulo in modulos %}
             <tr>
                 <td>
-                    {% if modulo.nombre == 'backups' %}Copias de seguridad{% elif modulo.nombre == 'brands' %}Marcas{% elif modulo.nombre == 'categories' %}Categorías{% elif modulo.nombre == 'dashboard' %}Panel{% elif modulo.nombre == 'expenses' %}Gastos{% elif modulo.nombre == 'facturacion' %}Facturación{% elif modulo.nombre == 'nominas' %}Nóminas{% elif modulo.nombre == 'products' %}Productos{% elif modulo.nombre == 'providers' %}Proveedores{% elif modulo.nombre == 'reportes' %}Reportes{% elif modulo.nombre == 'reservations' %}Reservas{% elif modulo.nombre == 'roles' %}Roles{% elif modulo.nombre == 'tables' %}Mesas{% elif modulo.nombre == 'users' %}Usuarios{% else %}{{ modulo.nombre }}{% endif %}
+                    {% if modulo.nombre == 'backups' %}Copias de seguridad{% elif modulo.nombre == 'brands' %}Marcas{% elif modulo.nombre == 'categories' %}Categorías{% elif modulo.nombre == 'dashboard' %}Panel{% elif modulo.nombre == 'expenses' %}Gastos{% elif modulo.nombre == 'facturacion' %}Facturación{% elif modulo.nombre == 'nominas' %}Nóminas{% elif modulo.nombre == 'products' %}Productos{% elif modulo.nombre == 'providers' %}Proveedores{% elif modulo.nombre == 'reportes' %}Reportes{% elif modulo.nombre == 'reservations' %}Reservas{% elif modulo.nombre == 'roles' %}Roles{% elif modulo.nombre == 'site_images' %}Imágenes del sitio{% elif modulo.nombre == 'tables' %}Mesas{% elif modulo.nombre == 'users' %}Usuarios{% else %}{{ modulo.nombre }}{% endif %}
                 </td>
                 {% for accion in acciones %}
                     <td style="text-align: center;">
