@@ -60,12 +60,37 @@ function setupGlobalEvents() {
     }, 5000);
     
     // Confirmar acciones peligrosas
-    const dangerButtons = document.querySelectorAll('.btn-danger, .delete-btn');
+    const dangerButtons = document.querySelectorAll('.btn-danger:not([data-feedback-confirm]), .delete-btn:not([data-feedback-confirm])');
     dangerButtons.forEach(function(btn) {
+        // Si ya tiene data-feedback-confirm, no agregar otro manejador
+        if (btn.hasAttribute('data-feedback-confirm')) return;
+        
         btn.addEventListener('click', function(e) {
-            if (!confirm('¿Estás seguro de que quieres realizar esta acción?')) {
-                e.preventDefault();
-                return false;
+            e.preventDefault();
+            
+            const self = this;
+            if (typeof AppFeedback !== 'undefined' && AppFeedback.confirm) {
+                AppFeedback.confirm({
+                    title: 'Confirmar Acción',
+                    message: '¿Estás seguro de que quieres realizar esta acción?',
+                    confirmLabel: 'Continuar',
+                    cancelLabel: 'Cancelar'
+                }).then(function(accepted) {
+                    if (accepted) {
+                        // Remover temporalmente el listener y hacer click
+                        const form = self.closest('form');
+                        if (form) {
+                            form.submit();
+                        } else if (self.tagName === 'A') {
+                            window.location.href = self.href;
+                        }
+                    }
+                });
+            } else if (confirm('¿Estás seguro de que quieres realizar esta acción?')) {
+                const form = self.closest('form');
+                if (form) {
+                    form.submit();
+                }
             }
         });
     });

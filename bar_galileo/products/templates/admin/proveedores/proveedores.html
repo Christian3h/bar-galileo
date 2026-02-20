@@ -53,12 +53,12 @@
                                     </a>
                                 {% endif %}
                                 {% if request.user|has_perm:"providers,eliminar" %}
-                                    <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}"
-                                       class="btn btn-sm btn-danger"
+                                    <button type="button" class="btn btn-sm btn-danger"
                                        title="Eliminar {{ proveedor.nombre }}"
-                                       aria-label="Eliminar proveedor {{ proveedor.nombre }}">
+                                       aria-label="Eliminar proveedor {{ proveedor.nombre }}"
+                                       onclick="confirmarEliminarProveedor({{ proveedor.id_proveedor }}, '{{ proveedor.nombre|escapejs }}')">
                                         <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width:16px; height:16px;">
-                                    </a>
+                                    </button>
                                 {% endif %}
                                 </div>
                             </td>
@@ -73,8 +73,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Formulario oculto para eliminación de proveedor -->
+    <form id="delete-proveedor-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+
     <!-- Inicialización de DataTables -->
     <script>
+    async function confirmarEliminarProveedor(proveedorId, proveedorNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Proveedor',
+            message: `¿Estás seguro de que deseas eliminar el proveedor "${proveedorNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-proveedor-form');
+            form.action = `/admin/products/providers/${proveedorId}/delete/`;
+            form.submit();
+        }
+    }
+
     $(document).ready(function() {
         var sel = '#tabla-proveedores';
         if (!$(sel).length) return;

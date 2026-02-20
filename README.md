@@ -58,54 +58,55 @@ bar-galileo/
 
 ## 🚀 Despliegue con Docker
 
-### Archivos relevantes
-- `Dockerfile`: Construye la imagen con Python 3.12, instala dependencias y `flite` para audio del CAPTCHA.
-- `docker/entrypoint.sh`: Aplica migraciones y `collectstatic`, luego arranca Gunicorn.
-- `docker-compose.yml`: Orquesta `web` y `db` (MySQL 8).
-- `.dockerignore`: Excluye archivos innecesarios del build.
+La pila se compone de dos servicios definidos en `docker-compose.yml`:
 
-### Levantar el entorno
+| Servicio | Detalle |
+|----------|---------|
+| `web` | Imagen propia basada en `python:3.12-slim`, instala `requirements-docker.txt`, corre migrations/collectstatic y expone Django + Channels mediante `daphne` en el puerto 8000. |
+| `db` | MySQL 8.0 con autenticación `mysql_native_password`, datos persistentes en el volumen `db_data`. |
+
+### 1. Configurar variables de entorno
+- Edita `.env.docker` (incluye valores seguros de desarrollo). Define aquí `GOOGLE_API_KEY`, credenciales SMTP (`EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`) y, si lo deseas, una nueva `SECRET_KEY` y `ALLOWED_HOSTS`.
+- Los valores se inyectan automáticamente tanto en el contenedor `web` como en `db`, y Django también los lee vía `os.getenv`.
+
+### 2. Construir y levantar
 ```bash
-# Construir la imagen
-docker compose build
+# Construir imágenes y descargar MySQL
+docker compose up -d --build
 
-# Levantar servicios
-docker compose up -d
-
-# Ver logs del servicio web
+# Seguir logs del servicio web
 docker compose logs -f web
 ```
 
-Abrir: http://localhost:8000
+La aplicación quedará disponible en http://localhost:8000 (estático y media persisten en volúmenes `static_volume` y `media_volume`).
 
-### Comandos útiles
+### 3. Operaciones frecuentes
 ```bash
-# Migraciones (entrypoint ya corre)
+# Aplicar migraciones (entrypoint ya lo hace, pero puedes forzarlo)
 docker compose exec web python bar_galileo/manage.py migrate
 
 # Crear superusuario
 docker compose exec web python bar_galileo/manage.py createsuperuser
 
-# Sembrar datos falsos
+# Sembrar datos de ejemplo
 docker compose exec web python bar_galileo/manage.py seed_fake_data
-```
 
-### Audio CAPTCHA (Flite)
-```bash
-# Verificar flite
+# Ejecutar comandos para el CAPTCHA de audio
 docker compose exec web which flite
+docker compose exec web flite -t "prueba audio" -o /tmp/test.wav
 
-# Probar generación de audio
-docker compose exec web flite -t "prueba de audio captcha" -o /tmp/test.wav
+# Generar reporte de licencias
+docker compose exec web pip-licenses --with-authors --with-urls --format=markdown \
+	> /app/bar_galileo/docs/THIRD_PARTY_LICENSES.md
 ```
 
-### Reporte de Licencias
+### 4. Limpieza y apagado
 ```bash
-# Generar reporte en Markdown de paquetes Python
-docker compose exec web pip-licenses --with-authors --with-urls --format=markdown > /app/bar_galileo/docs/THIRD_PARTY_LICENSES.md
+# Detener servicios
+docker compose down
 
-# Ver el archivo generado en el host
-cat bar_galileo/docs/THIRD_PARTY_LICENSES.md
+# Detener y borrar volúmenes (incluye DB)
+docker compose down -v
 ```
 
 ## 🚀 Instalación (modo manual)

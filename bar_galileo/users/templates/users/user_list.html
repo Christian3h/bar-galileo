@@ -328,10 +328,19 @@ function checkPasswordMatch() {
 document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
+    const form = this;
     const username = document.getElementById('modalUsername').textContent;
-    if (confirm('¿Estás seguro de que deseas cambiar la contraseña del usuario "' + username + '"?\n\nEsta acción será registrada en el sistema de auditoría.')) {
-        this.submit();
-    }
+    
+    AppFeedback.confirm({
+        title: 'Cambiar Contraseña',
+        message: '¿Estás seguro de que deseas cambiar la contraseña del usuario "' + username + '"?\n\nEsta acción será registrada en el sistema de auditoría.',
+        confirmLabel: 'Cambiar',
+        cancelLabel: 'Cancelar'
+    }).then(function(accepted) {
+        if (accepted) {
+            form.submit();
+        }
+    });
 });
 </script>
 {% endblock %}

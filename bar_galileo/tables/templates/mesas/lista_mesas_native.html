@@ -80,9 +80,10 @@
         </button>
         {% endif %}
         {% if request.user|has_perm:"tables,eliminar" %}
-        <a href="{% url 'tables:confirmar_eliminar_mesa' mesa.id %}" class="btn btn-danger btn-sm" title="Eliminar mesa">
+        <button type="button" class="btn btn-danger btn-sm" title="Eliminar mesa"
+            onclick="confirmarEliminarMesa('{{ mesa.id }}', '{{ mesa.nombre }}')">
           <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
-        </a>
+        </button>
         {% if request.user|has_perm:"tables,eliminar" %}
         <button class="btn btn-info btn-sm" onclick="liberarMesa('{{ mesa.id }}', {{ mesa.tiene_pedidos_en_proceso|yesno:'true,false' }})" title="Liberar mesa">
           Liberar
@@ -166,25 +167,27 @@
     </div>
   </div>
 
-  <!-- Contenedor para notificaciones toast -->
-  <div id="toast-container"></div>
+  <!-- Formulario oculto para eliminación de mesa -->
+  <form id="delete-mesa-form" method="post" style="display: none;">
+      {% csrf_token %}
+  </form>
 
-  <!-- Modal de Confirmación Genérico -->
-  <div id="confirmModal" class="modal">
-    <div class="modal-content-small">
-      <div class="modal-header">
-        <h3 id="confirmTitle"></h3>
-        <span class="close" id="confirmClose">&times;</span>
-      </div>
-      <div class="modal-body">
-        <p id="confirmMessage"></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="confirmCancel">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="confirmOk">Confirmar</button>
-      </div>
-    </div>
-  </div>
+  <script>
+  async function confirmarEliminarMesa(mesaId, mesaNombre) {
+      const confirmed = await AppFeedback.confirm({
+          title: 'Eliminar Mesa',
+          message: `¿Estás seguro de que deseas eliminar la mesa "${mesaNombre}"? Esta acción no se puede deshacer.`,
+          confirmLabel: 'Eliminar',
+          cancelLabel: 'Cancelar'
+      });
+      
+      if (confirmed) {
+          const form = document.getElementById('delete-mesa-form');
+          form.action = `/mesas/${mesaId}/eliminar/`;
+          form.submit();
+      }
+  }
+  </script>
 
   <script src="{% static 'js/tables/tables.js' %}"></script>
 

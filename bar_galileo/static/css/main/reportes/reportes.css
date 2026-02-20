@@ -540,28 +540,6 @@
     font-size: 1.1rem;
 }
 
-/* Alertas */
-.reporte-detail-page .alert {
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-}
-
-.reporte-detail-page .alert-warning {
-    background: rgba(255, 193, 7, 0.1);
-    border: 1px solid rgba(255, 193, 7, 0.4);
-    color: #ffc107;
-}
-
-.reporte-detail-page .alert-success {
-    background: rgba(40, 167, 69, 0.1);
-    border: 1px solid rgba(40, 167, 69, 0.4);
-    color: #28a745;
-}
-
 /* Badges */
 .reporte-detail-page .badge {
     display: inline-block;
