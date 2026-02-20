@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from products.models import Producto, Categoria
 from tables.models import Mesa, Pedido, PedidoItem, Factura
 from expenses.models import Expense
@@ -11,11 +11,16 @@ from django.db.models import Sum, Count, F, ExpressionWrapper, DecimalField
 from django.db.models.functions import TruncDay, TruncDate
 from datetime import datetime, date, time, timedelta
 from decimal import Decimal
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 import csv
 from io import BytesIO
 from django.template.loader import render_to_string
 from django.utils import timezone
+import json
 try:
     import openpyxl
     from openpyxl.utils import get_column_letter
@@ -341,3 +346,4 @@ def export_dashboard(request, fmt):
 
     else:
         return HttpResponse('Formato no soportado', status=400)
+

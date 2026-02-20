@@ -1,0 +1,110 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Contenido de la Home - Admin{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/image_management.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="image-management-container">
+
+    <!-- CABECERA -->
+    <div class="page-header">
+        <div class="page-header-left">
+            <h1> Contenido de la Página de Inicio</h1>
+            <p class="page-subtitle">Edita los textos e imágenes de cada sección que se muestran en la home del sitio.</p>
+        </div>
+        <div class="page-header-actions">
+            <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">
+                 Gestión de imágenes
+            </a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- SECCIONES -->
+    <div class="content-sections-list">
+
+        {% for section in sections %}
+        <div class="content-section-card
+            {% if section.section == 'hero' %}section-hero
+            {% elif section.section == 'about' %}section-about
+            {% elif section.section == 'cocktails' %}section-cocktails
+            {% elif section.section == 'services' %}section-services
+            {% else %}section-reservations{% endif %}">
+
+            <div class="csc-header">
+                <div class="csc-title-group">
+                    <span class="csc-icon">
+                        {% if section.section == 'hero' %}
+                        {% elif section.section == 'about' %}
+                        {% elif section.section == 'cocktails' %}
+                        {% elif section.section == 'services' %}
+                        {% else %}{% endif %}
+                    </span>
+                    <div>
+                        <h2 class="csc-title">{{ section.get_section_display }}</h2>
+                        <span class="csc-updated">Última edición: {{ section.updated_at|date:"d/m/Y H:i" }}</span>
+                    </div>
+                </div>
+                <a href="{% url 'site_images:site_content_edit' section.section %}" class="btn btn-primary">
+                    ✏️ Editar textos
+                </a>
+            </div>
+
+            <!-- Vista previa de los campos principales -->
+            <div class="csc-preview">
+                {% if section.section == 'hero' %}
+                    {% if section.hero_title %}<div class="preview-field"><span class="pf-label">Título:</span> <span class="pf-value">{{ section.hero_title }}</span></div>{% endif %}
+                    {% if section.hero_subtitle %}<div class="preview-field"><span class="pf-label">Subtítulo:</span> <span class="pf-value">{{ section.hero_subtitle|truncatechars:80 }}</span></div>{% endif %}
+                    {% if section.hero_button1_text %}<div class="preview-field"><span class="pf-label">Botón 1:</span> <span class="pf-value pf-badge">{{ section.hero_button1_text }}</span></div>{% endif %}
+                    {% if section.hero_button2_text %}<div class="preview-field"><span class="pf-label">Botón 2:</span> <span class="pf-value pf-badge">{{ section.hero_button2_text }}</span></div>{% endif %}
+
+                {% elif section.section == 'about' %}
+                    {% if section.about_title %}<div class="preview-field"><span class="pf-label">Título:</span> <span class="pf-value">{{ section.about_title }}</span></div>{% endif %}
+                    {% if section.about_paragraph1 %}<div class="preview-field"><span class="pf-label">Párrafo 1:</span> <span class="pf-value">{{ section.about_paragraph1|truncatechars:100 }}</span></div>{% endif %}
+
+                {% elif section.section == 'cocktails' %}
+                    {% if section.cocktails_title %}<div class="preview-field"><span class="pf-label">Título:</span> <span class="pf-value">{{ section.cocktails_title }}</span></div>{% endif %}
+                    {% if section.cocktails_subtitle %}<div class="preview-field"><span class="pf-label">Subtítulo:</span> <span class="pf-value">{{ section.cocktails_subtitle|truncatechars:100 }}</span></div>{% endif %}
+
+                {% elif section.section == 'services' %}
+                    {% if section.services_title %}<div class="preview-field"><span class="pf-label">Título:</span> <span class="pf-value">{{ section.services_title }}</span></div>{% endif %}
+                    <div class="preview-stats">
+                        {% if section.service1_number %}<span class="stat-chip">{{ section.service1_number }} — {{ section.service1_title }}</span>{% endif %}
+                        {% if section.service2_number %}<span class="stat-chip">{{ section.service2_number }} — {{ section.service2_title }}</span>{% endif %}
+                        {% if section.service3_number %}<span class="stat-chip">{{ section.service3_number }} — {{ section.service3_title }}</span>{% endif %}
+                        {% if section.service4_number %}<span class="stat-chip">{{ section.service4_number }} — {{ section.service4_title }}</span>{% endif %}
+                    </div>
+
+                {% else %}
+                    {% if section.reservations_title %}<div class="preview-field"><span class="pf-label">Título:</span> <span class="pf-value">{{ section.reservations_title }}</span></div>{% endif %}
+                    {% if section.reservations_text %}<div class="preview-field"><span class="pf-label">Texto:</span> <span class="pf-value">{{ section.reservations_text|truncatechars:100 }}</span></div>{% endif %}
+                    {% if section.reservations_whatsapp %}<div class="preview-field"><span class="pf-label">WhatsApp:</span> <span class="pf-value pf-badge">+{{ section.reservations_whatsapp }}</span></div>{% endif %}
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <!-- ENLACE A GESTIÓN DE IMÁGENES -->
+    <div class="content-images-banner">
+        <div class="cib-left">
+            <h3>🖼️ ¿Quieres cambiar las imágenes del sitio?</h3>
+            <p>Gestiona el carrusel principal y las imágenes de cada sección desde la página de gestión de imágenes.</p>
+        </div>
+        <a href="{% url 'site_images:image_management' %}" class="btn btn-primary">
+            Ir a gestión de imágenes →
+        </a>
+    </div>
+
+</div>
+{% endblock %}

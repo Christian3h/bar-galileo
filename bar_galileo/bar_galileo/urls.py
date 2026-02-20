@@ -33,6 +33,7 @@ urlpatterns = [
     path('', include(('core.urls', 'core'), namespace='core')),
     path('', include(('tables.urls', 'tables'), namespace='tables')),
     path('dashboard/', include(('admin_dashboard.urls', 'admin_dashboard'), namespace='admin_dashboard')),
+    path('dashboard/images/', include(('site_images.urls', 'site_images'), namespace='site_images')),
     path('rol/', include(('roles.urls', 'roles'), namespace='roles')),
     path('facturacion/', include(('facturacion.urls', 'facturacion'), namespace='facturacion')),
     path('', include(('users.urls', 'users'), namespace='users')),

@@ -8,30 +8,39 @@
   <!-- Hero Section -->
   <section class="hero" id="experiencia-section">
     <div class="hero-carousel">
-      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      {% if carousel_images %}
+        {% for image in carousel_images %}
+          <div class="hero-slide {% if forloop.first %}active{% endif %}" 
+               style="background-image: url('{{ image.image.url }}')">
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Imágenes por defecto si no hay en la BD -->
+        <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80')"></div>
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+      {% endif %}
     </div>
 
     <div class="hero-content">
-      <h1>BAR GALILEO</h1>
-      <p>Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable.</p>
+      <h1>{{ content_hero.hero_title|default:"BAR GALILEO" }}</h1>
+      <p>{{ content_hero.hero_subtitle|default:"Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable." }}</p>
       <div class="hero-buttons">
-        <button class="hero-button" data-action="carta">EXPLORAR CARTA</button>
-        <button class="hero-button" data-action="historia">NUESTRA HISTORIA</button>
+        <button class="hero-button" data-action="carta">{{ content_hero.hero_button1_text|default:"EXPLORAR CARTA" }}</button>
+        <button class="hero-button" data-action="historia">{{ content_hero.hero_button2_text|default:"NUESTRA HISTORIA" }}</button>
       </div>
     </div>
 
     <div class="hero-dots">
-      <span class="hero-dot active" data-slide="0"></span>
-      <span class="hero-dot" data-slide="1"></span>
-      <span class="hero-dot" data-slide="2"></span>
-      <span class="hero-dot" data-slide="3"></span>
-      <span class="hero-dot" data-slide="4"></span>
-      <span class="hero-dot" data-slide="5"></span>
+      {% if carousel_images %}
+        {% for image in carousel_images %}
+          <span class="hero-dot {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}"></span>
+        {% endfor %}
+      {% else %}
+        <span class="hero-dot active" data-slide="0"></span>
+        <span class="hero-dot" data-slide="1"></span>
+        <span class="hero-dot" data-slide="2"></span>
+      {% endif %}
     </div>
 
     <!-- Scroll Indicator -->
@@ -48,13 +57,17 @@
     <div class="container">
       <div class="about-grid">
         <div class="about-content">
-          <h2>Acerca de Bar Galileo</h2>
-          <p>Somos más que un bar, somos un espacio donde la pasión por la coctelería se encuentra con la elegancia y el diseño. Nuestro equipo de mixólogos expertos crea experiencias únicas para cada huésped.</p>
-          <p>Con una carta cuidadosamente seleccionada de destilados premium, ingredientes frescos y técnicas innovadoras, transformamos cada cóctel en una experiencia sensorial inolvidable.</p>
-          <p>Únete a nosotros y descubre por qué Bar Galileo se ha convertido en el destino preferido para los amantes de la buena coctelería en la ciudad.</p>
+          <h2>{{ content_about.about_title|default:"Acerca de Bar Galileo" }}</h2>
+          <p>{{ content_about.about_paragraph1|default:"Somos más que un bar, somos un espacio donde la pasión por la coctelería se encuentra con la elegancia y el diseño. Nuestro equipo de mixólogos expertos crea experiencias únicas para cada huésped." }}</p>
+          <p>{{ content_about.about_paragraph2|default:"Con una carta cuidadosamente seleccionada de destilados premium, ingredientes frescos y técnicas innovadoras, transformamos cada cóctel en una experiencia sensorial inolvidable." }}</p>
+          <p>{{ content_about.about_paragraph3|default:"Únete a nosotros y descubre por qué Bar Galileo se ha convertido en el destino preferido para los amantes de la buena coctelería en la ciudad." }}</p>
         </div>
         <div class="about-image">
-          <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Interior de Bar Galileo">
+          {% if about_image %}
+            <img src="{{ about_image.image.url }}" alt="{{ about_image.alt_text|default:'Interior de Bar Galileo' }}">
+          {% else %}
+            <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Interior de Bar Galileo">
+          {% endif %}
         </div>
       </div>
     </div>
@@ -64,9 +77,9 @@
   <span class="section-anchor" id="cocktails-section"></span>
   <section class="signature-section">
     <div class="container">
-      <h2>CÓCTELES</h2>
+      <h2>{{ content_cocktails.cocktails_title|default:"CÓCTELES" }}</h2>
       <p class="signature-subtitle">
-        Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo.
+        {{ content_cocktails.cocktails_subtitle|default:"Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo." }}
       </p>
       <div class="signature-cards">
         <div class="signature-card">
@@ -88,29 +101,29 @@
   <!-- Services Section -->
   <section class="services">
     <div class="container">
-      <h2>¿Qué hace especial a<br>BAR GALILEO?</h2>
-      <p class="services-subtitle">Ofrecemos una experiencia integral de coctelería premium con atención personalizada en cada detalle.</p>
+      <h2>{{ content_services.services_title|default:"¿Qué hace especial a BAR GALILEO?" }}</h2>
+      <p class="services-subtitle">{{ content_services.services_subtitle|default:"Ofrecemos una experiencia integral de coctelería premium con atención personalizada en cada detalle." }}</p>
 
       <div class="services-grid">
         <div class="service-item">
-          <div class="service-number">5+</div>
-          <h3>Años de experiencia</h3>
-          <p>Perfeccionando el arte de la mixología y creando momentos únicos.</p>
+          <div class="service-number">{{ content_services.service1_number|default:"5+" }}</div>
+          <h3>{{ content_services.service1_title|default:"Años de experiencia" }}</h3>
+          <p>{{ content_services.service1_description|default:"Perfeccionando el arte de la mixología y creando momentos únicos." }}</p>
         </div>
         <div class="service-item">
-          <div class="service-number">150+</div>
-          <h3>Cócteles únicos</h3>
-          <p>Carta exclusiva con creaciones propias y clásicos reimaginados.</p>
+          <div class="service-number">{{ content_services.service2_number|default:"150+" }}</div>
+          <h3>{{ content_services.service2_title|default:"Cócteles únicos" }}</h3>
+          <p>{{ content_services.service2_description|default:"Carta exclusiva con creaciones propias y clásicos reimaginados." }}</p>
         </div>
         <div class="service-item">
-          <div class="service-number">24/7</div>
-          <h3>Reservaciones</h3>
-          <p>Sistema de reservas disponible las 24 horas para tu comodidad.</p>
+          <div class="service-number">{{ content_services.service3_number|default:"24/7" }}</div>
+          <h3>{{ content_services.service3_title|default:"Reservaciones" }}</h3>
+          <p>{{ content_services.service3_description|default:"Sistema de reservas disponible las 24 horas para tu comodidad." }}</p>
         </div>
         <div class="service-item">
-          <div class="service-number">100%</div>
-          <h3>Satisfacción</h3>
-          <p>Compromiso total con la excelencia en cada experiencia.</p>
+          <div class="service-number">{{ content_services.service4_number|default:"100%" }}</div>
+          <h3>{{ content_services.service4_title|default:"Satisfacción" }}</h3>
+          <p>{{ content_services.service4_description|default:"Compromiso total con la excelencia en cada experiencia." }}</p>
         </div>
       </div>
     </div>
@@ -164,11 +177,11 @@
   <span class="section-anchor" id="reservas-section"></span>
   <section class="reservas-section">
     <div class="container">
-      <h2 class="products-title">Reservas</h2>
+      <h2 class="products-title">{{ content_reservations.reservations_title|default:"Reservas" }}</h2>
       <p style="font-size: 18px; margin-bottom: 40px;">
-        ¡Reserva tu mesa y asegura tu lugar en Bar Galileo!
+        {{ content_reservations.reservations_text|default:"¡Reserva tu mesa y asegura tu lugar en Bar Galileo!" }}
       </p>
-       <a href="https://wa.me/573044029343" class="nav-button">Reservar por WhatsApp</a>
+       <a href="https://wa.me/{{ content_reservations.reservations_whatsapp|default:'573044029343' }}" class="nav-button">{{ content_reservations.reservations_button_text|default:"Reservar por WhatsApp" }}</a>
     </div>
   </section>
 {% endblock %}

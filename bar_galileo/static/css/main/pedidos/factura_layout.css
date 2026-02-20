@@ -1,32 +1,33 @@
 /* static/css/main/pedidos/factura_layout.css */
+@import "../../_variables/_colors.css";
 
 /* Base styles for the invoice container */
 .factura-container {
     max-width: 1200px;
     margin: 20px auto;
-    background: #1a1a1a; /* Fondo oscuro como la imagen */
+    background: var(--color-accent);
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(166, 137, 50, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     overflow: hidden;
-    font-family: Arial, sans-serif;
-    color: #a68932; /* Color dorado */
+    font-family: 'Outfit', sans-serif;
+    color: var(--color-secondary);
     padding: 20px;
 }
 
 /* Header section */
 .factura-header {
     background: transparent;
-    color: #a68932; /* Color dorado */
+    color: var(--color-secondary);
     padding: 20px 0;
     text-align: center;
-    border-bottom: 2px solid #a68932;
+    border-bottom: 2px solid var(--color-secondary);
 }
 
 .factura-header h2 {
     margin: 0;
     font-size: 2rem;
     font-weight: 600;
-    color: #a68932;
+    color: var(--color-secondary);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -41,11 +42,11 @@
     text-align: left;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #a68932;
+    border-bottom: 1px solid var(--color-secondary);
 }
 
 .empresa-info h3 {
-    color: #a68932;
+    color: var(--color-secondary);
     margin: 0 0 15px 0;
     font-size: 1.5rem;
     font-weight: 600;
@@ -53,12 +54,12 @@
 
 .empresa-info p {
     margin: 5px 0;
-    color: #a68932;
+    color: var(--color-secondary);
     font-size: 14px;
 }
 
 .empresa-info strong {
-    color: #d4af37;
+    color: var(--color-primary);
 }
 
 /* Invoice table */
@@ -66,7 +67,7 @@
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
-    border: 2px solid #a68932;
+    border: 2px solid var(--color-secondary);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -79,18 +80,18 @@
 .factura-table td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #a68932;
-    color: #a68932;
+    border-bottom: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
 }
 
 .factura-table th {
     font-weight: 700;
-    color: #a68932;
+    color: var(--color-secondary);
     background-color: transparent;
     text-transform: uppercase;
     font-size: 14px;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid #a68932;
+    border-bottom: 2px solid var(--color-secondary);
 }
 
 .factura-table tbody tr {
@@ -98,25 +99,25 @@
 }
 
 .factura-table tbody tr:hover {
-    background-color: rgba(166, 137, 50, 0.1);
+    background-color: rgba(from var(--color-secondary) r g b / 0.1);
 }
 
 .factura-table tbody td {
-    color: #a68932;
+    color: var(--color-secondary);
     font-size: 15px;
 }
 
 .factura-table tfoot {
     background-color: transparent;
     font-weight: 700;
-    color: #d4af37;
-    border-top: 2px solid #a68932;
+    color: var(--color-primary);
+    border-top: 2px solid var(--color-secondary);
 }
 
 .factura-table tfoot td {
     padding: 20px 15px;
     font-size: 18px;
-    color: #d4af37;
+    color: var(--color-primary);
 }
 
 /* Text alignment helpers */
@@ -133,13 +134,13 @@
     text-align: center;
     margin-top: 30px;
     padding: 25px;
-    background: rgba(166, 137, 50, 0.15);
+    background: rgba(from var(--color-secondary) r g b / 0.08);
     border-radius: 8px;
-    border: 2px solid #a68932;
+    border: 2px solid var(--color-secondary);
 }
 
 .estado-pago h4 {
-    color: #d4af37;
+    color: var(--color-primary);
     margin: 0 0 10px 0;
     font-size: 1.5rem;
     font-weight: 700;
@@ -147,7 +148,7 @@
 }
 
 .estado-pago p {
-    color: #a68932;
+    color: var(--color-secondary);
     margin: 0;
     font-style: italic;
     font-size: 16px;
@@ -158,7 +159,7 @@
     margin-top: 30px;
     text-align: center;
     padding-top: 20px;
-    border-top: 2px solid #a68932;
+    border-top: 2px solid var(--color-secondary);
     display: flex;
     gap: 15px;
     justify-content: center;
@@ -167,9 +168,9 @@
 
 .botones-accion .btn {
     padding: 12px 24px;
-    border: 2px solid #a68932;
+    border: 2px solid var(--color-secondary);
     background: transparent;
-    color: #a68932;
+    color: var(--color-secondary);
     border-radius: 5px;
     font-weight: 600;
     cursor: pointer;
@@ -179,20 +180,20 @@
 }
 
 .botones-accion .btn:hover {
-    background: #a68932;
-    color: #1a1a1a;
+    background: var(--color-secondary);
+    color: var(--color-accent);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(166, 137, 50, 0.3);
+    box-shadow: 0 4px 12px var(--color-shadow);
 }
 
 .botones-accion .btn-primary {
-    background: #a68932;
-    color: #1a1a1a;
+    background: var(--color-secondary);
+    color: var(--color-accent);
 }
 
 .botones-accion .btn-primary:hover {
-    background: #d4af37;
-    border-color: #d4af37;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 /* Print specific styles */
