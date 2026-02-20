@@ -346,7 +346,7 @@
         
         if (confirmed) {
             const form = document.getElementById('delete-reporte-form');
-            form.action = `/reportes/${reporteId}/eliminar/`;
+            form.action = `/reportes/eliminar/${reporteId}/`;
             form.submit();
         }
     }

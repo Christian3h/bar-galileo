@@ -53,7 +53,7 @@ async function confirmarEliminarMarca(marcaId, marcaNombre) {
     
     if (confirmed) {
         const form = document.getElementById('delete-marca-form');
-        form.action = `/admin/products/brands/${marcaId}/delete/`;
+        form.action = `/adminD/brands/delete/${marcaId}/`;
         form.submit();
     }
 }
