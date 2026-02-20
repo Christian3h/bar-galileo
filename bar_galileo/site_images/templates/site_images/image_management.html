@@ -236,11 +236,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── DELETE ────────────────────────────────────────────────────────────
     document.querySelectorAll('.delete-image').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', async function() {
             const id   = this.dataset.id;
             const name = this.dataset.name;
             const type = this.dataset.type;
-            if (!confirm(`¿Eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
+            const confirmed = await AppFeedback.confirm({
+                title: 'Eliminar Imagen',
+                message: `¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`,
+                confirmLabel: 'Eliminar',
+                cancelLabel: 'Cancelar'
+            });
+            if (!confirmed) return;
             const url = type === 'carousel'
                 ? '{% url "site_images:carousel_image_delete" 0 %}'.replace('0', id)
                 : '{% url "site_images:site_image_delete" 0 %}'.replace('0', id);

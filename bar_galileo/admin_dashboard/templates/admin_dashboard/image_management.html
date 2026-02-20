@@ -239,34 +239,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Delete confirmation
     document.querySelectorAll('.delete-image').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', async function() {
             const id = this.dataset.id;
             const name = this.dataset.name;
             const type = this.dataset.type;
             
-            if (confirm(`¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`)) {
-                // Construir URL basada en el tipo
-                let url;
-                if (type === 'carousel') {
-                    url = '{% url "site_images:carousel_image_delete" 0 %}'.replace('0', id);
-                } else {
-                    url = '{% url "site_images:site_image_delete" 0 %}'.replace('0', id);
-                }
-                
-                // Crear un formulario temporal para enviar DELETE
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = url;
-                
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = 'csrfmiddlewaretoken';
-                csrfInput.value = getCookie('csrftoken');
-                form.appendChild(csrfInput);
-                
-                document.body.appendChild(form);
-                form.submit();
+            const confirmed = await AppFeedback.confirm({
+                title: 'Eliminar Imagen',
+                message: `¿Estás seguro de que deseas eliminar "${name}"? Esta acción no se puede deshacer.`,
+                confirmLabel: 'Eliminar',
+                cancelLabel: 'Cancelar'
+            });
+            if (!confirmed) return;
+            
+            let url;
+            if (type === 'carousel') {
+                url = '{% url "site_images:carousel_image_delete" 0 %}'.replace('0', id);
+            } else {
+                url = '{% url "site_images:site_image_delete" 0 %}'.replace('0', id);
             }
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = url;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = getCookie('csrftoken');
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
         });
     });
     
