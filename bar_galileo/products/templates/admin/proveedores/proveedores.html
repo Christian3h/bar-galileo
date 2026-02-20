@@ -53,7 +53,8 @@
                                     </a>
                                 {% endif %}
                                 {% if request.user|has_perm:"providers,eliminar" %}
-                                    <button type="button" class="btn btn-sm btn-danger"
+                                    <button type="button"
+                                       class="btn btn-sm btn-danger"
                                        title="Eliminar {{ proveedor.nombre }}"
                                        aria-label="Eliminar proveedor {{ proveedor.nombre }}"
                                        onclick="confirmarEliminarProveedor({{ proveedor.id_proveedor }}, '{{ proveedor.nombre|escapejs }}')">
@@ -73,13 +74,11 @@
             </div>
         </div>
     </div>
-
+    <!-- Inicialización de DataTables -->
     <!-- Formulario oculto para eliminación de proveedor -->
     <form id="delete-proveedor-form" method="post" style="display: none;">
         {% csrf_token %}
     </form>
-
-    <!-- Inicialización de DataTables -->
     <script>
     async function confirmarEliminarProveedor(proveedorId, proveedorNombre) {
         const confirmed = await AppFeedback.confirm({
@@ -88,13 +87,13 @@
             confirmLabel: 'Eliminar',
             cancelLabel: 'Cancelar'
         });
-        
         if (confirmed) {
             const form = document.getElementById('delete-proveedor-form');
             form.action = `/adminD/proveedores/delete/${proveedorId}/`;
             form.submit();
         }
     }
+    window.confirmarEliminarProveedor = confirmarEliminarProveedor;
 
     $(document).ready(function() {
         var sel = '#tabla-proveedores';
