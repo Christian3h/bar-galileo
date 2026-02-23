@@ -1,0 +1,10 @@
+# Forzar LF en scripts bash (para que funcionen en Docker/Linux)
+*.sh text eol=lf
+docker/entrypoint.sh text eol=lf
+
+# Archivos batch de Windows mantienen CRLF
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Archivos generales: auto-detectar
+* text=auto

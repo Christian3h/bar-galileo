@@ -126,9 +126,23 @@ cython_debug/
 # Collected static files (Django collectstatic output)
 **/staticfiles/
 
+# Media files (subidos por usuarios, no deben ir en git)
+bar_galileo/media/
+
 # Database dumps
 dump-*.sql
 *.sql
 
 # Backup files
 bar_galileo/backups/backup_files/
+
+# Archivos temporales del proyecto
+bar_galileo/tmp/
+*.bak
+*_old.*
+*_old_*
+
+# Video files (demasiado pesados para git)
+*.mp4
+*.avi
+*.mov
