@@ -283,9 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify({ ids: [parseInt(id, 10)] }),
     })
       .then(() => fetchNotifications())
-      .catch((err) =>
-        //console.error("[Notificaciones] Error marcando individual:", err),
-      );
+      .catch((err) => {});
   });
 
   // Cerrar panel al hacer click fuera
