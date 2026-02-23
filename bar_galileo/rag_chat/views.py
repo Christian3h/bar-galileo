@@ -63,7 +63,7 @@ PREGUNTA:
 
 RESPUESTA:"""
 
-    url = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-latest:generateContent"
+    url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
     headers = {"Content-Type": "application/json", "X-goog-api-key": api_key}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
