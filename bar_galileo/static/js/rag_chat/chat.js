@@ -182,22 +182,22 @@ function addAssistantMessage(text, sources = []) {
 
     let sourcesHtml = '';
     if (sources && sources.length > 0) {
+        const sourcesId = `sources-${Date.now()}-${Math.floor(Math.random()*10000)}`;
         sourcesHtml = `
             <div class="message-sources">
-                <div class="sources-title">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
+                <div class="sources-title" style="cursor:pointer; user-select:none;" onclick="toggleSources('${sourcesId}')">
+                    <span class="toggle-arrow" id="${sourcesId}-arrow" style="font-size:14px; margin-right:4px;">►</span>
                     Fuentes consultadas:
                 </div>
-                ${sources.map(source => `
-                    <div class="source-item">
-                        <div class="source-page">📄 Página ${source.page.join(', ')}</div>
-                        <p class="source-text">${escapeHtml(source.content)}</p>
-                        <div class="source-similarity">Relevancia: ${Math.round(source.similarity * 100)}%</div>
-                    </div>
-                `).join('')}
+                <div class="sources-content" id="${sourcesId}" style="margin-top: 6px; display: none;">
+                    ${sources.map(source => `
+                        <div class="source-item">
+                            <div class="source-page">📄 Página ${source.page.join(', ')}</div>
+                            <p class="source-text">${escapeHtml(source.content)}</p>
+                            <div class="source-similarity">Relevancia: ${Math.round(source.similarity * 100)}%</div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
         `;
     }
@@ -213,6 +213,20 @@ function addAssistantMessage(text, sources = []) {
 
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
+}
+
+// Colapsar/expandir fuentes consultadas
+function toggleSources(id) {
+    const content = document.getElementById(id);
+    const arrow = document.getElementById(id + '-arrow');
+    if (!content) return;
+    if (content.style.display === 'none') {
+        content.style.display = '';
+        if (arrow) arrow.textContent = '▼';
+    } else {
+        content.style.display = 'none';
+        if (arrow) arrow.textContent = '►';
+    }
 }
 
 /**
