@@ -57,8 +57,8 @@ class NotificacionesPendientesView(View):
         
         data = [{"id": n.id, "mensaje": n.mensaje, "fecha": n.fecha.isoformat()} for n in notificaciones]
 
-        # Marcarlas como leídas
-        notificaciones.update(leida=True)
+        # No marcar como leídas aquí - se marcan cuando el usuario lo hace explícitamente
+        # notificaciones.update(leida=True)
 
         return JsonResponse(data, safe=False)
 

@@ -131,6 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
+  // IDs de notificaciones ya mostradas como popup (evitar repetir)
+  const shownPopupIds = new Set();
+
   /**
    * Carga popups pendientes (notificaciones nuevas para mostrar como toast)
    */
@@ -142,7 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data)) {
-          data.forEach(n => n.mensaje && showPopup(n.mensaje));
+          data.forEach(n => {
+            if (n.mensaje && !shownPopupIds.has(n.id)) {
+              shownPopupIds.add(n.id);
+              showPopup(n.mensaje);
+            }
+          });
         }
       })
       .catch(error => {
@@ -180,6 +188,30 @@ document.addEventListener('DOMContentLoaded', () => {
      WEBSOCKET (opcional, para tiempo real)
   ================================================== */
 
+  let pollingInterval = null;
+  let wsConnected = false;
+
+  /**
+   * Inicia polling HTTP como fallback cuando WebSocket no está disponible.
+   * Consulta cada 15 segundos por nuevas notificaciones.
+   */
+  function startPolling() {
+    if (pollingInterval) return; // Ya está activo
+    console.log('[Notificaciones] Iniciando polling HTTP (cada 15s)');
+    pollingInterval = setInterval(() => {
+      fetchNotifications();
+      fetchPendingPopups();
+    }, 15000);
+  }
+
+  function stopPolling() {
+    if (pollingInterval) {
+      clearInterval(pollingInterval);
+      pollingInterval = null;
+      console.log('[Notificaciones] Polling detenido (WebSocket activo)');
+    }
+  }
+
   function initWebSocket() {
     try {
       const wsScheme = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -188,6 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       ws.onopen = () => {
         console.log('[Notificaciones] WebSocket conectado');
+        wsConnected = true;
+        stopPolling();
         fetchNotifications();
         fetchPendingPopups();
       };
@@ -205,14 +239,19 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       ws.onerror = () => {
-        console.warn('[Notificaciones] Error en WebSocket, usando polling');
+        console.warn('[Notificaciones] Error en WebSocket, activando polling');
+        wsConnected = false;
+        startPolling();
       };
 
       ws.onclose = () => {
-        console.log('[Notificaciones] WebSocket cerrado');
+        console.log('[Notificaciones] WebSocket cerrado, activando polling');
+        wsConnected = false;
+        startPolling();
       };
     } catch (err) {
-      console.warn('[Notificaciones] WebSocket no disponible:', err);
+      console.warn('[Notificaciones] WebSocket no disponible, activando polling');
+      startPolling();
     }
   }
 
@@ -293,10 +332,11 @@ document.addEventListener('DOMContentLoaded', () => {
      INICIALIZACIÓN
   ================================================== */
 
-  // Cargar notificaciones al inicio
+  // Cargar notificaciones y popups pendientes al inicio
   fetchNotifications();
+  fetchPendingPopups();
 
-  // Intentar conectar WebSocket para tiempo real
+  // Intentar conectar WebSocket para tiempo real (con fallback a polling)
   initWebSocket();
 
   console.log('[Notificaciones] Sistema inicializado');
