@@ -52,6 +52,8 @@ spacy==3.7.4            # Procesamiento de texto eficiente y liviano
 # Servidor ASGI para producción
 gunicorn==23.0.0
 uvicorn==0.23.2
+websockets
+wsproto
 
 # --- FIN DE DEPENDENCIAS ---
 
