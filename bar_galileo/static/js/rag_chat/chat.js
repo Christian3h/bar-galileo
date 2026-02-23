@@ -205,7 +205,7 @@ function addAssistantMessage(text, sources = []) {
     messageDiv.innerHTML = `
         <div class="message-avatar">AI</div>
         <div class="message-content">
-            <p class="message-text">${escapeHtml(text)}</p>
+            <p class="message-text">${marked.parse(text)}</p>
             ${sourcesHtml}
             <span class="message-timestamp">${formatTime(new Date())}</span>
         </div>
