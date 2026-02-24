@@ -4,12 +4,28 @@
  */
 
 // Estado global
-let currentCollectionId = null;
 let isProcessing = false;
+
+/**
+ * Habilita el chat
+ */
+function enableChat() {
+    document.getElementById('chat-input').disabled = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('chat-input').placeholder = 'Escribe tu pregunta aquí...';
+}
+
+/**
+ * Deshabilita el chat
+ */
+function disableChat() {
+    document.getElementById('chat-input').disabled = true;
+    document.getElementById('send-btn').disabled = true;
+    document.getElementById('chat-input').placeholder = 'Chat deshabilitado.';
+}
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
-    loadCollections();
     setupEventListeners();
 });
 
@@ -17,23 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
  * Configura los event listeners
  */
 function setupEventListeners() {
-    const collectionSelect = document.getElementById('collection-select');
     const chatInput = document.getElementById('chat-input');
     const sendBtn = document.getElementById('send-btn');
-    const uploadForm = document.getElementById('upload-form');
-    const pdfFile = document.getElementById('pdf-file');
 
-    // Cambio de colección
-    collectionSelect.addEventListener('change', (e) => {
-        currentCollectionId = e.target.value;
-        if (currentCollectionId) {
-            enableChat();
-            clearMessages();
-            addSystemMessage(`Has seleccionado: ${e.target.options[e.target.selectedIndex].text}`);
-        } else {
-            disableChat();
-        }
-    });
+    // Habilitar chat por defecto
+    enableChat();
 
     // Input auto-resize
     chatInput.addEventListener('input', () => {
@@ -52,54 +56,61 @@ function setupEventListeners() {
     // Botón enviar
     sendBtn.addEventListener('click', sendMessage);
 
-    // Upload form
-    uploadForm.addEventListener('submit', handleUpload);
-
-    // File input change
-    pdfFile.addEventListener('change', (e) => {
-        const fileName = e.target.files[0]?.name || 'Ningún archivo seleccionado';
-        document.querySelector('.file-name').textContent = fileName;
-
-        // Auto-populate title
-        const titleInput = document.getElementById('pdf-title');
-        if (!titleInput.value && fileName !== 'Ningún archivo seleccionado') {
-            titleInput.value = fileName.replace('.pdf', '');
-        }
-    });
+    // Eliminado: lógica de uploadForm y pdfFile (ya no existe subida de documentos)
 }
 
 /**
- * Carga las colecciones disponibles
- */
-async function loadCollections() {
-    try {
-        const response = await fetch('/rag-chat/api/documents/');
-        const data = await response.json();
-
-        const select = document.getElementById('collection-select');
-        select.innerHTML = '<option value="">Selecciona un manual...</option>';
-
-        if (data.documents && data.documents.length > 0) {
-            data.documents.forEach(doc => {
-                if (doc.status === 'indexed') {
-                    const option = document.createElement('option');
-                    option.value = doc.id;
-                    option.textContent = `${doc.title} (${doc.page_count} páginas)`;
-                    select.appendChild(option);
-                }
-            });
-        }
-    } catch (error) {
-        console.error('Error cargando colecciones:', error);
-        showNotification('Error al cargar documentos', 'error');
-    }
-}
-
-/**
- * Envía un mensaje
+ * Envía un mensaje al backend y muestra la respuesta
  */
 async function sendMessage() {
-    if (isProcessing || !currentCollectionId) return;
+    if (isProcessing) return;
+
+    const input = document.getElementById('chat-input');
+    const query = input.value.trim();
+
+    if (!query) return;
+
+    // Agregar mensaje del usuario
+    addUserMessage(query);
+    input.value = '';
+    input.style.height = 'auto';
+
+    // Agregar indicador de carga
+    const loadingId = addLoadingMessage();
+
+    isProcessing = true;
+
+    // Llamada al backend (ajusta la URL si es necesario)
+    try {
+        const response = await fetch('/rag-chat/api/query/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        });
+        const data = await response.json();
+        removeLoadingMessage(loadingId);
+
+        if (data.answer) {
+            addAssistantMessage(data.answer, data.sources || []);
+        } else {
+            addAssistantMessage('No se pudo obtener respuesta del asistente.', []);
+        }
+    } catch (error) {
+        removeLoadingMessage(loadingId);
+        addAssistantMessage('Error al consultar el asistente.', []);
+    } finally {
+        isProcessing = false;
+    }
+}
+  // Función loadCollections eliminada: ya no hay selección de manual.
+
+  /**
+   * Envía un mensaje
+   */
+  async function sendMessage() {
+    if (isProcessing) return;
 
     const input = document.getElementById('chat-input');
     const query = input.value.trim();
@@ -116,41 +127,39 @@ async function sendMessage() {
     isProcessing = true;
 
     try {
-        const response = await fetch('/rag-chat/api/query/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                collection_id: currentCollectionId,
-                query: query,
-                top_k: 3
-            })
-        });
+      const response = await fetch('/rag-chat/api/query/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: query
+        })
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        // Remover loading
-        removeMessage(loadingId);
+      // Remover loading
+      removeMessage(loadingId);
 
-        if (response.ok) {
-            addAssistantMessage(data.answer, data.sources);
-        } else {
-            addErrorMessage(data.error || 'Error desconocido');
-        }
+      if (response.ok) {
+        addAssistantMessage(data.answer, data.sources);
+      } else {
+        addErrorMessage(data.error || 'Error desconocido');
+      }
     } catch (error) {
-        removeMessage(loadingId);
-        addErrorMessage('Error de conexión. Por favor intenta de nuevo.');
-        console.error('Error:', error);
+      removeMessage(loadingId);
+      addErrorMessage('Error de conexión. Por favor intenta de nuevo.');
+      console.error('Error:', error);
     } finally {
-        isProcessing = false;
+      isProcessing = false;
     }
-}
+  }
 
-/**
- * Agrega mensaje del usuario
- */
-function addUserMessage(text) {
+  /**
+   * Agrega mensaje del usuario
+   */
+  function addUserMessage(text) {
     const messagesContainer = document.getElementById('chat-messages');
 
     // Remover welcome message si existe
@@ -169,12 +178,12 @@ function addUserMessage(text) {
 
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
-}
+  }
 
-/**
- * Agrega mensaje del asistente
- */
-function addAssistantMessage(text, sources = []) {
+  /**
+   * Agrega mensaje del asistente
+   */
+  function addAssistantMessage(text, sources = []) {
     const messagesContainer = document.getElementById('chat-messages');
 
     const messageDiv = document.createElement('div');
@@ -182,8 +191,8 @@ function addAssistantMessage(text, sources = []) {
 
     let sourcesHtml = '';
     if (sources && sources.length > 0) {
-        const sourcesId = `sources-${Date.now()}-${Math.floor(Math.random()*10000)}`;
-        sourcesHtml = `
+      const sourcesId = `sources-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+      sourcesHtml = `
             <div class="message-sources">
                 <div class="sources-title" style="cursor:pointer; user-select:none;" onclick="toggleSources('${sourcesId}')">
                     <span class="toggle-arrow" id="${sourcesId}-arrow" style="font-size:14px; margin-right:4px;">►</span>
@@ -213,26 +222,26 @@ function addAssistantMessage(text, sources = []) {
 
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
-}
+  }
 
-// Colapsar/expandir fuentes consultadas
-function toggleSources(id) {
+  // Colapsar/expandir fuentes consultadas
+  function toggleSources(id) {
     const content = document.getElementById(id);
     const arrow = document.getElementById(id + '-arrow');
     if (!content) return;
     if (content.style.display === 'none') {
-        content.style.display = '';
-        if (arrow) arrow.textContent = '▼';
+      content.style.display = '';
+      if (arrow) arrow.textContent = '▼';
     } else {
-        content.style.display = 'none';
-        if (arrow) arrow.textContent = '►';
+      content.style.display = 'none';
+      if (arrow) arrow.textContent = '►';
     }
-}
+  }
 
-/**
- * Agrega mensaje del sistema
- */
-function addSystemMessage(text) {
+  /**
+   * Agrega mensaje del sistema
+   */
+  function addSystemMessage(text) {
     const messagesContainer = document.getElementById('chat-messages');
 
     const welcome = messagesContainer.querySelector('.welcome-message');
@@ -249,12 +258,12 @@ function addSystemMessage(text) {
 
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
-}
+  }
 
-/**
- * Agrega indicador de carga
- */
-function addLoadingMessage() {
+  /**
+   * Agrega indicador de carga
+   */
+  function addLoadingMessage() {
     const messagesContainer = document.getElementById('chat-messages');
     const loadingId = 'loading-' + Date.now();
 
@@ -276,12 +285,12 @@ function addLoadingMessage() {
     scrollToBottom();
 
     return loadingId;
-}
+  }
 
-/**
- * Agrega mensaje de error
- */
-function addErrorMessage(text) {
+  /**
+   * Agrega mensaje de error
+   */
+  function addErrorMessage(text) {
     const messagesContainer = document.getElementById('chat-messages');
 
     const messageDiv = document.createElement('div');
@@ -295,68 +304,68 @@ function addErrorMessage(text) {
 
     messagesContainer.appendChild(messageDiv);
     scrollToBottom();
-}
+  }
 
-/**
- * Remueve un mensaje
- */
-function removeMessage(messageId) {
+  /**
+   * Remueve un mensaje
+   */
+  function removeMessage(messageId) {
     const message = document.getElementById(messageId);
     if (message) message.remove();
-}
+  }
 
-/**
- * Limpia todos los mensajes
- */
-function clearMessages() {
+  /**
+   * Limpia todos los mensajes
+   */
+  function clearMessages() {
     const messagesContainer = document.getElementById('chat-messages');
     messagesContainer.innerHTML = '';
-}
+  }
 
-/**
- * Habilita el chat
- */
-function enableChat() {
+  /**
+   * Habilita el chat
+   */
+  function enableChat() {
     document.getElementById('chat-input').disabled = false;
     document.getElementById('send-btn').disabled = false;
     document.getElementById('chat-input').placeholder = 'Escribe tu pregunta aquí...';
-}
+  }
 
-/**
- * Deshabilita el chat
- */
-function disableChat() {
+  /**
+   * Deshabilita el chat
+   */
+  function disableChat() {
     document.getElementById('chat-input').disabled = true;
     document.getElementById('send-btn').disabled = true;
-    document.getElementById('chat-input').placeholder = 'Selecciona un manual primero...';
-}
+    document.getElementById('chat-input').placeholder = 'Chat deshabilitado.';
+  }
 
-/**
- * Scroll al final
- */
-function scrollToBottom() {
+  /**
+   * Scroll al final
+   */
+  function scrollToBottom() {
     const messagesContainer = document.getElementById('chat-messages');
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
+  }
 
-/**
- * Modal de upload
- */
-function showUploadModal() {
+  /**
+   * Modal de upload
+   */
+  function showUploadModal() {
     document.getElementById('upload-modal').style.display = 'flex';
-}
+  }
 
-function closeUploadModal() {
+  function closeUploadModal() {
     document.getElementById('upload-modal').style.display = 'none';
     document.getElementById('upload-form').reset();
     document.querySelector('.file-name').textContent = 'Ningún archivo seleccionado';
     document.getElementById('upload-progress').style.display = 'none';
-}
+  }
 
-/**
- * Maneja el upload de PDF
- */
-async function handleUpload(e) {
+  /**
+   * Maneja el upload de PDF
+   */
+  async function handleUpload(e) {
     e.preventDefault();
 
     const fileInput = document.getElementById('pdf-file');
@@ -364,8 +373,8 @@ async function handleUpload(e) {
     const file = fileInput.files[0];
 
     if (!file) {
-        showNotification('Por favor selecciona un archivo', 'error');
-        return;
+      showNotification('Por favor selecciona un archivo', 'error');
+      return;
     }
 
     const formData = new FormData();
@@ -382,92 +391,92 @@ async function handleUpload(e) {
     submitBtn.disabled = true;
 
     try {
-        progressText.textContent = 'Subiendo archivo...';
-        progressFill.style.width = '30%';
+      progressText.textContent = 'Subiendo archivo...';
+      progressFill.style.width = '30%';
 
-        const response = await fetch('/rag-chat/api/upload/', {
-            method: 'POST',
-            body: formData
-        });
+      const response = await fetch('/rag-chat/api/upload/', {
+        method: 'POST',
+        body: formData
+      });
 
-        progressFill.style.width = '60%';
-        progressText.textContent = 'Procesando documento...';
+      progressFill.style.width = '60%';
+      progressText.textContent = 'Procesando documento...';
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-            progressFill.style.width = '100%';
-            progressText.textContent = '¡Documento procesado exitosamente!';
+      if (response.ok) {
+        progressFill.style.width = '100%';
+        progressText.textContent = '¡Documento procesado exitosamente!';
 
-            showNotification(`Documento "${data.title}" indexado con ${data.chunk_count} fragmentos`, 'success');
+        showNotification(`Documento "${data.title}" indexado con ${data.chunk_count} fragmentos`, 'success');
 
-            // Recargar colecciones
-            await loadCollections();
+        // Recargar colecciones
+        await loadCollections();
 
-            // Cerrar modal después de un momento
-            setTimeout(() => {
-                closeUploadModal();
-            }, 1500);
-        } else {
-            throw new Error(data.error || 'Error al procesar documento');
-        }
+        // Cerrar modal después de un momento
+        setTimeout(() => {
+          closeUploadModal();
+        }, 1500);
+      } else {
+        throw new Error(data.error || 'Error al procesar documento');
+      }
     } catch (error) {
-        console.error('Error en upload:', error);
-        progressText.textContent = 'Error: ' + error.message;
-        progressText.style.color = 'var(--color-dark)';
-        showNotification('Error al subir documento: ' + error.message, 'error');
+      console.error('Error en upload:', error);
+      progressText.textContent = 'Error: ' + error.message;
+      progressText.style.color = 'var(--color-dark)';
+      showNotification('Error al subir documento: ' + error.message, 'error');
     } finally {
-        submitBtn.disabled = false;
+      submitBtn.disabled = false;
     }
-}
+  }
 
-/**
- * Muestra notificación
- */
-function showNotification(message, type = 'info') {
+  /**
+   * Muestra notificación
+   */
+  function showNotification(message, type = 'info') {
     // Si existe un sistema de notificaciones del dashboard, úsalo
     // Si no, mostrar un alert simple
     if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-        new Notification('RAG Chat', { body: message });
+      new Notification('RAG Chat', { body: message });
     } else {
-        console.log(`[${type.toUpperCase()}] ${message}`);
+      console.log(`[${type.toUpperCase()}] ${message}`);
     }
-}
+  }
 
-/**
- * Escapa HTML
- */
-function escapeHtml(text) {
+  /**
+   * Escapa HTML
+   */
+  function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
+  }
 
-/**
- * Formatea hora
- */
-function formatTime(date) {
+  /**
+   * Formatea hora
+   */
+  function formatTime(date) {
     return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-}
+  }
 
-/**
- * Modal de gestión de documentos
- */
-function showManageDocsModal() {
+  /**
+   * Modal de gestión de documentos
+   */
+  function showManageDocsModal() {
     document.getElementById('manage-docs-modal').style.display = 'flex';
     loadDocumentsList();
-}
+  }
 
-function closeManageDocsModal() {
+  function closeManageDocsModal() {
     document.getElementById('manage-docs-modal').style.display = 'none';
-}
+  }
 
-/**
- * Carga la lista de documentos para el modal de gestión
- */
-async function loadDocumentsList() {
+  /**
+   * Carga la lista de documentos para el modal de gestión
+   */
+  async function loadDocumentsList() {
     const container = document.getElementById('docs-list-container');
-    
+
     container.innerHTML = `
         <div class="docs-loading">
             <div class="loading-dots">
@@ -480,11 +489,11 @@ async function loadDocumentsList() {
     `;
 
     try {
-        const response = await fetch('/rag-chat/api/documents/');
-        const data = await response.json();
+      const response = await fetch('/rag-chat/api/documents/');
+      const data = await response.json();
 
-        if (data.documents && data.documents.length > 0) {
-            container.innerHTML = `
+      if (data.documents && data.documents.length > 0) {
+        container.innerHTML = `
                 <div class="docs-list">
                     <div class="docs-list-header">
                         <span class="doc-col-title">Documento</span>
@@ -522,8 +531,8 @@ async function loadDocumentsList() {
                     `).join('')}
                 </div>
             `;
-        } else {
-            container.innerHTML = `
+      } else {
+        container.innerHTML = `
                 <div class="docs-empty">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -535,94 +544,88 @@ async function loadDocumentsList() {
                     </button>
                 </div>
             `;
-        }
+      }
     } catch (error) {
-        console.error('Error cargando documentos:', error);
-        container.innerHTML = `
+      console.error('Error cargando documentos:', error);
+      container.innerHTML = `
             <div class="docs-error">
                 <p>Error al cargar documentos</p>
                 <button class="btn-secondary" onclick="loadDocumentsList()">Reintentar</button>
             </div>
         `;
     }
-}
+  }
 
-/**
- * Retorna badge de estado
- */
-function getStatusBadge(status) {
+  /**
+   * Retorna badge de estado
+   */
+  function getStatusBadge(status) {
     const statusMap = {
-        'indexed': { text: 'Indexado', class: 'status-success' },
-        'processing': { text: 'Procesando', class: 'status-warning' },
-        'pending': { text: 'Pendiente', class: 'status-info' },
-        'error': { text: 'Error', class: 'status-danger' }
+      'indexed': { text: 'Indexado', class: 'status-success' },
+      'processing': { text: 'Procesando', class: 'status-warning' },
+      'pending': { text: 'Pendiente', class: 'status-info' },
+      'error': { text: 'Error', class: 'status-danger' }
     };
     const s = statusMap[status] || { text: status, class: 'status-info' };
     return `<span class="status-badge ${s.class}">${s.text}</span>`;
-}
+  }
 
-/**
- * Elimina un documento
- */
-async function deleteDocument(docId, docTitle) {
+  /**
+   * Elimina un documento
+   */
+  async function deleteDocument(docId, docTitle) {
     const confirmed = await AppFeedback.confirm({
-        title: 'Eliminar Documento',
-        message: `¿Estás seguro de que deseas eliminar el documento "${docTitle}"?\n\nEsta acción eliminará el documento y todos sus fragmentos indexados.`,
-        confirmLabel: 'Eliminar',
-        cancelLabel: 'Cancelar'
+      title: 'Eliminar Documento',
+      message: `¿Estás seguro de que deseas eliminar el documento "${docTitle}"?\n\nEsta acción eliminará el documento y todos sus fragmentos indexados.`,
+      confirmLabel: 'Eliminar',
+      cancelLabel: 'Cancelar'
     });
-    
+
     if (!confirmed) {
-        return;
+      return;
     }
 
     const docItem = document.querySelector(`.doc-item[data-id="${docId}"]`);
     if (docItem) {
-        docItem.classList.add('doc-deleting');
+      docItem.classList.add('doc-deleting');
     }
 
     try {
-        const response = await fetch(`/rag-chat/api/document/${docId}/`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            showNotification(`Documento "${docTitle}" eliminado correctamente`, 'success');
-            
-            // Recargar listas
-            await loadDocumentsList();
-            await loadCollections();
-            
-            // Si el documento eliminado era el seleccionado, limpiar selección
-            if (currentCollectionId == docId) {
-                currentCollectionId = null;
-                document.getElementById('collection-select').value = '';
-                disableChat();
-                clearMessages();
-                showWelcomeMessage();
-            }
-        } else {
-            throw new Error(data.error || 'Error al eliminar documento');
+      const response = await fetch(`/rag-chat/api/document/${docId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
         }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showNotification(`Documento "${docTitle}" eliminado correctamente`, 'success');
+
+        // Recargar listas
+        await loadDocumentsList();
+        await loadCollections();
+
+        // Si el documento eliminado era el seleccionado, limpiar selección
+        // Eliminado: lógica de colección y selección
+      } else {
+        throw new Error(data.error || 'Error al eliminar documento');
+      }
     } catch (error) {
-        console.error('Error eliminando documento:', error);
-        showNotification('Error al eliminar documento: ' + error.message, 'error');
-        
-        if (docItem) {
-            docItem.classList.remove('doc-deleting');
-        }
-    }
-}
+      console.error('Error eliminando documento:', error);
+      showNotification('Error al eliminar documento: ' + error.message, 'error');
 
-/**
- * Muestra mensaje de bienvenida
- */
-function showWelcomeMessage() {
+      if (docItem) {
+        docItem.classList.remove('doc-deleting');
+      }
+    }
+  }
+
+  /**
+   * Muestra mensaje de bienvenida
+   */
+  function showWelcomeMessage() {
     const messagesContainer = document.getElementById('chat-messages');
     messagesContainer.innerHTML = `
         <div class="welcome-message">
@@ -634,4 +637,4 @@ function showWelcomeMessage() {
             <p>Selecciona un manual arriba y comienza a hacer preguntas sobre su contenido.</p>
         </div>
     `;
-}
+  }
