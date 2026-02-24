@@ -14,9 +14,9 @@
     <div class="form-header">
         <h1>
             {% if object %}
-                ✏️ Editar Imagen del Carrusel
+                Editar Imagen del Carrusel
             {% else %}
-                ➕ Agregar Imagen al Carrusel
+                Agregar Imagen al Carrusel
             {% endif %}
         </h1>
         <p>
@@ -29,7 +29,7 @@
     </div>
 
     <div class="validation-requirements">
-        <h4>📋 Requisitos de la imagen:</h4>
+        <h4>Requisitos de la imagen:</h4>
         <ul>
             <li>Formatos permitidos: JPG, JPEG, PNG, WebP</li>
             <li>Tamaño máximo: 10MB</li>
@@ -40,7 +40,7 @@
 
     <form method="post" enctype="multipart/form-data" id="carousel-form">
         {% csrf_token %}
-        
+
         <div class="form-group {% if form.title.errors %}error{% endif %}">
             <label for="{{ form.title.id_for_label }}">
                 Título <span class="required">*</span>
@@ -73,7 +73,7 @@
                     {% endfor %}
                 </ul>
             {% endif %}
-            
+
             {% if object and object.image %}
                 <div class="current-image">
                     <p><strong>Imagen actual:</strong></p>
@@ -166,7 +166,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
-                {% if object %}💾 Guardar Cambios{% else %}➕ Agregar Imagen{% endif %}
+                {% if object %}Guardar Cambios{% else %}➕ Agregar Imagen{% endif %}
             </button>
             <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">
                 ❌ Cancelar
@@ -182,11 +182,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.querySelector('input[type="file"]');
     const previewContainer = document.getElementById('image-preview');
     const previewImg = document.getElementById('preview-img');
-    
+
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
-            
+
             if (file) {
                 // Validar tamaño
                 const maxSize = 10 * 1024 * 1024; // 10MB
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     previewContainer.style.display = 'none';
                     return;
                 }
-                
+
                 // Validar tipo
                 const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
                 if (!validTypes.includes(file.type)) {
@@ -205,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     previewContainer.style.display = 'none';
                     return;
                 }
-                
+
                 // Mostrar preview
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -218,11 +218,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
+
     // Auto-fill alt text from title if empty
     const titleInput = document.querySelector('input[name="title"]');
     const altTextInput = document.querySelector('input[name="alt_text"]');
-    
+
     if (titleInput && altTextInput) {
         titleInput.addEventListener('blur', function() {
             if (!altTextInput.value && titleInput.value) {
