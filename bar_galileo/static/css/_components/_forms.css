@@ -1,4 +1,5 @@
-@import '_selects.css';
+@import "
+.css";
 
 /* Cuadro para mostrar info personal y emergencia */
 .info-row-box {
@@ -60,7 +61,7 @@ form {
     border-radius: 8px;
 }
 
-form p{
+form p {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -155,9 +156,8 @@ input[type="radio"] {
     margin-right: 0.5rem;
 }
 
-
-@media (max-width: 600px){
-    form{
-        padding-top: 0
+@media (max-width: 600px) {
+    form {
+        padding-top: 0;
     }
 }

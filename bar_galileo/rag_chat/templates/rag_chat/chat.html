@@ -15,25 +15,7 @@
             Chat con Documentos
         </h1>
         <div class="chat-header-actions">
-            <select id="collection-select" class="collection-select">
-                <option value="">Selecciona un manual...</option>
-            </select>
-            <button id="manage-docs-btn" class="btn-secondary" onclick="showManageDocsModal()" title="Gestionar documentos">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                </svg>
-                Gestionar
-            </button>
-            <button id="upload-btn" class="btn-primary" onclick="showUploadModal()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                </svg>
-                Subir PDF
-            </button>
+            <!-- Select de manual eliminado. El chat está habilitado por defecto. -->
         </div>
     </div>
 
@@ -58,9 +40,8 @@
                     class="chat-input"
                     placeholder="Escribe tu pregunta aquí..."
                     rows="1"
-                    disabled
                 ></textarea>
-                <button id="send-btn" class="send-btn" disabled>
+                <button id="send-btn" class="send-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -76,6 +57,7 @@
 </div>
 
 <!-- Modal para subir PDF -->
+<!--
 <div id="upload-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -103,6 +85,7 @@
                 <div class="upload-progress" id="upload-progress" style="display: none;">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
+-->
                     </div>
                     <p class="progress-text" id="progress-text">Procesando documento...</p>
                 </div>
@@ -115,6 +98,7 @@
     </div>
 </div>
 
+<!--
 <!-- Modal para gestionar documentos -->
 <div id="manage-docs-modal" class="modal-overlay" style="display: none;">
     <div class="modal-content modal-large">
@@ -138,6 +122,7 @@
                 <div class="docs-loading">
                     <div class="loading-dots">
                         <div class="loading-dot"></div>
+-->
                         <div class="loading-dot"></div>
                         <div class="loading-dot"></div>
                     </div>
@@ -154,6 +139,7 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{% static 'js/vendor/marked.min.js' %}"></script>
 <script src="{% static 'js/rag_chat/chat.js' %}"></script>
 <script>
 // Funciones para gestionar documentos (inline para asegurar disponibilidad)
@@ -169,7 +155,7 @@ function closeManageDocsModal() {
 
 async function loadDocumentsList() {
     const container = document.getElementById('docs-list-container');
-    
+
     container.innerHTML = `
         <div class="docs-loading">
             <div class="loading-dots">
@@ -274,7 +260,7 @@ async function deleteDocument(docId, docTitle) {
         confirmLabel: 'Eliminar',
         cancelLabel: 'Cancelar'
     });
-    
+
     if (!confirmed) {
         return;
     }
@@ -297,13 +283,13 @@ async function deleteDocument(docId, docTitle) {
 
         if (response.ok) {
             alert(`✅ Documento "${docTitle}" eliminado correctamente`);
-            
+
             // Recargar listas
             await loadDocumentsList();
             if (typeof loadCollections === 'function') {
                 await loadCollections();
             }
-            
+
             // Si el documento eliminado era el seleccionado, limpiar selección
             if (typeof currentCollectionId !== 'undefined' && currentCollectionId == docId) {
                 currentCollectionId = null;
@@ -317,7 +303,7 @@ async function deleteDocument(docId, docTitle) {
     } catch (error) {
         console.error('Error eliminando documento:', error);
         alert('❌ Error al eliminar documento: ' + error.message);
-        
+
         if (docItem) {
             docItem.style.opacity = '1';
             docItem.style.pointerEvents = 'auto';
