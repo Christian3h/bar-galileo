@@ -351,7 +351,7 @@
   visibility: hidden;
   transform: translateY(-10px);
   transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
-  z-index: 2100;
+  z-index: 9999;
   overflow: hidden;
   border: 2px solid var(--color-secondary);
   display: flex;

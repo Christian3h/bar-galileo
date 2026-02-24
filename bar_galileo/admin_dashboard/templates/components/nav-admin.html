@@ -157,10 +157,10 @@
 
                 {% if request.user|has_perm:"site_images,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="toggleMenu('imagenes-submenu')"><img src="{% static 'img/icons/attach_money.svg' %}" alt="Gestión de Imágenes"> 🖼️ Imágenes</button>
+                    <button class="menu-btn" onclick="toggleMenu('imagenes-submenu')"><img src="{% static 'img/icons/images.svg' %}" alt="Gestión de Imágenes">Imágenes</button>
                     <ul id="imagenes-submenu" class="submenu hidden">
                         <li><a href="{% url 'site_images:image_management' %}">Gestión de imágenes</a></li>
-                        <li><a href="{% url 'site_images:site_content_list' %}">✏️ Contenido de la home</a></li>
+                        <li><a href="{% url 'site_images:site_content_list' %}">Contenido de la página de inicio</a></li>
                         {% if request.user|has_perm:"site_images,crear" %}
                         <li><a href="{% url 'site_images:carousel_image_create' %}">Agregar al carrusel</a></li>
                         <li><a href="{% url 'site_images:site_image_create' %}">Agregar imagen</a></li>
