@@ -1,0 +1,103 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}Editar {{ section_label }} - Admin{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/main/admin/image_forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <div class="form-header">
+    <h2>Editar contenido: {{ section_label }}</h2>
+    <p>Estos textos se mostrarán en la sección correspondiente de la página de inicio.</p>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+
+    {% if section_key == 'hero' %}
+      <div class="form-section-title">Sección Hero (Portada)</div>
+      {% include 'site_images/_content_field.html' with field=form.hero_title label="Título principal" %}
+      {% include 'site_images/_content_field.html' with field=form.hero_subtitle label="Subtítulo" %}
+      {% include 'site_images/_content_field.html' with field=form.hero_button1_text label="Texto botón 1" %}
+      {% include 'site_images/_content_field.html' with field=form.hero_button2_text label="Texto botón 2" %}
+
+    {% elif section_key == 'about' %}
+      <div class="form-section-title">Sección Acerca de</div>
+      {% include 'site_images/_content_field.html' with field=form.about_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.about_paragraph1 label="Párrafo 1" %}
+      {% include 'site_images/_content_field.html' with field=form.about_paragraph2 label="Párrafo 2" %}
+      {% include 'site_images/_content_field.html' with field=form.about_paragraph3 label="Párrafo 3" %}
+
+    {% elif section_key == 'cocktails' %}
+      <div class="form-section-title">Sección Cócteles</div>
+      {% include 'site_images/_content_field.html' with field=form.cocktails_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.cocktails_subtitle label="Subtítulo" %}
+
+    {% elif section_key == 'services' %}
+      <div class="form-section-title">Sección Servicios</div>
+      {% include 'site_images/_content_field.html' with field=form.services_title label="Título de la sección" %}
+      {% include 'site_images/_content_field.html' with field=form.services_subtitle label="Subtítulo de la sección" %}
+
+      <div class="form-section-subtitle">Estadística 1</div>
+      {% include 'site_images/_content_field.html' with field=form.service1_number label="Número / Valor" %}
+      {% include 'site_images/_content_field.html' with field=form.service1_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.service1_description label="Descripción" %}
+
+      <div class="form-section-subtitle">Estadística 2</div>
+      {% include 'site_images/_content_field.html' with field=form.service2_number label="Número / Valor" %}
+      {% include 'site_images/_content_field.html' with field=form.service2_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.service2_description label="Descripción" %}
+
+      <div class="form-section-subtitle">Estadística 3</div>
+      {% include 'site_images/_content_field.html' with field=form.service3_number label="Número / Valor" %}
+      {% include 'site_images/_content_field.html' with field=form.service3_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.service3_description label="Descripción" %}
+
+      <div class="form-section-subtitle">Estadística 4</div>
+      {% include 'site_images/_content_field.html' with field=form.service4_number label="Número / Valor" %}
+      {% include 'site_images/_content_field.html' with field=form.service4_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.service4_description label="Descripción" %}
+
+    {% elif section_key == 'reservations' %}
+      <div class="form-section-title">Sección Reservas</div>
+      {% include 'site_images/_content_field.html' with field=form.reservations_title label="Título" %}
+      {% include 'site_images/_content_field.html' with field=form.reservations_text label="Texto descriptivo" %}
+      {% include 'site_images/_content_field.html' with field=form.reservations_whatsapp label="Número de WhatsApp (sin + ni espacios)" %}
+      {% include 'site_images/_content_field.html' with field=form.reservations_button_text label="Texto del botón" %}
+    {% endif %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      <a href="{% url 'site_images:site_content_list' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<style>
+.form-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 0.4rem;
+  margin: 1.5rem 0 1rem;
+}
+.form-section-subtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  margin: 1.25rem 0 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid var(--color-secondary);
+}
+</style>
+{% endblock %}

@@ -1,0 +1,109 @@
+@import '../../_variables/_colors.css';
+@import '../../_components/selects.css';
+
+.store-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 100px auto 0;
+}
+
+@media (min-width: 768px) {
+    .store-container {
+        flex-direction: row;
+    }
+}
+
+.filters {
+    flex: 0 0 250px;
+}
+
+.filters h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-secondary);
+}
+
+.filter-group {
+    margin-bottom: 2rem;
+}
+
+.filter-group h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-secondary);
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--color-accent);
+    border: 1px solid var(--color-primary);
+    color: var(--color-secondary);
+    border-radius: 5px;
+}
+
+.price-range {
+    display: flex;
+    gap: 1rem;
+}
+
+.price-range input {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--color-accent);
+    border: 1px solid var(--color-primary);
+    color: var(--color-secondary);
+    border-radius: 5px;
+}
+
+.btn-filter {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--color-primary);
+    color: var(--color-light);
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: opacity 0.3s ease;
+}
+
+.btn-filter:hover {
+    opacity: 0.9;
+}
+
+.product-grid-container {
+    flex: 1;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.pagination {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.step-links a {
+    margin: 0 0.5rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.step-links a:hover {
+    opacity: 0.7;
+}
+
+.step-links .current {
+    margin: 0 0.5rem;
+    color: var(--color-secondary);
+}

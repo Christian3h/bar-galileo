@@ -4,69 +4,115 @@
 
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Nombre y Acciones */
+    @media (max-width: 768px) {
+      #tabla-proveedores .col-2,
+      #tabla-proveedores .col-3,
+      #tabla-proveedores .col-4 {
+        display: none;
+      }
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Proveedores</h1>
-        <!-- Contenedor responsivo para la tabla -->
-        <div class="table-responsive">
-            <table id="tabla-proveedores" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th class="idT">ID</th>
-                        <th class="nombreT">Nombre</th>
-                        <th class="contactoT">Contacto</th>
-                        <th class="telefonoT">Teléfono</th>
-                        <th class="direccionT">Dirección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for proveedor in proveedores %}
-                    <tr>
-                        <td class="idT">{{ proveedor.id_proveedor }}</td>
-                        <td class="nombreT">{{ proveedor.nombre }}</td>
-                        <td class="contactoT">{{ proveedor.contacto }}</td>
-                        <td class="telefonoT">{{ proveedor.telefono }}</td>
-                        <td class="direccionT">{{ proveedor.direccion }}</td>
-                        <td>
-                            {% if request.user|has_perm:"providers,editar" %}
-                                <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-warning">Editar</a>
-                            {% endif %}
-                            {% if request.user|has_perm:"providers,eliminar" %}
-                                <a href="{% url 'products:proveedores_delete_admin' proveedor.id_proveedor %}" class="btn btn-sm btn-danger">Eliminar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
+        {% if request.user|has_perm:"providers,crear" %}
+            <a href="{% url 'products:proveedores_create_admin' %}" class="btn btn-success mb-3">Crear Proveedor</a>
+        {% endif %}
+        <div class="table-contenedor">
+            <div class="table-responsive">
+                <table id="tabla-proveedores" class="table table-striped">
+                    <caption class="sr-only visually-hidden">Tabla con la lista de proveedores</caption>
+                    <thead>
                         <tr>
-                            <td colspan="6">No hay proveedores disponibles.</td>
+                            <th scope="col" class="col-1">Nombre</th>
+                            <th scope="col" class="col-2">Contacto</th>
+                            <th scope="col" class="col-3">Teléfono</th>
+                            <th scope="col" class="col-4">Dirección</th>
+                            <th scope="col">Acciones</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for proveedor in proveedores %}
+                        <tr>
+                            <td class="col-1">{{ proveedor.nombre }}</td>
+                            <td class="col-2">{{ proveedor.contacto }}</td>
+                            <td class="col-3">{{ proveedor.telefono }}</td>
+                            <td class="col-4">{{ proveedor.direccion }}</td>
+                            <td class="actions-cell">
+                                <div class="btn-group" role="group">
+                                {% if request.user|has_perm:"providers,editar" %}
+                                    <a href="{% url 'products:proveedores_edit_admin' proveedor.id_proveedor %}"
+                                       class="btn btn-sm btn-warning"
+                                       title="Editar {{ proveedor.nombre }}"
+                                       aria-label="Editar proveedor {{ proveedor.nombre }}">
+                                        <img src="{% static 'img/icons/edit.svg' %}" alt="Editar" style="width:16px; height:16px;">
+                                    </a>
+                                {% endif %}
+                                {% if request.user|has_perm:"providers,eliminar" %}
+                                    <button type="button"
+                                       class="btn btn-sm btn-danger"
+                                       title="Eliminar {{ proveedor.nombre }}"
+                                       aria-label="Eliminar proveedor {{ proveedor.nombre }}"
+                                       onclick="confirmarEliminarProveedor({{ proveedor.id_proveedor }}, '{{ proveedor.nombre|escapejs }}')">
+                                        <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width:16px; height:16px;">
+                                    </button>
+                                {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No hay proveedores registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
     <!-- Inicialización de DataTables -->
+    <!-- Formulario oculto para eliminación de proveedor -->
+    <form id="delete-proveedor-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
     <script>
+    async function confirmarEliminarProveedor(proveedorId, proveedorNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Proveedor',
+            message: `¿Estás seguro de que deseas eliminar el proveedor "${proveedorNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        if (confirmed) {
+            const form = document.getElementById('delete-proveedor-form');
+            form.action = `/adminD/proveedores/delete/${proveedorId}/`;
+            form.submit();
+        }
+    }
+    window.confirmarEliminarProveedor = confirmarEliminarProveedor;
+
     $(document).ready(function() {
-        $('#tabla-proveedores').DataTable({
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
-            },
-            responsive: true,  // Habilita el modo responsivo
-            "pageLength": 10,  // Establece el número de filas por página
-            "lengthChange": true,  // Permite cambiar el número de filas por página
-            "ordering": true,  // Habilita la ordenación de las columnas
-            "createdRow": function (row, data, dataIndex) {
-                // Añadir clases a las celdas para responsive
-                $(row).find('td').eq(0).addClass('idT');
-                $(row).find('td').eq(1).addClass('nombreT');
-                $(row).find('td').eq(2).addClass('contactoT');
-                $(row).find('td').eq(3).addClass('telefonoT');
-                $(row).find('td').eq(4).addClass('direccionT');
-            }
+        var sel = '#tabla-proveedores';
+        if (!$(sel).length) return;
+
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+
+        $(sel).DataTable({
+            language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
+            responsive: true,
+            pageLength: 10,
+            lengthChange: true,
+            ordering: true,
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false }
+            ]
         });
     });
     </script>

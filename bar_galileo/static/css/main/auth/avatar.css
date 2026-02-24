@@ -1,0 +1,58 @@
+/* Avatar Gmail style */
+@import "../../_variables/_colors.css";
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-secondary);
+    background: var(--color-light);
+    display: inline-block;
+    vertical-align: middle;
+}
+.user-avatar-initials {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--color-secondary);
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--color-secondary);
+    vertical-align: middle;
+}
+.user-avatar-dropdown {
+    position: relative;
+    display: inline-block;
+}
+.user-avatar-dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 45px;
+    background: var(--color-accent);
+    min-width: 180px;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    z-index: 2000;
+    padding: 10px 0;
+}
+.user-avatar-dropdown:hover .user-avatar-dropdown-content,
+.user-avatar-dropdown:focus-within .user-avatar-dropdown-content {
+    display: block;
+}
+.user-avatar-dropdown-content a {
+    color: var(--color-secondary);
+    padding: 10px 20px;
+    display: block;
+    text-decoration: none;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+.user-avatar-dropdown-content a:hover {
+    background: var(--color-light);
+}

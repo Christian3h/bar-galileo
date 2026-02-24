@@ -1,29 +1,80 @@
 {% extends 'base_admin.html' %}
 {% block content %}
-<h2>Roles</h2>
-<table id="roles-table" class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for rol in roles %}
-        <tr>
-            <td>{{ rol.nombre }}</td>
-            <td>{{ rol.descripcion }}</td>
-            <td>
-                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-primary">Editar permisos</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% load static %}
+{% load roles_tags %}
+<div class="container">
+    <h2 class="my-4">Roles</h2>
+    {% if request.user|has_perm:"roles,crear" %}
+        <a href="{% url 'roles:rol_create' %}" class="btn btn-success mb-3">Crear Rol</a>
+    {% endif %}
+    <div class="table-contenedor">
+        <div class="table-responsive">
+            <table id="roles-table" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rol in roles %}
+                    <tr>
+                        <td>{{ rol.nombre }}</td>
+                        <td>{{ rol.descripcion }}</td>
+                        <td>
+                            {% if request.user|has_perm:"roles,editar" %}
+                                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info" title="Gestionar permisos del rol">Permisos</a>
+                                <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary" title="Editar rol"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                            {% endif %}
+                            {% if request.user|has_perm:"roles,eliminar" %}
+                                <button type="button" class="btn btn-sm btn-danger" title="Eliminar rol"
+                                    onclick="confirmarEliminarRol({{ rol.pk }}, '{{ rol.nombre }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Formulario oculto para eliminación -->
+<form id="delete-rol-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
-$(document).ready(function() {
-    $('#roles-table').DataTable();
-});
+    async function confirmarEliminarRol(rolId, rolNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Rol',
+            message: `¿Estás seguro de que deseas eliminar el rol "${rolNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-rol-form');
+            form.action = `/roles/${rolId}/eliminar/`;
+            form.submit();
+        }
+    }
+
+    $(document).ready(function () {
+        var sel = '#roles-table';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
+            "language": {
+                "url": "{% static 'js/DataTables/es-ES.json' %}"
+            }
+        });
+    });
 </script>
 {% endblock %}

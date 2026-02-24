@@ -1,0 +1,53 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file:
+      - .env.docker
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bar_galileo}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_USER: ${MYSQL_USER:-django}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-django}
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - .env.docker
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-bar_galileo.settings}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-bar_galileo}
+      DB_USER: ${DB_USER:-django}
+      DB_PASSWORD: ${DB_PASSWORD:-django}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      emailHost: ${EMAIL_HOST_USER:-}
+      emailPassword: ${EMAIL_HOST_PASSWORD:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./bar_galileo:/app/bar_galileo:rw
+      - static_volume:/app/bar_galileo/staticfiles
+      - media_volume:/app/bar_galileo/media
+    command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "bar_galileo.asgi:application"]
+
+volumes:
+  db_data:
+  static_volume:
+  media_volume:

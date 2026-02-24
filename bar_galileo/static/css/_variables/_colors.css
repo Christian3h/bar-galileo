@@ -1,5 +1,5 @@
 /* Colores principales para el e-commerce Vive Natural */
-:root {
+/* :root {
   --color-primary: #62733d;
   --color-secondary: #a68932;
   --color-dark: #bf452a;
@@ -7,4 +7,77 @@
   --color-accent: #0d0d0d;
   --color-gray: #a68932;
   --color-shadow: #62733d;
+} */
+
+:root {
+  --color-primary: #7d9250;   /* verde natural más claro */
+  --color-secondary: #4a4a4a; /* gris oscuro para texto (mejor contraste) */
+  --color-dark: #a6502a;      /* acento rojizo natural */
+  --color-light: #e5e5e5;     /* fondo claro */
+  --color-accent: #ffffff;    /* tarjetas o contenedores */
+  --color-gray: #b1b1b1;      /* texto secundario */
+  --color-shadow: #c3d1a3;    /* sombras suaves */
+  --color-surface: #f9faf5;
+  --color-surface-alt: #ffffff;
+  --color-border-muted: rgba(0, 0, 0, 0.08);
+
+  --color-success: #4f9d69;
+  --color-success-strong: #2f6a3c;
+  --color-warning: #dca437;
+  --color-warning-strong: #8a640f;
+  --color-info: #4b7fd1;
+  --color-info-strong: #27457b;
+  --color-danger: #c5533f;
+  --color-danger-strong: #843224;
+
+  --feedback-success-bg: #eef9f1;
+  --feedback-success-foreground: #204a31;
+  --feedback-warning-bg: #fff6e7;
+  --feedback-warning-foreground: #6a3f00;
+  --feedback-info-bg: #e9f1ff;
+  --feedback-info-foreground: #143861;
+  --feedback-danger-bg: #fff0ed;
+  --feedback-danger-foreground: #6d2015;
+  --feedback-neutral-bg: #f6f6f6;
+  --feedback-neutral-foreground: #2d2d2d;
+  --feedback-changed-bg: #f1f7e8;
+  --feedback-changed-foreground: #304d1a;
+  --feedback-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* === 🌑 Tema Oscuro === */
+[data-theme="dark"] {
+  --color-primary: #62733d;
+  --color-secondary: #a68932;
+  --color-dark: #bf452a;
+  --color-light: #262626;
+  --color-accent: #0d0d0d;
+  --color-gray: #a68932;
+  --color-shadow: #62733d;
+  --color-surface: #151515;
+  --color-surface-alt: #1f1f1f;
+  --color-border-muted: rgba(255, 255, 255, 0.1);
+
+  --color-success: #7dd9a4;
+  --color-success-strong: #5ab782;
+  --color-warning: #f5c76a;
+  --color-warning-strong: #d49b33;
+  --color-info: #7db0ff;
+  --color-info-strong: #4f7dcb;
+  --color-danger: #ff8b7b;
+  --color-danger-strong: #e66552;
+
+  --feedback-success-bg: rgba(125, 217, 164, 0.16);
+  --feedback-success-foreground: #e4fff1;
+  --feedback-warning-bg: rgba(245, 199, 106, 0.16);
+  --feedback-warning-foreground: #fff4d9;
+  --feedback-info-bg: rgba(125, 176, 255, 0.16);
+  --feedback-info-foreground: #e6f0ff;
+  --feedback-danger-bg: rgba(255, 139, 123, 0.16);
+  --feedback-danger-foreground: #ffe6e1;
+  --feedback-neutral-bg: rgba(255, 255, 255, 0.05);
+  --feedback-neutral-foreground: #f5f5f5;
+  --feedback-changed-bg: rgba(98, 146, 80, 0.22);
+  --feedback-changed-foreground: #f2ffe3;
+  --feedback-shadow: 0 30px 55px rgba(0, 0, 0, 0.6);
 }

@@ -1,0 +1,266 @@
+/**
+ * Estilos para el módulo de Gestión de Backups
+ * Bar Galileo - Sistema de Backups Encriptados
+ */
+@import "../../_variables/_colors.css";
+
+/* Badges de tipo de backup */
+.backup-type-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.badge-db {
+    background-color: #3498db;
+    color: white;
+}
+
+.badge-media {
+    background-color: #9b59b6;
+    color: white;
+}
+
+.backup-size {
+    font-family: 'Courier New', monospace;
+}
+
+/* Centrar acciones en la tabla */
+.actions-cell {
+    display: flex !important;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.actions-cell .btn {
+    margin: 0;
+}
+
+/* Modales - Estilos del proyecto */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal-content {
+    background-color: var(--color-light);
+    margin: 10% auto;
+    padding: 25px;
+    border: 1px solid var(--color-gray);
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    color: var(--color-secondary);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-gray);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: var(--color-secondary);
+    font-size: 1.5rem;
+}
+
+.modal-body {
+    padding: 10px 0;
+    line-height: 1.6;
+}
+
+.modal-body p {
+    margin: 10px 0;
+}
+
+.modal-body strong {
+    color: var(--color-secondary);
+    word-break: break-all;
+}
+
+.modal-footer {
+    border-top: 1px solid var(--color-gray);
+    padding-top: 20px;
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: #fff;
+}
+
+.field-group {
+    margin-bottom: 15px;
+}
+
+.field-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--color-secondary);
+}
+
+.field-group select,
+.field-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-gray);
+    border-radius: 5px;
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
+    font-size: 14px;
+}
+
+/* Tabs del modal de restauración */
+.tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--color-gray);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    border-bottom: 3px solid var(--color-secondary);
+    color: var(--color-secondary);
+}
+
+.tab-btn:hover {
+    color: var(--color-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        margin: 5% auto;
+        padding: 20px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.2rem;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+
+    /* Reducir padding en cards */
+    .dashboard-cards {
+        gap: 1rem;
+    }
+
+    .card {
+        min-width: unset;
+        padding: 1rem;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    .card p {
+        font-size: 1.3rem;
+    }
+
+    /* Botones en columna */
+    .buttons-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .buttons-group button {
+        max-width: 90dvw !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 2% auto;
+        padding: 15px;
+    }
+
+    .dashboard-container {
+        padding: 1rem;
+    }
+
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .dashboard-cards {
+        gap: 0.75rem;
+    }
+
+    .card {
+        padding: 0.75rem;
+    }
+
+    .card h3 {
+        font-size: 0.9rem;
+    }
+
+    .card p {
+        font-size: 1.1rem;
+    }
+
+    /* Badges más pequeños */
+    .backup-type-badge {
+        padding: 2px 8px;
+        font-size: 10px;
+    }
+
+    /* Botones más compactos */
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+    }
+
+    .btn-sm img {
+        width: 14px !important;
+        height: 14px !important;
+    }
+}

@@ -8,12 +8,34 @@
 @import "../../_components/_forms.css";
 
 /* =======================================
+   ESTILOS PARA .form-select (copiados de tables.css)
+======================================= */
+.form-select,
+.form-control {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--color-primary);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-secondary);
+    transition: all 0.3s ease;
+}
+
+.form-select:focus,
+.form-control:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(98, 115, 61, 0.25);
+    transform: translateY(-1px);
+}
+
+/* =======================================
    BASE
 ======================================= */
 /* Este aplica a toda la página */
 
 body {
   display: flex;
+  flex-direction: column;
   margin: 0;
   font-family: sans-serif;
   height: 100vh;
@@ -66,20 +88,20 @@ body {
 }
 
 .card {
-  background: transparent;
+  background: rgba(166, 137, 50, 0.1);
   border-radius: 12px;
-  border: 2px solid var(--color-primary);
-  box-shadow: 0 4px 8px var(--color-primary);
+  border: 2px solid var(--color-secondary);
+  box-shadow: 0 4px 8px rgba(166, 137, 50, 0.2);
   padding: 1.5rem;
   flex: 1;
   min-width: 250px;
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 30px var(--color-primary);
+  box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
 }
 
 .card h3 {
@@ -106,7 +128,7 @@ body {
   border: 2px solid var(--color-primary);
   padding: 1.5rem;
   flex: 1;
-  min-width: 300px;
+  min-width: 600px;
 }
 
 .chart-box h4 {
@@ -127,8 +149,7 @@ body {
 }
 
 @media (max-width: 768px) {
-  .dashboard-cards,
-  .dashboard-charts {
+  .dashboard-cards {
     flex-direction: column;
   }
 
@@ -136,11 +157,16 @@ body {
     padding: 1rem;
   }
 
-  .card,
-  .chart-box {
+  .card {
     width: 100%;
     min-width: unset;
   }
+
+  #tabla-permisos_wrapper{
+    max-width: 95dvw;
+    overflow: scroll;
+  }
+
 }
 
 @media (max-width: 480px) {
@@ -170,7 +196,7 @@ body {
 /*estilos para las tablas */
 
 .table {
-  width: 50% !important;
+  width: 100%;
 }
 
 .dt-paging-button {
@@ -180,4 +206,21 @@ body {
 .table th,
 .table td {
   border: 1px solid var(--color-secondary) !important;
+}
+
+.table-contenedor {
+  display: flex;
+  justify-content: center;
+}
+
+
+@media (max-width: 700px) {
+  .dashboard-charts {
+    flex-direction: column;
+    overflow: scroll;
+  }
+  .chart-box{
+    min-width: 100%;
+
+  }
 }

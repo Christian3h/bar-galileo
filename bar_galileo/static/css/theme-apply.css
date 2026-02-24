@@ -1,0 +1,56 @@
+/* ============================================
+   APLICACIÓN DE VARIABLES CSS - TEMA
+   Aplica las variables del tema a elementos principales
+   ============================================ */
+
+/* Body y contenedor principal */
+body {
+    background-color: var(--color-light) !important;
+    color: var(--color-secondary) !important;
+}
+
+/* Header y navegación */
+.header {
+    background: transparent; /* Por defecto transparente, cambia con .scrolled */
+}
+
+.nav-menu a,
+.logo {
+    color: var(--color-secondary) !important;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--color-light);
+    color: var(--color-secondary);
+}
+
+/* Transiciones suaves */
+body,
+.header,
+.footer,
+.nav-menu a,
+.logo {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Header cuando el usuario hace scroll: usa un degradado que parte de --color-accent hacia transparente */
+.header.scrolled {
+    background: var(--color-accent);
+    opacity: 0.95;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Cuando el menú móvil está abierto queremos que el header muestre el mismo color/gradiente del menú */
+.header.menu-open {
+    background: var(--color-accent);
+    opacity: 0.98;
+}
+
+.nav-menu.show {
+    background: var(--color-accent);
+    border: 1px solid var(--color-primary);
+    color: var(--color-secondary);
+}

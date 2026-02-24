@@ -1,37 +1,190 @@
 {% extends 'base_admin.html' %}
 {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/product_form.css' %}">
+{% endblock %}
+
 {% block content %}
 <h1>{% if object %}Editar{% else %}Crear{% endif %} Producto</h1>
 
-<a href="{% url 'products:products_admin' %}" class="btn btn-secondary" >Volver</a>
+<a href="{% url 'products:products_admin' %}" class="btn btn-secondary">Volver</a>
 
-<!-- Formulario principal de creación/edición -->
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
     {{ form.as_p }}
 
-    <label for="id_imagenes">Imágenes:</label>
-    <input type="file" name="imagenes" id="id_imagenes" multiple>
+    <div class="form-group">
+        <label for="id_imagenes">Añadir nuevas imágenes:</label>
+        <input type="file" name="imagenes" id="id_imagenes" multiple class="form-control-file">
+    </div>
 
-    <button type="submit" class="btn btn-primary">
-        {% if object %}Actualizar{% else %}Crear{% endif %}
-    </button>
+    {% if object.imagenes.all %}
+        <h4>Imágenes actuales</h4>
+        <div class="image-grid" id="image-grid">
+            {% for imagen in object.imagenes.all %}
+                <div class="image-container" id="image-container-{{ imagen.id_imagen }}">
+                    <img src="{{ imagen.imagen.url }}" class="img-thumbnail">
+                    <div class="image-actions">
+                        <button type="button" class="btn btn-sm btn-info maximize-image-btn" data-src="{{ imagen.imagen.url }}">🔍</button>
+                        <button type="button" class="btn btn-sm btn-danger delete-image-btn" data-id="{{ imagen.id_imagen }}" data-delete-url="{% url 'products:producto_imagen_eliminar_api' imagen.id_imagen %}">🗑️</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-actions mt-3">
+        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Crear{% endif %} Producto</button>
+    </div>
 </form>
 
-<!-- Imágenes actuales, con formularios separados para eliminar -->
-{% if imagenes %}
-    <h4>Imágenes actuales</h4>
-    <div class="row">
-        {% for imagen in imagenes %}
-            <div class="col-md-3 mb-3">
-                <img src="{% static imagen.imagen %}" class="img-thumbnail" style="max-width:120px;">
-                <form method="post" action="{% url 'products:producto_imagen_eliminar' imagen.id_imagen %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-sm btn-danger mt-2">Eliminar</button>
-                </form>
-            </div>
-        {% endfor %}
-    </div>
-{% endif %}
+<!-- Modal para maximizar imagen -->
+<div id="imageViewerModal" class="modal-image-viewer">
+    <span class="close-modal-image-viewer">&times;</span>
+    <img class="modal-image-viewer-content" id="viewerModalImage">
+</div>
+
+<!-- Modal para mensajes de error/éxito -->
+{% include 'components/simple_modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageGrid = document.getElementById('image-grid');
+
+    // Elementos del modal de maximizar imagen
+    const imageViewerModal = document.getElementById('imageViewerModal');
+    const viewerModalImage = document.getElementById('viewerModalImage');
+    const closeImageViewerModal = document.querySelector('.close-modal-image-viewer');
+
+    // Elementos del modal de mensajes
+    const simpleModal = document.getElementById('simpleModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalFooter = simpleModal.querySelector('.modal-footer');
+    const closeModalButtons = simpleModal.querySelectorAll('.close-modal');
+
+    // Función para mostrar el modal de mensajes
+    function showSimpleModal(title, message, isConfirm = false, onConfirm = null) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalFooter.innerHTML = ''; // Limpiar botones anteriores
+
+        if (isConfirm) {
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = 'Sí, Eliminar';
+            confirmBtn.classList.add('btn', 'btn-danger', 'mt-3');
+            confirmBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+                if (onConfirm) onConfirm();
+            };
+            modalFooter.appendChild(confirmBtn);
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.classList.add('btn', 'btn-secondary', 'mt-3', 'ms-2');
+            cancelBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(cancelBtn);
+        } else {
+            const okBtn = document.createElement('button');
+            okBtn.textContent = 'Aceptar';
+            okBtn.classList.add('btn', 'btn-primary', 'mt-3');
+            okBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(okBtn);
+        }
+        simpleModal.style.display = 'block';
+    }
+
+    // Event listeners para cerrar el modal de mensajes
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            simpleModal.style.display = 'none';
+        });
+    });
+    window.addEventListener('click', function(event) {
+        if (event.target == simpleModal) {
+            simpleModal.style.display = 'none';
+        }
+    });
+
+    if (imageGrid) {
+        imageGrid.addEventListener('click', function(event) {
+            const target = event.target.closest('button');
+
+            if (!target) return;
+
+            // --- Manejar clic en el botón de eliminar ---
+            if (target.classList.contains('delete-image-btn')) {
+                const imageId = target.dataset.id;
+                const deleteUrl = target.dataset.deleteUrl; // Obtener la URL del atributo data-delete-url
+                const imageContainer = document.getElementById(`image-container-${imageId}`);
+
+                showSimpleModal(
+                    'Confirmar Eliminación',
+                    '¿Estás seguro de que quieres eliminar esta imagen?',
+                    true, // Es un modal de confirmación
+                    function() { // Callback para cuando se confirma la eliminación
+                        fetch(deleteUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.error || `Error del servidor: ${response.statusText}`);
+                                }).catch(() => {
+                                    throw new Error(`Error del servidor: ${response.statusText}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                imageContainer.classList.add('deleted');
+                                showSimpleModal('Éxito', 'Imagen eliminada correctamente.');
+                            } else {
+                                showSimpleModal('Error', data.error || 'Error al eliminar la imagen.');
+                            }
+                        })
+                        .catch(error => {
+                            showSimpleModal('Error de Conexión', error.message || 'Error de conexión al eliminar la imagen.');
+                        });
+                    }
+                );
+            }
+
+            // --- Manejar clic en el botón de maximizar ---
+            if (target.classList.contains('maximize-image-btn')) {
+                const imgSrc = target.dataset.src;
+                imageViewerModal.style.display = "block";
+                viewerModalImage.src = imgSrc;
+            }
+        });
+    }
+
+    // --- Cerrar el modal de maximizar imagen ---
+    if(closeImageViewerModal) {
+        closeImageViewerModal.addEventListener('click', function() {
+            imageViewerModal.style.display = "none";
+        });
+    }
+
+    if(imageViewerModal) {
+        window.addEventListener('click', function(event) {
+            if (event.target == imageViewerModal) {
+                imageViewerModal.style.display = "none";
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

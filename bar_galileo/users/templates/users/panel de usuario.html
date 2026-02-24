@@ -1,112 +1,68 @@
 {% load humanize %}
 {% load format_tags %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Usuario - Bar Galileo</title>
-    <link rel="stylesheet" href="/static/css/panel_usuario_custom.css">
-    <style>
-.form-error {
-  color: #BF452A;
-  background: #262626;
-  border: 1px solid #A68932;
-  border-radius: 6px;
-  padding: 6px 12px;
-  margin-top: 6px;
-  font-size: 0.95em;
-  font-weight: bold;
-  box-shadow: 0 0 8px #A68932;
-}
-.alert-success {
-  background: #262626;
-  color: #A68932;
-  border: 2px solid #A68932;
-  border-radius: 12px;
-  font-size: 1.1em;
-  font-weight: bold;
-  box-shadow: 0 0 16px #A68932;
-  padding: 18px 32px;
-  margin-bottom: 10px;
-  opacity: 1;
-  animation: fadeInOut 3.5s forwards;
-}
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(-20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-20px); }
-}
-</style>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="{% static 'css/main/users/panel_usuario.css' %}">
+    <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
 </head>
 <body>
-    {% if messages %}
-      <div class="messages">
-        {% for message in messages %}
-          <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-      </div>
-    {% endif %}
+    {% include 'components/notificaciones.html' %}
 
-    <script>
-// Mostrar/ocultar formularios de edición
-function toggleInfoForm(show) {
-  document.getElementById('info-display').style.display = show ? 'none' : '';
-  document.getElementById('info-form').style.display = show ? '' : 'none';
-}
-function toggleEmergenciaForm(show) {
-  document.getElementById('emergencia-display').style.display = show ? 'none' : '';
-  document.getElementById('emergencia-form').style.display = show ? '' : 'none';
-}
-// Datos de historial mensual desde Django
-const historialMensual = JSON.parse('{{ datos.historial_mensual|safe|escapejs }}');
-console.log('historialMensual:', historialMensual);
-
-function selectMonth(btn, mesKey) {
-  console.log('Botón clickeado:', mesKey);
-  document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const chart = document.querySelector('.history-chart');
-  chart.innerHTML = '';
-  if (historialMensual[mesKey] && historialMensual[mesKey].barras) {
-    historialMensual[mesKey].barras.forEach(valor => {
-      const bar = document.createElement('div');
-      bar.className = 'chart-bar';
-      bar.style.height = (valor / 500000 * 100) + '%';
-      bar.setAttribute('data-amount', '$' + valor.toLocaleString());
-      chart.appendChild(bar);
-    });
-    document.getElementById('month-total').textContent = `Total ${historialMensual[mesKey].mes} 2025: $${historialMensual[mesKey].total.toLocaleString()}`;
-  } else {
-    chart.innerHTML = '<div style="color:red">No hay datos para este mes</div>';
-    document.getElementById('month-total').textContent = 'Sin datos';
-  }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.month-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      selectMonth(btn, btn.getAttribute('data-mes'));
-    });
-  });
-  const activeBtn = document.querySelector('.month-btn.active');
-  if (activeBtn) {
-    selectMonth(activeBtn, activeBtn.getAttribute('data-mes'));
-  }
-});
-        setTimeout(function() {
-          document.querySelectorAll('.alert-success').forEach(function(el) {
-            el.style.display = 'none';
-          });
-        }, 3500);
-    </script>
-    <div class="container">
+    <div class="container dashboard-container">
       <div class="header">
-        <h1 style="display: flex; justify-content: center; align-items: center;">
-          <img src="/static/img/favicon/apple-touch-icon.png" alt="icono" style="height: 150px; width: 150px; object-fit: contain; vertical-align: middle;">
-        </h1>
+        <div class="avatar-container">
+            {% if datos.avatar_url %}
+                <img src="{{ datos.avatar_url }}" alt="Avatar" class="profile-avatar">
+            {% else %}
+                <div class="default-avatar">{{ request.user.username|slice:":1"|upper }}</div>
+            {% endif %}
+        </div>
         <p> Bienvenido, {{ datos.nombre }}</p>
+
+        <!-- Sistema de Notificaciones -->
+        <div class="notification-icon" id="notification-icon">
+            <span id="icono-notification"> <img width="50px" src="{% static 'img/icons/notifications.svg' %}" alt=""> </span>
+            <span class="notification-badge" id="notification-badge">0</span>
+            <div class="notifications-panel sidebar-panel" id="notifications-panel">
+                <div class="notification-header">
+                    <h4>Notificaciones</h4>
+                    <button id="mark-all-as-read">Marcar todas como leídas</button>
+
+                    <ul class="notification-list" id="notification-list">
+                    <!-- Las notificaciones se cargarán aquí -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menú de navegación -->
+        <nav class="user-navigation">
+          <a href="{% url 'core:index' %}" class="menu-btn">
+            <img src="{% static 'img/icons/home.svg' %}" alt="Inicio">Inicio
+          </a>
+            <a href="{% url 'users:panel_usuario' %}" class="menu-btn">
+            <img src="{% static 'img/icons/group.svg' %}" alt="Panel">Panel de Usuario
+          </a>
+          <a href="{% url 'account_email' %}" class="menu-btn">
+            <img src="{% static 'img/icons/email.svg' %}" alt="Email">Email
+          </a>
+          <a href="{% url 'account_change_password' %}" class="menu-btn">
+            <img src="{% static 'img/icons/password.svg' %}" alt="Contraseña">Cambiar Contraseña
+          </a>
+          <a href="{% url 'socialaccount_connections' %}" class="menu-btn">
+            <img src="{% static 'img/icons/accounts.svg' %}" alt="Cuentas">Conexiones
+          </a>
+          <a href="{% url 'account_logout' %}" class="menu-btn">
+            <img src="{% static 'img/icons/logout.svg' %}" alt="Salir">Cerrar Sesión
+          </a>
+        </nav>
       </div>
       <div class="dashboard">
         <!-- Cuenta Actual -->
@@ -129,45 +85,43 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
           </div>
         </div>
-        <!-- Historial Mensual -->
+        <!-- Historial de Consumo -->
         <div class="card">
           <div class="card-header">
             <div class="card-icon monthly-history">📊</div>
-            <div class="card-title">Historial Mensual</div>
+            <div class="card-title">Historial de Consumo</div>
           </div>
-          <div class="month-selector">
-  <button class="month-btn" data-mes="ene">Ene</button>
-  <button class="month-btn" data-mes="feb">Feb</button>
-  <button class="month-btn" data-mes="mar">Mar</button>
-  <button class="month-btn" data-mes="abr">Abr</button>
-  <button class="month-btn" data-mes="may">May</button>
-  <button class="month-btn" data-mes="jun">Jun</button>
-  <button class="month-btn active" data-mes="jul">Jul</button>
-  <button class="month-btn" data-mes="ago">Ago</button>
-  <button class="month-btn" data-mes="sep">Sep</button>
-  <button class="month-btn" data-mes="oct">Oct</button>
-  <button class="month-btn" data-mes="nov">Nov</button>
-  <button class="month-btn" data-mes="dic">Dic</button>
-</div>
-          <div class="history-chart">
-            {% with mes_seleccionado=request.GET.mes|default:'ene' %}
-              {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado %}
-                {% for valor in datos.historial_mensual.mes_seleccionado.barras %}
-                  <div class="chart-bar" style="height: {{ valor|floatformat:0 }}%;" data-amount="${{ valor|intcomma }}"></div>
+          <div class="history-table-container">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Mesa</th>
+                  <th>Total Pagado</th>
+                  <th>Factura</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pedido in datos.pedidos_facturados %}
+                <tr>
+                  <td>{{ pedido.fecha_actualizacion|date:"d/m/Y" }}</td>
+                  <td>{{ pedido.mesa.nombre|default:"N/A" }}</td>
+                  <td>${{ pedido.total|intcomma }}</td>
+                  <td>
+                    {% if pedido.factura %}
+                    <a href="{% url 'tables:ver_factura' pedido.factura.id %}" class="btn-factura">Ver</a>
+                    {% else %}
+                    <span>N/A</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="4" class="text-center">No hay historial de consumo todavía.</td>
+                </tr>
                 {% endfor %}
-              {% else %}
-                <div style="color:red">No hay datos para este mes</div>
-              {% endif %}
-            {% endwith %}
-          </div>
-          <div style="text-align: center; margin-top: 15px;">
-              {% with mes_seleccionado=request.GET.mes|default:'ene' %}
-                {% if datos.historial_mensual and datos.historial_mensual.mes_seleccionado and datos.historial_mensual.mes_seleccionado.total %}
-                  <span id="month-total">Total {{ datos.historial_mensual.mes_seleccionado.mes }} 2025: ${{ datos.historial_mensual.mes_seleccionado.total|intcomma }}</span>
-                {% else %}
-                  <span id="month-total">Sin datos</span>
-                {% endif %}
-              {% endwith %}
+              </tbody>
+            </table>
           </div>
         </div>
         <!-- Información Personal -->
@@ -176,34 +130,45 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="card-icon user-info">👤</div>
             <div class="card-title">Mi Información</div>
           </div>
+          <div class="avatar-management">
+              <form method="post" enctype="multipart/form-data" action="{% url 'users:panel_usuario' %}">
+                  {% csrf_token %}
+                  <label for="avatar-upload" class="edit-btn">Subir/Cambiar Foto</label>
+                  <input id="avatar-upload" type="file" name="avatar" accept="image/*" class="hidden-input" onchange="this.form.submit()">
+                  {% if datos.avatar_url %}
+                      <button type="submit" name="delete_avatar" value="1" class="edit-btn"
+                          data-feedback-confirm="¿Seguro que quieres eliminar tu foto de perfil?"
+                          data-feedback-confirm-title="Eliminar Foto"
+                          data-feedback-confirm-ok="Eliminar"
+                          data-feedback-confirm-cancel="Cancelar">Eliminar Foto</button>
+                  {% endif %}
+              </form>
+          </div>
           <div id="info-display">
             <div class="form-field-col">
               <label class="form-label">Nombre:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.nombre }}</div>
+              <div class="info-input text-left">{{ datos.nombre }}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Cédula:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.cedula }}</div>
+              <div class="info-input text-left">{{ datos.cedula }}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Teléfono:</label>
-                  <div class="info-input" style="text-align:left;">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
+                  <div class="info-input text-left">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Email:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.email }}</div>
+              <div class="info-input text-left">{{ datos.email }}</div>
             </div>
             <div class="form-field-col">
               <label class="form-label">Dirección:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.direccion }}</div>
+              <div class="info-input text-left">{{ datos.direccion }}</div>
             </div>
-            <div class="form-field-col">
-              <label class="form-label">Cliente desde:</label>
-              <div class="info-input" style="text-align:left;">{{ datos.cliente_desde }}</div>
-            </div>
+
             <button type="button" class="edit-btn" onclick="toggleInfoForm(true)">Editar</button>
           </div>
-          <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form" style="display:none;">
+          <form id="info-form" method="post" action="{% url 'users:editar_info' %}" class="edit-form hidden-form">
             {% csrf_token %}
             <div class="form-field-col">
               <label for="nombre" class="form-label">Nombre:</label>
@@ -215,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="form-field-col">
               <label for="telefono" class="form-label">Teléfono:</label>
-              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:':3' == '+57' %}{{ datos.telefono|slice:'3:' }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
+              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:":3" == '+57' %}{{ datos.telefono|slice:"3:" }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="email" class="form-label">Email:</label>
@@ -225,12 +190,13 @@ document.addEventListener('DOMContentLoaded', function() {
               <label for="direccion" class="form-label">Dirección:</label>
               <input type="text" id="direccion" name="direccion" value="{{ datos.direccion }}" class="info-input">
             </div>
-            <div class="form-field-col">
-              <label for="cliente_desde" class="form-label">Cliente desde:</label>
-              <input type="text" id="cliente_desde" name="cliente_desde" value="{{ datos.cliente_desde }}" class="info-input">
-            </div>
+
             <button type="submit">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_info' %}" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
+            <button type="submit" formaction="{% url 'users:borrar_info' %}"
+                data-feedback-confirm="¿Seguro que deseas borrar tu información personal?"
+                data-feedback-confirm-title="Borrar Información"
+                data-feedback-confirm-ok="Borrar"
+                data-feedback-confirm-cancel="Cancelar">Borrar Información</button>
             <button type="button" onclick="toggleInfoForm(false)">Cancelar</button>
           </form>
         </div>
@@ -238,41 +204,41 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="card">
           <div class="card-header">
             <div class="card-icon emergency-contact">🚨</div>
-            <div class="card-title">Contacto de Emergenciaa</div>
+            <div class="card-title">Contacto de Emergencia</div>
           </div>
           <div id="emergencia-display">
             {% if datos.emergencia.nombre or datos.emergencia.telefono %}
               <div class="form-field-col">
                 <label class="form-label">Nombre:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.nombre }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.nombre }}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Relación:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.relacion }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.relacion }}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Teléfono:</label>
-                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono %}{% if datos.emergencia.telefono|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono }}{% endif %}{% else %}{{ datos.emergencia.telefono }}{% endif %}</div>
+                    <div class="info-input text-left">{% if datos.emergencia.telefono %}{% if datos.emergencia.telefono|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono }}{% endif %}{% else %}{{ datos.emergencia.telefono }}{% endif %}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Teléfono Alternativo:</label>
-                    <div class="info-input" style="text-align:left;">{% if datos.emergencia.telefono_alt %}{% if datos.emergencia.telefono_alt|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono_alt }}{% endif %}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}</div>
+                    <div class="info-input text-left">{% if datos.emergencia.telefono_alt %}{% if datos.emergencia.telefono_alt|slice:":3" == '+57' %}+57 {{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}+57 {{ datos.emergencia.telefono_alt }}{% endif %}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Tipo de Sangre:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.sangre }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.sangre }}</div>
               </div>
               <div class="form-field-col">
                 <label class="form-label">Alergias:</label>
-                <div class="info-input" style="text-align:left;">{{ datos.emergencia.alergias }}</div>
+                <div class="info-input text-left">{{ datos.emergencia.alergias }}</div>
               </div>
               <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Editar</button>
             {% else %}
-              <div class="info-input" style="text-align:center; color:#A68932; margin-bottom:18px;">No hay contacto de emergencia registrado.</div>
+              <div class="info-input text-center empty-message">No hay contacto de emergencia registrado.</div>
               <button type="button" class="edit-btn" onclick="toggleEmergenciaForm(true)">Agregar Contacto</button>
             {% endif %}
           </div>
-          <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form" style="display:none;">
+          <form id="emergencia-form" method="post" action="{% url 'users:editar_emergencia' %}" class="edit-form hidden-form">
             {% csrf_token %}
             <div class="form-field-col">
               <label for="emergencia_nombre" class="form-label">Nombre:</label>
@@ -284,11 +250,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="form-field-col">
               <label for="emergencia_telefono" class="form-label">Teléfono:</label>
-              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:':3' == '+57' %}{{ datos.emergencia.telefono|slice:'3:' }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
+              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:":3" == '+57' %}{{ datos.emergencia.telefono|slice:"3:" }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_telefono_alt" class="form-label">Teléfono Alternativo:</label>
-              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:':3' == '+57' %}{{ datos.emergencia.telefono_alt|slice:'3:' }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
+              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:":3" == '+57' %}{{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_sangre" class="form-label">Tipo de Sangre:</label>
@@ -309,50 +275,91 @@ document.addEventListener('DOMContentLoaded', function() {
               <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input">
             </div>
             <button type="submit">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
+            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}"
+                data-feedback-confirm="¿Seguro que deseas borrar el contacto de emergencia?"
+                data-feedback-confirm-title="Borrar Contacto"
+                data-feedback-confirm-ok="Borrar"
+                data-feedback-confirm-cancel="Cancelar">Borrar Contacto</button>
             <button type="button" onclick="toggleEmergenciaForm(false)">Cancelar</button>
           </form>
         </div>
       </div>
     </div>
 
-  <script>
-function validarInfoForm() {
-  let nombre = document.querySelector('input[name="nombre"]').value.trim();
-  let cedula = document.querySelector('input[name="cedula"]').value.trim();
-  let telefono = document.querySelector('input[name="telefono"]').value.trim();
-  let email = document.querySelector('input[name="email"]').value.trim();
-  let errores = [];
-  if (nombre.length < 3) errores.push('El nombre debe tener al menos 3 caracteres.');
-  if (!/^\d{6,}$/.test(cedula)) errores.push('La cédula debe ser numérica y tener al menos 6 dígitos.');
-  if (!/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
-  if (!email.includes('@')) errores.push('El email debe ser válido.');
-  if (errores.length) {
-    alert(errores.join('\n'));
-    return false;
-  }
-  return true;
-}
-function validarEmergenciaForm() {
-  let nombre = document.querySelector('input[name="emergencia_nombre"]').value.trim();
-  let telefono = document.querySelector('input[name="emergencia_telefono"]').value.trim();
-  let telefono_alt = document.querySelector('input[name="emergencia_telefono_alt"]').value.trim();
-  let errores = [];
-  if (nombre.length < 3) errores.push('El nombre de emergencia debe tener al menos 3 caracteres.');
-  if (telefono && !/^\d{10}$/.test(telefono)) errores.push('El teléfono debe ser numérico y tener exactamente 10 dígitos.');
-  if (telefono_alt && !/^\d{10}$/.test(telefono_alt)) errores.push('El teléfono alternativo debe ser numérico y tener exactamente 10 dígitos.');
-  if (errores.length) {
-    alert(errores.join('\n'));
-    return false;
-  }
-  return true;
-}
-document.addEventListener('DOMContentLoaded', function() {
-  var infoForm = document.getElementById('info-form');
-  if (infoForm) infoForm.onsubmit = validarInfoForm;
-  var emergenciaForm = document.getElementById('emergencia-form');
-  if (emergenciaForm) emergenciaForm.onsubmit = validarEmergenciaForm;
-});
-  </script>
+<footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>BAR GALILEO</h3>
+                    <p>Creamos experiencias únicas en coctelería premium y ofrecemos un ambiente sofisticado para
+                        momentos especiales. Descubre el arte de la mixología con nosotros.</p>
+
+                    <div class="social-icons">
+                        <a href="https://facebook.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>f</span>
+                        </a>
+                        <a href="https://instagram.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>📷</span>
+                        </a>
+                        <a href="https://twitter.com/bargalileo" class="social-icon" target="_blank" rel="noopener">
+                            <span>🐦</span>
+                        </a>
+                        <a href="https://wa.me/525512345678" class="social-icon" target="_blank" rel="noopener">
+                            <span>📱</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="{% url 'core:store' %}">Tienda</a></li>
+                        <li><a href="{% url 'core:index' %}#reservas-section">Reservas</a></li>
+                        <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <i>📞</i>
+                            <a href="tel:+322-227-1308">+57 322-227-1308</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>✉️</i>
+                            <a href="mailto:bargalileo07@gmail.com">bargalileo07@gmail.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i>📍</i>
+                            <span>Sogamoso, Boyacá</span>
+                        </div>
+                        <div class="contact-item">
+                            <i>🕒</i>
+                            <span>Mar-Dom: 6:00 PM - 2:00 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom">
+                        <div class="footer-bottom-left">
+                            <p>&copy; 2025 Bar Galileo. Todos los derechos reservados.</p>
+                        </div>
+                        <div class="footer-bottom-right">
+                            <a href="#privacy">Política de Privacidad</a>
+                            <a href="#terms">Términos y Condiciones</a>
+                            <a href="#cookies">Política de Cookies</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/ui/feedback.js' %}"></script>
+    <script src="{% static 'js/panel_usuario.js' %}"></script>
+    <script src="{% static 'js/admin/notification_history.js' %}"></script>
+    <script src="{% static 'accessibility/sienna.js' %}"></script>
+    <script src="{% static 'accessibility/custom.js' %}"></script>
 </body>
 </html>

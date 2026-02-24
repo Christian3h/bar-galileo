@@ -1,0 +1,4 @@
+/* Asegurar que el panel lateral se oculte correctamente */
+.sidebar-panel.hidden {
+    display: none !important;
+}

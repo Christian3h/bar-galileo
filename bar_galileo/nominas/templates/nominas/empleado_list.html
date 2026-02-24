@@ -1,0 +1,185 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+{% load format_tags %}
+{% load roles_tags %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+<link rel="stylesheet" href="{% static 'css/main/admin/nominas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2 class="dashboard-title">Gestión de Nóminas</h2>
+    {% if request.user|has_perm:"nominas,crear" %}
+        <a href="{% url 'nominas:empleado_crear' %}" class="btn btn-success mb-3">Crear Empleado</a>
+    {% endif %}
+
+    <!-- Estadísticas -->
+    <section class="dashboard-cards">
+        <div class="card">
+            <h3>Total Empleados</h3>
+            <p>{{ total_empleados }}</p>
+        </div>
+        <div class="card">
+            <h3>Empleados Activos</h3>
+            <p>{{ total_activos }}</p>
+        </div>
+        <div class="card">
+            <h3>Empleados Inactivos</h3>
+            <p>{{ total_inactivos }}</p>
+        </div>
+        <div class="card">
+            <h3>Salarios (Mensual)</h3>
+            <p>{{ total_salarios|format_price }} COP</p>
+        </div>
+    </section>
+
+    <!-- Filtros de búsqueda -->
+    <div class="search-container">
+        <form method="GET" class="search-form">
+            <div class="search-fields">
+                <div class="field-group">
+                    <label>Estado:</label>
+                    {{ filter_form.estado }}
+                </div>
+                <div class="field-group">
+                    <label>Tipo de Contrato:</label>
+                    {{ filter_form.tipo_contrato }}
+                </div>
+                <div class="field-group">
+                    <label>Buscar:</label>
+                    {{ filter_form.busqueda }}
+                </div>
+            </div>
+            <div class="field-group buttons-group">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+                <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lista de empleados -->
+    <div class="table-responsive">
+        <table id="tabla-empleados" class="table nowrap">
+            <thead>
+                <tr>
+                    <th class="col-1">Nombre</th>
+                    <th class="col-2">Cargo</th>
+                    <th class="col-3">Salario Base</th>
+                    <th class="estadoCol">Estado</th>
+                    <th class="tipoContratoCol">Tipo Contrato</th>
+                    <th class="fechaContratacionCol">Fecha Contratación</th>
+                    <th class="usuarioCol">Usuario</th>
+                    <th class="accionesCol" {% if not empleados %}style="display: none;"{% endif %}>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for empleado in empleados %}
+                <tr>
+                    <td class="col-1">{{ empleado.nombre }}</td>
+                    <td class="col-2">{{ empleado.get_cargo_display }}</td>
+                    <td class="col-3">{{ empleado.salario|format_price }} COP</td>
+                    <td class="estadoCol">
+                        <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ empleado.get_estado_display }}
+                        </span>
+                    </td>
+                    <td class="tipoContratoCol">{{ empleado.get_tipo_contrato_display }}</td>
+                    <td class="fechaContratacionCol">{{ empleado.fecha_contratacion }}</td>
+                    <td class="usuarioCol">
+                        {% if empleado.user %}
+                            <span class="badge bg-primary" title="Usuario: {{ empleado.user.username }}">
+                                <i class="fa fa-user-check"></i> {{ empleado.user.username }}
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary" title="Sin usuario vinculado">
+                                <i class="fa fa-user-times"></i> Sin usuario
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="accionesCol">
+                        <div class="actions-cell">
+                            <a href="{% url 'nominas:empleado_detail' empleado.pk %}" class="btn btn-sm btn-info" title="Ver detalles del empleado">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                            <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary" title="Editar empleado">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" title="Eliminar empleado"
+                                onclick="confirmarEliminarEmpleado({{ empleado.pk }}, '{{ empleado.nombre|escapejs }} {{ empleado.apellido|escapejs }}')">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center" style="color: var(--color-secondary);">No hay empleados registrados</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Formulario oculto para eliminación de empleado -->
+<form id="delete-empleado-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
+{% load static %}
+<script>
+    async function confirmarEliminarEmpleado(empleadoId, empleadoNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Empleado',
+            message: `¿Estás seguro de que deseas eliminar al empleado "${empleadoNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-empleado-form');
+            form.action = `/nominas/empleados/${empleadoId}/eliminar/`;
+            form.submit();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar solo si existe la tabla en el DOM
+        if (!document.querySelector('#tabla-empleados')) return;
+
+        // Destruir instancia previa si existe
+        if ($.fn.dataTable.isDataTable('#tabla-empleados')) {
+            $('#tabla-empleados').DataTable().destroy();
+        }
+
+        // Verificar si hay datos en la tabla
+        var rowCount = $('#tabla-empleados tbody tr').length;
+        var hasData = rowCount > 0 && !$('#tabla-empleados tbody tr td[colspan]').length;
+
+        if (!hasData) {
+            // Si no hay datos, no inicializar DataTables
+            console.log('No hay datos en la tabla de empleados');
+            return;
+        }
+
+        // Inicialización completa con idioma
+        var tabla = $('#tabla-empleados').DataTable({
+            language: {
+                emptyTable: 'No hay empleados registrados',
+                zeroRecords: 'No se encontraron resultados',
+                search: 'Buscar:',
+                lengthMenu: 'Mostrar _MENU_ registros',
+                info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                infoEmpty: 'Mostrando 0 a 0 de 0 registros',
+                paginate: {
+                    first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior'
+                }
+            },
+            order: [[0, 'asc']]
+        });
+    });
+</script>
+{% endblock %}

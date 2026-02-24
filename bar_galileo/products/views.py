@@ -20,15 +20,16 @@ import logging
 from django.utils.decorators import method_decorator
 from roles.decorators import permission_required
 from notifications.utils import notificar_usuario
+from django.views.decorators.cache import never_cache
 
 
 class ProductosJsonView(View):
     def get(self, request):
-        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes', 'stocks').all()
+        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes', 'stocks').filter(activo=True)
         data = []
         for producto in productos:
             primera_imagen = producto.imagenes.first()
-            imagen_url = request.build_absolute_uri(f'/static/{primera_imagen.imagen}') if primera_imagen else ''
+            imagen_url = primera_imagen.imagen.url if primera_imagen else ''
 
             # Obtener el stock actual de la tabla Stock
             ultimo_stock = producto.stocks.order_by('-fecha_hora').first()
@@ -48,33 +49,6 @@ class ProductosJsonView(View):
                 'imagen_url': imagen_url,
             })
         return JsonResponse({'data': data})
-
-
-
-@method_decorator(permission_required('products', 'crear'), name='dispatch')
-class ProductoCreateAdminView(CreateView):
-    model = Producto
-    form_class = ProductoForm
-    template_name = "admin/products/products_form.html"
-    success_url = reverse_lazy("products:products_admin")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["productos"] = Producto.objects.all()
-        context["imagenes"] = []
-        return context
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        producto = self.object
-
-        for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
-            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
-            ProductoImagen.objects.create(producto=producto, imagen=ruta)
-
-        mensaje = f"Se ha creado el nuevo producto: '{producto.nombre}'."
-        notificar_usuario(self.request.user, mensaje)
-        return response
 
 
 
@@ -228,7 +202,7 @@ class ProductoCreateAdminView(CreateView):
 #                 form.save()
 #                 messages.success(request, "Categoría agregada correctamente.")
 #                 return redirect("products:categorias")
-#             context = self.get_context_data(**kwargs)
+#             context = self.get_context_data()
 #             context["form"] = form
 #             return self.render_to_response(context)
 
@@ -547,7 +521,10 @@ class ProductosAdminView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["products"] = Producto.objects.all()
+        # En admin, mostrar todos para poder reactivar/archivar
+        productos = Producto.objects.select_related('id_categoria', 'id_proveedor', 'id_marca').prefetch_related('imagenes').filter(activo=True).order_by('nombre')
+        context["products"] = productos
+        context["productos"] = productos  # Para compatibilidad
         return context
 
 @method_decorator(permission_required('products', 'crear'), name='dispatch')
@@ -565,25 +542,19 @@ class ProductoCreateAdminView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)  # Guarda el producto
-        producto = self.object  # Ahora sí existe self.object
+        producto = self.object
 
         for index, imagen in enumerate(self.request.FILES.getlist('imagenes')):
             ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{index}")
             ProductoImagen.objects.create(producto=producto, imagen=ruta)
 
+        # Notificar y mostrar mensaje de éxito
+        mensaje = f"Se ha creado el nuevo producto: '{producto.nombre}'."
+        notificar_usuario(self.request.user, mensaje)
         messages.success(self.request, "Producto creado correctamente.")
         return response
 
-@method_decorator(permission_required('products', 'editar'), name='dispatch')
-class ProductoUpdateAdminView(UpdateView):
-    model = Producto
-    form_class = ProductoForm
-    template_name = "admin/products/products_form.html"
-    success_url = reverse_lazy("products:products_admin")
-    pk_url_kwarg = "pk"
 
-    def get_object(self, queryset=None):
-        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -628,18 +599,20 @@ class ProductoDeleteAdminView(DeleteView):
     def get_object(self, queryset=None):
         return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
 
-    def delete(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        # Manejar confirmación (POST) como archivado lógico
         producto = self.get_object()
-        imagenes = ProductoImagen.objects.filter(producto=producto)
-        for imagen in imagenes:
-            path = os.path.join(settings.BASE_DIR, 'static', imagen.imagen)
-            if os.path.exists(path):
-                os.remove(path)
-        imagenes.delete()
-        producto.delete()
-        mensaje = f"El producto '{producto.nombre}' ha sido eliminado."
+        if producto.activo:
+            producto.activo = False
+            producto.save(update_fields=['activo'])
+        mensaje = f"El producto '{producto.nombre}' ha sido archivado."
         notificar_usuario(request.user, mensaje)
+        messages.success(request, mensaje)
         return redirect(self.success_url)
+
+    def delete(self, request, *args, **kwargs):
+        # Si llegara una petición DELETE real, tratar igual que POST
+        return self.post(request, *args, **kwargs)
 
 @method_decorator(permission_required('products', 'editar'), name='dispatch')
 class EliminarImagenProductoAdminView(View):
@@ -717,12 +690,14 @@ class BrandDeleteAdminView(DeleteView):
         return response
 
 @method_decorator(permission_required('providers', 'ver'), name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class ProveedoresAdminView(TemplateView):
     template_name = "admin/proveedores/proveedores.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["proveedores"] = Proveedor.objects.all()
+        # Mostrar primero los más recientes para que el recién creado sea visible de inmediato
+        context["proveedores"] = Proveedor.objects.all().order_by('-id_proveedor')
         return context
 
 @method_decorator(permission_required('providers', 'crear'), name='dispatch')
@@ -834,5 +809,82 @@ class ProductoDetailView(DetailView):
     context_object_name = "producto"
 
     def get_object(self, queryset=None):
-        return get_object_or_404(Producto, id_producto=self.kwargs.get("pk"))
+        # Solo permitir ver productos activos públicamente
+        return get_object_or_404(Producto, id_producto=self.kwargs.get("pk"), activo=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        producto_actual = self.object
+
+        # Obtener productos relacionados (misma marca, excluyendo el producto actual) y solo activos
+        productos_relacionados = Producto.objects.filter(
+            id_marca=producto_actual.id_marca, activo=True
+        ).exclude(
+            id_producto=producto_actual.id_producto
+        )[:4]
+
+        context['productos_relacionados'] = productos_relacionados
+        return context
+
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
+class ProductosArchivadosAdminView(TemplateView):
+    template_name = "admin/products/products_archived.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["products"] = Producto.objects.filter(activo=False)
+        return context
+
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
+class ProductoReactivarAdminView(View):
+    def post(self, request, pk):
+        producto = get_object_or_404(Producto, id_producto=pk)
+        producto.activo = True
+        producto.save(update_fields=['activo'])
+        messages.success(request, f"Producto '{producto.nombre}' reactivado.")
+        return redirect('products:products_archived_admin')
+
+
+@method_decorator(permission_required('products', 'editar'), name='dispatch')
+class ProductoUpdateAdminView(UpdateView):
+    model = Producto
+    form_class = ProductoForm
+    template_name = "admin/products/products_form.html"
+    success_url = reverse_lazy("products:products_admin")
+    pk_url_kwarg = "pk"
+
+    def get_object(self, queryset=None):
+        return Producto.objects.get(id_producto=self.kwargs.get(self.pk_url_kwarg))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["imagenes"] = ProductoImagen.objects.filter(producto=self.object)
+        return context
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        producto = self.object
+
+        # Guardar nuevas imágenes si las hay, asignando índices consecutivos
+        imagenes_existentes = ProductoImagen.objects.filter(producto=producto).values_list('imagen', flat=True)
+        indices = []
+        for ruta in imagenes_existentes:
+            nombre_archivo = os.path.basename(ruta)
+            try:
+                indice = int(nombre_archivo.split('_')[-1].split('.')[0])
+                indices.append(indice)
+            except (IndexError, ValueError):
+                continue
+
+        siguiente_indice = max(indices) + 1 if indices else 0
+
+        for imagen in self.request.FILES.getlist('imagenes'):
+            ruta = procesar_y_guardar_imagen(imagen, producto.id_producto, f"{producto.id_producto}_{siguiente_indice}")
+            ProductoImagen.objects.create(producto=producto, imagen=ruta)
+            siguiente_indice += 1
+
+        mensaje = f"El producto '{producto.nombre}' ha sido actualizado."
+        notificar_usuario(self.request.user, mensaje)
+        messages.success(self.request, "Producto actualizado correctamente.")
+        return response
 

@@ -17,21 +17,40 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
+from accounts.views import CustomEmailView
+from django.views.generic import RedirectView
+from django.templatetags.static import static as staticfiles_static
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/email/', CustomEmailView.as_view(), name="account_email"), # Vista de depuración
     path('accounts/', include('allauth.urls')),
+    path('captcha/', include('captcha.urls')),
     path('', include(('products.urls', 'products'), namespace='products')),
     path('', include(('core.urls', 'core'), namespace='core')),
     path('', include(('tables.urls', 'tables'), namespace='tables')),
     path('dashboard/', include(('admin_dashboard.urls', 'admin_dashboard'), namespace='admin_dashboard')),
+    path('dashboard/images/', include(('site_images.urls', 'site_images'), namespace='site_images')),
     path('rol/', include(('roles.urls', 'roles'), namespace='roles')),
     path('facturacion/', include(('facturacion.urls', 'facturacion'), namespace='facturacion')),
     path('', include(('users.urls', 'users'), namespace='users')),
     path('', include(('notifications.urls', 'notifications'), namespace='notifications')),
+    path('expenses/', include(('expenses.urls', 'expenses'), namespace='expenses')),
+    path('nominas/', include(('nominas.urls', 'nominas'), namespace='nominas')),
+    path('backups/', include(('backups.urls', 'backups'), namespace='backups')),
+    path('reportes/', include(('reportes.urls', 'reportes'), namespace='reportes')),
+    path('google-chat/', include(('google_chat.urls', 'google_chat'), namespace='google_chat')),
+    path('rag-chat/', include(('rag_chat.urls', 'rag_chat'), namespace='rag_chat')),
+
+    # Evitar 404 para iconos solicitados en la raíz por navegadores
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_static('img/favicon/favicon.ico'), permanent=True)),
+    path('apple-touch-icon.png', RedirectView.as_view(url=staticfiles_static('img/favicon/apple-touch-icon.png'), permanent=True)),
+    path('apple-touch-icon-precomposed.png', RedirectView.as_view(url=staticfiles_static('img/favicon/apple-touch-icon.png'), permanent=True)),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+    urlpatterns += staticfiles_urlpatterns()
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

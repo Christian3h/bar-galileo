@@ -1,3 +1,32 @@
+/* === Botón para cerrar el sidebar === */
+.close-sidebar-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1001;
+  background-color: var(--color-light);
+  color: var(--color-secondary);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.close-sidebar-btn:hover {
+  background: var(--color-dark);
+  color: var(--color-secondary);
+}
+
+/* Eliminar scroll del sidebar cuando está abierto en móvil */
+.sidebar.mobile-show {
+  overflow: hidden;
+}
 header {
   background-color: var(--color-light);
 }
@@ -30,9 +59,27 @@ header {
 
 /* === Sidebar Menú === */
 .menu {
+  margin-top: 50px !important;
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+.menu > a {
+  display: block;
+  text-align: center;
+  padding: 0.5rem 10px;
+}
+
+.menu > a img {
+  width: 120px;
+  height: auto;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+.menu > a img:hover {
+  transform: scale(1.05);
 }
 
 .menu > * {
@@ -77,16 +124,71 @@ header {
   transition: all 0.3s ease;
 }
 
+  #sidebar {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+
+#sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+
 /* === Toggle Button === */
 .toggle-sidebar-btn {
   color: var(--color-secondary);
-  background: transparent;
+  background-color: var(--color-light);
   border: none;
   font-size: 3rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
   display: none;
+  z-index: 1000; /* Ensure it's above the sidebar */
+  position: relative; /* Needed for span positioning */
+  width: 40px;
+  height: 40px;
 }
+
+.toggle-sidebar-btn span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--color-secondary);
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+}
+
+.toggle-sidebar-btn span:nth-child(1) {
+  top: 10px;
+}
+
+.toggle-sidebar-btn span:nth-child(2) {
+  top: 20px;
+}
+
+.toggle-sidebar-btn span:nth-child(3) {
+  top: 30px;
+}
+
+body.sidebar-is-open .toggle-sidebar-btn span:nth-child(1) {
+  top: 20px;
+  transform: rotate(135deg);
+}
+
+body.sidebar-is-open .toggle-sidebar-btn span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
+  top: 20px;
+  transform: rotate(-135deg);
+}
+
 
 /* === Efectos hover para los botones y los enlaces === */
 .menu li:hover,
@@ -117,6 +219,9 @@ header {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 /* === Responsivo === */

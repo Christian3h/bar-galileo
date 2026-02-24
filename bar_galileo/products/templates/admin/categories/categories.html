@@ -5,50 +5,81 @@
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Categorías</h1>
+        {% if request.user|has_perm:"categories,crear" %}
+            <a href="{% url 'products:categories_create_admin' %}" class="btn btn-success mb-3">Crear Categoría</a>
+        {% endif %}
 
-        <!-- Contenedor responsivo para la tabla -->
-        <div class="table-responsive">
-            <table id="tabla-categorias" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for categoria in categorias %}
-                    <tr>
-                        <td>{{ categoria.id_categoria }}</td>
-                        <td>{{ categoria.nombre_categoria }}</td>
-                        <td>{{ categoria.descripcion }}</td>
-                        <td>
-                            {% if request.user|has_perm:"categories,editar" %}
-                                <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning">Editar</a>
-                            {% endif %}
-                            {% if request.user|has_perm:"categories,eliminar" %}
-                                <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger">Eliminar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="table-contenedor">
+            <div class="table-responsive">
+                <table id="tabla-categorias" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th class="col-1">Nombre</th>
+                            <th class="col-2">Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr>
+                            <td class="col-1">{{ categoria.nombre_categoria }}</td>
+                            <td class="col-2">{{ categoria.descripcion }}</td>
+                            <td>
+                                {% if request.user|has_perm:"categories,editar" %}
+                                    <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning" title="Editar categoría"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                {% endif %}
+                                {% if request.user|has_perm:"categories,eliminar" %}
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar categoría"
+                                        onclick="confirmarEliminarCategoria({{ categoria.id_categoria }}, '{{ categoria.nombre_categoria }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
+    <!-- Formulario oculto para eliminación -->
+    <form id="delete-categoria-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+
     <!-- Activación de DataTable -->
     <script>
+    async function confirmarEliminarCategoria(categoriaId, categoriaNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Categoría',
+            message: `¿Estás seguro de que deseas eliminar la categoría "${categoriaNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-categoria-form');
+            form.action = `/adminD/categories/delete/${categoriaId}/`;
+            form.submit();
+        }
+    }
+
     $(document).ready(function() {
-        $('#tabla-categorias').DataTable({
-            "language": {
-                "url": "{% static 'js/DataTables/es-ES.json' %}"
+        var sel = '#tabla-categorias';
+        if (!$(sel).length) return;
+        if ($.fn.dataTable.isDataTable(sel)) {
+            $(sel).DataTable().destroy();
+        }
+        $(sel).DataTable({
+            language: {
+                url: "{% static 'js/DataTables/es-ES.json' %}"
             },
-            responsive: true,  // Activar el modo responsivo de DataTables
-            "pageLength": 10,  // Definir el número de filas por página
-            "lengthChange": true,  // Permite cambiar el número de filas por página
-            "ordering": true  // Permite ordenar las columnas
+            columnDefs: [
+                { targets: '_all', defaultContent: '' }
+            ],
+            responsive: true,
+            pageLength: 10,
+            lengthChange: true,
+            ordering: true
         });
     });
     </script>

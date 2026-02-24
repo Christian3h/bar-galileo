@@ -1,0 +1,96 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/reportes/reporte_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>{% if object %}Editar{% else %}Crear{% endif %} Reporte</h1>
+
+<a href="{% url 'reportes:reporte_list' %}" class="btn btn-secondary">Volver</a>
+
+<form method="post" enctype="multipart/form-data" novalidate class="reporte-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    {% if object and object.archivo %}
+        <div class="form-group">
+            <label>Archivo actual:</label>
+            <p>
+                📎 <a href="{{ object.archivo.url }}" target="_blank">{{ object.archivo.name|truncatewords:5 }}</a>
+            </p>
+        </div>
+    {% endif %}
+
+    <div class="form-actions mt-3">
+        <button type="submit" class="btn btn-primary">{% if object %}Actualizar{% else %}Crear{% endif %} Reporte</button>
+    </div>
+</form>
+
+<!-- Modal para mensajes de error/éxito -->
+{% include 'components/simple_modal.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos del modal de mensajes
+    const simpleModal = document.getElementById('simpleModal');
+    if (!simpleModal) return;
+    
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalFooter = simpleModal.querySelector('.modal-footer');
+    const closeModalButtons = simpleModal.querySelectorAll('.close-modal');
+
+    // Función para mostrar el modal de mensajes
+    function showSimpleModal(title, message, isConfirm = false, onConfirm = null) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        modalFooter.innerHTML = ''; // Limpiar botones anteriores
+
+        if (isConfirm) {
+            const confirmBtn = document.createElement('button');
+            confirmBtn.textContent = 'Confirmar';
+            confirmBtn.classList.add('btn', 'btn-danger', 'mt-3');
+            confirmBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+                if (onConfirm) onConfirm();
+            };
+            modalFooter.appendChild(confirmBtn);
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancelar';
+            cancelBtn.classList.add('btn', 'btn-secondary', 'mt-3', 'ms-2');
+            cancelBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(cancelBtn);
+        } else {
+            const okBtn = document.createElement('button');
+            okBtn.textContent = 'Aceptar';
+            okBtn.classList.add('btn', 'btn-primary', 'mt-3');
+            okBtn.onclick = function() {
+                simpleModal.style.display = 'none';
+            };
+            modalFooter.appendChild(okBtn);
+        }
+        simpleModal.style.display = 'block';
+    }
+
+    // Event listeners para cerrar el modal de mensajes
+    closeModalButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            simpleModal.style.display = 'none';
+        });
+    });
+    
+    window.addEventListener('click', function(event) {
+        if (event.target == simpleModal) {
+            simpleModal.style.display = 'none';
+        }
+    });
+});
+</script>
+{% endblock %}
