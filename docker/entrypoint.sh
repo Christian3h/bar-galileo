@@ -15,6 +15,9 @@ cd /app/bar_galileo
 # Apply migrations
 python manage.py migrate --noinput
 
+# Setup site_images module and permissions
+python manage.py setup_site_images
+
 # Collect static files
 python manage.py collectstatic --noinput
 

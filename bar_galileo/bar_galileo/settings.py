@@ -314,6 +314,16 @@ DBBACKUP_ENCRYPTION = False
 # DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
 # DBBACKUP_GPG_PASSPHRASE = os.getenv('DBBACKUP_GPG_PASSPHRASE', '')
 
+# Especificar rutas absolutas a mysqldump/mysql para evitar problemas de PATH
+# cuando el servidor se inicia desde entornos con PATH reducido
+DBBACKUP_CONNECTORS = {
+    'default': {
+        'CONNECTOR': 'dbbackup.db.mysql.MysqlDumpConnector',
+        'DUMP_CMD': '/usr/local/mysql/bin/mysqldump',
+        'RESTORE_CMD': '/usr/local/mysql/bin/mysql',
+    }
+}
+
 
 # ==================== Configuraciones de Seguridad ====================
 # Configuraciones de seguridad adaptadas al entorno (desarrollo/producción)

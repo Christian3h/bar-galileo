@@ -379,21 +379,23 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    console.error('Error al crear backup:', data.error);
+                    const errorMsg = data.error || 'Error desconocido al crear el backup';
+                    console.error('Error al crear backup:', errorMsg);
+                    AppFeedback.error(errorMsg);
                     if (btnCrear) {
                         btnCrear.disabled = false;
                         btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
                     }
-                    location.reload();
                 }
             })
             .catch(error => {
+                const errorMsg = 'Error de conexión al crear el backup. Revisa la consola del servidor.';
                 console.error('Error al crear backup:', error);
+                AppFeedback.error(errorMsg);
                 if (btnCrear) {
                     btnCrear.disabled = false;
                     btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
                 }
-                location.reload();
             });
     }
 
