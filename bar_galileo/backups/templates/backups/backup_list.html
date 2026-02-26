@@ -572,7 +572,6 @@
                     console.log('Respuesta de restauración:', data);
                     if (data.success) {
                         console.log('✅ Restauración exitosa, recargando página...');
-                        alert('✅ Backup restaurado exitosamente');
                         location.reload();
                     } else {
                         throw new Error(data.error || 'Error al restaurar');
@@ -619,7 +618,6 @@
                     console.log('Respuesta de restauración:', data);
                     if (data.success) {
                         console.log('✅ Restauración exitosa, recargando página...');
-                        alert('✅ Backup restaurado exitosamente');
                         location.reload();
                     } else {
                         console.error('Error al restaurar:', data.error);
