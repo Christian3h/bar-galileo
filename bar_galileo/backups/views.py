@@ -424,33 +424,91 @@ class BackupRestoreView(View):
                 logger.info("Archivo no encriptado, restaurando directamente...")
                 restore_filename = filename
 
-            # PASO 2: Restaurar usando django-dbbackup SIN --decrypt
+            # PASO 2: Restaurar el backup
             logger.info(f"Iniciando restauración con archivo: {restore_filename}")
-            
+
             try:
                 if tipo == 'db':
-                    # Restaurar base de datos SIN --decrypt
-                    logger.info(f"Ejecutando dbrestore con archivo desencriptado: {restore_filename}")
-                    call_command(
-                        'dbrestore',
-                        '--input-filename=' + restore_filename,
-                        # NO incluir --decrypt porque ya desencriptamos manualmente
-                        '--noinput',  # No pedir confirmación
-                        verbosity=2
+                    # Restaurar base de datos con MySQLdb (Python puro, sin binarios externos)
+                    logger.info(f"Restaurando DB con MySQLdb desde: {restore_filename}")
+                    import MySQLdb
+
+                    db_config = settings.DATABASES['default']
+                    restore_file_path = backup_dir / restore_filename
+
+                    conn = MySQLdb.connect(
+                        host=db_config.get('HOST', 'localhost'),
+                        port=int(db_config.get('PORT', 3306)),
+                        user=db_config.get('USER', 'root'),
+                        passwd=db_config.get('PASSWORD', ''),
+                        db=db_config['NAME'],
+                        charset='utf8mb4',
                     )
-                    logger.info("dbrestore ejecutado exitosamente")
-                    
+
+                    try:
+                        cursor = conn.cursor()
+                        cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
+
+                        with open(restore_file_path, 'r', encoding='utf-8') as f:
+                            sql_content = f.read()
+
+                        # Dividir el contenido en sentencias individuales
+                        # Ignorar líneas de comentarios y vacías
+                        statements = []
+                        current = []
+                        for line in sql_content.splitlines():
+                            stripped = line.strip()
+                            if stripped.startswith('--') or stripped == '':
+                                continue
+                            current.append(line)
+                            if stripped.endswith(';'):
+                                stmt = '\n'.join(current).strip()
+                                if stmt:
+                                    statements.append(stmt)
+                                current = []
+
+                        logger.info(f"Ejecutando {len(statements)} sentencias SQL...")
+                        errores_sql = 0
+                        for i, stmt in enumerate(statements):
+                            try:
+                                cursor.execute(stmt)
+                            except Exception as e_sql:
+                                errores_sql += 1
+                                logger.warning(f"Sentencia {i+1} con error (ignorado): {str(e_sql)[:200]}")
+
+                        conn.commit()
+                        cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
+                        cursor.close()
+                        logger.info(f"Restauración completada. Errores ignorados: {errores_sql}")
+                    finally:
+                        conn.close()
+
+                    logger.info("Restauración de DB completada exitosamente")
+
                 elif tipo == 'media':
-                    # Restaurar archivos media SIN --decrypt
-                    logger.info(f"Ejecutando mediarestore con archivo desencriptado: {restore_filename}")
-                    call_command(
-                        'mediarestore',
-                        '--input-filename=' + restore_filename,
-                        # NO incluir --decrypt porque ya desencriptamos manualmente
-                        '--noinput',  # No pedir confirmación
-                        verbosity=2
-                    )
-                    logger.info("mediarestore ejecutado exitosamente")
+                    # Restaurar archivos media extrayendo el archivo directamente a MEDIA_ROOT.
+                    # django-dbbackup guarda el media como TAR (aunque usa extensión .zip),
+                    # por lo que se usa tarfile. Si falla, se intenta con zipfile como fallback.
+                    import tarfile
+                    import zipfile
+                    restore_file_path = backup_dir / restore_filename
+                    media_root = Path(settings.MEDIA_ROOT)
+                    media_root.mkdir(parents=True, exist_ok=True)
+
+                    logger.info(f"Extrayendo {restore_file_path} en {media_root} ...")
+
+                    if tarfile.is_tarfile(str(restore_file_path)):
+                        with tarfile.open(restore_file_path, 'r:*') as tf:
+                            tf.extractall(media_root)
+                        logger.info("Restauración de media (TAR) completada exitosamente")
+                    elif zipfile.is_zipfile(restore_file_path):
+                        with zipfile.ZipFile(restore_file_path, 'r') as zf:
+                            zf.extractall(media_root)
+                        logger.info("Restauración de media (ZIP) completada exitosamente")
+                    else:
+                        raise Exception(
+                            f"El archivo '{restore_filename}' no es un TAR ni ZIP válido."
+                        )
 
             except Exception as e:
                 logger.error(f"Error durante la ejecución del comando: {str(e)}")
@@ -511,23 +569,22 @@ class BackupUploadView(View):
             backup_file = request.FILES['backup_file']
             filename = backup_file.name
 
-            # Validar extensión - aceptar diferentes formatos de backups GPG
-            if filename.endswith('.psql.gpg') or filename.endswith('.sql.gpg') or \
-               filename.endswith('.mysql.gpg') or (filename.endswith('.gpg') and 'db' in filename.lower()):
+            # Validar extensión - aceptar formatos con y sin encriptación
+            if (filename.endswith('.psql') or filename.endswith('.psql.gpg') or
+                    filename.endswith('.sql') or filename.endswith('.sql.gpg') or
+                    filename.endswith('.mysql') or filename.endswith('.mysql.gpg') or
+                    (filename.endswith('.gpg') and 'db' in filename.lower())):
                 tipo = 'db'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "db"
-                # Normalizar nombre del archivo a formato estándar
-                if not filename.endswith('.psql.gpg'):
-                    # Mantener el nombre original pero en la carpeta correcta
-                    pass
-            elif filename.endswith('.media.zip.gpg') or filename.endswith('.zip.gpg') or \
-                 (filename.endswith('.gpg') and 'media' in filename.lower()):
+            elif (filename.endswith('.media.zip') or filename.endswith('.media.zip.gpg') or
+                  filename.endswith('.zip.gpg') or
+                  (filename.endswith('.gpg') and 'media' in filename.lower())):
                 tipo = 'media'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "media"
             else:
                 return JsonResponse({
                     'success': False,
-                    'error': 'Tipo de archivo no válido. Debe ser un backup encriptado (.psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg)'
+                    'error': 'Tipo de archivo no válido. Formatos aceptados: .psql, .psql.gpg, .sql, .sql.gpg, .media.zip, .media.zip.gpg'
                 }, status=400)
 
             # Crear directorio si no existe

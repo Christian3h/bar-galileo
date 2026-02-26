@@ -20,16 +20,8 @@
             <p>{{ total_db_backups }}</p>
         </div>
         <div class="card">
-            <h3>Copia de Seguridad de Media</h3>
-            <p>{{ total_media_backups }}</p>
-        </div>
-        <div class="card">
             <h3>Espacio BD</h3>
             <p>{{ total_db_size_mb|floatformat:2 }} MB</p>
-        </div>
-        <div class="card">
-            <h3>Espacio Media</h3>
-            <p>{{ total_media_size_mb|floatformat:2 }} MB</p>
         </div>
     </section>
 
@@ -37,14 +29,8 @@
     <div class="search-container">
         {% if request.user|has_perm:"backups,crear" %}
         <div class="field-group buttons-group">
-            <button onclick="crearBackup('completo')" class="btn btn-success">
-                🔒 Crear copia Completa
-            </button>
             <button onclick="crearBackup('db')" class="btn btn-primary">
-                💾 Solo Base de Datos
-            </button>
-            <button onclick="crearBackup('media')" class="btn btn-primary">
-                📁 Solo Archivos Media
+                💾 Crear Copia de Seguridad
             </button>
         </div>
         {% endif %}
@@ -108,53 +94,6 @@
         </table>
     </div>
 
-    <!-- Backups de Media -->
-    <div class="table-responsive" style="margin-top: 40px;">
-        <h3 style="margin: 20px 0 10px 0;">📁 Copia de seguridad de Archivos Media</h3>
-        <table id="tabla-backups-media" class="table table-striped table-bordered nowrap">
-            <thead>
-                <tr>
-                    <th class="col-1">Tipo</th>
-                    <th class="col-2">Nombre</th>
-                    <th class="col-3">Fecha</th>
-                    <th class="col-4">Tamaño</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for backup in media_backups %}
-                <tr>
-                    <td class="col-1">
-                        <span class="backup-type-badge badge-media">MEDIA</span>
-                    </td>
-                    <td class="col-2">{{ backup.nombre }}</td>
-                    <td class="col-3">{{ backup.fecha|date:"d/m/Y H:i" }}</td>
-                    <td class="col-4 backup-size">{{ backup.tamanio_mb|floatformat:2 }} MB</td>
-                    <td class="actions-cell">
-                        {% if request.user|has_perm:"backups,crear" %}
-                        <a href="{% url 'backups:backup_download' 'media' backup.nombre %}" class="btn btn-sm"
-                            title="Descargar">
-                            <img src="{% static 'img/icons/download.svg' %}" alt="Descargar"
-                                style="width: 16px; height: 16px;">
-                        </a>
-                        {% endif %}
-                        {% if request.user|has_perm:"backups,eliminar" %}
-                        <button onclick="confirmarEliminar('media', '{{ backup.nombre }}')"
-                            class="btn btn-sm btn-delete" title="Eliminar">
-                            <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"
-                                style="width: 16px; height: 16px;">
-                        </button>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" style="text-align: center;">No hay copias de media disponibles</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
 </div>
 
 <!-- Modal de confirmación de eliminación removido — se usa AppFeedback.confirm() -->
@@ -207,7 +146,6 @@
                     <select id="restoreTipo" class="form-control" onchange="cargarBackupsDisponibles()">
                         <option value="">-- Selecciona --</option>
                         <option value="db">Base de Datos</option>
-                        <option value="media">Archivos Media</option>
                     </select>
                 </div>
 
@@ -223,10 +161,10 @@
             <div id="contenidoSubir" style="display: none;">
                 <div class="field-group">
                     <label for="uploadFile">Archivo de Backup:</label>
-                    <input type="file" id="uploadFile" accept=".gpg,.psql,.zip" class="form-control"
+                    <input type="file" id="uploadFile" accept=".psql,.sql,.mysql,.media.zip,.gpg,.psql.gpg,.sql.gpg,.zip.gpg,.media.zip.gpg" class="form-control"
                         onchange="validarArchivoSubida()">
                     <small style="color: #888; margin-top: 5px; display: block;">
-                        Formatos aceptados: Con/sin encriptación (.psql, .psql.gpg, .sql.gpg, .media.zip, .media.zip.gpg, .zip.gpg)
+                        Formatos aceptados: .psql, .psql.gpg, .sql, .sql.gpg, .media.zip, .media.zip.gpg
                     </small>
                 </div>
 
@@ -379,21 +317,23 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    console.error('Error al crear backup:', data.error);
+                    const errorMsg = data.error || 'Error desconocido al crear el backup';
+                    console.error('Error al crear backup:', errorMsg);
+                    AppFeedback.error(errorMsg);
                     if (btnCrear) {
                         btnCrear.disabled = false;
                         btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
                     }
-                    location.reload();
                 }
             })
             .catch(error => {
+                const errorMsg = 'Error de conexión al crear el backup. Revisa la consola del servidor.';
                 console.error('Error al crear backup:', error);
+                AppFeedback.error(errorMsg);
                 if (btnCrear) {
                     btnCrear.disabled = false;
                     btnCrear.textContent = btnCrear.dataset.originalText || 'Crear Backup';
                 }
-                location.reload();
             });
     }
 
@@ -632,7 +572,6 @@
                     console.log('Respuesta de restauración:', data);
                     if (data.success) {
                         console.log('✅ Restauración exitosa, recargando página...');
-                        alert('✅ Backup restaurado exitosamente');
                         location.reload();
                     } else {
                         throw new Error(data.error || 'Error al restaurar');
@@ -679,7 +618,6 @@
                     console.log('Respuesta de restauración:', data);
                     if (data.success) {
                         console.log('✅ Restauración exitosa, recargando página...');
-                        alert('✅ Backup restaurado exitosamente');
                         location.reload();
                     } else {
                         console.error('Error al restaurar:', data.error);
