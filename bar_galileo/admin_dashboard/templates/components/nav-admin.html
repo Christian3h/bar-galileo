@@ -181,18 +181,15 @@
                 </li>
                 {% endif %}
 
-
-                <!-- {% if request.user|has_perm:"dashboard,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('ajustes-submenu')">Ajustes</button>
-                <ul id="ajustes-submenu" class="submenu hidden">
-                    <li><a href="#">Crear</a></li>
-                    <li><a href="#">Listar</a></li>
-                </ul>
-            </li>
-            {% endif %} -->
-            <!-- Comentario de prueba -->
             </ul>
+
+            <!-- Cerrar sesión al fondo del sidebar -->
+            <div class="sidebar-logout">
+                <a href="{% url 'account_logout' %}" class="sidebar-logout-btn" onclick="return confirm('¿Estás seguro de que deseas cerrar sesión?');">
+                    <img src="{% static 'img/icons/logout.svg' %}" alt="Cerrar sesión">
+                    Cerrar Sesión
+                </a>
+            </div>
         </nav>
 </header>
 
