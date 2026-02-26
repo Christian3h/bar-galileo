@@ -106,6 +106,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "bar_galileo.urls"
+# Configuración explícita de django-allauth para registro
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False  # Si solo quieres email
+ACCOUNT_AUTHENTICATION_METHOD = "email"  # Opcional, si solo usas email
 
 TEMPLATES = [
     {
@@ -246,9 +250,14 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("emailHost")
-EMAIL_HOST_PASSWORD = os.getenv("emailPassword")
-DEFAULT_FROM_EMAIL = os.getenv("emailHost")  # Email remitente por defecto
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+print("EMAIL_HOST_USER:", EMAIL_HOST_USER)
+print("EMAIL_HOST_PASSWORD:", EMAIL_HOST_PASSWORD)
+print("DEFAULT_FROM_EMAIL:", DEFAULT_FROM_EMAIL)
 
 # Para debug: descomentar la siguiente línea para ver emails en consola
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
