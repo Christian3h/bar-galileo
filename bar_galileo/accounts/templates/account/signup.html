@@ -85,7 +85,7 @@
                     {{ redirect_field }}
                 {% endslot %}
                 {% slot actions %}
-                    {% element button tags="prominent,signup" type="submit" %}
+                    {% element button tags="prominent,signup" type="submit" attrs="id='signup-btn' disabled" %}
                         Registrarse
                     {% endelement %}
                 {% endslot %}
@@ -367,6 +367,36 @@
                 this.querySelector('.eye-closed').style.display = show ? ''     : 'none';
             });
         });
+
+        // --- INICIO: Habilitar/deshabilitar botón de registro según requisitos ---
+
+        function allRequirementsOk() {
+            return (
+                reqLength.classList.contains('ok') &&
+                reqNumeric.classList.contains('ok') &&
+                reqCommon.classList.contains('ok') &&
+                reqPersonal.classList.contains('ok')
+            );
+        }
+
+        function updateSubmitButton() {
+            const btn = document.getElementById('signup-btn');
+            if (!btn) return;
+            btn.disabled = !allRequirementsOk();
+        }
+
+        // Llama a updateSubmitButton() cada vez que se actualizan los requisitos
+        if (pass1) {
+            pass1.addEventListener('input', function () {
+                // ... ya existe la lógica de requisitos ...
+                updateSubmitButton();
+            });
+        }
+
+        // Asegúrate de que el botón esté deshabilitado al cargar la página
+        updateSubmitButton();
+
+        // --- FIN ---
 
     });
     </script>
