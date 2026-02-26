@@ -486,15 +486,29 @@ class BackupRestoreView(View):
                     logger.info("Restauración de DB completada exitosamente")
 
                 elif tipo == 'media':
-                    # Restaurar archivos media con mediarestore
-                    logger.info(f"Ejecutando mediarestore con archivo desencriptado: {restore_filename}")
-                    call_command(
-                        'mediarestore',
-                        '--input-filename=' + restore_filename,
-                        '--noinput',
-                        verbosity=2
-                    )
-                    logger.info("mediarestore ejecutado exitosamente")
+                    # Restaurar archivos media extrayendo el archivo directamente a MEDIA_ROOT.
+                    # django-dbbackup guarda el media como TAR (aunque usa extensión .zip),
+                    # por lo que se usa tarfile. Si falla, se intenta con zipfile como fallback.
+                    import tarfile
+                    import zipfile
+                    restore_file_path = backup_dir / restore_filename
+                    media_root = Path(settings.MEDIA_ROOT)
+                    media_root.mkdir(parents=True, exist_ok=True)
+
+                    logger.info(f"Extrayendo {restore_file_path} en {media_root} ...")
+
+                    if tarfile.is_tarfile(str(restore_file_path)):
+                        with tarfile.open(restore_file_path, 'r:*') as tf:
+                            tf.extractall(media_root)
+                        logger.info("Restauración de media (TAR) completada exitosamente")
+                    elif zipfile.is_zipfile(restore_file_path):
+                        with zipfile.ZipFile(restore_file_path, 'r') as zf:
+                            zf.extractall(media_root)
+                        logger.info("Restauración de media (ZIP) completada exitosamente")
+                    else:
+                        raise Exception(
+                            f"El archivo '{restore_filename}' no es un TAR ni ZIP válido."
+                        )
 
             except Exception as e:
                 logger.error(f"Error durante la ejecución del comando: {str(e)}")
