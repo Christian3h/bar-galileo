@@ -27,10 +27,12 @@
                         {% if field.name == "password1" %}
                             <div class="form-field-col">
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                <div class="password-toggle-wrapper" style="display: flex; align-items: center; gap: 0.5em;">
+                                <div class="password-input-wrapper">
                                     {{ field }}
-                                    <input type="checkbox" class="toggle-password" data-target="{{ field.id_for_label }}" title="Mostrar contraseña" style="margin-left: 0.5em;">
-                                    <span style="font-size:0.95em; color:var(--color-secondary); margin-left:0.25em;">Mostrar</span>
+                                    <button type="button" class="toggle-password" data-target="{{ field.id_for_label }}" title="Mostrar contraseña">
+                                        <svg class="eye-open" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+                                        <svg class="eye-closed" style="display:none" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07A3 3 0 019.07 9.07M3 3l18 18" stroke-linecap="round"/></svg>
+                                    </button>
                                 </div>
                                 {% if field.errors %}
                                     <ul class="form-errors">
@@ -53,10 +55,12 @@
                         {% elif field.name == "password2" %}
                             <div class="form-field-col">
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                <div class="password-toggle-wrapper" style="display: flex; align-items: center; gap: 0.5em;">
+                                <div class="password-input-wrapper">
                                     {{ field }}
-                                    <input type="checkbox" class="toggle-password" data-target="{{ field.id_for_label }}" title="Mostrar contraseña" style="margin-left: 0.5em;">
-                                    <span style="font-size:0.95em; color:var(--color-secondary); margin-left:0.25em;">Mostrar</span>
+                                    <button type="button" class="toggle-password" data-target="{{ field.id_for_label }}" title="Mostrar contraseña">
+                                        <svg class="eye-open" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+                                        <svg class="eye-closed" style="display:none" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07A3 3 0 019.07 9.07M3 3l18 18" stroke-linecap="round"/></svg>
+                                    </button>
                                 </div>
                                 {% if field.errors %}
                                     <ul class="form-errors">
@@ -113,15 +117,23 @@
         }
 
         .toggle-password {
-            position: absolute;
-            right: 0.6rem;
-            top: 50%;
             transform: translateY(-50%);
             cursor: pointer;
-            width: 16px;
-            height: 16px;
-            margin: 0;
+            background: none;
+            border: none;
+            padding: 0.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            border-radius: 4px;
+            line-height: 1;
+            width: auto !important;
+            padding: 2px !important;
+            margin-left: 5px;
         }
+        .toggle-password:hover { color: #333; }
+        .toggle-password:focus { outline: none; }
 
         .password-strength-container {
             display: flex;
@@ -346,9 +358,13 @@
         }
         if (pass2) pass2.addEventListener('input', checkMatch);
 
-        document.querySelectorAll('.toggle-password').forEach(cb => {
-            cb.addEventListener('change', function () {
-                document.getElementById(this.dataset.target).type = this.checked ? 'text' : 'password';
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const input = document.getElementById(this.dataset.target);
+                const show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                this.querySelector('.eye-open').style.display  = show ? 'none' : '';
+                this.querySelector('.eye-closed').style.display = show ? ''     : 'none';
             });
         });
 
