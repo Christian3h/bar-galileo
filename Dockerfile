@@ -16,6 +16,7 @@ RUN apt-get update && apt-get install -y \
     libmupdf-dev \
     libgl1 \
     libglib2.0-0 \
+    flite \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar dependencias Python
