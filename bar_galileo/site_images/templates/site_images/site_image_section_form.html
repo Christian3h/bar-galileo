@@ -12,12 +12,12 @@
 {% block content %}
 <div class="form-container">
     <div class="form-header">
-        <h1>{% if object %}✏️ Editar{% else %}➕ Nueva{% endif %} Sección</h1>
+        <h1>{% if object %}Editar{% else %}Nueva{% endif %} Sección</h1>
     </div>
 
     <form method="post">
         {% csrf_token %}
-        
+
         <div class="form-group">
             <label for="{{ form.name.id_for_label }}">Nombre <span class="required">*</span></label>
             {{ form.name }}
@@ -41,7 +41,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
-                {% if object %}💾 Guardar{% else %}➕ Crear{% endif %}
+                {% if object %}Guardar{% else %}➕ Crear{% endif %}
             </button>
             <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">Cancelar</a>
         </div>

@@ -3,19 +3,19 @@ services:
     image: mysql:8.0
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - bar_galileo/.env
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-bar_galileo}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_USER: ${MYSQL_USER:-django}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-django}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_seguro}
+      MYSQL_USER: ${MYSQL_USER:-bar_galileo_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-Galileo2025}
     ports:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     command: ["--default-authentication-plugin=mysql_native_password"]
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-root_seguro}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -24,27 +24,28 @@ services:
     build: .
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
-      - .env.docker
+      - bar_galileo/.env
     environment:
       DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-bar_galileo.settings}
-      DB_HOST: ${DB_HOST:-db}
+      DB_HOST: db
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: ${DB_NAME:-bar_galileo}
-      DB_USER: ${DB_USER:-django}
-      DB_PASSWORD: ${DB_PASSWORD:-django}
+      DB_USER: ${DB_USER:-bar_galileo_user}
+      DB_PASSWORD: ${DB_PASSWORD:-Galileo2025}
       DEBUG: ${DEBUG:-True}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
-      emailHost: ${EMAIL_HOST_USER:-}
-      emailPassword: ${EMAIL_HOST_PASSWORD:-}
+      emailHost: ${emailHost:-}
+      emailPassword: ${emailPassword:-}
     ports:
       - "8000:8000"
     volumes:
-      - ./bar_galileo:/app/bar_galileo:rw
-      - static_volume:/app/bar_galileo/staticfiles
-      - media_volume:/app/bar_galileo/media
+      - ./bar_galileo:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
     command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "bar_galileo.asgi:application"]
 
 volumes:

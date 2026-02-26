@@ -13,7 +13,7 @@
 <div class="form-container">
     <div class="form-header">
         <h1>
-            {% if object %}✏️ Editar{% else %}➕ Agregar{% endif %} Imagen del Sitio
+            {% if object %}Editar{% else %}Agregar{% endif %} Imagen del Sitio
         </h1>
     </div>
 
@@ -28,7 +28,7 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        
+
         <div class="form-group">
             <label for="{{ form.section.id_for_label }}">Sección <span class="required">*</span></label>
             {{ form.section }}
@@ -51,7 +51,7 @@
             {% if form.image.errors %}
                 <ul class="error-list">{% for error in form.image.errors %}<li>{{ error }}</li>{% endfor %}</ul>
             {% endif %}
-            
+
             {% if object and object.image %}
                 <div class="current-image">
                     <p><strong>Imagen actual:</strong></p>
@@ -86,7 +86,7 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">
-                {% if object %}💾 Guardar{% else %}➕ Agregar{% endif %}
+                {% if object %}Guardar{% else %}➕ Agregar{% endif %}
             </button>
             <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">Cancelar</a>
         </div>
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.querySelector('input[type="file"]');
     const previewContainer = document.getElementById('image-preview');
     const previewImg = document.getElementById('preview-img');
-    
+
     if (imageInput) {
         imageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
