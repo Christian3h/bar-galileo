@@ -569,23 +569,22 @@ class BackupUploadView(View):
             backup_file = request.FILES['backup_file']
             filename = backup_file.name
 
-            # Validar extensión - aceptar diferentes formatos de backups GPG
-            if filename.endswith('.psql.gpg') or filename.endswith('.sql.gpg') or \
-               filename.endswith('.mysql.gpg') or (filename.endswith('.gpg') and 'db' in filename.lower()):
+            # Validar extensión - aceptar formatos con y sin encriptación
+            if (filename.endswith('.psql') or filename.endswith('.psql.gpg') or
+                    filename.endswith('.sql') or filename.endswith('.sql.gpg') or
+                    filename.endswith('.mysql') or filename.endswith('.mysql.gpg') or
+                    (filename.endswith('.gpg') and 'db' in filename.lower())):
                 tipo = 'db'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "db"
-                # Normalizar nombre del archivo a formato estándar
-                if not filename.endswith('.psql.gpg'):
-                    # Mantener el nombre original pero en la carpeta correcta
-                    pass
-            elif filename.endswith('.media.zip.gpg') or filename.endswith('.zip.gpg') or \
-                 (filename.endswith('.gpg') and 'media' in filename.lower()):
+            elif (filename.endswith('.media.zip') or filename.endswith('.media.zip.gpg') or
+                  filename.endswith('.zip.gpg') or
+                  (filename.endswith('.gpg') and 'media' in filename.lower())):
                 tipo = 'media'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "media"
             else:
                 return JsonResponse({
                     'success': False,
-                    'error': 'Tipo de archivo no válido. Debe ser un backup encriptado (.psql.gpg, .sql.gpg, .zip.gpg, .media.zip.gpg)'
+                    'error': 'Tipo de archivo no válido. Formatos aceptados: .psql, .psql.gpg, .sql, .sql.gpg, .media.zip, .media.zip.gpg'
                 }, status=400)
 
             # Crear directorio si no existe
