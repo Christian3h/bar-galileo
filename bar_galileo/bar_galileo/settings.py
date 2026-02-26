@@ -16,6 +16,8 @@ from pathlib import Path
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
+from django.utils.translation import gettext_lazy as _
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 # Cargar el .env desde la raíz del proyecto
@@ -108,7 +110,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "bar_galileo.urls"
 # Configuración explícita de django-allauth para registro
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False  # Si solo quieres email
+ACCOUNT_USERNAME_REQUIRED = True  # Si solo quieres email
 ACCOUNT_AUTHENTICATION_METHOD = "email"  # Opcional, si solo usas email
 
 TEMPLATES = [
@@ -161,12 +163,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {
+            "user_attributes": ("username", "email"),
+            "max_similarity": 0.7
+        }
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 8
+        }
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -180,7 +190,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = "es-co"
+LANGUAGE_CODE = "es"
 USE_I18N = True
 TIME_ZONE = "America/Bogota"
 
