@@ -629,7 +629,7 @@
         });
         if (confirmed) {
             const form = document.getElementById('delete-producto-form');
-            form.action = `/adminD/products/${productoId}/delete/`;
+            form.action = `/adminD/products/delete/${productoId}/`;
             form.submit();
         }
     }

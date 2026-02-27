@@ -30,6 +30,7 @@ class RolCreateView(LoginRequiredMixin, CreateView):
         role = form.save()
         mensaje = f"Se ha creado el nuevo rol: '{role.nombre}'."
         notificar_usuario(self.request.user, mensaje)
+        messages.success(self.request, 'Registro creado correctamente.')
         return redirect('roles:rol_permisos', role.id)
 
 @method_decorator(permission_required('roles', 'editar'), name='dispatch')
@@ -43,6 +44,7 @@ class RolUpdateView(LoginRequiredMixin, UpdateView):
         role = form.save()
         mensaje = f"El rol '{role.nombre}' ha sido actualizado."
         notificar_usuario(self.request.user, mensaje)
+        messages.success(self.request, 'Cambios guardados correctamente.')
         return redirect(self.success_url)
 
 from .models import UserProfile  # Importa el modelo correcto desde el mismo módulo
@@ -55,6 +57,7 @@ class RolDeleteView(LoginRequiredMixin, DeleteView):
 
     def post(self, request, *args, **kwargs):
         role = self.get_object()
+<<<<<<< HEAD
         # No permitir eliminar el rol "Usuario"
         if role.nombre.lower() == "usuario":
             messages.error(request, "El rol 'Usuario' no se puede eliminar.")
@@ -75,6 +78,12 @@ class RolDeleteView(LoginRequiredMixin, DeleteView):
     def get(self, request, *args, **kwargs):
         # Permite mostrar el template de confirmación antes de eliminar
         return super().get(request, *args, **kwargs)
+=======
+        mensaje = f"El rol '{role.nombre}' ha sido eliminado."
+        notificar_usuario(self.request.user, mensaje)
+        messages.success(self.request, 'Registro eliminado correctamente.')
+        return super().form_valid(form)
+>>>>>>> origin/Sebastian
 
 @method_decorator(permission_required('roles', 'editar'), name='dispatch')
 class RolPermisosView(LoginRequiredMixin, View):
@@ -107,4 +116,9 @@ class RolPermisosView(LoginRequiredMixin, View):
 
         mensaje = f"Los permisos para el rol '{role.nombre}' han sido actualizados."
         notificar_usuario(request.user, mensaje)
+<<<<<<< HEAD
         return redirect('roles:rol_list')
+=======
+        messages.success(request, 'Cambios guardados correctamente.')
+        return redirect('roles:rol_list')
+>>>>>>> origin/Sebastian
