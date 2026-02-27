@@ -1,0 +1,1375 @@
+Manual de Usuario
+
+
+Sistema de Gestión Integral Bar Galileo
+
+
+Versión: 2.0 • Fecha: 23-Feb-2026
+
+
+════════════════════════════════════════════════════════════════
+                           ÍNDICE
+════════════════════════════════════════════════════════════════
+
+1. Acceso al sistema e inicio de sesión
+   1.1 Restablecer contraseña
+2. Panel de Administrador
+   2.1 Estadísticas generales
+   2.2 Exportar datos del dashboard
+   2.3 Navegación del menú lateral
+3. Módulo: Mesas y Pedidos
+   3.1 Ver mesas
+   3.2 Crear mesa
+   3.3 Editar mesa
+   3.4 Cambiar estado / Liberar mesa
+   3.5 Agregar productos al pedido
+   3.6 Asignar usuarios al pedido
+   3.7 Facturar y cerrar mesa
+4. Módulo: Productos e Inventario
+   4.1 Lista de productos
+   4.2 Crear un producto
+   4.3 Editar un producto
+   4.4 Eliminar (archivar) un producto
+   4.5 Productos archivados y reactivación
+   4.6 Ajustes de inventario (entradas/salidas)
+5. Módulo: Categorías
+   5.1 Ver categorías
+   5.2 Crear categoría
+   5.3 Editar / eliminar categoría
+6. Módulo: Marcas
+   6.1 Ver marcas
+   6.2 Crear marca
+   6.3 Editar / eliminar marca
+7. Módulo: Proveedores
+   7.1 Ver proveedores
+   7.2 Crear proveedor
+   7.3 Editar / eliminar proveedor
+8. Módulo: Facturación
+   8.1 Consultar facturas
+   8.2 Detalle de factura
+   8.3 Exportar facturas (CSV / Excel / PDF)
+   8.4 Eliminar factura
+9. Módulo: Gastos
+   9.1 Registrar un gasto
+   9.2 Editar / eliminar un gasto
+   9.3 Consultar gastos
+   9.4 Buenas prácticas
+10. Módulo: Nóminas    10.1 Lista de empleados
+    10.2 Crear empleado
+    10.3 Editar / eliminar empleado
+    10.4 Detalle del empleado
+    10.5 Registrar pago
+    10.6 Crear bonificación
+    10.7 Consultar historial de pagos
+11. Módulo: Reportes (PDF / Excel / CSV)
+    11.1 Ver reportes guardados
+    11.2 Crear un reporte
+    11.3 Generar datos del reporte
+    11.4 Exportar reporte
+    11.5 Editar / eliminar reporte
+12. Módulo: Notificaciones
+    12.1 Ver notificaciones
+    12.2 Marcar como leída
+    12.3 Recomendaciones
+13. Módulo: Backups
+    13.1 Ver backups disponibles
+    13.2 Crear backup manual
+    13.3 Subir backup
+    13.4 Descargar backup
+    13.5 Restaurar backup
+    13.6 Eliminar backup
+    13.7 Buenas prácticas
+14. Usuarios, roles y permisos
+    14.1 Lista de usuarios
+    14.2 Cambiar contraseña de usuario (Admin)
+    14.3 Crear / editar rol
+    14.4 Configurar permisos por rol
+    14.5 Permisos y acceso a módulos
+15. Panel de Usuario Personal
+    15.1 Ver perfil
+    15.2 Editar información personal
+    15.3 Contacto de emergencia
+    15.4 Historial y pedidos
+16. Gestión de Imágenes del Sitio
+    16.1 Carrusel de la página principal
+    16.2 Imágenes por sección
+    16.3 Contenido editable del sitio
+17. Chat IA (RAG) – Módulo de ayuda inteligente
+    17.1 Abrir el chat
+    17.2 Subir documentos PDF
+    17.3 Hacer una pregunta
+    17.4 Historial de consultas
+    17.5 Buenas prácticas
+    17.6 Solución de errores del chat
+18. Chat IA General (Google Gemini)
+    18.1 Abrir el chat
+    18.2 Enviar mensajes
+    18.3 Gestionar sesiones
+19. Tienda Pública
+    19.1 Navegar la tienda
+    19.2 Filtros disponibles
+20. Solución de problemas (FAQ)
+
+
+════════════════════════════════════════════════════════════════
+
+
+¿Qué es la página Web Bar Galileo?
+
+Bar Galileo es una aplicación web para la gestión integral de un bar/restaurante. Incluye los siguientes módulos: mesas y pedidos, inventario de productos, categorías, marcas, proveedores, facturación, gastos, nóminas y empleados, reportes (PDF/Excel/CSV), notificaciones en tiempo real, backups, gestión de usuarios y roles con permisos, panel de usuario personal, gestión de imágenes del sitio web, un asistente con IA para consultar documentos (RAG) y un chat de inteligencia artificial general.
+
+Los módulos descritos en este manual corresponden a las funcionalidades implementadas en el sistema.
+
+
+════════════════════════════════════════════════════════════════
+1. ACCESO AL SISTEMA E INICIO DE SESIÓN
+════════════════════════════════════════════════════════════════
+
+El sistema se accede desde un navegador web. La URL depende del entorno:
+   • Desarrollo local: http://localhost:8000
+   • Producción/Docker: la URL configurada por el administrador del servidor.
+
+Pasos para iniciar sesión:
+
+   • Paso 1. En el campo Usuario, escribe tu nombre de usuario.
+   • Paso 2. En el campo Contraseña, escribe tu clave (respeta mayúsculas/minúsculas).
+   • Paso 3. Completa el captcha de verificación.
+   • Paso 4. Presiona el botón "Iniciar sesión".
+   • Paso 5. Si prefieres ingresar con tu cuenta de Google, presiona el botón "Ingresar con Google".
+
+[IMAGEN: Pantalla de inicio de sesión con campos usuario, contraseña, captcha y botón de Google]
+
+
+────────────────────────────────────────────────────────────────
+1.1 Restablecer contraseña
+────────────────────────────────────────────────────────────────
+
+Si olvidaste tu contraseña:
+
+   • Paso 1. En la pantalla de login, presiona "¿Olvidaste tu contraseña?".
+   • Paso 2. Ingresa tu correo electrónico registrado.
+   • Paso 3. Presiona "Restablecer Contraseña".
+   • Paso 4. Revisa tu bandeja de entrada (y spam) para el enlace de recuperación.
+   • Paso 5. Sigue el enlace y crea una nueva contraseña.
+
+Usa "Volver al inicio de sesión" para regresar sin realizar cambios.
+
+[IMAGEN: Formulario de restablecimiento de contraseña]
+
+
+════════════════════════════════════════════════════════════════
+2. PANEL DE ADMINISTRADOR
+════════════════════════════════════════════════════════════════
+
+Para ingresar al Panel de Administrador:
+   • Paso 1. Haz clic en el icono de perfil ubicado en la esquina superior derecha.
+   • Paso 2. Selecciona "Panel de administrador" en el menú desplegable.
+
+[IMAGEN: Menú de perfil con opción "Panel de administrador"]
+
+
+────────────────────────────────────────────────────────────────
+2.1 Estadísticas generales
+────────────────────────────────────────────────────────────────
+
+Al ingresar verás el panel de estadísticas generales que muestra un resumen visual del estado del sistema:
+
+   • Ingresos totales
+   • Ganancias
+   • Stock total
+   • Gastos
+   • Nóminas
+   • Empleados activos
+   • Bonificaciones
+
+Incluye gráficos de:
+   • Estado de mesas (disponibles, ocupadas, reservadas, fuera de servicio)
+   • Top 5 productos más vendidos
+   • Ventas del período
+   • Productos con mayor stock
+
+Puedes filtrar la información por período: mensual, trimestral o todo el historial.
+
+Esta sección es solo de consulta y no permite realizar acciones directas.
+
+[IMAGEN: Panel de estadísticas generales con gráficos]
+
+
+────────────────────────────────────────────────────────────────
+2.2 Exportar datos del dashboard
+────────────────────────────────────────────────────────────────
+
+Puedes exportar las estadísticas del panel en tres formatos:
+   • CSV: archivo de datos separados por comas.
+   • Excel (XLSX): hoja de cálculo.
+   • PDF: documento con formato para impresión.
+
+Para exportar, busca los botones de exportación en la parte superior del dashboard y selecciona el formato deseado.
+
+
+────────────────────────────────────────────────────────────────
+2.3 Navegación del menú lateral
+────────────────────────────────────────────────────────────────
+
+Para acceder al listado completo de módulos, haz clic en el icono de menú (☰) en la parte superior izquierda. Se desplegará el panel lateral con acceso a todos los módulos disponibles según tu rol y permisos.
+
+Nota: Los módulos visibles dependen de los permisos asignados a tu rol. Si no ves un módulo, contacta al administrador.
+
+[IMAGEN: Menú lateral desplegado con lista de módulos]
+
+
+════════════════════════════════════════════════════════════════
+3. MÓDULO: MESAS Y PEDIDOS
+════════════════════════════════════════════════════════════════
+
+Este módulo se usa para la operación diaria: abrir mesas, tomar pedidos, enviar a preparación y facturar.
+
+[IMAGEN: Vista general de mesas]
+
+
+────────────────────────────────────────────────────────────────
+3.1 Ver mesas
+────────────────────────────────────────────────────────────────
+
+La vista principal muestra todas las mesas registradas con su estado actual. Los estados posibles son:
+
+   • Disponible: mesa libre, lista para recibir clientes.
+   • Ocupada: mesa con un pedido activo en proceso.
+   • Reservada: mesa apartada para un cliente.
+   • Fuera de servicio: mesa no disponible (mantenimiento, etc.).
+
+Cada mesa se muestra con un color diferente según su estado para fácil identificación visual.
+
+
+────────────────────────────────────────────────────────────────
+3.2 Crear mesa
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona el botón "Crear mesa" o "+".
+   • Paso 2. Ingresa el nombre de la mesa (ej.: "Mesa 1", "Terraza 3").
+   • Paso 3. Agrega una descripción opcional (ej.: "Mesa junto a la ventana").
+   • Paso 4. Selecciona el estado inicial de la mesa.
+   • Paso 5. Presiona "Guardar".
+
+Usa "Volver" para regresar sin guardar cambios.
+
+[IMAGEN: Formulario de crear mesa]
+
+
+────────────────────────────────────────────────────────────────
+3.3 Editar mesa
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de mesas, selecciona la mesa que deseas editar.
+   • Paso 2. Presiona el botón "Editar".
+   • Paso 3. Modifica el nombre, descripción o estado según necesites.
+   • Paso 4. Presiona "Guardar" para confirmar los cambios.
+
+Para eliminar una mesa, presiona "Eliminar". El sistema pedirá confirmación antes de proceder.
+
+Nota: No se puede eliminar una mesa que tenga un pedido activo.
+
+
+────────────────────────────────────────────────────────────────
+3.4 Cambiar estado / Liberar mesa
+────────────────────────────────────────────────────────────────
+
+   • Cambiar estado: Puedes cambiar directamente el estado de una mesa (disponible, ocupada, reservada, fuera de servicio) desde la vista de mesas.
+   • Liberar mesa: Cuando una mesa está ocupada y ya se facturó el pedido, usa el botón "Liberar" para cambiarla a estado disponible.
+
+
+────────────────────────────────────────────────────────────────
+3.5 Agregar productos al pedido
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Selecciona una mesa disponible u ocupada.
+   • Paso 2. Presiona "Pedido" para abrir el panel de pedido.
+   • Paso 3. Busca el producto por nombre o categoría.
+   • Paso 4. Selecciona la cantidad deseada.
+   • Paso 5. Presiona "Agregar" para añadirlo al pedido.
+   • Paso 6. Repite para cada ítem (bebidas, cócteles, comida, etc.).
+   • Paso 7. Puedes modificar la cantidad o eliminar ítems del pedido en cualquier momento.
+   • Paso 8. Revisa el total provisional del pedido en la parte inferior.
+
+Las actualizaciones de stock se reflejan en tiempo real gracias al sistema de WebSockets.
+
+[IMAGEN: Panel de pedido con productos agregados]
+
+
+────────────────────────────────────────────────────────────────
+3.6 Asignar usuarios al pedido
+────────────────────────────────────────────────────────────────
+
+Puedes asignar uno o más usuarios (meseros) a un pedido para llevar registro de quién atendió cada mesa:
+
+   • Paso 1. Dentro del pedido activo, busca la opción de gestión de usuarios.
+   • Paso 2. Selecciona el o los usuarios que atienden la mesa.
+   • Paso 3. Confirma la asignación.
+
+
+────────────────────────────────────────────────────────────────
+3.7 Facturar y cerrar mesa
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Confirma que todos los productos consumidos estén registrados en el pedido.
+   • Paso 2. Presiona el botón "Facturar".
+   • Paso 3. El sistema genera automáticamente una factura con un número único de 8 dígitos.
+   • Paso 4. Se muestra la factura con el detalle de productos, cantidades, precios y total.
+   • Paso 5. La mesa queda lista para ser liberada.
+
+Nota: Una vez facturado, el pedido no se puede modificar.
+
+[IMAGEN: Factura generada]
+
+
+════════════════════════════════════════════════════════════════
+4. MÓDULO: PRODUCTOS E INVENTARIO
+════════════════════════════════════════════════════════════════
+
+Aquí se administran los productos del bar, incluyendo precios, stock e imágenes.
+
+[IMAGEN: Lista de productos]
+
+
+────────────────────────────────────────────────────────────────
+4.1 Lista de productos
+────────────────────────────────────────────────────────────────
+
+La vista principal muestra todos los productos activos en formato de tabla con:
+   • Nombre del producto
+   • Categoría
+   • Marca
+   • Proveedor
+   • Precio de venta
+   • Stock disponible
+   • Estado (activo/archivado)
+
+Puedes usar el buscador y los filtros para encontrar productos específicos.
+
+
+────────────────────────────────────────────────────────────────
+4.2 Crear un producto
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de productos, presiona "+ Crear producto".
+   • Paso 2. Completa los campos del formulario:
+      - Nombre: nombre del producto (debe ser único).
+      - Categoría: selecciona la categoría (ej.: Bebidas, Cócteles, Comida).
+      - Marca: selecciona la marca del producto.
+      - Proveedor: selecciona el proveedor.
+      - Precio de compra: costo de adquisición del producto.
+      - Precio de venta: precio al que se vende al cliente.
+      - Stock: cantidad inicial disponible.
+      - Descripción: descripción opcional del producto.
+      - Imágenes: sube una o más imágenes del producto.
+   • Paso 3. Presiona "Guardar".
+
+Nota: El precio de venta debe ser mayor al precio de compra. El sistema valida esto automáticamente.
+
+Nota: Las imágenes se convierten automáticamente a formato WEBP optimizado.
+
+[IMAGEN: Formulario de crear producto]
+
+
+────────────────────────────────────────────────────────────────
+4.3 Editar un producto
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la tabla de productos, busca el producto usando el buscador o filtros.
+   • Paso 2. En la columna de acciones, presiona "Editar".
+   • Paso 3. Modifica los campos que necesites (precio, stock, nombre, imágenes, etc.).
+   • Paso 4. Presiona "Guardar" para confirmar los cambios.
+
+También puedes agregar o eliminar imágenes del producto desde la vista de edición.
+
+
+────────────────────────────────────────────────────────────────
+4.4 Eliminar (archivar) un producto
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la tabla de productos, busca el producto.
+   • Paso 2. En la columna de acciones, presiona "Eliminar".
+   • Paso 3. Confirma la acción.
+
+Importante: Eliminar un producto NO lo borra permanentemente del sistema. El producto se archiva (desactivación lógica) y deja de aparecer en la lista de productos activos y en los pedidos.
+
+
+────────────────────────────────────────────────────────────────
+4.5 Productos archivados y reactivación
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Accede a la sección "Productos archivados" desde el menú de productos.
+   • Paso 2. Verás la lista de productos que fueron eliminados/archivados.
+   • Paso 3. Para reactivar un producto, presiona "Reactivar" en la columna de acciones.
+   • Paso 4. El producto volverá a aparecer en la lista de productos activos.
+
+
+────────────────────────────────────────────────────────────────
+4.6 Ajustes de inventario (entradas/salidas)
+────────────────────────────────────────────────────────────────
+
+   • Usa "Ajuste de inventario" cuando haya conteos físicos, pérdidas o correcciones.
+   • Registra el motivo del ajuste (ej.: merma, daño, conteo, devolución).
+   • Para compras a proveedor, registra como Entrada. Para consumo o merma, como Salida.
+   • Verifica el stock final y guarda.
+
+El sistema mantiene un historial de todos los movimientos de stock con fecha y hora.
+
+
+════════════════════════════════════════════════════════════════
+5. MÓDULO: CATEGORÍAS
+════════════════════════════════════════════════════════════════
+
+Permite administrar las categorías en las que se agrupan los productos (ej.: Bebidas, Cócteles, Comida, Licores, etc.).
+
+
+────────────────────────────────────────────────────────────────
+5.1 Ver categorías
+────────────────────────────────────────────────────────────────
+
+La vista muestra todas las categorías registradas en formato de tabla. Permite buscar, ordenar y ver el nombre y descripción de cada una.
+
+[IMAGEN: Lista de categorías]
+
+
+────────────────────────────────────────────────────────────────
+5.2 Crear categoría
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona el botón "Crear Categoría".
+   • Paso 2. Ingresa el nombre de la categoría (debe ser único).
+   • Paso 3. Agrega una descripción opcional.
+   • Paso 4. Presiona "Crear" para guardar.
+
+Usa "Volver" para regresar sin guardar cambios.
+
+[IMAGEN: Formulario de crear categoría]
+
+
+────────────────────────────────────────────────────────────────
+5.3 Editar / eliminar categoría
+────────────────────────────────────────────────────────────────
+
+   • Editar: en la tabla de categorías, presiona "Editar" en la categoría deseada, modifica los datos y guarda.
+   • Eliminar: presiona "Eliminar" y confirma. No se puede eliminar una categoría que tenga productos asociados.
+
+
+════════════════════════════════════════════════════════════════
+6. MÓDULO: MARCAS
+════════════════════════════════════════════════════════════════
+
+Permite administrar las marcas de los productos (ej.: Absolut, Johnnie Walker, Coca-Cola, etc.).
+
+
+────────────────────────────────────────────────────────────────
+6.1 Ver marcas
+────────────────────────────────────────────────────────────────
+
+La vista muestra todas las marcas registradas con su nombre y descripción.
+
+
+────────────────────────────────────────────────────────────────
+6.2 Crear marca
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona "Crear Marca".
+   • Paso 2. Ingresa el nombre de la marca.
+   • Paso 3. Agrega una descripción opcional.
+   • Paso 4. Presiona "Crear" para guardar.
+
+
+────────────────────────────────────────────────────────────────
+6.3 Editar / eliminar marca
+────────────────────────────────────────────────────────────────
+
+   • Editar: presiona "Editar" en la marca deseada, modifica los datos y guarda.
+   • Eliminar: presiona "Eliminar" y confirma la acción.
+
+
+════════════════════════════════════════════════════════════════
+7. MÓDULO: PROVEEDORES
+════════════════════════════════════════════════════════════════
+
+Permite administrar la información de los proveedores que suministran productos al bar.
+
+
+────────────────────────────────────────────────────────────────
+7.1 Ver proveedores
+────────────────────────────────────────────────────────────────
+
+La vista muestra todos los proveedores registrados con:
+   • Nombre del proveedor
+   • Contacto
+   • Teléfono
+   • Dirección
+
+
+────────────────────────────────────────────────────────────────
+7.2 Crear proveedor
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona "Crear Proveedor".
+   • Paso 2. Completa los campos:
+      - Nombre: nombre del proveedor o empresa.
+      - Contacto: persona de contacto.
+      - Teléfono: número de teléfono.
+      - Dirección: dirección del proveedor.
+   • Paso 3. Presiona "Crear" para guardar.
+
+
+────────────────────────────────────────────────────────────────
+7.3 Editar / eliminar proveedor
+────────────────────────────────────────────────────────────────
+
+   • Editar: presiona "Editar" en el proveedor deseado, modifica los datos y guarda.
+   • Eliminar: presiona "Eliminar" y confirma la acción.
+
+
+════════════════════════════════════════════════════════════════
+8. MÓDULO: FACTURACIÓN
+════════════════════════════════════════════════════════════════
+
+Este módulo permite consultar, gestionar y exportar todas las facturas generadas desde el módulo de mesas y pedidos.
+
+
+────────────────────────────────────────────────────────────────
+8.1 Consultar facturas
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Ingresa al módulo de Facturación desde el menú lateral.
+   • Paso 2. Verás la lista completa de facturas con: número de factura, fecha, total y estado.
+   • Paso 3. Usa el buscador para encontrar facturas por número o datos específicos.
+   • Paso 4. Filtra por rango de fechas para acotar los resultados.
+
+La lista incluye paginación para facilitar la navegación.
+
+[IMAGEN: Lista de facturas]
+
+
+────────────────────────────────────────────────────────────────
+8.2 Detalle de factura
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de facturas, presiona sobre la factura que deseas revisar.
+   • Paso 2. Se muestra el detalle completo: número de factura, fecha, productos con cantidad y precio unitario, subtotales y total general.
+
+[IMAGEN: Detalle de factura]
+
+
+────────────────────────────────────────────────────────────────
+8.3 Exportar facturas (CSV / Excel / PDF)
+────────────────────────────────────────────────────────────────
+
+Puedes exportar las facturas en tres formatos:
+
+   • CSV: datos separados por comas, ideal para análisis en hojas de cálculo.
+   • Excel (XLSX): archivo de Excel con formato.
+   • PDF: documento con formato para impresión o archivo.
+
+Para exportar, usa los botones de exportación disponibles en la vista de facturas.
+
+
+────────────────────────────────────────────────────────────────
+8.4 Eliminar factura
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de facturas, selecciona la factura.
+   • Paso 2. Presiona "Eliminar".
+   • Paso 3. Confirma la acción.
+
+Nota: Solo usuarios con permisos de administrador pueden eliminar facturas.
+
+
+════════════════════════════════════════════════════════════════
+9. MÓDULO: GASTOS
+════════════════════════════════════════════════════════════════
+
+Permite registrar y controlar los egresos del bar (servicios, compras, mantenimiento, etc.).
+
+[IMAGEN: Lista de gastos]
+
+
+────────────────────────────────────────────────────────────────
+9.1 Registrar un gasto
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona "Nuevo gasto".
+   • Paso 2. Completa los campos:
+      - Fecha: fecha del gasto.
+      - Monto: valor del gasto.
+      - Categoría: selecciona la categoría (ej.: Servicios, Insumos, Mantenimiento).
+      - Descripción: detalle del gasto.
+      - Recibo/Comprobante: adjunta el archivo de soporte (factura, recibo, foto).
+   • Paso 3. Presiona "Guardar".
+
+
+────────────────────────────────────────────────────────────────
+9.2 Editar / eliminar un gasto
+────────────────────────────────────────────────────────────────
+
+   • Editar: en la lista de gastos, presiona "Editar" en el gasto deseado, modifica los campos y guarda.
+   • Eliminar: presiona "Eliminar" y confirma la acción.
+
+
+────────────────────────────────────────────────────────────────
+9.3 Consultar gastos
+────────────────────────────────────────────────────────────────
+
+   • Filtra los gastos por rango de fechas o categoría.
+   • Revisa el listado con fecha, monto, categoría y descripción de cada gasto.
+
+
+────────────────────────────────────────────────────────────────
+9.4 Buenas prácticas
+────────────────────────────────────────────────────────────────
+
+   • Adjunta siempre el soporte (factura o recibo) como comprobante.
+   • Usa categorías consistentes para facilitar los reportes.
+   • Registra los gastos el mismo día en que ocurren.
+
+
+════════════════════════════════════════════════════════════════
+10. MÓDULO: NÓMINAS
+════════════════════════════════════════════════════════════════
+
+Administra los empleados, pagos de nómina y bonificaciones del bar.
+
+[IMAGEN: Lista de empleados]
+
+
+────────────────────────────────────────────────────────────────
+10.1 Lista de empleados
+────────────────────────────────────────────────────────────────
+
+La vista principal muestra todos los empleados con:
+   • Nombre
+   • Cargo
+   • Salario
+   • Estado (activo, inactivo, vacaciones, permiso, suspendido)
+   • Tipo de contrato (tiempo completo, medio tiempo, temporal, por proyecto)
+
+Puedes filtrar por estado, tipo de contrato o buscar por nombre.
+
+
+────────────────────────────────────────────────────────────────
+10.2 Crear empleado
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona "Nuevo empleado" o "Crear".
+   • Paso 2. Completa los datos:
+      - Nombre completo
+      - Cargo (ej.: Mesero, Bartender, Cajero, Administrador)
+      - Salario
+      - Fecha de contratación
+      - Estado: activo, inactivo, vacaciones, permiso o suspendido
+      - Tipo de contrato: tiempo completo, medio tiempo, temporal o por proyecto
+      - Email
+      - Teléfono
+      - Dirección
+   • Paso 3. Opcionalmente, vincula el empleado a un usuario existente del sistema o crea un nuevo usuario.
+   • Paso 4. Presiona "Guardar".
+
+[IMAGEN: Formulario de crear empleado]
+
+
+────────────────────────────────────────────────────────────────
+10.3 Editar / eliminar empleado
+────────────────────────────────────────────────────────────────
+
+   • Editar: presiona "Editar" en el empleado deseado, modifica los datos y guarda.
+   • Eliminar: presiona "Eliminar" y confirma la acción.
+
+
+────────────────────────────────────────────────────────────────
+10.4 Detalle del empleado
+────────────────────────────────────────────────────────────────
+
+Al seleccionar un empleado, verás su información completa junto con:
+   • Historial de pagos realizados
+   • Bonificaciones vigentes
+   • Antigüedad en el bar
+   • Estado del usuario vinculado (si aplica)
+
+
+────────────────────────────────────────────────────────────────
+10.5 Registrar pago
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Ingresa a "Pagos" o al detalle del empleado.
+   • Paso 2. Presiona "Nuevo pago" o "Agregar pago".
+   • Paso 3. Completa:
+      - Empleado: selecciona el empleado.
+      - Fecha de pago.
+      - Monto: valor del pago.
+      - Tipo: salario, bono, vacaciones, liquidación u otro.
+      - Descripción: detalle del concepto.
+      - Comprobante: adjunta el archivo de soporte (opcional).
+   • Paso 4. Presiona "Guardar".
+
+
+────────────────────────────────────────────────────────────────
+10.6 Crear bonificación
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Ingresa al detalle del empleado o a la sección de bonificaciones.
+   • Paso 2. Presiona "Agregar bonificación".
+   • Paso 3. Completa:
+      - Nombre: concepto de la bonificación (ej.: "Bono navideño", "Incentivo de ventas").
+      - Monto.
+      - Recurrente: sí o no (si es recurrente, se aplica cada período).
+      - Fecha de inicio.
+      - Fecha de fin (opcional).
+   • Paso 4. Presiona "Guardar".
+
+
+────────────────────────────────────────────────────────────────
+10.7 Consultar historial de pagos
+────────────────────────────────────────────────────────────────
+
+   • Ingresa a "Pagos" desde el menú de nóminas.
+   • Filtra por empleado o período de tiempo.
+   • Revisa los pagos realizados con fecha, monto, tipo y concepto.
+
+
+════════════════════════════════════════════════════════════════
+11. MÓDULO: REPORTES (PDF / EXCEL / CSV)
+════════════════════════════════════════════════════════════════
+
+Genera reportes de operación del bar y los exporta a PDF, Excel o CSV.
+
+[IMAGEN: Lista de reportes]
+
+
+────────────────────────────────────────────────────────────────
+11.1 Ver reportes guardados
+────────────────────────────────────────────────────────────────
+
+La vista principal muestra todos los reportes creados con su nombre, tipo, período, formato y estado (generado o pendiente).
+
+
+────────────────────────────────────────────────────────────────
+11.2 Crear un reporte
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona "Nuevo reporte".
+   • Paso 2. Completa los campos:
+      - Nombre: título descriptivo del reporte.
+      - Tipo de reporte:
+         ◦ Ventas
+         ◦ Inventario
+         ◦ Gastos
+         ◦ Nóminas
+         ◦ Productos
+         ◦ Mesas y pedidos
+         ◦ General
+      - Período:
+         ◦ Diario
+         ◦ Semanal
+         ◦ Mensual
+         ◦ Trimestral
+         ◦ Anual
+         ◦ Personalizado (define fecha inicio y fin)
+      - Formato de salida: PDF, Excel o CSV.
+      - Descripción: información adicional opcional.
+   • Paso 3. Si eliges período "Personalizado", define la fecha de inicio y la fecha de fin.
+   • Paso 4. Presiona "Guardar".
+
+[IMAGEN: Formulario de crear reporte]
+
+
+────────────────────────────────────────────────────────────────
+11.3 Generar datos del reporte
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de reportes, selecciona el reporte creado.
+   • Paso 2. Presiona "Generar" para que el sistema recopile los datos según el tipo y período configurados.
+   • Paso 3. Espera a que se complete la generación.
+   • Paso 4. Una vez generado, podrás ver el detalle de los datos y exportar el archivo.
+
+
+────────────────────────────────────────────────────────────────
+11.4 Exportar reporte
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En el detalle del reporte generado, presiona "Exportar".
+   • Paso 2. El archivo se descargará en el formato configurado (PDF, Excel o CSV).
+   • Paso 3. Verifica la información descargada.
+
+
+────────────────────────────────────────────────────────────────
+11.5 Editar / eliminar reporte
+────────────────────────────────────────────────────────────────
+
+   • Editar: modifica nombre, tipo, período o formato y vuelve a generar.
+   • Eliminar: presiona "Eliminar" y confirma la acción.
+
+
+════════════════════════════════════════════════════════════════
+12. MÓDULO: NOTIFICACIONES
+════════════════════════════════════════════════════════════════
+
+El sistema incluye notificaciones en tiempo real mediante WebSockets. Las notificaciones se generan automáticamente con cada acción que se realiza en los módulos del sistema (crear, editar, eliminar registros).
+
+
+────────────────────────────────────────────────────────────────
+12.1 Ver notificaciones
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Haz clic en el icono de campana (🔔) en la barra superior.
+   • Paso 2. Se desplegará el panel con las notificaciones más recientes.
+   • Paso 3. Las notificaciones no leídas aparecen resaltadas.
+
+También puedes acceder al historial completo de notificaciones.
+
+
+────────────────────────────────────────────────────────────────
+12.2 Marcar como leída
+────────────────────────────────────────────────────────────────
+
+   • Abre la notificación y presiona "Marcar como leída".
+   • La notificación dejará de mostrarse como pendiente.
+
+
+────────────────────────────────────────────────────────────────
+12.3 Recomendaciones
+────────────────────────────────────────────────────────────────
+
+   • Revisa las notificaciones regularmente, especialmente antes del cierre de turno.
+   • No dejes notificaciones pendientes para evitar perder información importante.
+   • Si no recibes notificaciones, recarga la página para restablecer la conexión WebSocket.
+
+
+════════════════════════════════════════════════════════════════
+13. MÓDULO: BACKUPS
+════════════════════════════════════════════════════════════════
+
+Permite generar copias de seguridad de la base de datos y los archivos media del sistema.
+
+[IMAGEN: Lista de backups]
+
+
+────────────────────────────────────────────────────────────────
+13.1 Ver backups disponibles
+────────────────────────────────────────────────────────────────
+
+La vista muestra todos los backups creados con su nombre, fecha, tipo y tamaño. También incluye estadísticas de almacenamiento.
+
+
+────────────────────────────────────────────────────────────────
+13.2 Crear backup manual
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Ingresa al módulo de Backups.
+   • Paso 2. Presiona "Crear backup".
+   • Paso 3. Confirma la acción.
+   • Paso 4. Espera a que el proceso finalice (puede tomar algunos minutos según el tamaño de los datos).
+   • Paso 5. Verifica que el backup aparezca en la lista.
+
+
+────────────────────────────────────────────────────────────────
+13.3 Subir backup
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Presiona "Subir backup".
+   • Paso 2. Selecciona el archivo de backup desde tu computadora.
+   • Paso 3. Espera a que se complete la carga.
+   • Paso 4. El backup aparecerá en la lista disponible.
+
+
+────────────────────────────────────────────────────────────────
+13.4 Descargar backup
+────────────────────────────────────────────────────────────────
+
+   • En la lista de backups, presiona el botón "Descargar" en el backup deseado.
+   • El archivo se descargará a tu computadora.
+
+Recomendación: descarga backups periódicamente para tener copias fuera del servidor.
+
+
+────────────────────────────────────────────────────────────────
+13.5 Restaurar backup
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de backups, selecciona la copia que deseas restaurar.
+   • Paso 2. Presiona "Restaurar".
+   • Paso 3. Confirma la acción.
+   • Paso 4. Espera a que el proceso finalice.
+
+⚠️ ADVERTENCIA: Restaurar un backup reemplaza TODOS los datos actuales. Solo usuarios administradores pueden realizar esta acción. Asegúrate de crear un backup del estado actual antes de restaurar uno anterior.
+
+
+────────────────────────────────────────────────────────────────
+13.6 Eliminar backup
+────────────────────────────────────────────────────────────────
+
+   • Selecciona el backup y presiona "Eliminar".
+   • Confirma la acción.
+
+
+────────────────────────────────────────────────────────────────
+13.7 Buenas prácticas
+────────────────────────────────────────────────────────────────
+
+   • Realiza backups antes de cualquier actualización del sistema.
+   • Verifica que la copia aparezca en el historial después de crearla.
+   • Descarga y almacena backups en un lugar seguro fuera del servidor.
+   • Realiza respaldos al menos una vez por semana.
+
+
+════════════════════════════════════════════════════════════════
+14. USUARIOS, ROLES Y PERMISOS
+════════════════════════════════════════════════════════════════
+
+El sistema cuenta con un módulo de roles y permisos para controlar el acceso a cada módulo según el cargo del usuario (cajero, mesero, administrador, etc.).
+
+
+────────────────────────────────────────────────────────────────
+14.1 Lista de usuarios
+────────────────────────────────────────────────────────────────
+
+   • Ingresa a "Usuarios" desde el menú del dashboard.
+   • Verás la lista de todos los usuarios del sistema con su nombre, rol asignado y estado.
+   • Puedes cambiar el rol de un usuario directamente desde esta vista.
+
+[IMAGEN: Lista de usuarios]
+
+
+────────────────────────────────────────────────────────────────
+14.2 Cambiar contraseña de usuario (Admin)
+────────────────────────────────────────────────────────────────
+
+Los administradores pueden cambiar la contraseña de cualquier usuario:
+
+   • Paso 1. En la lista de usuarios, selecciona "Cambiar contraseña".
+   • Paso 2. Ingresa la nueva contraseña.
+   • Paso 3. Indica el motivo del cambio.
+   • Paso 4. Confirma la acción.
+
+El sistema registra automáticamente: administrador que realizó el cambio, fecha, hora, dirección IP y motivo. Este historial puede consultarse para auditoría.
+
+
+────────────────────────────────────────────────────────────────
+14.3 Crear / editar rol
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Ingresa a "Roles" desde el menú.
+   • Paso 2. Presiona "Crear rol" para uno nuevo, o "Editar" en un rol existente.
+   • Paso 3. Define el nombre y descripción del rol (ej.: "Mesero", "Cajero", "Administrador").
+   • Paso 4. Presiona "Guardar".
+
+[IMAGEN: Lista de roles]
+
+
+────────────────────────────────────────────────────────────────
+14.4 Configurar permisos por rol
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. En la lista de roles, presiona "Permisos" en el rol que deseas configurar.
+   • Paso 2. Se muestra una matriz de permisos con:
+      - Filas: módulos del sistema (dashboard, mesas, productos, categorías, marcas, proveedores, gastos, facturación, roles, backups, reportes, imágenes del sitio).
+      - Columnas: acciones disponibles (ver, crear, editar, eliminar).
+   • Paso 3. Activa o desactiva cada permiso según corresponda al rol.
+   • Paso 4. Presiona "Guardar" para aplicar los cambios.
+
+[IMAGEN: Matriz de permisos]
+
+
+────────────────────────────────────────────────────────────────
+14.5 Permisos y acceso a módulos
+────────────────────────────────────────────────────────────────
+
+   • Cada usuario solo ve los módulos para los que su rol tiene permiso de "ver".
+   • Si un usuario no puede acceder a un módulo, el administrador debe revisar los permisos del rol asignado.
+   • Los permisos se aplican en tiempo real: al cambiar un permiso, el usuario verá los cambios en su próxima carga de página.
+
+
+════════════════════════════════════════════════════════════════
+15. PANEL DE USUARIO PERSONAL
+════════════════════════════════════════════════════════════════
+
+Cada usuario del sistema tiene acceso a su panel personal donde puede consultar y editar su información.
+
+
+────────────────────────────────────────────────────────────────
+15.1 Ver perfil
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Haz clic en el icono de perfil en la barra superior.
+   • Paso 2. Selecciona "Panel de usuario" o "Mi perfil".
+   • Paso 3. Verás tu información personal, pedidos facturados y cuenta actual.
+
+
+────────────────────────────────────────────────────────────────
+15.2 Editar información personal
+────────────────────────────────────────────────────────────────
+
+Desde el panel puedes actualizar:
+   • Nombre
+   • Cédula / documento de identidad
+   • Teléfono
+   • Dirección
+   • Foto de perfil (avatar)
+
+Presiona "Editar info" para modificar los datos y "Guardar" para confirmar.
+
+
+────────────────────────────────────────────────────────────────
+15.3 Contacto de emergencia
+────────────────────────────────────────────────────────────────
+
+Puedes registrar un contacto de emergencia con la siguiente información:
+   • Nombre del contacto
+   • Relación (familiar, amigo, etc.)
+   • Teléfono principal y alternativo
+   • Tipo de sangre
+   • Alergias
+
+Presiona "Editar emergencia" para modificar estos datos.
+
+
+────────────────────────────────────────────────────────────────
+15.4 Historial y pedidos
+────────────────────────────────────────────────────────────────
+
+En el panel personal también puedes ver:
+   • Tu historial mensual de actividad.
+   • Los pedidos que has facturado.
+   • Tu cuenta actual.
+
+
+════════════════════════════════════════════════════════════════
+16. GESTIÓN DE IMÁGENES DEL SITIO
+════════════════════════════════════════════════════════════════
+
+Este módulo permite administrar las imágenes y textos de la página pública del bar (landing page).
+
+
+────────────────────────────────────────────────────────────────
+16.1 Carrusel de la página principal
+────────────────────────────────────────────────────────────────
+
+   • Para agregar una imagen al carrusel: presiona "Crear imagen de carrusel", sube la imagen y configura título y orden.
+   • Para editar una imagen: presiona "Editar" en la imagen deseada.
+   • Para eliminar: presiona "Eliminar" y confirma.
+   • Puedes activar/desactivar imágenes sin eliminarlas.
+   • Puedes reordenar las imágenes del carrusel arrastrándolas o modificando su número de orden.
+
+
+────────────────────────────────────────────────────────────────
+16.2 Imágenes por sección
+────────────────────────────────────────────────────────────────
+
+El sitio tiene diferentes secciones que pueden incluir imágenes:
+   • Hero (banner principal)
+   • About (sobre nosotros)
+   • Servicios
+   • Encabezado y pie de página
+   • Banners
+   • Fondos
+
+Para cada sección puedes crear, editar, eliminar y activar/desactivar imágenes. Las imágenes se optimizan automáticamente al subirlas.
+
+
+────────────────────────────────────────────────────────────────
+16.3 Contenido editable del sitio
+────────────────────────────────────────────────────────────────
+
+Puedes editar los textos de las siguientes secciones de la página pública:
+
+   • Hero: título, subtítulo y botones del banner principal.
+   • About: título y párrafos de la sección "Sobre nosotros".
+   • Cocktails: título y subtítulo de la sección de cócteles.
+   • Services: título, subtítulo y descripción de los 4 servicios principales.
+   • Reservations: título, texto, número de WhatsApp y texto del botón de reservas.
+
+Para editar, ve a "Contenido del sitio", selecciona la sección y modifica los textos.
+
+
+════════════════════════════════════════════════════════════════
+17. CHAT IA (RAG) – MÓDULO DE AYUDA INTELIGENTE
+════════════════════════════════════════════════════════════════
+
+El sistema incluye un asistente con inteligencia artificial que puede consultar documentos para responder preguntas (Retrieval-Augmented Generation).
+
+
+────────────────────────────────────────────────────────────────
+17.1 Abrir el chat
+────────────────────────────────────────────────────────────────
+
+   • Desde el menú lateral, selecciona "Chat IA (RAG)".
+   • Se abrirá la interfaz del chat con el campo para escribir tu pregunta.
+
+
+────────────────────────────────────────────────────────────────
+17.2 Subir documentos PDF
+────────────────────────────────────────────────────────────────
+
+Para que el chat pueda responder preguntas basadas en documentos específicos:
+
+   • Paso 1. En la interfaz del chat, busca la opción "Subir documento".
+   • Paso 2. Selecciona un archivo PDF desde tu computadora.
+   • Paso 3. Espera a que el sistema procese el documento (lo fragmenta y genera los embeddings).
+   • Paso 4. Una vez procesado, el estado del documento cambiará a "Indexado".
+
+Puedes ver la lista de documentos subidos y eliminar los que ya no necesites.
+
+
+────────────────────────────────────────────────────────────────
+17.3 Hacer una pregunta
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Escribe tu pregunta en el campo de texto (ej.: "¿Cómo facturo una mesa?", "¿Cuáles son los pasos para crear un producto?").
+   • Paso 2. Presiona "Enviar" o Enter.
+   • Paso 3. El sistema buscará la información relevante en los documentos subidos y generará una respuesta.
+
+
+────────────────────────────────────────────────────────────────
+17.4 Historial de consultas
+────────────────────────────────────────────────────────────────
+
+El sistema guarda un historial de todas las preguntas y respuestas previas para tu referencia.
+
+
+────────────────────────────────────────────────────────────────
+17.5 Buenas prácticas
+────────────────────────────────────────────────────────────────
+
+   • Pregunta por pasos específicos (ej.: "¿Cómo crear una categoría?").
+   • Usa palabras clave del módulo en tu pregunta (mesas, reportes, inventario, gastos).
+   • Si la respuesta no es precisa, reformula tu pregunta con más detalle.
+   • Asegúrate de que el manual o documento esté subido y procesado antes de preguntar.
+
+
+────────────────────────────────────────────────────────────────
+17.6 Solución de errores del chat
+────────────────────────────────────────────────────────────────
+
+   • El chat no responde: verifica que al menos un documento esté subido y su estado sea "Indexado".
+   • Respuesta irrelevante: reformula la pregunta con más contexto o sube un documento más específico.
+   • Error de conexión: recarga la página y vuelve a intentar.
+
+
+════════════════════════════════════════════════════════════════
+18. CHAT IA GENERAL (GOOGLE GEMINI)
+════════════════════════════════════════════════════════════════
+
+Además del chat RAG, el sistema incluye un chat de inteligencia artificial de propósito general que no requiere documentos. Puedes hacer preguntas libres y mantener conversaciones completas.
+
+
+────────────────────────────────────────────────────────────────
+18.1 Abrir el chat
+────────────────────────────────────────────────────────────────
+
+   • Desde el menú lateral, selecciona "Google Chat" o "Chat IA".
+
+
+────────────────────────────────────────────────────────────────
+18.2 Enviar mensajes
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Escribe tu mensaje o pregunta en el campo de texto.
+   • Paso 2. Presiona "Enviar".
+   • Paso 3. El asistente responderá basándose en su conocimiento general.
+
+El historial de la conversación se mantiene como contexto para respuestas más coherentes.
+
+
+────────────────────────────────────────────────────────────────
+18.3 Gestionar sesiones
+────────────────────────────────────────────────────────────────
+
+   • Puedes crear múltiples sesiones de conversación para diferentes temas.
+   • Accede al historial de sesiones anteriores.
+   • Limpia una sesión si deseas empezar de cero.
+
+
+════════════════════════════════════════════════════════════════
+19. TIENDA PÚBLICA
+════════════════════════════════════════════════════════════════
+
+El sistema incluye una tienda pública accesible desde la página principal donde los visitantes pueden ver los productos disponibles.
+
+
+────────────────────────────────────────────────────────────────
+19.1 Navegar la tienda
+────────────────────────────────────────────────────────────────
+
+   • Accede a la tienda desde el menú principal del sitio público.
+   • Los productos se muestran en formato de tarjetas con imagen, nombre y precio.
+   • La tienda tiene paginación (9 productos por página).
+
+
+────────────────────────────────────────────────────────────────
+19.2 Filtros disponibles
+────────────────────────────────────────────────────────────────
+
+Puedes filtrar los productos por:
+   • Categoría: muestra solo productos de una categoría específica.
+   • Marca: filtra por marca.
+   • Rango de precios: establece un precio mínimo y máximo.
+
+
+════════════════════════════════════════════════════════════════
+20. SOLUCIÓN DE PROBLEMAS (FAQ)
+════════════════════════════════════════════════════════════════
+
+PROBLEMA: No puedo iniciar sesión.
+SOLUCIÓN: Verifica que usuario y contraseña sean correctos (respeta mayúsculas). Tu cuenta puede estar desactivada o el servidor puede estar fuera de línea. Contacta al administrador.
+
+PROBLEMA: No veo un módulo en el menú.
+SOLUCIÓN: Tu rol no tiene permiso para acceder a ese módulo. Solicita al administrador que revise los permisos de tu rol.
+
+PROBLEMA: No puedo generar un reporte (PDF/Excel/CSV).
+SOLUCIÓN: Verifica que tengas permisos de reportes. Asegúrate de que el rango de fechas tenga datos. Si persiste, contacta al administrador.
+
+PROBLEMA: No llegan las notificaciones.
+SOLUCIÓN: Recarga la página para restablecer la conexión WebSocket. Verifica tu conexión a internet. Si persiste, el servicio WebSocket puede estar detenido (contactar al administrador).
+
+PROBLEMA: El inventario no cuadra con el stock físico.
+SOLUCIÓN: Realiza un conteo físico y registra un ajuste de inventario con el motivo correspondiente (merma, daño, conteo).
+
+PROBLEMA: El chat IA no responde o da errores.
+SOLUCIÓN: Verifica que la API key de Google Gemini esté configurada correctamente. Para el chat RAG, asegúrate de tener al menos un documento subido y procesado.
+
+PROBLEMA: No puedo crear o restaurar un backup.
+SOLUCIÓN: Verifica que tienes permisos de administrador. Asegúrate de que hay espacio disponible en el servidor. Si usas encriptación GPG, verifica que las claves estén configuradas.
+
+PROBLEMA: Las imágenes no se muestran correctamente.
+SOLUCIÓN: Verifica que la carpeta /media/ tenga los permisos correctos. Intenta subir la imagen nuevamente.
+
+PROBLEMA: El sistema está lento.
+SOLUCIÓN: Puede deberse a la conexión a internet o a la carga del servidor. Intenta recargar la página. Si persiste, contacta al administrador para revisar los recursos del servidor.
+
+════════════════════════════════════════════════════════════════
+XX. MÓDULO: FILTRO AVANZADO DE BÚSQUEDA
+════════════════════════════════════════════════════════════════
+
+Este módulo permite filtrar registros usando condiciones personalizadas. Puedes combinar
+múltiples criterios (por ejemplo: precio, stock, categoría) con operadores lógicos AND/OR
+para obtener resultados exactos.
+
+[IMAGEN: Vista general del filtro avanzado]
+
+
+────────────────────────────────────────────────────────────────
+XX.1 Partes del filtro
+────────────────────────────────────────────────────────────────
+
+El filtro está compuesto por los siguientes elementos:
+
+   • Botón AND / OR (parte superior): define cómo se combinan TODAS las condiciones del
+     filtro entre sí.
+      - AND: se muestran solo los registros que cumplen TODAS las condiciones.
+      - OR: se muestran los registros que cumplen AL MENOS UNA condición.
+
+   • Fila de condición: cada condición tiene tres campos:
+      - Data (campo rojo): el dato a evaluar (ej.: Precio, Stock, Categoría, Nombre).
+      - Condición (campo verde): el tipo de comparación (ej.: igual a, menor a, mayor a,
+        contiene, entre).
+      - Valor (campo azul): el valor con el que se compara (ej.: 5000, "Bebidas", 10).
+
+   • Botón X: elimina esa condición del filtro.
+
+   • Botón "Añadir condición": agrega una nueva fila de condición al filtro.
+
+[IMAGEN: Fila de condición con los campos Data, Condición y Valor]
+
+
+────────────────────────────────────────────────────────────────
+XX.2 Crear un filtro simple (una condición)
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Accede al módulo donde deseas filtrar (ej.: Productos, Facturación, Gastos).
+   • Paso 2. Presiona el botón "Filtro" o "Filtro avanzado".
+   • Paso 3. En el campo Data, selecciona el dato que quieres evaluar (ej.: "Precio").
+   • Paso 4. En el campo Condición, selecciona el tipo de comparación (ej.: "Menor a").
+   • Paso 5. En el campo Valor, escribe el valor de referencia (ej.: 10000).
+   • Paso 6. Presiona "Aplicar" o "Buscar" para ver los resultados.
+
+Ejemplo: mostrar todos los productos con precio menor a 10.000.
+
+[IMAGEN: Filtro simple con una condición configurada]
+
+
+────────────────────────────────────────────────────────────────
+XX.3 Agregar múltiples condiciones
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Configura la primera condición siguiendo los pasos del apartado XX.2.
+   • Paso 2. Presiona el botón "Añadir condición".
+   • Paso 3. Aparecerá una nueva fila con sus propios campos Data, Condición y Valor.
+   • Paso 4. Completa los campos de la nueva condición (ej.: Data: "Stock", Condición:
+     "Mayor a", Valor: "5").
+   • Paso 5. Repite los pasos 2 al 4 para agregar más condiciones si lo necesitas.
+   • Paso 6. Presiona "Aplicar" para ver los resultados.
+
+Ejemplo: mostrar productos con precio menor a 10.000 Y stock mayor a 5.
+
+[IMAGEN: Filtro con dos condiciones y operador AND seleccionado]
+
+
+────────────────────────────────────────────────────────────────
+XX.4 Cambiar el operador lógico (AND / OR)
+────────────────────────────────────────────────────────────────
+
+Cuando tienes más de una condición, el botón AND/OR en la parte superior del filtro
+determina cómo se relacionan entre sí:
+
+   • AND: el resultado mostrará solo los registros que cumplan TODAS las condiciones al
+     mismo tiempo.
+      Ejemplo: precio menor a 10.000 AND stock mayor a 5 → muestra productos baratos
+      que además tienen stock suficiente.
+
+   • OR: el resultado mostrará los registros que cumplan al menos UNA de las condiciones.
+      Ejemplo: precio menor a 10.000 OR stock mayor a 5 → muestra productos baratos
+      o productos con buen stock (o ambos).
+
+Para cambiar el operador, presiona el botón "AND" u "OR" en la parte superior del filtro.
+El botón activo cambiará de apariencia para indicar cuál está seleccionado.
+
+
+────────────────────────────────────────────────────────────────
+XX.5 Eliminar una condición
+────────────────────────────────────────────────────────────────
+
+   • Paso 1. Identifica la fila de la condición que deseas eliminar.
+   • Paso 2. Presiona el botón "X" ubicado al lado derecho de esa fila.
+   • Paso 3. La condición desaparecerá inmediatamente.
+
+Nota: Si eliminas todas las condiciones, el filtro quedará vacío y se mostrarán todos
+los registros sin filtrar.
+
+
+────────────────────────────────────────────────────────────────
+XX.6 Limpiar el filtro
+────────────────────────────────────────────────────────────────
+
+Para remover todos los filtros y ver todos los registros nuevamente:
+
+   • Presiona el botón "Limpiar filtro" o "Restablecer".
+   • También puedes eliminar cada condición individualmente con su botón X.
+
+
+────────────────────────────────────────────────────────────────
+XX.7 Ejemplos de uso
+────────────────────────────────────────────────────────────────
+
+Ejemplo 1 – Productos con stock bajo:
+   • Data: Stock | Condición: Menor a | Valor: 5
+   → Muestra productos que necesitan reabastecimiento.
+
+Ejemplo 2 – Facturas de un rango de fechas específico:
+   • Data: Fecha | Condición: Mayor a | Valor: 01/01/2026
+   • Añadir condición → Data: Fecha | Condición: Menor a | Valor: 31/01/2026
+   • Operador: AND
+   → Muestra solo las facturas del mes de enero 2026.
+
+Ejemplo 3 – Productos de dos categorías diferentes:
+   • Data: Categoría | Condición: Igual a | Valor: Bebidas
+   • Añadir condición → Data: Categoría | Condición: Igual a | Valor: Cócteles
+   • Operador: OR
+   → Muestra productos que sean Bebidas o Cócteles.
+
+════════════════════════════════════════════════════════════════
+FIN DEL MANUAL DE USUARIO
+════════════════════════════════════════════════════════════════
