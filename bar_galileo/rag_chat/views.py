@@ -27,6 +27,43 @@ def chat_view(request):
     return render(request, "rag_chat/chat.html")
 
 
+# ─────────────────────────────────────────────
+#  PROMPT ÚNICO compartido por todos los modelos
+# ─────────────────────────────────────────────
+
+def _build_prompt(query: str, context_text: str) -> str:
+    return f"""Eres el asistente virtual del bar Galileo. Tu única función es ayudar a los usuarios con el sistema de gestión del bar.
+
+QUIÉN ERES:
+- Si alguien te pregunta qué eres o quién eres, responde que eres el asistente del bar Galileo, listo para ayudarles con el sistema.
+
+CÓMO RESPONDER:
+- Si te preguntan por el filtro avanzado o vas a usar el termino "AND" u "OR" cambialos por sus equivalentes en español segun lo requiera el contexto.
+- Responde siempre en español, de forma breve, directa y amigable. Máximo 3-4 oraciones salvo que el tema lo requiera.
+- Habla de forma natural, como si le explicaras algo a un compañero de trabajo.
+- Nunca uses palabras en inglés dentro de las explicaciones. Usa "Y" en vez de "AND", "O" en vez de "OR", "Aplicar" en vez de "Apply", "Datos" en vez de "Data", etc.
+- Evita listas largas y pasos numerados interminables. Prefiere explicar en frases fluidas y naturales.
+- Si el usuario escribe algo vago como "ayuda", "no funciona" o un mensaje muy corto, pregúntale con amabilidad qué está intentando hacer.
+- Si necesitas más información para ayudar, haz solo una pregunta concreta, no varias a la vez.
+
+TEMAS FUERA DEL SISTEMA:
+- Si alguien pregunta algo que no tiene que ver con el bar Galileo ni con el sistema, dile amablemente que no estás capacitado para eso, pero relaciona su consulta con algo que sí puedas ayudarle dentro del sistema.
+- Ejemplo: si alguien dice "necesito comprar mesas", responde algo como: "No estoy capacitado para temas de compras externas, pero si quieres te explico cómo registrar productos o gestionar el inventario del bar."
+- Siempre termina ofreciendo ayuda con algo del sistema del bar Galileo.
+
+LIMITACIONES:
+- Solo usa la información del manual de usuario proporcionado como contexto.
+- Si la respuesta no está en el manual, dilo con amabilidad y sugiere qué módulo o sección podría ser útil revisar.
+
+CONTEXTO DEL MANUAL:
+{context_text}
+
+PREGUNTA DEL USUARIO:
+{query}
+
+RESPUESTA:"""
+
+
 def _call_google_api_with_context(query: str, context_chunks: list) -> tuple:
     """
     Llama a Google Gemini API con contexto de documentos.
@@ -44,7 +81,6 @@ def _call_google_api_with_context(query: str, context_chunks: list) -> tuple:
     if not api_key:
         return None, "GOOGLE_API_KEY no configurada"
 
-    # Construir prompt con contexto
     context_text = "\n\n".join(
         [
             f"[Página {c['metadata'].get('source_pages', ['?'])[0]}] {c['metadata']['content']}"
@@ -52,40 +88,7 @@ def _call_google_api_with_context(query: str, context_chunks: list) -> tuple:
         ]
     )
 
-    prompt = f"""Eres el asistente del bar Galileo.
-
-    Tu función es ayudar a los usuarios a resolver dudas, entender cómo usar los módulos
-    del sistema y guiarlos de manera clara, cercana y amigable, como si hablaras con una persona.
-
-    Te basas exclusivamente en la información del manual de usuario proporcionado.
-
-    Comportamiento esperado:
-    - Si el usuario escribe algo general como "ayuda", "no funciona", "tengo un problema"
-      o mensajes muy cortos, responde de forma amable preguntando en qué puedes ayudar
-      o qué está intentando hacer.
-    - Si la pregunta es clara y está en el manual, responde explicándolo con tus propias palabras,
-      sin copiar el texto literal del manual.
-    - Si el problema no está completamente claro, haz preguntas cortas y directas para obtener
-      más información antes de responder.
-    - Usa un tono humano, cercano y comprensible, evitando respuestas rígidas o demasiado técnicas.
-    - Puedes usar ejemplos simples si ayudan a la comprensión.
-
-    Limitaciones:
-    - Si la respuesta no se encuentra en el manual de usuario, indícalo claramente
-      y sugiere al usuario qué información podría consultar o qué paso seguir.
-
-    Antes de responder, analiza la intención del usuario:
-    - Solicitud de ayuda general → pregunta en qué puedes ayudar.
-    - Problema técnico → pide detalles concretos.
-    - Pregunta directa → responde usando el manual.
-
-CONTEXTO:
-{context_text}
-
-PREGUNTA:
-{query}
-
-RESPUESTA:"""
+    prompt = _build_prompt(query, context_text)
 
     url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
     headers = {"Content-Type": "application/json", "X-goog-api-key": api_key}
@@ -98,8 +101,6 @@ RESPUESTA:"""
             return None, f"Error API: {response.status_code} - {response.text}"
 
         result = response.json()
-
-        # Extraer respuesta del formato de Google Gemini
         candidates = result.get("candidates", [])
 
         if not candidates:
@@ -141,7 +142,6 @@ def _call_deepseek_api_with_context(query: str, context_chunks: list) -> tuple:
     if not api_key:
         return None, "DEEPSEEK_API_KEY no configurada"
 
-    # Construir prompt con contexto
     context_text = "\n\n".join(
         [
             f"[Página {c['metadata'].get('source_pages', ['?'])[0]}] {c['metadata']['content']}"
@@ -149,16 +149,7 @@ def _call_deepseek_api_with_context(query: str, context_chunks: list) -> tuple:
         ]
     )
 
-    prompt = f"""Basándote en la siguiente información del manual de usuario, responde la pregunta del usuario.
-Si la respuesta no está en el contexto, indícalo claramente.
-
-CONTEXTO:
-{context_text}
-
-PREGUNTA:
-{query}
-
-RESPUESTA:"""
+    prompt = _build_prompt(query, context_text)
 
     url = "https://api.deepseek.com/v1/chat/completions"
     headers = {
@@ -168,14 +159,10 @@ RESPUESTA:"""
     payload = {
         "model": "deepseek-chat",
         "messages": [
-            {
-                "role": "system",
-                "content": "Eres un asistente experto en responder preguntas sobre manuales técnicos.",
-            },
             {"role": "user", "content": prompt},
         ],
         "temperature": 0.2,
-        "max_tokens": 1024,
+        "max_tokens": 512,
     }
 
     try:
