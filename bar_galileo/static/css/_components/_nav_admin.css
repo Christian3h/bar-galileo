@@ -121,6 +121,7 @@ header {
 .main-content {
   flex: 1;
   padding: 2rem;
+  padding-top: calc(54px + 1.5rem);
   transition: all 0.3s ease;
 }
 
@@ -137,16 +138,22 @@ header {
 /* === Toggle Button === */
 .toggle-sidebar-btn {
   color: var(--color-secondary);
-  background-color: var(--color-light);
+  background-color: transparent;
   border: none;
   font-size: 3rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
   display: none;
-  z-index: 1000; /* Ensure it's above the sidebar */
-  position: relative; /* Needed for span positioning */
+  z-index: 1000;
+  position: relative;
   width: 40px;
   height: 40px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.toggle-sidebar-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .toggle-sidebar-btn span {
@@ -246,6 +253,7 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
 
   .main-content {
     padding: 1rem;
+    padding-top: calc(54px + 1rem);
   }
 
   .toggle-sidebar-btn {
