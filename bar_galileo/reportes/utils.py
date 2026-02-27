@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.conf import settings
-from django.db.models import Sum, Count, Avg, Q, F
+from django.db.models import Sum, Count, Avg, Q, F, Min, Max
+from django.utils import timezone
 from decimal import Decimal
 import csv
 import io
@@ -395,7 +396,7 @@ def generar_pdf_reporte(reporte, datos):
     
     # Pie de página
     elements.append(Spacer(1, 30))
-    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y a las %H:%M')}"
+    footer_text = f"Generado el {timezone.now().strftime('%d/%m/%Y a las %H:%M')}"
     footer = Paragraph(footer_text, ParagraphStyle('Footer', parent=styles['Normal'], 
                                                    fontSize=8, textColor=colors.grey, 
                                                    alignment=TA_CENTER))
@@ -443,7 +444,7 @@ def obtener_datos_ventas(reporte):
     from tables.models import Factura, Pedido, PedidoItem
     
     facturas = Factura.objects.filter(
-        fecha__range=[reporte.fecha_inicio, reporte.fecha_fin]
+        fecha__date__range=[reporte.fecha_inicio, reporte.fecha_fin]
     ).select_related('pedido', 'pedido__mesa').prefetch_related('pedido__items__producto')
     
     total_ventas = facturas.aggregate(Sum('total'))['total__sum'] or Decimal('0')
@@ -543,8 +544,10 @@ def obtener_datos_nominas(reporte):
     """Obtiene datos detallados de nóminas"""
     from nominas.models import Empleado
     
+    # Filtrar empleados activos que fueron contratados antes del fin del periodo
     empleados = Empleado.objects.filter(
-        estado='activo'
+        estado='activo',
+        fecha_contratacion__lte=reporte.fecha_fin
     ).order_by('nombre')
     
     total_empleados = empleados.count()
@@ -559,6 +562,7 @@ def obtener_datos_nominas(reporte):
     
     # Resumen
     resumen = {
+        'Periodo': f"{reporte.fecha_inicio.strftime('%d/%m/%Y')} - {reporte.fecha_fin.strftime('%d/%m/%Y')}",
         'Total de Empleados Activos': total_empleados,
         'Total en Salarios': f"${total_salarios:,.2f}",
         'Promedio Salarial': f"${promedio_salario:,.2f}",
@@ -712,10 +716,10 @@ def obtener_datos_productos(reporte):
     precios_stats = productos.aggregate(
         precio_compra_promedio=Avg('precio_compra'),
         precio_venta_promedio=Avg('precio_venta'),
-        precio_compra_min=Sum('precio_compra'),
-        precio_compra_max=Sum('precio_compra'),
-        precio_venta_min=Sum('precio_venta'),
-        precio_venta_max=Sum('precio_venta')
+        precio_compra_min=Min('precio_compra'),
+        precio_compra_max=Max('precio_compra'),
+        precio_venta_min=Min('precio_venta'),
+        precio_venta_max=Max('precio_venta')
     )
     
     # Calcular margen promedio
@@ -737,22 +741,15 @@ def obtener_datos_productos(reporte):
     
     # ========== RESUMEN MEJORADO ==========
     resumen = {
-        '=== INFORMACIÓN GENERAL ===': '',
         'Total de Productos': total_productos,
         'Productos Activos': productos_activos,
         'Categorías': categorias_count,
         'Proveedores': por_proveedor.count(),
+        'Margen Promedio': f"{margen_promedio:.2f}%",
+        'Valor Inventario (Compra)': f"${valor_inventario_compra:,.2f}",
+        'Valor Inventario (Venta)': f"${valor_inventario_venta:,.2f}",
+        'Ganancia Potencial Total': f"${ganancia_potencial_total:,.2f}",
     }
-    
-    # Separador
-    resumen['─' * 50] = ''
-    
-    # Análisis de rentabilidad
-    resumen['=== ANÁLISIS DE RENTABILIDAD ==='] = ''
-    resumen['Margen Promedio'] = f"{margen_promedio:.2f}%"
-    resumen['Valor Inventario (Compra)'] = f"${valor_inventario_compra:,.2f}"
-    resumen['Valor Inventario (Venta)'] = f"${valor_inventario_venta:,.2f}"
-    resumen['Ganancia Potencial Total'] = f"${ganancia_potencial_total:,.2f}"
     
     # Agregar productos con mayor y menor margen
     if mayor_margen:
@@ -760,50 +757,34 @@ def obtener_datos_productos(reporte):
     if menor_margen:
         resumen['Producto con Menor Margen'] = f"{menor_margen['producto'].nombre} ({menor_margen['margen']:.1f}%)"
     
-    # Separador
-    resumen['─' * 50 + ' '] = ''
-    
-    # Agregar top productos por valor potencial
-    resumen['=== TOP 5 VALOR POTENCIAL ==='] = ''
+    # Top productos por valor potencial
     for i, item in enumerate(top_valor_potencial, 1):
-        resumen[f"  {i}. {item['producto'].nombre}"] = f"${item['valor_potencial']:,.2f}"
-    
-    # Separador
-    resumen['─' * 50 + '  '] = ''
+        resumen[f"Top {i} Valor Potencial"] = f"{item['producto'].nombre} (${item['valor_potencial']:,.2f})"
     
     # Alertas de stock
-    resumen['=== ALERTAS DE STOCK ==='] = ''
-    resumen['🔴 Stock Crítico (< 5)'] = productos_stock_critico.count()
-    resumen['🟡 Requiere Reorden (5-10)'] = productos_reorden.count()
-    resumen['⚫ Sin Stock'] = productos_sin_stock.count()
-    resumen['🔵 Stock Excesivo (> 100)'] = productos_exceso_stock.count()
+    resumen['Stock Critico (< 5)'] = productos_stock_critico.count()
+    resumen['Requiere Reorden (5-10)'] = productos_reorden.count()
+    resumen['Sin Stock'] = productos_sin_stock.count()
+    resumen['Stock Excesivo (> 100)'] = productos_exceso_stock.count()
     
-    # Separador
-    resumen['─' * 50 + '   '] = ''
-    
-    # Estadísticas por proveedor
-    resumen['=== TOP 5 PROVEEDORES ==='] = ''
+    # Top 5 proveedores
     for prov in por_proveedor[:5]:
         prov_nombre = prov['id_proveedor__nombre'] or 'Sin proveedor'
         valor = prov['valor_compra'] or 0
-        resumen[f"  - {prov_nombre}"] = f"{prov['cantidad']} productos (${valor:,.2f})"
-    
-    # Separador
-    resumen['─' * 50 + '    '] = ''
+        resumen[f"Proveedor - {prov_nombre}"] = f"{prov['cantidad']} productos (${valor:,.2f})"
     
     # Estadísticas de precios
-    resumen['=== ESTADÍSTICAS DE PRECIOS ==='] = ''
     resumen['Precio Compra Promedio'] = f"${precios_stats['precio_compra_promedio'] or 0:,.2f}"
     resumen['Precio Venta Promedio'] = f"${precios_stats['precio_venta_promedio'] or 0:,.2f}"
-    
-    # Separador
-    resumen['─' * 50 + '     '] = ''
+    resumen['Precio Compra Min'] = f"${precios_stats['precio_compra_min'] or 0:,.2f}"
+    resumen['Precio Compra Max'] = f"${precios_stats['precio_compra_max'] or 0:,.2f}"
+    resumen['Precio Venta Min'] = f"${precios_stats['precio_venta_min'] or 0:,.2f}"
+    resumen['Precio Venta Max'] = f"${precios_stats['precio_venta_max'] or 0:,.2f}"
     
     # Top 5 categorías
-    resumen['=== TOP 5 CATEGORÍAS ==='] = ''
     for cat in por_categoria[:5]:
         cat_nombre = cat['id_categoria__nombre_categoria'] or 'Sin categoría'
-        resumen[f"  - {cat_nombre}"] = f"{cat['cantidad']} productos (Stock: {cat['stock_total'] or 0})"
+        resumen[f"Categoria - {cat_nombre}"] = f"{cat['cantidad']} productos (Stock: {cat['stock_total'] or 0})"
     
     # ========== DETALLES MEJORADOS ==========
     detalles = []
@@ -851,30 +832,17 @@ def obtener_datos_productos(reporte):
     
     # ========== TOTALES MEJORADOS ==========
     totales = {
-        '=== INVENTARIO ===': '',
         'TOTAL PRODUCTOS': total_productos,
         'PRODUCTOS ACTIVOS': productos_activos,
         'VALOR INVENTARIO (COMPRA)': f"${valor_inventario_compra:,.2f}",
         'VALOR INVENTARIO (VENTA)': f"${valor_inventario_venta:,.2f}",
+        'GANANCIA POTENCIAL TOTAL': f"${ganancia_potencial_total:,.2f}",
+        'MARGEN PROMEDIO': f"{margen_promedio:.2f}%",
+        'STOCK CRITICO': productos_stock_critico.count(),
+        'REQUIERE REORDEN': productos_reorden.count(),
+        'SIN STOCK': productos_sin_stock.count(),
+        'STOCK EXCESIVO': productos_exceso_stock.count(),
     }
-    
-    # Separador
-    totales['═' * 50] = ''
-    
-    # Rentabilidad
-    totales['=== RENTABILIDAD ==='] = ''
-    totales['GANANCIA POTENCIAL TOTAL'] = f"${ganancia_potencial_total:,.2f}"
-    totales['MARGEN PROMEDIO'] = f"{margen_promedio:.2f}%"
-    
-    # Separador
-    totales['═' * 50 + ' '] = ''
-    
-    # Alertas
-    totales['=== ALERTAS ==='] = ''
-    totales['🔴 STOCK CRÍTICO'] = productos_stock_critico.count()
-    totales['🟡 REQUIERE REORDEN'] = productos_reorden.count()
-    totales['⚫ SIN STOCK'] = productos_sin_stock.count()
-    totales['🔵 STOCK EXCESIVO'] = productos_exceso_stock.count()
     
     return {
         'resumen': resumen,
@@ -888,12 +856,12 @@ def obtener_datos_mesas(reporte):
     from tables.models import Mesa, Pedido, Factura
     
     pedidos = Pedido.objects.filter(
-        fecha_creacion__range=[reporte.fecha_inicio, reporte.fecha_fin]
+        fecha_creacion__date__range=[reporte.fecha_inicio, reporte.fecha_fin]
     ).select_related('mesa').prefetch_related('items')
     
     mesas = Mesa.objects.all()
     facturas = Factura.objects.filter(
-        fecha__range=[reporte.fecha_inicio, reporte.fecha_fin]
+        fecha__date__range=[reporte.fecha_inicio, reporte.fecha_fin]
     )
     
     total_mesas = mesas.count()
@@ -949,7 +917,7 @@ def obtener_datos_general(reporte):
     from nominas.models import Empleado
     
     # Obtener datos de todos los módulos
-    facturas = Factura.objects.filter(fecha__range=[reporte.fecha_inicio, reporte.fecha_fin])
+    facturas = Factura.objects.filter(fecha__date__range=[reporte.fecha_inicio, reporte.fecha_fin])
     gastos = Expense.objects.filter(date__range=[reporte.fecha_inicio, reporte.fecha_fin])
     
     total_ventas = facturas.aggregate(Sum('total'))['total__sum'] or Decimal('0')
