@@ -1,45 +1,40 @@
-# Python slim image
-FROM python:3.12-slim
+# Dockerfile para Bar Galileo
+# Python 3.11 + dependencias nativas + OCR + NLP
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+FROM python:3.11-slim-bullseye
 
-# System deps: build tools, MySQL client libs, flite for audio captcha
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    default-libmysqlclient-dev \
-    pkg-config \
-    curl \
-    flite \
-    netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/*
-
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Install dependencies (using lightweight requirements without torch/CUDA)
-COPY requirements-docker.txt /app/requirements-docker.txt
-RUN pip install --upgrade pip && pip install -r /app/requirements-docker.txt
+# Instalar dependencias del sistema necesarias para mysqlclient, pymupdf, pytesseract, cryptography, etc.
+RUN apt-get update && apt-get install -y \
+    gcc \
+    pkg-config \
+    default-libmysqlclient-dev \
+    tesseract-ocr \
+    tesseract-ocr-spa \
+    libmupdf-dev \
+    libgl1 \
+    libglib2.0-0 \
+    flite \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy project
-COPY bar_galileo /app/bar_galileo
-COPY run_server.sh /app/run_server.sh
-COPY docker/entrypoint.sh /app/entrypoint.sh
+# Copiar dependencias Python
+COPY requirements.txt .
 
-# Make scripts executable
-RUN chmod +x /app/entrypoint.sh /app/run_server.sh
+# Instalar dependencias Python
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a non-root user and set ownership
-RUN useradd -m appuser && chown -R appuser:appuser /app
+# Descargar modelos de spaCy y NLTK necesarios en runtime
+#RUN python -m spacy download es_core_news_sm
+RUN pip install https://github.com/explosion/spacy-models/releases/download/es_core_news_sm-3.7.0/es_core_news_sm-3.7.0-py3-none-any.whl
+RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 
-# Switch to non-root user
-USER appuser
+# Copiar el resto del código fuente
+COPY bar_galileo/ .
 
-# Environment
-ENV DJANGO_SETTINGS_MODULE=bar_galileo.settings \
-    PYTHONPATH=/app
-
+# Exponer el puerto de la aplicación
 EXPOSE 8000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Comando por defecto (puedes cambiarlo en docker-compose)
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "bar_galileo.asgi:application"]
