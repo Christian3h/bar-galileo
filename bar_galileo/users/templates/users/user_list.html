@@ -27,7 +27,7 @@
     }
     
     .modal-content {
-        background-color: var(--color-surface-alt);
+        background-color: var(--card-bg, #262626);
         margin: 5% auto;
         padding: 0;
         border-radius: 10px;
@@ -43,7 +43,7 @@
     
     .modal-header h3 {
         margin: 0;
-        color: var(--color-primary);
+        color: var(--primary-color, #d4af37);
         font-size: 1.25rem;
     }
     
@@ -63,7 +63,7 @@
         position: absolute;
         right: 20px;
         top: 20px;
-        color: var(--color-gray);
+        color: #aaa;
         font-size: 28px;
         font-weight: bold;
         cursor: pointer;
@@ -81,7 +81,7 @@
     .field-group label {
         display: block;
         margin-bottom: 5px;
-        color: var(--color-secondary);
+        color: var(--text-color, #e0e0e0);
         font-weight: 500;
     }
     
@@ -89,10 +89,10 @@
     .field-group textarea {
         width: 100%;
         padding: 10px;
-        border: 1px solid var(--color-gray);
+        border: 1px solid var(--border-color, #444);
         border-radius: 6px;
-        background-color: var(--color-surface);
-        color: var(--color-secondary);
+        background-color: var(--input-bg, #1a1a1a);
+        color: var(--text-color, #e0e0e0);
         font-size: 14px;
     }
     
@@ -181,7 +181,7 @@
             <h3>Cambiar Contraseña de Usuario</h3>
         </div>
         <div class="modal-body">
-            <p style="color: var(--color-gray); margin-bottom: 20px;">Usuario: <strong id="modalUsername"></strong></p>
+            <p style="color: #aaa; margin-bottom: 20px;">Usuario: <strong id="modalUsername"></strong></p>
             
             <form id="changePasswordForm" method="post" action="{% url 'users:cambiar_password' %}">
                 {% csrf_token %}
