@@ -13,5 +13,10 @@ fi
 
 cd /app
 python manage.py migrate --noinput
+
+# Setup site_images module and permissions
+python manage.py setup_site_images
+
+# Collect static files
 python manage.py collectstatic --noinput
 exec "$@"

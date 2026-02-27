@@ -1,7 +1,8 @@
 """
-Comando para crear backups completos (DB + Media) con encriptación GPG.
-Soluciona el problema de django-dbbackup 5.0.0 donde los backups de media
-se guardan en la carpeta incorrecta.
+Comando para crear backups completos (DB + Media).
+Implementa el backup de MySQL directamente con Python (MySQLdb),
+sin ejecutar binarios externos, para evitar problemas de permisos/PATH
+cuando se ejecuta desde el servidor web (uvicorn/ASGI).
 
 Uso:
     python manage.py crear_backup_completo
@@ -9,15 +10,15 @@ Uso:
 
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
-from pathlib import Path
 from django.conf import settings
+from pathlib import Path
+from datetime import datetime
 import os
 import shutil
-from datetime import datetime
 
 
 class Command(BaseCommand):
-    help = 'Crea un backup completo de la base de datos y archivos media con encriptación GPG'
+    help = 'Crea un backup completo de la base de datos y archivos media'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -30,6 +31,84 @@ class Command(BaseCommand):
             action='store_true',
             help='No crear backup de archivos media',
         )
+
+    def _crear_backup_mysql(self, db_backup_dir):
+        """
+        Crea un dump de MySQL usando MySQLdb (Python puro).
+        No requiere ejecutar ningún binario externo (mysqldump).
+        Devuelve el Path del archivo creado.
+        """
+        import MySQLdb
+
+        db = settings.DATABASES['default']
+        timestamp = datetime.now().strftime('%Y-%m-%d-%H%M%S')
+        output_file = db_backup_dir / f'{timestamp}.psql'
+
+        conn = MySQLdb.connect(
+            host=db.get('HOST', 'localhost'),
+            port=int(db.get('PORT', 3306)),
+            user=db.get('USER', 'root'),
+            passwd=db.get('PASSWORD', ''),
+            db=db['NAME'],
+            charset='utf8mb4',
+        )
+
+        try:
+            cursor = conn.cursor()
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(f'-- Backup de {db["NAME"]} generado el {datetime.now()}\n')
+                f.write('SET FOREIGN_KEY_CHECKS=0;\n')
+                f.write('SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";\n')
+                f.write('SET NAMES utf8mb4;\n\n')
+
+                # Obtener lista de tablas
+                cursor.execute('SHOW TABLES')
+                tablas = [row[0] for row in cursor.fetchall()]
+
+                for tabla in tablas:
+                    # CREATE TABLE
+                    cursor.execute(f'SHOW CREATE TABLE `{tabla}`')
+                    create_sql = cursor.fetchone()[1]
+                    f.write(f'DROP TABLE IF EXISTS `{tabla}`;\n')
+                    f.write(f'{create_sql};\n\n')
+
+                    # Datos en lotes de 500 filas
+                    cursor.execute(f'SELECT * FROM `{tabla}`')
+                    columnas = [col[0] for col in cursor.description]
+                    col_list = ', '.join(f'`{c}`' for c in columnas)
+                    filas = cursor.fetchmany(500)
+                    while filas:
+                        valores_lista = []
+                        for fila in filas:
+                            valores = []
+                            for v in fila:
+                                if v is None:
+                                    valores.append('NULL')
+                                elif isinstance(v, (int, float)):
+                                    valores.append(str(v))
+                                elif isinstance(v, bytes):
+                                    valores.append(
+                                        '0x' + v.hex() if v else "''"
+                                    )
+                                else:
+                                    escaped = str(v).replace('\\', '\\\\').replace("'", "\\'")
+                                    valores.append(f"'{escaped}'")
+                            valores_lista.append(f"({', '.join(valores)})")
+                        f.write(
+                            f'INSERT INTO `{tabla}` ({col_list}) VALUES\n'
+                            + ',\n'.join(valores_lista)
+                            + ';\n'
+                        )
+                        filas = cursor.fetchmany(500)
+                    f.write('\n')
+
+                f.write('SET FOREIGN_KEY_CHECKS=1;\n')
+
+            cursor.close()
+        finally:
+            conn.close()
+
+        return output_file
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('=' * 70))
@@ -45,30 +124,20 @@ class Command(BaseCommand):
         db_backup_dir.mkdir(parents=True, exist_ok=True)
         media_backup_dir.mkdir(parents=True, exist_ok=True)
 
+        # Rastrear errores para propagar al final
+        errores = []
+
         # 1. Backup de Base de Datos
         if not options['sin_db']:
             self.stdout.write(self.style.WARNING('📊 Creando backup de base de datos...'))
             try:
-                # Verificar si la encriptación está habilitada en settings
-                encrypt_flag = '--encrypt' if settings.DBBACKUP_ENCRYPTION else ''
-                
-                if encrypt_flag:
-                    call_command('dbbackup', '--encrypt', verbosity=1)
-                else:
-                    call_command('dbbackup', verbosity=1)
-
-                # Verificar que se creó en la carpeta correcta
-                # Buscar con o sin .gpg según la encriptación
-                pattern = '*.psql.gpg' if settings.DBBACKUP_ENCRYPTION else '*.psql'
-                db_files = sorted(db_backup_dir.glob(pattern))
-                if db_files:
-                    ultimo_db = db_files[-1]
-                    self.stdout.write(self.style.SUCCESS(f'✅ Backup de DB creado: {ultimo_db.name}'))
-                    self.stdout.write(f'   Tamaño: {ultimo_db.stat().st_size / 1024:.2f} KB')
-                else:
-                    self.stdout.write(self.style.ERROR('❌ No se encontró el backup de DB'))
+                backup_file = self._crear_backup_mysql(db_backup_dir)
+                self.stdout.write(self.style.SUCCESS(f'✅ Backup de DB creado: {backup_file.name}'))
+                self.stdout.write(f'   Tamaño: {backup_file.stat().st_size / 1024:.2f} KB')
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f'❌ Error al crear backup de DB: {e}'))
+                msg = str(e)
+                self.stdout.write(self.style.ERROR(f'❌ Error al crear backup de DB: {msg}'))
+                errores.append(f'Backup DB: {msg}')
         else:
             self.stdout.write(self.style.WARNING('⏭️  Saltando backup de base de datos'))
 
@@ -77,8 +146,9 @@ class Command(BaseCommand):
         # 2. Backup de Media
         if not options['sin_media']:
             self.stdout.write(self.style.WARNING('📁 Creando backup de archivos media...'))
+            pattern_media = '*.media.zip.gpg' if settings.DBBACKUP_ENCRYPTION else '*.media.zip'
+            archivos_antes_media = set(media_backup_dir.glob(pattern_media))
             try:
-                # Crear el backup de media
                 if settings.DBBACKUP_ENCRYPTION:
                     call_command('mediabackup', '--encrypt', verbosity=1)
                 else:
@@ -86,8 +156,7 @@ class Command(BaseCommand):
 
                 # WORKAROUND: Mover el archivo de media de db/ a media/ si es necesario
                 # debido al bug en django-dbbackup 5.0.0
-                pattern = '*.media.zip.gpg' if settings.DBBACKUP_ENCRYPTION else '*.media.zip'
-                media_files_in_db = sorted(db_backup_dir.glob(pattern))
+                media_files_in_db = sorted(db_backup_dir.glob(pattern_media))
                 if media_files_in_db:
                     for media_file in media_files_in_db:
                         destino = media_backup_dir / media_file.name
@@ -96,29 +165,38 @@ class Command(BaseCommand):
                         self.stdout.write(f'   Tamaño: {destino.stat().st_size / (1024 * 1024):.2f} MB')
                         self.stdout.write(f'   📂 Movido a: backups/backup_files/media/')
                 else:
-                    # Verificar si ya está en la carpeta correcta
-                    media_files = sorted(media_backup_dir.glob(pattern))
-                    if media_files:
-                        ultimo_media = media_files[-1]
+                    # Detectar si se creó un archivo nuevo en la carpeta correcta
+                    archivos_despues_media = set(media_backup_dir.glob(pattern_media))
+                    nuevos_media = archivos_despues_media - archivos_antes_media
+                    if nuevos_media:
+                        ultimo_media = sorted(nuevos_media)[-1]
                         self.stdout.write(self.style.SUCCESS(f'✅ Backup de Media: {ultimo_media.name}'))
                         self.stdout.write(f'   Tamaño: {ultimo_media.stat().st_size / (1024 * 1024):.2f} MB')
                     else:
-                        self.stdout.write(self.style.ERROR('❌ No se encontró el backup de Media'))
+                        msg = 'El comando mediabackup se ejecutó pero no se encontró el archivo de backup'
+                        self.stdout.write(self.style.ERROR(f'❌ {msg}'))
+                        errores.append(f'Backup Media: {msg}')
             except Exception as e:
-                self.stdout.write(self.style.ERROR(f'❌ Error al crear backup de Media: {e}'))
+                msg = str(e)
+                self.stdout.write(self.style.ERROR(f'❌ Error al crear backup de Media: {msg}'))
+                errores.append(f'Backup Media: {msg}')
         else:
             self.stdout.write(self.style.WARNING('⏭️  Saltando backup de archivos media'))
 
         self.stdout.write('')
-        self.stdout.write(self.style.SUCCESS('=' * 70))
-        self.stdout.write(self.style.SUCCESS('✅ PROCESO DE BACKUP COMPLETADO'))
-        self.stdout.write(self.style.SUCCESS('=' * 70))
+        if errores:
+            self.stdout.write(self.style.ERROR('=' * 70))
+            self.stdout.write(self.style.ERROR('❌ PROCESO COMPLETADO CON ERRORES'))
+            self.stdout.write(self.style.ERROR('=' * 70))
+        else:
+            self.stdout.write(self.style.SUCCESS('=' * 70))
+            self.stdout.write(self.style.SUCCESS('✅ PROCESO DE BACKUP COMPLETADO'))
+            self.stdout.write(self.style.SUCCESS('=' * 70))
         self.stdout.write('')
 
         # Resumen de backups
         self.stdout.write(self.style.WARNING('📋 RESUMEN DE BACKUPS DISPONIBLES:'))
         self.stdout.write('')
-# Buscar backups con ambos patrones (encriptados y sin encriptar)
         db_backups = sorted(db_backup_dir.glob('*.psql*'))
         if db_backups:
             self.stdout.write(f'  🗄️  Backups de Base de Datos ({len(db_backups)}):')
@@ -138,3 +216,8 @@ class Command(BaseCommand):
                 self.stdout.write(f'     • {fecha} ({tamanio:.2f} MB)')
 
         self.stdout.write('')
+
+        # Elevar excepción DESPUÉS del resumen para que el llamador (la vista) pueda reportar el error
+        if errores:
+            raise RuntimeError('\n'.join(errores))
+
