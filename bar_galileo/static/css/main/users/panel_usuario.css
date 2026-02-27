@@ -744,7 +744,7 @@ body {
     font-weight: 700;
     letter-spacing: 3px;
     margin-bottom: 20px;
-    color: #d4af37;
+    color: var(--color-secondary);
 }
 
 .footer-brand p {
@@ -757,7 +757,7 @@ body {
 .footer-section h4 {
     font-size: 20px;
     margin-bottom: 25px;
-    color: #d4af37;
+    color: var(--color-secondary);
     font-weight: 600;
 }
 
@@ -781,7 +781,7 @@ body {
 }
 
 .footer-section ul li a:hover {
-    color: #d4af37;
+    color: var(--color-primary);
     padding-left: 10px;
 }
 
@@ -797,8 +797,8 @@ body {
     justify-content: center;
     width: 45px;
     height: 45px;
-    background: linear-gradient(135deg, #d4af37, #f4d467);
-    color: #000;
+    background: var(--color-secondary);
+    color: var(--color-accent);
     text-decoration: none;
     border-radius: 50%;
     font-size: 18px;
@@ -808,7 +808,7 @@ body {
 
 .social-icon:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 5px 20px var(--color-shadow);
 }
 
 .contact-info {
@@ -825,7 +825,7 @@ body {
 
 .contact-item i {
     margin-right: 12px;
-    color: #d4af37;
+    color: var(--color-secondary);
     width: 20px;
     font-size: 16px;
 }
@@ -837,7 +837,7 @@ body {
 }
 
 .contact-item a:hover {
-    color: #d4af37;
+    color: var(--color-primary);
 }
 
 .footer-bottom {
@@ -868,7 +868,7 @@ body {
 }
 
 .footer-bottom-right a:hover {
-    color: #d4af37;
+    color: var(--color-primary);
 }
 
 /* Responsive Footer */
@@ -988,6 +988,11 @@ form button {
   }
 }
 
+/* Clase para ocultar el panel lateral */
+.hidden {
+    display: none !important;
+}
+
 /* =======================================
    CLASES ADICIONALES PARA FORMULARIOS
 ======================================= */
@@ -1014,7 +1019,7 @@ form button {
 /* Mensaje vacío */
 .empty-message {
   text-align: center;
-  color: #A68932;
+  color: var(--color-secondary);
   margin-bottom: 18px;
 }
 

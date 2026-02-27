@@ -14,11 +14,6 @@
       </select>
     </form>
 
-    <!-- Export buttons: PDF and CSV -->
-    <div class="export-actions" style="margin-left: 12px; display: inline-block; vertical-align: middle;">
-      <a class="btn btn-primary" href="{% url 'admin_dashboard:export_dashboard' 'pdf' %}?period={{ selected_period }}" target="_blank">Exportar PDF</a>
-      <a class="btn btn-primary" href="{% url 'admin_dashboard:export_dashboard' 'csv' %}?period={{ selected_period }}">Exportar Excel (CSV)</a>
-    </div>
   </div>
 
   <section class="dashboard-cards">
@@ -31,7 +26,7 @@
       <p>{{ ganancia_total|format_price }}</p>
     </div>
     <div class="card">
-      <h3>Valor Total del Stock</h3>
+      <h3>Valor Total del Cantidad</h3>
       <p>{{ valor_total_stock|format_price }}</p>
     </div>
     <div class="card">
@@ -81,7 +76,7 @@
     </article>
 
     <article class="chart-box">
-      <h4>Productos con Más Stock</h4>
+      <h4>Productos con Más Cantidad</h4>
       <div style="overflow-x: auto;">
         <div id="mas-stock-chart" style="width: 100%; height: 400px;"></div>
       </div>

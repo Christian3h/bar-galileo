@@ -1,3 +1,6 @@
+# Entorno y variables de entorno
+.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -125,3 +128,10 @@ cython_debug/
 
 # Collected static files (Django collectstatic output)
 **/staticfiles/
+
+# Database dumps
+dump-*.sql
+*.sql
+
+# Backup files
+bar_galileo/backups/backup_files/

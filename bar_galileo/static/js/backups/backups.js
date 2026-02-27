@@ -291,7 +291,7 @@ function cargarBackupsDisponibles() {
     const fileGroup = document.getElementById('restoreFileGroup');
 
     // Limpiar opciones
-    selectFile.innerHTML = '<option value="">-- Seleccione un archivo --</option>';
+    selectFile.innerHTML = '<option value="">-- Selecciona un archivo --</option>';
 
     if (!tipo) {
         fileGroup.style.display = 'none';
@@ -299,8 +299,12 @@ function cargarBackupsDisponibles() {
         return;
     }
 
-    // Los backups se cargarán dinámicamente desde el template
-    // Ver backup_list.html para la implementación con Django template tags
+    // Copiar opciones pre-renderizadas según el tipo
+    const sourceSelectId = tipo === 'db' ? 'restoreFileOptionsDb' : 'restoreFileOptionsMedia';
+    const sourceSelect = document.getElementById(sourceSelectId);
+    if (sourceSelect) {
+        selectFile.innerHTML = sourceSelect.innerHTML;
+    }
 
     fileGroup.style.display = 'block';
 

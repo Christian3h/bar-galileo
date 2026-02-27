@@ -1,61 +1,26 @@
-anyio==4.10.0
-asgiref==3.9.1
-attrs==25.3.0
-autobahn==24.4.2
-Automat==25.4.16
-certifi==2025.7.14
-cffi==1.17.1
-channels==4.3.1
-charset-normalizer==3.4.2
-click==8.2.1
-constantly==23.10.4
-cryptography==45.0.5
-daphne==4.2.1
-dbackup==1.0.1
+# --- DEPENDENCIAS ESENCIALES PARA BAR GALILEO ---
+
+# Django y extensiones principales
 Django==5.2.4
+channels==4.3.1
 django-allauth==65.10.0
 django-dbbackup==5.0.0
 django-markdown-deux==1.0.6
 django-ranged-response==0.2.0
 django-simple-captcha==0.6.2
-dotenv==0.9.9
-greenlet==3.2.4
-h11==0.16.0
-httptools==0.6.4
-hyperlink==21.0.0
-idna==3.10
-incremental==24.7.2
-Markdown==3.8.2
-markdown2==2.5.3
-oauthlib==3.3.1
-packaging==25.0
-pillow==11.3.0
-playwright==1.55.0
-psycopg2-binary==2.9.10
-pyasn1==0.6.1
-pyasn1_modules==0.4.2
-pycparser==2.22
-pyee==13.0.0
-PyJWT==2.10.1
-pyOpenSSL==25.1.0
+daphne==4.1.2
+
+# Utilidades y librerías básicas
 python-dotenv==1.1.1
-python-gnupg==0.5.5
-pytube==15.0.0
-PyYAML==6.0.2
 requests==2.32.4
-requests-oauthlib==2.0.0
-service-identity==24.2.0
-setuptools==80.9.0
-sniffio==1.3.1
+pillow==11.3.0
+PyYAML==6.0.2
 sqlparse==0.5.3
-Twisted==25.5.0
-txaio==25.6.1
-typing_extensions==4.14.1
-urllib3==2.5.0
-uvicorn==0.23.2
-watchfiles==1.1.0
-websockets==15.0.1
-zope.interface==7.2
+
+# Seguridad y autenticación
+cryptography==45.0.5
+pyOpenSSL==25.1.0
+PyJWT==2.10.1
 
 # Base de datos MySQL/MariaDB
 mysqlclient==2.2.7
@@ -64,10 +29,36 @@ mysqlclient==2.2.7
 openpyxl==3.1.5
 reportlab==4.2.5
 
-# RAG Chat Dependencies
-pymupdf==1.24.13
-sentence-transformers==3.3.1
-faiss-cpu==1.9.0.post1
+# --- DEPENDENCIAS ESENCIALES ADICIONALES ---
 numpy==1.26.4
-torch==2.5.1
-# Optional: pytesseract==0.3.13 (para OCR de PDFs escaneados)
+pymupdf==1.24.13
+pytesseract==0.3.13
+
+# --- IA / Embeddings / Búsqueda vectorial (alternativas livianas) ---
+gensim==4.3.2           # Word2Vec, FastText, Doc2Vec embeddings
+scikit-learn==1.4.2     # TF-IDF, NearestNeighbors, clustering, etc.
+nltk==3.8.1             # Procesamiento de lenguaje natural clásico
+spacy==3.7.4            # Procesamiento de texto eficiente y liviano
+
+# --- DEPENDENCIAS OPCIONALES (para características avanzadas) ---
+# Instala solo si necesitas RAG, OCR, PDF, IA, etc.
+
+# PDF y OCR
+# pymupdf==1.24.13
+# pytesseract==0.3.13
+
+# Backups automáticos con GPG (solo si usas backup cifrado)
+# python-gnupg==0.5.5
+
+# Servidor ASGI para producción
+gunicorn==23.0.0
+uvicorn==0.23.2
+websockets
+wsproto
+
+# --- FIN DE DEPENDENCIAS ---
+
+# NOTA:
+# - Elimina dependencias duplicadas o pesadas que no uses.
+# - Si necesitas alguna dependencia opcional, descomenta la línea correspondiente.
+# - Para desarrollo avanzado, instala dependencias opcionales solo cuando lo requieras.

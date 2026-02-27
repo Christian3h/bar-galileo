@@ -3,8 +3,8 @@
 # Incluye vigilancia de archivos HTML, CSS y JS para reinicio automático
 
 # --- Detección de IP y muestra de URL ---
-# Obtener la IP local de la manera más fiable
-LOCAL_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+# Obtener la IP local de la manera más fiable (compatible macOS)
+LOCAL_IP=$(ipconfig getifaddr en0)
 
 # Limpiar la pantalla y mostrar información ótil
 clear
@@ -17,12 +17,12 @@ echo "Iniciando servidor Uvicorn con recarga automática..."
 
 echo ""
 echo "Puedes acceder desde este equipo en:"
-echo "  http://localhost:8000"
-echo "  http://127.0.0.1:8000"
+echo "  http://localhost:8001"
+echo "  http://127.0.0.1:8001"
 
 echo ""
 echo "Desde otros dispositivos en la misma red, usa:"
-echo "  http://${LOCAL_IP}:8000"
+echo "  http://${LOCAL_IP}:8001"
 
 echo ""
 echo "======================================================"
@@ -39,7 +39,7 @@ cd bar_galileo
 # Ejecutar uvicorn con vigilancia extendida de archivos
 ../.venv/bin/python -m uvicorn bar_galileo.asgi:application \
     --host 0.0.0.0 \
-    --port 8000 \
+    --port 8001 \
     --reload-include="*.py" \
     --reload-include="*.html" \
     --reload-include="*.css" \

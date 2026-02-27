@@ -1,174 +1,31 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load format_tags %}
-
-{% block title %}Inicio - {{ block.super }}{% endblock %}
-
-{% block content %}
-  <!-- Hero Section -->
-  <section class="hero" id="experiencia-section">
-    <div class="hero-carousel">
-      <div class="hero-slide active" style="background-image: url('https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
-      <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta</head> charset="UTF-8">
+    <title>Bar Galileo</title>
+    <meta name="viewport" content="</title>width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <div class="main-landing">
+        <header>
+            <h1>Bien</body></header></h1>venido a Bar Galileo</h1>
+            <nav>
+                <ul>
+                    <</nav></ul>li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+                    <li><a href="{% url 'register' %}">Registrarse</a></li>
+                </ul>
+            </nav>
+        </header>
+        <section class="landing-content">
+            <h2>Gestión integral para tu</h2> bar</h2>
+            <p>Administra productos, ventas, empleados y mucho más desde una sola plataforma.</p>
+            <</p>a href="{% url 'login' %}" class="btn btn-primary">Comenzar</a>
+        </section>
+        <footer>
+            <p>&</footer>copy; {{ year }} Bar Galileo. Todos los derechos reservados.</p>
+        </footer>
     </div>
-
-    <div class="hero-content">
-      <h1>BAR GALILEO</h1>
-      <p>Donde cada cerveza cuenta una historia y cada noche se convierte en una experiencia inolvidable</p>
-      <div class="hero-buttons">
-        <button class="hero-button" data-action="carta">EXPLORAR CARTA</button>
-        <button class="hero-button" data-action="historia">NUESTRA HISTORIA</button>
-      </div>
-    </div>
-
-    <div class="hero-dots">
-      <span class="hero-dot active" data-slide="0"></span>
-      <span class="hero-dot" data-slide="1"></span>
-      <span class="hero-dot" data-slide="2"></span>
-      <span class="hero-dot" data-slide="3"></span>
-      <span class="hero-dot" data-slide="4"></span>
-      <span class="hero-dot" data-slide="5"></span>
-    </div>
-
-    <!-- Scroll Indicator -->
-    <div class="scroll-indicator" id="scroll-indicator">
-      <div class="arrow"></div>
-      <div class="arrow"></div>
-      <div class="arrow"></div>
-      <div class="arrow"></div>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section class="about" id="about">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-content">
-          <h2>Acerca de Bar Galileo</h2>
-          <p>Somos más que un bar, somos un espacio donde la pasión por la coctelería se encuentra con la elegancia y el diseño. Nuestro equipo de mixólogos expertos crea experiencias únicas para cada huésped.</p>
-          <p>Con una carta cuidadosamente seleccionada de destilados premium, ingredientes frescos y técnicas innovadoras, transformamos cada cóctel en una experiencia sensorial inolvidable.</p>
-          <p>Únete a nosotros y descubre por qué Bar Galileo se ha convertido en el destino preferido para los amantes de la buena coctelería en la ciudad.</p>
-        </div>
-        <div class="about-image">
-          <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" alt="Interior de Bar Galileo">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SIGNATURE COCKTAILS -->
-  <span class="section-anchor" id="cocktails-section"></span>
-  <section class="signature-section">
-    <div class="container">
-      <h2>CÓCTELES SIGNATURE</h2>
-      <p class="signature-subtitle">
-        Creaciones únicas de nuestros mixólogos expertos, elaboradas con los mejores ingredientes del mundo
-      </p>
-      <div class="signature-cards">
-        <div class="signature-card">
-          <div class="card-badge">ESPECIAL</div>
-          <div class="card-icon">🍸</div>
-        </div>
-        <div class="signature-card">
-          <div class="card-badge">ESPECIAL</div>
-          <div class="card-icon">🍹</div>
-        </div>
-        <div class="signature-card">
-          <div class="card-badge">ESPECIAL</div>
-          <div class="card-icon">🥃</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Services Section -->
-  <section class="services">
-    <div class="container">
-      <h2>¿Qué hace especial a<br>BAR GALILEO?</h2>
-      <p class="services-subtitle">Ofrecemos una experiencia integral de coctelería premium con atención personalizada en cada detalle</p>
-
-      <div class="services-grid">
-        <div class="service-item">
-          <div class="service-number">5+</div>
-          <h3>Años de experiencia</h3>
-          <p>Perfeccionando el arte de la mixología y creando momentos únicos</p>
-        </div>
-        <div class="service-item">
-          <div class="service-number">150+</div>
-          <h3>Cocteles únicos</h3>
-          <p>Carta exclusiva con creaciones propias y clásicos reimaginados</p>
-        </div>
-        <div class="service-item">
-          <div class="service-number">24/7</div>
-          <h3>Reservaciones</h3>
-          <p>Sistema de reservas disponible las 24 horas para tu comodidad</p>
-        </div>
-        <div class="service-item">
-          <div class="service-number">100%</div>
-          <h3>Satisfacción</h3>
-          <p>Compromiso total con la excelencia en cada experiencia</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PRODUCTOS DESDE BASE DE DATOS -->
-  <span class="section-anchor" id="carta-section"></span>
-  <section class="products-section">
-    <div class="container">
-      <h2 class="products-title">Nuestros Productos</h2>
-      <div class="products-grid" id="productos-grid">
-        {% for producto in productos_iniciales %}
-        <div class="product-card">
-          <div class="product-carousel">
-            {% if producto.imagenes.exists %}
-              <img src="{{ producto.imagenes.first.imagen.url }}" class="product-img" alt="{{ producto.nombre }}" />
-            {% else %}
-              <img src="https://via.placeholder.com/400x300?text=Sin+Imagen" class="product-img" alt="{{ producto.nombre }}" />
-            {% endif %}
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">{{ producto.nombre }}</h3>
-            <p class="product-price">{{ producto.precio_venta|format_price }}</p>
-            <p class="product-description">{{ producto.descripcion|truncatewords:10 }}</p>
-            <button class="btn-green" data-producto-id="{{ producto.id_producto }}">Ver producto</button>
-          </div>
-        </div>
-        {% empty %}
-        <div style="text-align: center; color: #ccc; grid-column: 1 / -1;">
-          <p>No hay productos disponibles en este momento.</p>
-        </div>
-        {% endfor %}
-      </div>
-
-      {% if total_productos > 3 %}
-      <div class="productos-botones">
-        <button id="mostrar-mas-productos" class="btn-green">
-          Mostrar más productos
-        </button>
-        <button id="mostrar-menos-productos" class="btn-green" style="display: none;">
-          Mostrar menos productos
-        </button>
-        <div id="loading-productos" style="display: none;">
-        </div>
-      </div>
-      {% endif %}
-    </div>
-  </section>
-
-  <!-- SECCIÓN RESERVAS -->
-  <span class="section-anchor" id="reservas-section"></span>
-  <section class="reservas-section">
-    <div class="container">
-      <h2 class="products-title">Reservas</h2>
-      <p style="font-size: 18px; margin-bottom: 40px;">
-        ¡Reserva tu mesa y asegura tu lugar en Bar Galileo!
-      </p>
-       <a href="https://wa.me/573044029343" class="nav-button">Reservar por WhatsApp</a>
-    </div>
-  </section>
-{% endblock %}
+</body>
+</html>

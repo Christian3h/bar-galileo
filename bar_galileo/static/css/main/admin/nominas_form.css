@@ -212,16 +212,6 @@
     display: block;
 }
 
-/* Alertas */
-.alert-info {
-    background-color: rgba(166, 137, 50, 0.15);
-    border: 2px solid var(--color-secondary);
-    color: var(--color-secondary);
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-
 /* Errores */
 .errorlist {
     list-style: none;

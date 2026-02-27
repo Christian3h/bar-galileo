@@ -5,6 +5,16 @@
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
     <link rel="stylesheet" href="{% static 'css/main/facturacion/facturacion.css' %}">
+    <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Número y Acciones */
+    @media (max-width: 768px) {
+      #tabla-facturas .col-2,
+      #tabla-facturas .col-3,
+      #tabla-facturas .col-4 {
+        display: none;
+      }
+    }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -31,20 +41,6 @@
             <p>{{ estadisticas.ingresos_hoy|format_price }}</p>
         </div>
     </section>
-
-    <!-- Botón de exportar (PDF / Excel) -->
-    <div class="export-actions" style="margin: 16px 0;">
-        <div class="btn-group">
-            <button type="button" class="btn btn-primary">Exportar</button>
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="sr-only">Toggle Dropdown</span>
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'pdf' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" target="_blank">Exportar PDF</a>
-                <a class="dropdown-item" href="{% url 'facturacion:export_facturas' 'csv' %}?busqueda={{ busqueda }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}">Exportar Excel (CSV)</a>
-            </div>
-        </div>
-    </div>
 
     <!-- Filtros de búsqueda -->
     <div class="search-container">
@@ -77,27 +73,6 @@
         </form>
     </div>
 
-    <!-- Botones de exportación -->
-    <div class="export-container mb-3">
-        <div class="btn-group" role="group" aria-label="Exportar datos">
-            <a href="{% url 'facturacion:exportar_csv' %}?{{ request.GET.urlencode }}" 
-               class="btn btn-outline-success">
-                <img src="{% static 'img/icons/download.svg' %}" alt="CSV" style="width:16px; height:16px;">
-                Exportar CSV
-            </a>
-            <a href="{% url 'facturacion:exportar_xlsx' %}?{{ request.GET.urlencode }}" 
-               class="btn btn-outline-primary">
-                <img src="{% static 'img/icons/download.svg' %}" alt="XLSX" style="width:16px; height:16px;">
-                Exportar Excel
-            </a>
-            <a href="{% url 'facturacion:exportar_pdf' %}?{{ request.GET.urlencode }}" 
-               class="btn btn-outline-danger">
-                <img src="{% static 'img/icons/download.svg' %}" alt="PDF" style="width:16px; height:16px;">
-                Exportar PDF
-            </a>
-        </div>
-    </div>
-
     <!-- Lista de facturas -->
     <div class="table-responsive">
         <table id="tabla-facturas" class="table table-striped table-bordered nowrap">
@@ -127,10 +102,11 @@
                                 <a href="{% url 'facturacion:detalle_factura' factura.id %}"
                                     class="btn btn-sm btn-primary btn-view"
                                     title="Ver detalles">Ver</a>
-                                <a href="{% url 'facturacion:eliminar_factura' factura.id %}"
+                                <button type="button"
                                     class="btn btn-sm btn-danger btn-delete"
                                     title="Eliminar factura"
-                                    ><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    onclick="confirmarEliminarFactura({{ factura.id }}, '{{ factura.numero|escapejs }}')"
+                                    ><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -139,7 +115,27 @@
     </div>
 </div>
 
+<!-- Formulario oculto para eliminación de factura -->
+<form id="delete-factura-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
+async function confirmarEliminarFactura(facturaId, facturaNumero) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Factura',
+        message: `¿Estás seguro de que deseas eliminar la factura #${facturaNumero}? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-factura-form');
+        form.action = `/facturacion/factura/${facturaId}/eliminar/`;
+        form.submit();
+    }
+}
+
 $(document).ready(function() {
     var sel = '#tabla-facturas';
     if (!document.querySelector(sel)) return;

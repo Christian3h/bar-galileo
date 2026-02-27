@@ -9,140 +9,152 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-from dotenv import load_dotenv
-from pathlib import Path
+
 import os
-import ssl
+from pathlib import Path
+
 from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
+
+from django.utils.translation import gettext_lazy as _
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
-load_dotenv(dotenv_path=Path(__file__).resolve().parent / '.env')
+# Cargar el .env desde la raíz del proyecto
+load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent.parent / ".env")
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Configuración sensible a entorno
-DEBUG = str(os.getenv('DEBUG', 'True')).lower() in ('1', 'true', 'yes')
-SECRET_KEY = os.getenv('secret_key') or get_random_secret_key()
-raw_hosts = os.getenv('ALLOWED_HOSTS', '*' if DEBUG else '')
-ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(',') if h.strip()]
+DEBUG = str(os.getenv("DEBUG", "True")).lower() in ("1", "true", "yes")
+SECRET_KEY = os.getenv("secret_key") or get_random_secret_key()
+raw_hosts = os.getenv("ALLOWED_HOSTS", "*" if DEBUG else "")
+ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     # app para el captcha
-    'captcha',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    #apps propias
-    'core', # se encarga las paginas de inicio
-    'products',
-    'accounts.apps.AccountsConfig',
-    'tables',
-    'roles',
-    'users',
-    'expenses',
-    'nominas',
-    #app para el dashboard
-    'admin_dashboard',
-    #app para facturación
-    'facturacion',
-    #apps necesarias para la libreria django-allauth
-    'django.contrib.sites',                # ¡MUY IMPORTANTE!
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    #app para el manejo de las notificaciones
-    'channels',
-    'notifications',
-    #app para el manejo de backups
-    'dbbackup',
-    'backups',
-    #app para reportes
-    'reportes',
-    #app para consumir Google API
-    'google_chat',
-    #app para RAG (Q&A sobre documentos)
-    'rag_chat',
-    ]
+    "captcha",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    # apps propias
+    "core",  # se encarga las paginas de inicio
+    "products",
+    "accounts.apps.AccountsConfig",
+    "tables",
+    "roles",
+    "users",
+    "expenses",
+    "nominas",
+    # app para el dashboard
+    "admin_dashboard",
+    # app para gestión de imágenes del sitio
+    "site_images",
+    # app para facturación
+    "facturacion",
+    # apps necesarias para la libreria django-allauth
+    "django.contrib.sites",  # ¡MUY IMPORTANTE!
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    # app para el manejo de las notificaciones
+    "channels",
+    "notifications",
+    # app para el manejo de backups
+    "dbbackup",
+    "backups",
+    # app para reportes
+    "reportes",
+    # app para consumir Google API
+    "google_chat",
+    # RAG chat app (interfaz de chat con búsqueda/embeddings)
+    "rag_chat",
+]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'roles.middleware.PermissionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'accounts.middleware.AdminRedirectMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware'
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "roles.middleware.PermissionMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "accounts.middleware.AdminRedirectMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
-ROOT_URLCONF = 'bar_galileo.urls'
+ROOT_URLCONF = "bar_galileo.urls"
+# Configuración explícita de django-allauth para registro
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True  # Si solo quieres email
+ACCOUNT_AUTHENTICATION_METHOD = "email"  # Opcional, si solo usas email
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates'),
-                os.path.join(BASE_DIR, 'accounts', 'templates'),
-                os.path.join(BASE_DIR, 'products', 'templates'),
-                os.path.join(BASE_DIR, 'core', 'templates'),
-                os.path.join(BASE_DIR, 'admin_dashboard', 'templates'),
-                os.path.join(BASE_DIR, 'notifications', 'templates'),
-                os.path.join(BASE_DIR, 'backups', 'templates')
-                ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(BASE_DIR, "templates"),
+            os.path.join(BASE_DIR, "accounts", "templates"),
+            os.path.join(BASE_DIR, "products", "templates"),
+            os.path.join(BASE_DIR, "core", "templates"),
+            os.path.join(BASE_DIR, "admin_dashboard", "templates"),
+            os.path.join(BASE_DIR, "notifications", "templates"),
+            os.path.join(BASE_DIR, "backups", "templates"),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
 
-WSGI_APPLICATION = 'bar_galileo.wsgi.application'
-ASGI_APPLICATION = 'bar_galileo.asgi.application'
+WSGI_APPLICATION = "bar_galileo.wsgi.application"
+ASGI_APPLICATION = "bar_galileo.asgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'bar_galileo'),
-        'USER': os.getenv('DB_USER', 'bar_galileo_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'Galileo2025'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '3306'),
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("DB_NAME", "bar_galileo"),
+        "USER": os.getenv("DB_USER", "bar_galileo_user"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "Galileo2025"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
+        "PORT": os.getenv("DB_PORT", "3306"),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
 }
@@ -151,18 +163,26 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {
+            "user_attributes": ("username", "email"),
+            "max_similarity": 0.7
+        }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 8
+        }
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -170,9 +190,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'es-co'
+LANGUAGE_CODE = "es"
 USE_I18N = True
-TIME_ZONE = 'UTC'
+TIME_ZONE = "America/Bogota"
 
 USE_TZ = True
 
@@ -183,7 +203,7 @@ USE_TZ = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Configuración de storages para Django 5.2+
 STORAGES = {
@@ -207,42 +227,47 @@ STORAGES = {
     },
 }
 
-#lineas de codigo necesarias para que funcione django-allauth
+# lineas de codigo necesarias para que funcione django-allauth
 
 
 SITE_ID = 1
 
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
         ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
+        "AUTH_PARAMS": {
+            "access_type": "online",
         },
-        'OAUTH_PKCE_ENABLED': True,
+        "OAUTH_PKCE_ENABLED": True,
     }
 }
 
 ACCOUNT_FORMS = {
-    'login': 'accounts.forms.CustomLoginForm',
-    'add_email': 'accounts.forms.CustomAddEmailForm',
+    "login": "accounts.forms.CustomLoginForm",
+    "add_email": "accounts.forms.CustomAddEmailForm",
 }
 
-LOGIN_URL = '/accounts/login/'  # link que redirige al login
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = "/accounts/login/"  # link que redirige al login
+LOGIN_REDIRECT_URL = "/"
 
-#---------------------- credenciales para enviar correos
+# ---------------------- credenciales para enviar correos
 
 # Configuración SMTP para Gmail (funciona en desarrollo y producción)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('emailHost')
-EMAIL_HOST_PASSWORD = os.getenv('emailPassword')
-DEFAULT_FROM_EMAIL = os.getenv('emailHost')  # Email remitente por defecto
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+print("EMAIL_HOST_USER:", EMAIL_HOST_USER)
+print("EMAIL_HOST_PASSWORD:", EMAIL_HOST_PASSWORD)
+print("DEFAULT_FROM_EMAIL:", DEFAULT_FROM_EMAIL)
 
 # Para debug: descomentar la siguiente línea para ver emails en consola
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -255,9 +280,9 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 año
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
-#bar-galileo
+# bar-galileo
 
 # ALLOWED_HOSTS se lee desde entorno arriba
 
@@ -276,21 +301,21 @@ CHANNEL_LAYERS = {
 CAPTCHA_LENGTH = 1
 CAPTCHA_IMAGE_SIZE = (225, 75)
 CAPTCHA_FONT_SIZE = 40
-CAPTCHA_FLITE_PATH = '/usr/bin/flite'
+CAPTCHA_FLITE_PATH = "/usr/bin/flite"
 
 # ==================== Configuración de Django-DBBackup ====================
-# Usar el storage "dbbackup" definido en STORAGES para base de datos
-DBBACKUP_STORAGE = 'dbbackup'
-
-# Usar el storage "mediabackup" definido en STORAGES para archivos media
-DBBACKUP_MEDIA_STORAGE = 'mediabackup'
+# Configuración compatible con django-dbbackup 5.0.0+
+# No usar DBBACKUP_STORAGE ni DBBACKUP_STORAGE_OPTIONS (deprecados)
+# La librería usará automáticamente los storages del sistema Django
 
 # Ruta de los archivos media a respaldar
 DBBACKUP_MEDIA_PATH = MEDIA_ROOT
 
 # Formato de nombres de archivos de backup (formato: 2025-10-19-123456.psql.gpg)
-DBBACKUP_FILENAME_TEMPLATE = '{datetime}.psql'
-DBBACKUP_MEDIA_FILENAME_TEMPLATE = '{datetime}.media.zip'# Limpieza automática - mantener solo los últimos 10 backups
+DBBACKUP_FILENAME_TEMPLATE = "{datetime}.psql"
+DBBACKUP_MEDIA_FILENAME_TEMPLATE = "{datetime}.media.zip"
+
+# Limpieza automática - mantener solo los últimos 10 backups
 DBBACKUP_CLEANUP_KEEP = 10
 DBBACKUP_CLEANUP_KEEP_MEDIA = 10
 
@@ -299,7 +324,61 @@ DBBACKUP_COMPRESS = True
 DBBACKUP_COMPRESSION_LEVEL = 6  # 1-9, donde 9 es la máxima compresión
 
 # Encriptación de backups con GNU Privacy Guard (GPG)
-# IMPORTANTE: Los backups SIEMPRE están encriptados para mayor seguridad
-DBBACKUP_ENCRYPTION = True
-DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+# DESHABILITADO por defecto para evitar problemas con GPG
+# Si deseas habilitar encriptación, configura GPG primero:
+# 1. gpg --gen-key (selecciona email: bargalileo07@gmail.com)
+# 2. Cambia DBBACKUP_ENCRYPTION a True
+# 3. Configura DBBACKUP_GPG_PASSPHRASE en el archivo .env si es necesario
+DBBACKUP_ENCRYPTION = False
+# DBBACKUP_GPG_RECIPIENT = 'bargalileo07@gmail.com'
+# DBBACKUP_GPG_PASSPHRASE = os.getenv('DBBACKUP_GPG_PASSPHRASE', '')
 
+
+# ==================== Configuraciones de Seguridad ====================
+# Configuraciones de seguridad adaptadas al entorno (desarrollo/producción)
+
+# Cookies de sesión seguras (solo HTTPS en producción)
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+
+# Cookies CSRF seguras (solo HTTPS en producción)
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_HTTPONLY = False  # Debe ser False para que JavaScript pueda leer el token CSRF en solicitudes AJAX
+CSRF_COOKIE_SAMESITE = "Lax"
+
+# Orígenes confiables para CSRF (necesario para AJAX y solicitudes cross-origin)
+# En desarrollo, permitir localhost y 127.0.0.1
+# En producción, agregar los dominios desde variables de entorno
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+        "http://localhost",
+        "http://127.0.0.1",
+    ]
+else:
+    # En producción, leer desde variable de entorno
+    trusted_origins = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+    CSRF_TRUSTED_ORIGINS = [
+        origin.strip() for origin in trusted_origins.split(",") if origin.strip()
+    ]
+
+# Seguridad de contenido
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+
+# Configuraciones SSL/HTTPS (solo en producción)
+if not DEBUG:
+    # HTTP Strict Transport Security
+    SECURE_HSTS_SECONDS = 31536000  # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Redirección SSL
+    SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    # Política de referencia
+    SECURE_REFERRER_POLICY = "same-origin"

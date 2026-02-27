@@ -5,6 +5,18 @@
 
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Fecha y Acciones */
+    @media (max-width: 768px) {
+      #expenses-table .col-2,
+      #expenses-table .col-3,
+      #expenses-table .col-4,
+      #expenses-table .col-5,
+      #expenses-table .col-6 {
+        display: none;
+      }
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -60,7 +72,8 @@
                                     <a href="{% url 'expenses:expense_update' expense.pk %}" class="btn btn-sm btn-primary" title="Editar gasto"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                                 {% endif %}
                                 {% if request.user|has_perm:"expenses,eliminar" %}
-                                    <a href="{% url 'expenses:expense_delete' expense.pk %}" class="btn btn-sm btn-danger" title="Eliminar gasto"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar gasto"
+                                        onclick="confirmarEliminarGasto({{ expense.pk }}, '{{ expense.description|escapejs }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                                 {% endif %}
                             </div>
                         </td>
@@ -75,6 +88,11 @@
         </div>
     </div>
 </div>
+
+<!-- Formulario oculto para eliminación de gasto -->
+<form id="delete-gasto-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
 
 <!-- Modal para preview de recibos -->
 <div class="modal fade" id="receiptPreviewModal" tabindex="-1" aria-labelledby="receiptPreviewModalLabel" aria-hidden="true" style="z-index: 10000;">
@@ -165,6 +183,21 @@
 </style>
 
 <script>
+    async function confirmarEliminarGasto(gastoId, gastoDesc) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Gasto',
+            message: `¿Estás seguro de que deseas eliminar el gasto "${gastoDesc}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-gasto-form');
+            form.action = `/expenses/${gastoId}/delete/`;
+            form.submit();
+        }
+    }
+
     $(document).ready(function () {
         var sel = '#expenses-table';
         if (!$(sel).length) return;

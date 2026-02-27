@@ -241,7 +241,7 @@ En tu template base, incluir el contenedor de notificaciones flotantes:
 </div>
 
 <!-- Scripts -->
-<script src="{% static 'js/notifications/notifications.js' %}"></script>
+<script src="{% static 'js/ui/feedback.js' %}"></script>
 <script src="{% static 'js/admin/notification_history.js' %}"></script>
 ```
 

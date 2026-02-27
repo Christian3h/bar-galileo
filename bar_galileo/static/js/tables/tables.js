@@ -5,22 +5,21 @@
 
 // Función de utilidad para formatear números como precios colombianos
 function formatNumberForPrice(number) {
-  if (number === null || number === undefined || number === '') {
-    return '$0';
+  if (number === null || number === undefined || number === "") {
+    return "$0";
   }
-  
+
   try {
     const num = parseInt(number);
-    const formatted = new Intl.NumberFormat('de-DE', { 
+    const formatted = new Intl.NumberFormat("de-DE", {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(num);
     return `$${formatted}`;
   } catch (error) {
-    return '$0';
+    return "$0";
   }
 }
-
 
 // ===== VARIABLES GLOBALES =====
 let mesaActualId = null;
@@ -28,58 +27,55 @@ let pedidoActual = {};
 let listaCompletaProductos = [];
 let listaCompletaUsuarios = [];
 let virtualStock = {};
-const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]")?.value || "";
+const csrfToken =
+  document.querySelector("[name=csrfmiddlewaretoken]")?.value || "";
 
 // ===== COMPONENTES DE UI (TOAST Y CONFIRM) =====
 
-function showToast(message, type = 'error') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = message;
-  container.appendChild(toast);
-  setTimeout(() => { toast.remove(); }, 5000);
-}
+const notify = (message, variant = "error") => {
+  if (window.AppFeedback && typeof AppFeedback.show === "function") {
+    AppFeedback.show(message, { variant });
+  } else {
+    //const logger = variant === "error" ? console.error : console.log;
+    //logger(`[Mesas] ${message}`);
+  }
+};
 
-function showConfirm(title, message) {
-  return new Promise(resolve => {
-    const modal = document.getElementById('confirmModal');
-    document.getElementById('confirmTitle').textContent = title;
-    document.getElementById('confirmMessage').textContent = message;
-    const [confirmBtn, cancelBtn, closeBtn] = ['confirmOk', 'confirmCancel', 'confirmClose'].map(id => document.getElementById(id));
-    const cleanup = () => {
-      modal.style.display = 'none';
-      confirmBtn.onclick = cancelBtn.onclick = closeBtn.onclick = null;
-    };
-    confirmBtn.onclick = () => { cleanup(); resolve(true); };
-    cancelBtn.onclick = closeBtn.onclick = () => { cleanup(); resolve(false); };
-    modal.style.display = 'flex';
-  });
-}
+const confirmAction = (title, message) => {
+  if (window.AppFeedback && typeof AppFeedback.confirm === "function") {
+    return AppFeedback.confirm({ title, message });
+  }
+  const fallbackMessage = title ? `${title}\n\n${message}` : message;
+  return Promise.resolve(window.confirm(fallbackMessage));
+};
 
 // ===== WEBSOCKETS PARA STOCK EN TIEMPO REAL =====
 
 function setupWebSocket() {
-  const protocol = window.location.protocol === 'https' ? 'wss' : 'ws';
-  const ws = new WebSocket(`${protocol}://${window.location.host}/ws/stock_updates/`);
+  const protocol = window.location.protocol === "https" ? "wss" : "ws";
+  const ws = new WebSocket(
+    `${protocol}://${window.location.host}/ws/stock_updates/`,
+  );
 
-  ws.onopen = () => console.log("[WebSocket] Conectado al canal de stock.");
-  ws.onclose = () => console.log("[WebSocket] Desconectado del canal de stock.");
-  ws.onerror = (err) => console.error("[WebSocket] Error:", err);
-
-  ws.onmessage = (e) => {
-    const data = JSON.parse(e.data);
-    if (data.type === 'stock_update') {
-      const { product_id, delta } = data.message;
-      if (virtualStock[product_id] !== undefined) {
-        virtualStock[product_id] += delta;
-      }
-      if (document.getElementById("pedidoModal").style.display === "block") {
-        actualizarListaProductosUI();
-        actualizarPedidoItemsUI();
-      }
-    }
-  };
+  ws.onopen = () =>
+    //console.log("[WebSocket] Conectado al canal de stock.");
+    (ws.onclose = () =>
+      //console.log("[WebSocket] Desconectado del canal de stock.");
+      (ws.onerror = (
+        err, //console.error("[WebSocket] Error:", err);
+      ) =>
+        (ws.onmessage = (e) => {
+          const data = JSON.parse(e.data);
+          if (data.type === "stock_update") {
+            const { product_id, delta } = data.message;
+            if (virtualStock[product_id] !== undefined) {
+              virtualStock[product_id] += delta;
+            }
+            // Actualizar la UI siempre, no solo si el modal está abierto
+            actualizarListaProductosUI();
+            actualizarPedidoItemsUI();
+          }
+        })));
 }
 
 // ===== MANEJO DE ERRORES Y PETICIONES API =====
@@ -87,8 +83,10 @@ function setupWebSocket() {
 async function apiFetch(url, options) {
   const response = await fetch(url, options);
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: `Error del servidor: ${response.status}` }));
-    throw new Error(errorData.error || 'Ocurrió un error inesperado.');
+    const errorData = await response
+      .json()
+      .catch(() => ({ error: `Error del servidor: ${response.status}` }));
+    throw new Error(errorData.error || "Ocurrió un error inesperado.");
   }
   return response.json();
 }
@@ -96,10 +94,14 @@ async function apiFetch(url, options) {
 // ===== LÓGICA DE VISIBILIDAD Y ESTADOS DE MESA =====
 
 function actualizarVisibilidadBotonPedido(mesaCard) {
-    const botonPedido = mesaCard.querySelector('button[onclick*="gestionarPedido"]');
-    if (botonPedido) {
-        botonPedido.style.display = mesaCard.classList.contains('ocupada') ? 'inline-block' : 'none';
-    }
+  const botonPedido = mesaCard.querySelector(
+    'button[onclick*="gestionarPedido"]',
+  );
+  if (botonPedido) {
+    botonPedido.style.display = mesaCard.classList.contains("ocupada")
+      ? "inline-block"
+      : "none";
+  }
 }
 
 // ===== GESTIÓN DEL MODAL DE PEDIDO =====
@@ -108,8 +110,8 @@ async function gestionarPedido(mesaId) {
   mesaActualId = mesaId;
   try {
     const [pedidoData, usuariosData] = await Promise.all([
-        apiFetch(`/api/mesas/${mesaId}/pedido/`),
-        apiFetch(`/api/users/`)
+      apiFetch(`/api/mesas/${mesaId}/pedido/`),
+      apiFetch(`/api/users/`),
     ]);
 
     document.getElementById("mesaNombre").textContent = pedidoData.mesa.nombre;
@@ -117,8 +119,9 @@ async function gestionarPedido(mesaId) {
     listaCompletaProductos = pedidoData.productos;
     listaCompletaUsuarios = usuariosData.users;
 
-    listaCompletaProductos.forEach(p => {
-      virtualStock[p.id_producto] = p.stock - (pedidoData.reservas_stock[p.id_producto] || 0);
+    listaCompletaProductos.forEach((p) => {
+      virtualStock[p.id_producto] =
+        p.stock - (pedidoData.reservas_stock[p.id_producto] || 0);
     });
 
     actualizarListaProductosUI();
@@ -127,17 +130,18 @@ async function gestionarPedido(mesaId) {
 
     document.getElementById("pedidoModal").style.display = "block";
   } catch (error) {
-    console.error("Error al obtener datos del pedido o usuarios:", error);
-    showToast(error.message);
+    //console.error("Error al obtener datos del pedido o usuarios:", error);
+    notify(error.message);
   }
 }
 
 function actualizarListaProductosUI() {
   const lista = document.getElementById("productosLista");
-  lista.innerHTML = listaCompletaProductos.map(p => {
-    const stock = virtualStock[p.id_producto] || 0;
-    return `
-    <div class="producto-item ${stock <= 0 ? 'disabled' : ''}" onclick="mostrarControlCantidad(${p.id_producto})">
+  lista.innerHTML = listaCompletaProductos
+    .map((p) => {
+      const stock = virtualStock[p.id_producto] || 0;
+      return `
+    <div class="producto-item ${stock <= 0 ? "disabled" : ""}" onclick="mostrarControlCantidad(${p.id_producto})">
       <div class="producto-row">
         <div class="producto-main">
           ${p.imagen ? `<img src="${p.imagen}" alt="${p.nombre}" class="producto-thumb">` : `<div class="thumb-placeholder">Sin img</div>`}
@@ -149,33 +153,40 @@ function actualizarListaProductosUI() {
         <span class="precio">${formatNumberForPrice(p.precio_venta)}</span>
       </div>
     </div>
-  `}).join("");
+  `;
+    })
+    .join("");
 }
 
 function actualizarPedidoItemsUI() {
   const itemsContainer = document.getElementById("pedidoItems");
   if (pedidoActual && pedidoActual.items && pedidoActual.items.length > 0) {
-    itemsContainer.innerHTML = pedidoActual.items.map(item => {
-      const stock = virtualStock[item.producto.id] || 0;
-      const atascadoEnStock = item.cantidad >= stock;
-      return `
+    itemsContainer.innerHTML = pedidoActual.items
+      .map((item) => {
+        const stock = virtualStock[item.producto.id] || 0;
+        const atascadoEnStock = item.cantidad >= stock;
+        return `
         <div class="pedido-item">
           <div class="pedido-info"><strong>${item.producto.nombre}</strong></div>
           <div class="pedido-controles">
             <div class="cantidad">
               <button onclick="cambiarCantidadItem(${item.id}, ${item.cantidad - 1})" class="btn-cantidad">-</button>
               <span class="cantidad-valor">${item.cantidad}</span>
-              <button onclick="cambiarCantidadItem(${item.id}, ${item.cantidad + 1})" class="btn-cantidad" ${atascadoEnStock ? 'disabled' : ''}>+</button>
+              <button onclick="cambiarCantidadItem(${item.id}, ${item.cantidad + 1})" class="btn-cantidad" ${atascadoEnStock ? "disabled" : ""}>+</button>
             </div>
             <span class="subtotal">${formatNumberForPrice(item.subtotal)}</span>
             <button class="btn btn-sm btn-danger btn-eliminar" onclick="eliminarItem(${item.id})">×</button>
           </div>
         </div>
       `;
-    }).join("");
-    document.getElementById("pedidoTotal").textContent = formatNumberForPrice(pedidoActual.total || 0);
+      })
+      .join("");
+    document.getElementById("pedidoTotal").textContent = formatNumberForPrice(
+      pedidoActual.total || 0,
+    );
   } else {
-    itemsContainer.innerHTML = '<p class="pedido-vacio">No hay items en el pedido</p>';
+    itemsContainer.innerHTML =
+      '<p class="pedido-vacio">No hay items en el pedido</p>';
     document.getElementById("pedidoTotal").textContent = "$0";
   }
 }
@@ -183,79 +194,95 @@ function actualizarPedidoItemsUI() {
 // ===== GESTIÓN DE USUARIOS EN PEDIDO =====
 
 function actualizarUsuariosUI() {
-    const assignedUsersList = document.getElementById('assignedUsersList');
-    if (pedidoActual.usuarios && pedidoActual.usuarios.length > 0) {
-        assignedUsersList.innerHTML = pedidoActual.usuarios.map(user => `
+  const assignedUsersList = document.getElementById("assignedUsersList");
+  if (pedidoActual.usuarios && pedidoActual.usuarios.length > 0) {
+    assignedUsersList.innerHTML = pedidoActual.usuarios
+      .map(
+        (user) => `
             <div class="assigned-user">
                 <span>${user.username}</span>
                 <button class="btn btn-sm btn-danger" onclick="gestionarUsuarioEnPedido(${user.id}, 'remove')">×</button>
             </div>
-        `).join('');
-    } else {
-        assignedUsersList.innerHTML = '<p class="text-muted">No hay clientes en este pedido.</p>';
-    }
+        `,
+      )
+      .join("");
+  } else {
+    assignedUsersList.innerHTML =
+      '<p class="text-muted">No hay clientes en este pedido.</p>';
+  }
 }
 
 function renderizarResultadosBusquedaUsuarios(terminoBusqueda) {
-    const resultsContainer = document.getElementById('userSearchResults');
-    if (!terminoBusqueda) {
-        resultsContainer.innerHTML = '';
-        return;
-    }
+  const resultsContainer = document.getElementById("userSearchResults");
+  if (!terminoBusqueda) {
+    resultsContainer.innerHTML = "";
+    return;
+  }
 
-    const idsUsuariosAsignados = new Set(pedidoActual.usuarios.map(u => u.id));
-    const resultados = listaCompletaUsuarios.filter(user => 
-        user.username.toLowerCase().includes(terminoBusqueda.toLowerCase()) && !idsUsuariosAsignados.has(user.id)
-    );
+  const idsUsuariosAsignados = new Set(pedidoActual.usuarios.map((u) => u.id));
+  const resultados = listaCompletaUsuarios.filter(
+    (user) =>
+      user.username.toLowerCase().includes(terminoBusqueda.toLowerCase()) &&
+      !idsUsuariosAsignados.has(user.id),
+  );
 
-    if (resultados.length > 0) {
-        resultsContainer.innerHTML = resultados.map(user => `
+  if (resultados.length > 0) {
+    resultsContainer.innerHTML = resultados
+      .map(
+        (user) => `
             <div class="user-search-result" onclick="gestionarUsuarioEnPedido(${user.id}, 'add')">
                 ${user.username}
             </div>
-        `).join('');
-    } else {
-        resultsContainer.innerHTML = '<p class="text-muted">No se encontraron clientes.</p>';
-    }
+        `,
+      )
+      .join("");
+  } else {
+    resultsContainer.innerHTML =
+      '<p class="text-muted">No se encontraron clientes.</p>';
+  }
 }
 
 async function gestionarUsuarioEnPedido(userId, action) {
-    try {
-        await apiFetch(`/api/pedidos/${pedidoActual.id}/usuarios/`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
-            body: JSON.stringify({ user_id: userId, action: action }),
-        });
+  try {
+    await apiFetch(`/api/pedidos/${pedidoActual.id}/usuarios/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
+      body: JSON.stringify({ user_id: userId, action: action }),
+    });
 
-        const data = await apiFetch(`/api/mesas/${mesaActualId}/pedido/`);
-        pedidoActual = data.pedido;
-        
-        actualizarUsuariosUI();
-        
-        const searchInput = document.getElementById('userSearchInput');
-        searchInput.value = '';
-        renderizarResultadosBusquedaUsuarios('');
+    const data = await apiFetch(`/api/mesas/${mesaActualId}/pedido/`);
+    pedidoActual = data.pedido;
 
-    } catch (error) {
-        console.error(`Error al ${action === 'add' ? 'agregar' : 'eliminar'} usuario:`, error);
-        showToast(error.message);
-    }
+    actualizarUsuariosUI();
+
+    const searchInput = document.getElementById("userSearchInput");
+    searchInput.value = "";
+    renderizarResultadosBusquedaUsuarios("");
+  } catch (error) {
+    //console.error(
+    //  `Error al ${action === "add" ? "agregar" : "eliminar"} usuario:`,
+    //  error,
+    //);
+    notify(error.message);
+  }
 }
 
 // ===== MODAL DE CANTIDAD =====
 
 function mostrarControlCantidad(productoId) {
-  const producto = listaCompletaProductos.find(p => p.id_producto === productoId);
+  const producto = listaCompletaProductos.find(
+    (p) => p.id_producto === productoId,
+  );
   const stock = virtualStock[productoId] || 0;
   if (stock <= 0) {
-    showToast("No hay stock disponible para este producto.");
+    notify("No hay stock disponible para este producto.");
     return;
   }
 
   cerrarModalCantidad();
-  const modal = document.createElement('div');
-  modal.id = 'modalCantidad';
-  modal.className = 'modal-overlay';
+  const modal = document.createElement("div");
+  modal.id = "modalCantidad";
+  modal.className = "modal-overlay";
   modal.innerHTML = `
     <div class="modal-box">
       <h4 class="modal-title">Agregar ${producto.nombre}</h4>
@@ -272,11 +299,11 @@ function mostrarControlCantidad(productoId) {
     </div>
   `;
   document.body.appendChild(modal);
-  document.getElementById('cantidadInput').focus();
+  document.getElementById("cantidadInput").focus();
 }
 
 function cambiarCantidadEnModal(delta) {
-  const input = document.getElementById('cantidadInput');
+  const input = document.getElementById("cantidadInput");
   const max = parseInt(input.max, 10);
   let newValue = parseInt(input.value, 10) + delta;
   if (newValue < 1) newValue = 1;
@@ -285,22 +312,26 @@ function cambiarCantidadEnModal(delta) {
 }
 
 function cerrarModalCantidad() {
-  const modal = document.getElementById('modalCantidad');
+  const modal = document.getElementById("modalCantidad");
   if (modal) modal.remove();
 }
 
 // ===== ACCIONES DE ITEMS DEL PEDIDO =====
 
 async function confirmarAgregarProducto(productoId) {
-  const cantidad = parseInt(document.getElementById('cantidadInput').value, 10);
+  const cantidad = parseInt(document.getElementById("cantidadInput").value, 10);
   if (isNaN(cantidad) || cantidad < 1) return;
 
   const stock = virtualStock[productoId] || 0;
-  const itemExistente = pedidoActual.items.find(i => i.producto.id === productoId);
+  const itemExistente = pedidoActual.items.find(
+    (i) => i.producto.id === productoId,
+  );
   const cantidadPrevia = itemExistente ? itemExistente.cantidad : 0;
 
   if (stock < cantidadPrevia + cantidad) {
-    showToast(`Stock insuficiente. Solo puedes agregar ${stock - cantidadPrevia} más.`);
+    notify(
+      `Stock insuficiente. Solo puedes agregar ${stock - cantidadPrevia} más.`,
+    );
     return;
   }
 
@@ -308,7 +339,11 @@ async function confirmarAgregarProducto(productoId) {
     const data = await apiFetch("/api/pedidos/agregar-item/", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
-      body: JSON.stringify({ mesa_id: mesaActualId, producto_id: productoId, cantidad: cantidad }),
+      body: JSON.stringify({
+        mesa_id: mesaActualId,
+        producto_id: productoId,
+        cantidad: cantidad,
+      }),
     });
     virtualStock[productoId] -= cantidad;
     pedidoActual = data.pedido;
@@ -316,20 +351,22 @@ async function confirmarAgregarProducto(productoId) {
     actualizarListaProductosUI();
     cerrarModalCantidad();
   } catch (error) {
-    console.error('Error al agregar producto:', error);
-    showToast(error.message);
+    //console.error("Error al agregar producto:", error);
+    notify(error.message);
   }
 }
 
 async function cambiarCantidadItem(itemId, nuevaCantidad) {
-  const item = pedidoActual.items.find(i => i.id === itemId);
+  const item = pedidoActual.items.find((i) => i.id === itemId);
   const old_cantidad = item.cantidad;
 
-  if (nuevaCantidad < 1) { return await eliminarItem(itemId); }
+  if (nuevaCantidad < 1) {
+    return await eliminarItem(itemId);
+  }
 
   const stock = virtualStock[item.producto.id] + old_cantidad;
   if (stock < nuevaCantidad) {
-    showToast(`Stock insuficiente. Disponible: ${stock}`);
+    notify(`Stock insuficiente. Disponible: ${stock}`);
     return;
   }
 
@@ -345,18 +382,23 @@ async function cambiarCantidadItem(itemId, nuevaCantidad) {
     actualizarPedidoItemsUI();
     actualizarListaProductosUI();
   } catch (error) {
-    console.error('Error al actualizar cantidad:', error);
-    showToast(error.message);
+    //console.error("Error al actualizar cantidad:", error);
+    notify(error.message);
   }
 }
 
 async function eliminarItem(itemId) {
-  const confirmado = await showConfirm('Eliminar Item', '¿Estás seguro de que deseas eliminar este item del pedido?');
+  const confirmado = await confirmAction(
+    "Eliminar Item",
+    "¿Estás seguro de que deseas eliminar este item del pedido?",
+  );
   if (!confirmado) return;
 
-  const item = pedidoActual.items.find(i => i.id === itemId);
+  const item = pedidoActual.items.find((i) => i.id === itemId);
   if (!item) {
-    console.error("Intentando eliminar un item que no se encontró en el pedido actual.");
+    //console.error(
+    //  "Intentando eliminar un item que no se encontró en el pedido actual.",
+    //);
     return;
   }
   const productoId = item.producto.id;
@@ -371,10 +413,10 @@ async function eliminarItem(itemId) {
     pedidoActual = data.pedido;
     actualizarPedidoItemsUI();
     actualizarListaProductosUI();
-    showToast('Item eliminado correctamente', 'success');
+    notify("Item eliminado correctamente", "success");
   } catch (error) {
-    console.error('Error al eliminar item:', error);
-    showToast(error.message);
+    //console.error("Error al eliminar item:", error);
+    notify(error.message);
   }
 }
 
@@ -382,9 +424,12 @@ async function eliminarItem(itemId) {
 
 async function facturarPedido() {
   if (!pedidoActual || !pedidoActual.items || !pedidoActual.items.length) {
-    return showToast("No hay items en el pedido para facturar.");
+    return notify("No hay items en el pedido para facturar.");
   }
-  const confirmado = await showConfirm('Facturar Pedido', '¿Estás seguro de que deseas facturar este pedido? Esta acción actualizará el inventario.');
+  const confirmado = await confirmAction(
+    "Facturar Pedido",
+    "¿Estás seguro de que deseas facturar este pedido? Esta acción actualizará el inventario.",
+  );
   if (confirmado) {
     try {
       const data = await apiFetch(`/api/pedidos/${pedidoActual.id}/facturar/`, {
@@ -392,56 +437,60 @@ async function facturarPedido() {
         headers: { "X-CSRFToken": csrfToken },
       });
       if (data.success) {
-        showToast('Pedido facturado exitosamente', 'success');
+        notify("Pedido facturado exitosamente", "success");
         window.location.href = data.factura_url;
       }
     } catch (error) {
-      console.error('Error al facturar:', error);
-      showToast(error.message);
+      //console.error("Error al facturar:", error);
+      notify(error.message);
     }
   }
 }
 
 function liberarMesa(mesaId, tienePedidos) {
-    const submitForm = () => {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/mesas/${mesaId}/liberar/`;
-        const csrf = document.querySelector('input[name="csrfmiddlewaretoken"]').cloneNode(true);
-        form.appendChild(csrf);
-        document.body.appendChild(form);
-        form.submit();
-    };
+  const submitForm = () => {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = `/mesas/${mesaId}/liberar/`;
+    const csrf = document
+      .querySelector('input[name="csrfmiddlewaretoken"]')
+      .cloneNode(true);
+    form.appendChild(csrf);
+    document.body.appendChild(form);
+    form.submit();
+  };
 
-    if (tienePedidos) {
-        showConfirm(
-            'Liberar Mesa',
-            'Esta mesa tiene pedidos sin facturar. ¿Estás seguro de que deseas liberarla? Los pedidos serán eliminados.'
-        ).then(confirmed => {
-            if (confirmed) {
-                submitForm();
-            }
-        });
-    } else {
+  if (tienePedidos) {
+    confirmAction(
+      "Liberar Mesa",
+      "Esta mesa tiene pedidos sin facturar. ¿Estás seguro de que deseas liberarla? Los pedidos serán eliminados.",
+    ).then((confirmed) => {
+      if (confirmed) {
         submitForm();
-    }
+      }
+    });
+  } else {
+    submitForm();
+  }
 }
 
 // ===== INICIALIZACIÓN Y EVENTOS =====
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.mesa-card').forEach(actualizarVisibilidadBotonPedido);
-    setupWebSocket();
+document.addEventListener("DOMContentLoaded", () => {
+  document
+    .querySelectorAll(".mesa-card")
+    .forEach(actualizarVisibilidadBotonPedido);
+  setupWebSocket();
 
-    document.getElementById('userSearchInput').addEventListener('input', (e) => {
-        renderizarResultadosBusquedaUsuarios(e.target.value);
-    });
+  document.getElementById("userSearchInput").addEventListener("input", (e) => {
+    renderizarResultadosBusquedaUsuarios(e.target.value);
+  });
 });
 
-document.addEventListener('change', (event) => {
-    if (event.target.matches('select[name="estado"]')) {
-        select.closest('form').submit();
-    }
+document.addEventListener("change", (event) => {
+  if (event.target.matches('select[name="estado"]')) {
+    select.closest("form").submit();
+  }
 });
 
 function cerrarModal() {
@@ -450,7 +499,7 @@ function cerrarModal() {
 
 document.getElementById("buscarProducto").addEventListener("input", (e) => {
   const busqueda = e.target.value.toLowerCase();
-  document.querySelectorAll(".producto-item").forEach(item => {
+  document.querySelectorAll(".producto-item").forEach((item) => {
     const nombre = item.querySelector("strong").textContent.toLowerCase();
     item.style.display = nombre.includes(busqueda) ? "" : "none";
   });
