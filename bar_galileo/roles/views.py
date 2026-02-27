@@ -45,17 +45,36 @@ class RolUpdateView(LoginRequiredMixin, UpdateView):
         notificar_usuario(self.request.user, mensaje)
         return redirect(self.success_url)
 
+from .models import UserProfile  # Importa el modelo correcto desde el mismo módulo
+
 @method_decorator(permission_required('roles', 'eliminar'), name='dispatch')
 class RolDeleteView(LoginRequiredMixin, DeleteView):
     model = Role
     template_name = 'roles/rol_confirm_delete.html'
     success_url = reverse_lazy('roles:rol_list')
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
         role = self.get_object()
-        mensaje = f"El rol '{role.nombre}' ha sido eliminado."
-        notificar_usuario(self.request.user, mensaje)
-        return super().form_valid(form)
+        # No permitir eliminar el rol "Usuario"
+        if role.nombre.lower() == "usuario":
+            messages.error(request, "El rol 'Usuario' no se puede eliminar.")
+            return redirect(self.success_url)
+        # Validar si el rol está en uso
+        usuarios_con_rol = UserProfile.objects.filter(rol=role).count()
+        if usuarios_con_rol > 0:
+            messages.error(
+                request,
+                f"No se puede eliminar el rol '{role.nombre}' porque está asignado a {usuarios_con_rol} usuario(s). Debe reasignar los roles antes de eliminar."
+            )
+            return redirect(self.success_url)
+        # Si pasa las validaciones, eliminar el rol
+        role.delete()
+        messages.success(request, f"Rol '{role.nombre}' eliminado correctamente.")
+        return redirect(self.success_url)
+
+    def get(self, request, *args, **kwargs):
+        # Permite mostrar el template de confirmación antes de eliminar
+        return super().get(request, *args, **kwargs)
 
 @method_decorator(permission_required('roles', 'editar'), name='dispatch')
 class RolPermisosView(LoginRequiredMixin, View):
@@ -64,7 +83,7 @@ class RolPermisosView(LoginRequiredMixin, View):
         modulos = Module.objects.all()
         acciones = Action.objects.all()
         permisos = RolePermission.objects.filter(rol=role)
-        
+
         return render(request, 'roles/rol_permisos.html', {
             'role': role,
             'modulos': modulos,
@@ -79,7 +98,7 @@ class RolPermisosView(LoginRequiredMixin, View):
 
         # Limpiar permisos existentes
         RolePermission.objects.filter(rol=role).delete()
-        
+
         # Crear permisos nuevos marcados
         for modulo in modulos:
             for accion in acciones:

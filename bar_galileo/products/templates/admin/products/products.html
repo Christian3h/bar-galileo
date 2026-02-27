@@ -490,7 +490,7 @@
                             <th class="col-nombre">Nombre</th>
                             <th class="col-precio-compra">Precio Compra</th>
                             <th class="col-precio-venta">Precio Venta</th>
-                            <th class="col-stock">Stock</th>
+                            <th class="col-stock">Cantidad</th>
                             <th class="col-descripcion">Descripción</th>
                             <th class="col-categoria">Categoría</th>
                             <th class="col-proveedor">Proveedor</th>
@@ -517,7 +517,7 @@
                             <th class="col-imagen">Imagen</th>
                             <th class="col-nombre">Nombre</th>
                             <th class="col-precio-venta">Precio Venta</th>
-                            <th class="col-stock">Stock</th>
+                            <th class="col-stock">Cantidad</th>
                             <th class="col-categoria">Categoría</th>
                             <th class="col-acciones">Acciones</th>
                         </tr>
@@ -537,7 +537,7 @@
                             <td class="text-center col-stock">
                                 {{ producto.stock }}
                                 {% if producto.stock <= 0 %}
-                                    <span class="badge bg-danger">Sin stock</span>
+                                    <span class="badge bg-danger">Sin cantidad</span>
                                 {% elif producto.stock <= 10 %}
                                     <span class="badge bg-warning">Bajo</span>
                                 {% endif %}

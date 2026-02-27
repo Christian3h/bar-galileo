@@ -22,7 +22,7 @@
                             <th>Imagen</th>
                             <th>Nombre</th>
                             <th>Precio Venta</th>
-                            <th>Stock</th>
+                            <th>Cantidad</th>
                             <th>Categoría</th>
                             <th>Acciones</th>
                         </tr>
@@ -42,7 +42,7 @@
                             <td>
                                 {{ producto.stock }}
                                 {% if producto.stock <= 0 %}
-                                    <span class="badge bg-danger">Sin stock</span>
+                                    <span class="badge bg-danger">Sin cantidad</span>
                                 {% elif producto.stock <= 10 %}
                                     <span class="badge bg-warning">Bajo</span>
                                 {% else %}
@@ -93,7 +93,7 @@
             confirmLabel: 'Eliminar',
             cancelLabel: 'Cancelar'
         });
-        
+
         if (confirmed) {
             const form = document.getElementById('delete-producto-form');
             form.action = `/adminD/products/${productoId}/delete/`;
