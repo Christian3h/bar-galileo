@@ -78,7 +78,7 @@ class ProductoForm(forms.ModelForm):
             "nombre": "Nombre del Producto",
             "precio_compra": "Precio de Compra",
             "precio_venta": "Precio de Venta",
-            "stock": "Stock Inicial",
+            "stock": "Cantidad Inicial",
             "descripcion": "Descripción",
             "id_categoria": "Categoría",
             "id_proveedor": "Proveedor",

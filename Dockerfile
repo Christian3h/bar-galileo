@@ -7,7 +7,7 @@ FROM python:3.11-slim-bullseye
 WORKDIR /app
 
 # Instalar dependencias del sistema necesarias para mysqlclient, pymupdf, pytesseract, cryptography, etc.
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --fix-missing \
     gcc \
     pkg-config \
     default-libmysqlclient-dev \
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     libmupdf-dev \
     libgl1 \
     libglib2.0-0 \
-    flite \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar dependencias Python
@@ -33,8 +33,15 @@ RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 # Copiar el resto del código fuente
 COPY bar_galileo/ .
 
+# Copiar y configurar entrypoint
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Exponer el puerto de la aplicación
 EXPOSE 8000
 
-# Comando por defecto (puedes cambiarlo en docker-compose)
+# Entrypoint: ejecuta migraciones y collectstatic antes de levantar el servidor
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Comando por defecto
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "bar_galileo.asgi:application"]
