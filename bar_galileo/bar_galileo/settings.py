@@ -39,7 +39,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 DEBUG = str(os.getenv("DEBUG", "True")).lower() in ("1", "true", "yes")
 SECRET_KEY = os.getenv("secret_key") or get_random_secret_key()
 raw_hosts = os.getenv("ALLOWED_HOSTS", "*" if DEBUG else "")
-ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition

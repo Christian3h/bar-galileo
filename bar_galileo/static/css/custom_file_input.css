@@ -1,0 +1,44 @@
+bar-galileo/bar_galileo/static/css/custom_file_input.css
+```
+```css
+/* Ocultar completamente el input nativo */
+.custom-file-input input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: transparent;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Estilo del contenedor */
+.custom-file-input {
+  position: relative;
+  display: inline-block;
+  border: 2px dashed #ccc;
+  border-radius: 6px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.custom-file-input:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo del texto que muestra el nombre del archivo */
+.custom-file-input .file-name {
+  display: block;
+  margin-top: 8px;
+  color: #555;
+  font-size: 13px;
+  font-style: italic;
+}
