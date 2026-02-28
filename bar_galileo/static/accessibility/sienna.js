@@ -893,15 +893,15 @@ document.addEventListener("DOMContentLoaded", function() {
             const isDarkModeBtn = btn.dataset.key === 'dark-mode';
 
             if (!btn.classList.contains('asw-selected')) {
-                btn.style.background = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
+                // Removed background color change for non-selected buttons
                 btn.style.borderColor = getCSSVariable('--color-accent') === '#ffffff' ? '#3a3a3a' : '#2a2a2a';
                 btn.style.boxShadow = 'none';
                 btn.style.transform = 'none';
             } else if (!isDarkModeBtn) {
                 // Asegurar que los botones seleccionados tengan el estilo destacado (excepto dark-mode)
                 const highlightColor = getCSSVariable('--color-secondary');
-                btn.style.setProperty('background', highlightColor, 'important');
-                btn.style.setProperty('border-color', highlightColor, 'important');
+                //btn.style.setProperty('background', highlightColor, 'important');
+                //btn.style.setProperty('border-color', highlightColor, 'important');
                 btn.style.setProperty('box-shadow', '0 0 0 3px rgba(166, 137, 50, 0.3), 0 4px 12px rgba(166, 137, 50, 0.5)', 'important');
                 btn.style.transform = 'scale(1.02)';
             } else if (isDarkModeBtn) {
