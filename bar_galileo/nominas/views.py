@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.edit import FormView
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.db.models import Q, Sum, Count
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
@@ -240,12 +241,44 @@ class EmpleadoDetailView(DetailView):
             empleado=empleado
         ).order_by('-fecha_inicio')
 
-        # Total pagado al empleado
-        context['total_pagado'] = Pago.objects.filter(empleado=empleado).aggregate(
-            total=Sum('monto')
-        )['total'] or 0
+        # Obtener el período seleccionado, predeterminado a 'mensual'
+        periodo = self.request.GET.get('periodo', 'mensual')
+        context['periodo'] = periodo
 
-        # Formularios para agregar pagos y bonificaciones
+        # Filtrar pagos según el período
+        pagos = Pago.objects.filter(empleado=empleado)
+        if periodo == 'mensual':
+            pagos = pagos.filter(
+                fecha_pago__month=timezone.now().month,
+                fecha_pago__year=timezone.now().year
+            )
+        elif periodo == 'semestral':
+            current_month = timezone.now().month
+            if current_month <= 6:
+                pagos = pagos.filter(
+                    fecha_pago__month__gte=1,
+                    fecha_pago__month__lte=6,
+                    fecha_pago__year=timezone.now().year
+                )
+            else:
+                pagos = pagos.filter(
+                    fecha_pago__month__gte=7,
+                    fecha_pago__month__lte=12,
+                    fecha_pago__year=timezone.now().year
+                )
+        elif periodo == 'anual':
+            pagos = pagos.filter(
+                fecha_pago__year=timezone.now().year
+            )
+        elif periodo == 'historial':
+            # Mostrar todos los pagos sin aplicar filtros
+            pagos = Pago.objects.filter(empleado=empleado).order_by('-fecha_pago')
+
+        # Total pagado según el filtro
+        context['total_pagado'] = pagos.aggregate(total=Sum('monto'))['total'] or 0
+
+        # Pagos filtrados para mostrar en la tabla
+        context['pagos'] = pagos.order_by('-fecha_pago')
         context['pago_form'] = PagoForm(initial={'empleado': empleado})
         context['bonificacion_form'] = BonificacionForm(initial={'empleado': empleado})
 

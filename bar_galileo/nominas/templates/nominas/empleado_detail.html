@@ -146,6 +146,16 @@
             <section class="perfil-panel">
                 <div class="panel-header">
                     <h3>Historial de Pagos</h3>
+                    <form method="get" class="form-inline mb-3">
+                        <label for="periodo" class="mr-2">Filtrar por período:</label>
+                        <select name="periodo" id="periodo" class="form-control mr-2">
+                            <option value="mensual">Mensual</option>
+                            <option value="semestral">Semestral</option>
+                            <option value="anual">Anual</option>
+                        <option value="historial">Historial completo</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Aplicar</button>
+                    </form>
                     <a href="{% url 'nominas:agregar_pago' empleado.id %}" class="btn btn-primary btn-sm" title="Registrar un nuevo pago">
                         <i class="fa fa-plus"></i> Registrar Pago
                     </a>
@@ -154,6 +164,7 @@
                 <div class="info-row-box">
                     <span class="info-label">Total Pagado</span>
                     <span class="info-value">{{ total_pagado|format_price }} COP</span>
+                    <span class="info-label text-muted">({{ periodo|default:"Total" }})</span>
                 </div>
 
                 <div class="table-responsive">
