@@ -4,7 +4,7 @@
 
 # --- Detección de IP y muestra de URL ---
 # Obtener la IP local de la manera más fiable (compatible macOS)
-LOCAL_IP=$(ipconfig getifaddr en0)
+LOCAL_IP=$(hostname -I | awk '{print $1}')
 
 # Limpiar la pantalla y mostrar información ótil
 clear
