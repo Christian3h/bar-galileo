@@ -50,7 +50,6 @@
           <li><a href="{% url 'core:index' %}#about">EXPERIENCIA</a></li>
           <li><a href="{% url 'core:store' %}">CARTA</a></li>
           <li><a href="{% url 'core:index' %}#reservas-section">RESERVAS</a></li>
-          <li><a href="{% url 'core:index' %}#contact">CONTACTO</a></li>
 
           {% if user.is_authenticated %}
             <li class="nav-avatar-item" tabindex="0">
@@ -125,7 +124,7 @@
           <div class="contact-info">
             <div class="contact-item">
               <i>📞</i>
-              <a href="tel:+322-227-1308">+57 322-227-1308</a>
+              <a htarget="_blank" ref="tel:+322-227-1308">+57 322-227-1308</a>
             </div>
             <div class="contact-item">
               <i>✉️</i>

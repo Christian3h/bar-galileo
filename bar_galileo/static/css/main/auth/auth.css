@@ -549,7 +549,7 @@ body {
 
 .container-login label {
   display: block;
-  color: #ccc;
+  color: var (--color-secondary);
   font-size: 14px;
   margin-bottom: 8px;
   font-weight: 500;
