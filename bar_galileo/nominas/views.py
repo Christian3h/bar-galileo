@@ -322,6 +322,9 @@ class BonificacionCreateView(SuccessMessageMixin, CreateView):
 
 # Vistas para crear pagos y bonificaciones desde la vista de detalle
 def agregar_pago(request, empleado_id):
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirigir al inicio de sesión si el usuario no está autenticado
+
     empleado = get_object_or_404(Empleado, pk=empleado_id)
 
     if request.method == "POST":
