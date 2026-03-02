@@ -1,3 +1,7 @@
+# URLs del módulo de reportes (namespace='reportes').
+# CRUD: list, create, detail, update, delete
+# Acciones: exportar/<pk>/<fmt>/ (pdf|excel|csv)  y  generar/<pk>/ (AJAX JSON)
+
 from django.urls import path
 from . import views
 

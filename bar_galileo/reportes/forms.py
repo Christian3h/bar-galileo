@@ -1,10 +1,13 @@
+# Formularios del módulo de reportes.
+
 from django import forms
 from django.contrib.auth.models import User
 from .models import Reporte
 
 
 class ReporteForm(forms.ModelForm):
-    """Formulario para crear y editar reportes"""
+    # Formulario de creación/edición. Valida: nombre no vacío, archivo ≤10MB (PDF/Excel/CSV),
+    # y que fecha_fin ≥ fecha_inicio con rango máximo de 2 años.
     
     class Meta:
         model = Reporte
@@ -116,7 +119,8 @@ class ReporteForm(forms.ModelForm):
 
 
 class ReporteFilterForm(forms.Form):
-    """Formulario para filtrar reportes"""
+    # Formulario de filtrado para la lista (GET). Todos los campos son opcionales.
+    # La vista ReporteListView aplica cada campo activo como filtro al queryset.
     
     tipo = forms.ChoiceField(
         choices=[('', 'Todos los tipos')] + list(Reporte.TIPO_CHOICES),

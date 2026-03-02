@@ -1,3 +1,24 @@
+"""
+Vistas del módulo de reportes.
+
+Expone el CRUD completo del modelo `Reporte` más dos acciones especiales:
+  - `exportar_reporte`      : descarga el reporte en PDF, Excel o CSV.
+  - `generar_reporte_datos` : recalcula y guarda los datos en caché (AJAX).
+
+Control de acceso
+-----------------
+Todas las vistas están protegidas por el decorador `permission_required`
+del módulo `roles`. Los permisos necesarios son:
+  - 'ver'      : listar, ver detalle, exportar y generar datos.
+  - 'crear'    : crear nuevos reportes.
+  - 'editar'   : modificar reportes existentes.
+  - 'eliminar' : borrar reportes.
+
+El módulo de lógica de negocio (consultas y exportación) vive en `utils.py`.
+Las vistas son únicamente responsables de la capa HTTP (recibir request,
+coordinar llamadas a utils, devolver response y mensajes flash).
+"""
+
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.shortcuts import get_object_or_404, redirect
@@ -13,7 +34,8 @@ from .forms import ReporteForm, ReporteFilterForm
 
 @method_decorator(permission_required('reportes', 'ver'), name='dispatch')
 class ReporteListView(ListView):
-    """Vista para listar todos los reportes"""
+    # Lista todos los reportes. Soporta filtros por tipo, periodo, usuario y búsqueda de texto (GET).
+    # DataTables pagina en cliente, por eso paginate_by=None.
     model = Reporte
     template_name = 'reportes/reporte_list.html'
     context_object_name = 'reportes'
@@ -65,7 +87,7 @@ class ReporteListView(ListView):
 
 @method_decorator(permission_required('reportes', 'ver'), name='dispatch')
 class ReporteDetailView(DetailView):
-    """Vista de detalle de un reporte"""
+    # Muestra el detalle del reporte. Inyecta datos_json deserializado al contexto.
     model = Reporte
     template_name = 'reportes/reporte_detail.html'
     context_object_name = 'reporte'
@@ -83,7 +105,7 @@ class ReporteDetailView(DetailView):
 
 @method_decorator(permission_required('reportes', 'crear'), name='dispatch')
 class ReporteCreateView(SuccessMessageMixin, CreateView):
-    """Vista para crear un nuevo reporte"""
+    # Crea un nuevo reporte. Asigna creado_por al usuario actual automáticamente.
     model = Reporte
     form_class = ReporteForm
     template_name = 'reportes/reporte_form.html'
@@ -97,7 +119,7 @@ class ReporteCreateView(SuccessMessageMixin, CreateView):
 
 @method_decorator(permission_required('reportes', 'editar'), name='dispatch')
 class ReporteUpdateView(SuccessMessageMixin, UpdateView):
-    """Vista para editar un reporte existente"""
+    # Edita un reporte existente. Si se cambian fechas o tipo, los datos en caché quedarán desactualizados.
     model = Reporte
     form_class = ReporteForm
     template_name = 'reportes/reporte_form.html'
@@ -107,7 +129,7 @@ class ReporteUpdateView(SuccessMessageMixin, UpdateView):
 
 @method_decorator(permission_required('reportes', 'eliminar'), name='dispatch')
 class ReporteDeleteView(SuccessMessageMixin, DeleteView):
-    """Vista para eliminar un reporte"""
+    # Elimina el reporte de la BD. El archivo adjunto en disco NO se borra automáticamente.
     model = Reporte
     template_name = 'reportes/reporte_confirm_delete.html'
     success_url = reverse_lazy('reportes:reporte_list')
@@ -120,7 +142,8 @@ class ReporteDeleteView(SuccessMessageMixin, DeleteView):
 
 @permission_required('reportes', 'ver')
 def exportar_reporte(request, pk, formato):
-    """Vista para exportar un reporte en diferentes formatos"""
+    # Descarga el reporte como archivo. Si no hay datos en caché los genera primero.
+    # formato puede ser: 'pdf', 'excel' o 'csv'. Llama a la función correspondiente en utils.py.
     from .utils import generar_pdf_reporte, generar_excel_reporte, generar_csv_reporte, obtener_datos_reporte_detallado
     import traceback
     
@@ -167,7 +190,7 @@ def exportar_reporte(request, pk, formato):
 
 @permission_required('reportes', 'ver')
 def generar_reporte_datos(request, pk):
-    """Vista para generar/actualizar datos del reporte"""
+    # Endpoint AJAX. Genera/actualiza los datos del reporte y devuelve JSON con el resumen.
     from .utils import obtener_datos_reporte_detallado
     
     # Verificar que el usuario esté autenticado
