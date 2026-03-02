@@ -555,6 +555,9 @@
     .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
+    .accionesCol {
+        display: table-cell !important;
+    }
     .empleado-perfil-page .perfil-panel {
       padding: 5px;
     }
@@ -562,12 +565,18 @@
 
 @media (max-width: 576px) {
     /* Móviles pequeños - Solo mostrar Nombre y Acciones */
-    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol, .fechaCol, .tipoCol {
         display: none;
     }
-
+    #tabla-pagos td.fechaCol,
+    #tabla-pagos td.tipoCol {
+        display: none;
+    }
+    .accionesCol {
+        display: table-cell !important;
+    }
     .empleado-perfil-page .perfil-panel {
-      padding: 5px !important;
+        padding: 5px !important;
     }
 }
 
@@ -582,8 +591,19 @@
 
 @media (max-width: 768px) {
     .comprobanteCol {
+        display: table-cell !important;
+    }
+    .fechaCol, .tipoCol {
         display: none;
     }
+    #tabla-pagos td.fechaCol,
+    #tabla-pagos td.tipoCol {
+        display: none;
+    }
+    .fechaCol, .tipoCol, .precioCol, .montoCol {
+        display: none;
+    }
+}
 }
 
 /* =======================================
@@ -707,6 +727,7 @@
     color: var(--color-secondary);
     font-weight: 700;
     font-size: 1.4rem;
+    text-align: center;
 }
 
 /* Responsive */

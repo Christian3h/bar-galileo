@@ -5,6 +5,7 @@
 {% block extra_css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="/static/css/main/admin/nominas.css">
+<link rel="stylesheet" href="/static/css/main/admin/bonificaciones/empleado_detail.css">
 <link rel="stylesheet" href="/static/css/modals/modal_styles.css">
 {% endblock %}
 
@@ -172,8 +173,8 @@
                     <table id="tabla-pagos" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Tipo</th>
+                                <th class="fechaCol">Fecha</th>
+                                <th class="tipoCol">Tipo</th>
                                 <th>Monto</th>
                                 <th class="descripcionCol">Descripción</th>
                                 <th class="comprobanteCol" {% if not pagos %}style="display: none;"{% endif %}>Comprobante</th>
@@ -182,8 +183,8 @@
                         <tbody>
                             {% for pago in pagos %}
                             <tr>
-                                <td>{{ pago.fecha_pago }}</td>
-                                <td>{{ pago.get_tipo_display }}</td>
+                                <td class="fechaCol">{{ pago.fecha_pago }}</td>
+                                <td class="tipoCol">{{ pago.get_tipo_display }}</td>
                                 <td>{{ pago.monto|format_price }} COP</td>
                                 <td class="descripcionCol">{{ pago.descripcion|default:"-" }}</td>
                                 <td class="comprobanteCol">
@@ -209,7 +210,7 @@
                 </div>
             </section>
 
-            <section class="perfil-panel">
+            <!-- <section class="perfil-panel"> 
                 <div class="panel-header">
                     <h3>Bonificaciones</h3>
                     <a href="{% url 'nominas:agregar_bonificacion' empleado.id %}" class="btn btn-primary btn-sm" title="Agregar una nueva bonificación">
@@ -251,7 +252,7 @@
                         </tbody>
                     </table>
                 </div>
-            </section>
+            </section> -->
         </div>
     </div>
 </div>
