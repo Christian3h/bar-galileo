@@ -135,3 +135,11 @@ dump-*.sql
 
 # Backup files
 bar_galileo/backups/backup_files/
+-e 
+# Database dumps
+*.sql
+Dump*.sql
+
+# Database dumps
+*.sql
+Dump*.sql
