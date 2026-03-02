@@ -1,0 +1,82 @@
+/* Estilos para el módulo de bonificaciones en empleado_detail */
+
+/* Contenedor principal del panel de bonificaciones */
+.perfil-panel {
+  padding: 5px;
+}
+
+/* Estilos para la tabla de bonificaciones */
+#tabla-bonificaciones {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#tabla-bonificaciones th,
+#tabla-bonificaciones td {
+  border: 1px solid var(--color-secondary);
+  padding: 8px;
+  text-align: left;
+}
+
+#tabla-bonificaciones th {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+#tabla-bonificaciones tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+#tabla-bonificaciones tbody tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
+#tabla-bonificaciones .badge {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+
+#tabla-bonificaciones .badge.bg-success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+#tabla-bonificaciones .badge.bg-secondary {
+  background-color: var(--color-gray);
+  color: white;
+}
+
+.perfil-col{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 90dvw;
+    align-items: center;
+}
+
+
+@media ( max-width: 768px) {
+    .empleado-perfil-page .panel-header {
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+    }
+
+    .perfil-panel {
+        min-width: 90dvw;
+    }
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .perfil-panel {
+    padding: 5px;
+  }
+}
+
+@media (max-width: 576px) {
+  .perfil-panel {
+    padding: 5px !important;
+  }
+}

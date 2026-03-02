@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 };
             } else if (extension === 'pdf') {
                 modalTitle.textContent = 'Vista Previa del PDF';
-                modalBody.innerHTML = `<embed src="${url}" type="application/pdf" style="width: 100%; height: 500px; border: 2px solid var(--color-secondary); border-radius: 8px;">`;
+                modalBody.innerHTML = `<iframe src="${url}" type="application/pdf" style="width: 100%; height: 500px; border: 2px solid var(--color-secondary); border-radius: 8px;" frameborder="0"></iframe>`;
             } else {
                 modalTitle.textContent = 'Formato no soportado';
                 modalBody.innerHTML = '<p style="color: red;">No se puede previsualizar este tipo de archivo.</p>';

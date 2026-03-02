@@ -3,6 +3,14 @@
   margin: 0 auto !important;
 }
 
+/* Ocultar columnas de fecha y tipo en pantallas pequeñas */
+@media (max-width: 768px) {
+  #pagos-table .fechaCol,
+  #pagos-table .tipoCol {
+    display: none;
+  }
+}
+
 /* Wrapper para tablas con scroll horizontal controlado */
 .table-contenedor {
   width: 100%;
