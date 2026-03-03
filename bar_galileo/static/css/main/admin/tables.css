@@ -3,6 +3,14 @@
   margin: 0 auto !important;
 }
 
+/* Ocultar columnas de fecha y tipo en pantallas pequeñas */
+@media (max-width: 768px) {
+  #pagos-table .fechaCol,
+  #pagos-table .tipoCol {
+    display: none;
+  }
+}
+
 /* Wrapper para tablas con scroll horizontal controlado */
 .table-contenedor {
   width: 100%;
@@ -70,7 +78,7 @@
   .table-contenedor .table {
     font-size: 0.8rem;
   }
-  
+
   .table-contenedor .table th,
   .table-contenedor .table td {
     padding: 0.4rem 0.2rem;
@@ -81,7 +89,7 @@
   .table-contenedor .table {
     font-size: 0.75rem;
   }
-  
+
   .table-contenedor .table th,
   .table-contenedor .table td {
     padding: 0.3rem 0.15rem;
@@ -128,19 +136,19 @@
   .col-descripcion {
     display: none !important;
   }
-  
+
   .table-productos .col-nombre {
     width: 12% !important;
   }
-  
+
   .table-productos .col-categoria {
     width: 10% !important;
   }
-  
+
   .table-productos .col-proveedor {
     width: 11% !important;
   }
-  
+
   .table-productos .col-marca {
     width: 14% !important;
   }
@@ -152,15 +160,15 @@
   .col-descripcion, .col-proveedor {
     display: none !important;
   }
-  
+
   .table-productos .col-nombre {
     width: 13% !important;
   }
-  
+
   .table-productos .col-categoria {
     width: 12% !important;
   }
-  
+
   .table-productos .col-marca {
     width: 16% !important;
   }
@@ -171,11 +179,11 @@
   .col-descripcion {
     display: none !important;
   }
-  
+
   .table-productos .col-nombre {
     width: 13% !important;
   }
-  
+
   .table-productos .col-marca {
     width: 15% !important;
   }
@@ -186,11 +194,11 @@
   .col-descripcion, .col-proveedor {
     display: none !important;
   }
-  
+
   .table-productos .col-nombre {
     width: 15% !important;
   }
-  
+
   .table-productos .col-marca {
     width: 18% !important;
   }
@@ -240,40 +248,40 @@
   .table-contenedor {
     padding: 0 0.25rem;
   }
-  
+
   .table-responsive-wrapper {
     margin: 0 -0.25rem;
     padding: 0 0.25rem;
   }
-  
+
   /* Tabla más compacta en móvil */
   .table-productos {
     font-size: 0.8rem;
   }
-  
+
   .table-productos th,
   .table-productos td {
     padding: 0.35rem 0.25rem !important;
     vertical-align: middle;
   }
-  
+
   /* Imágenes más pequeñas */
   .table-productos img {
     max-width: 35px !important;
     max-height: 35px !important;
     border-radius: 3px;
   }
-  
+
   /* Botones de acción compactos */
   .table-productos .btn-group .btn {
     padding: 0.2rem 0.35rem;
   }
-  
+
   .table-productos .btn-group .btn img {
     width: 14px !important;
     height: 14px !important;
   }
-  
+
   /* Badges más pequeños */
   .table-productos .badge {
     font-size: 0.65rem;
@@ -285,28 +293,27 @@
 @media (max-width: 400px) {
   .table-productos {
     font-size: 0.7rem;
-    min-width: 400px;
   }
-  
+
   .table-productos th,
   .table-productos td {
     padding: 0.25rem 0.15rem !important;
   }
-  
+
   .table-productos img {
     max-width: 28px !important;
     max-height: 28px !important;
   }
-  
+
   .table-productos .btn-group .btn {
     padding: 0.15rem 0.25rem;
   }
-  
+
   .table-productos .btn-group .btn img {
     width: 12px !important;
     height: 12px !important;
   }
-  
+
   /* Nombre truncado */
   .col-nombre {
     max-width: 80px;

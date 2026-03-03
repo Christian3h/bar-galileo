@@ -302,3 +302,7 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
   height: 22px;
   filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2353%) hue-rotate(340deg) brightness(93%) contrast(92%);
 }
+
+#form_cerrar_sesion_botones{
+    padding: 0 !important;
+}

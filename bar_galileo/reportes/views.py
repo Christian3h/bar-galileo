@@ -118,6 +118,7 @@ class ReporteDeleteView(SuccessMessageMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+@permission_required('reportes', 'ver')
 def exportar_reporte(request, pk, formato):
     """Vista para exportar un reporte en diferentes formatos"""
     from .utils import generar_pdf_reporte, generar_excel_reporte, generar_csv_reporte, obtener_datos_reporte_detallado
@@ -164,6 +165,7 @@ def exportar_reporte(request, pk, formato):
         return redirect('reportes:reporte_detail', pk=pk)
 
 
+@permission_required('reportes', 'ver')
 def generar_reporte_datos(request, pk):
     """Vista para generar/actualizar datos del reporte"""
     from .utils import obtener_datos_reporte_detallado

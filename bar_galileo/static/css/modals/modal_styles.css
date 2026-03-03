@@ -1,0 +1,34 @@
+/* Estilos para el modal de previsualización */
+
+/* Importar variables de colores */
+@import '../_variables/_colors.css';
+
+.modal-preview {
+    position: fixed;
+    z-index: 1050;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--color-shadow);
+    color: var(--color-light);
+}
+
+.modal-preview-content {
+    background-color: var(--color-surface-alt);
+    margin: 5% auto;
+    padding: 2rem;
+    border: 2px solid var(--color-secondary);
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px var(--color-shadow);
+}
+
+.close-modal-preview {
+    cursor: pointer;
+    float: right;
+    font-size: 1.5rem;
+    color: var(--color-light);
+}

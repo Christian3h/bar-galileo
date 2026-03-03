@@ -1,0 +1,202 @@
+/* ============================================================
+   DataTables SearchBuilder — Layout + Visual
+   Los tooltips los maneja searchbuilder-tooltips.js
+   ============================================================ */
+
+/* ── Contenedor principal ── */
+.dtsb-searchBuilder {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 12px !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border-muted) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* ── Fila de título ── */
+.dtsb-titleRow {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding-bottom: 8px !important;
+  border-bottom: 1px solid var(--color-border-muted) !important;
+}
+
+.dtsb-title {
+  flex: 1 1 auto !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-weight: 600 !important;
+  font-size: 0.82rem !important;
+  color: var(--color-secondary) !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+/* ── GRUPO ── */
+.dtsb-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  margin-left: 0 !important;
+  padding: 10px 10px 10px 14px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  background: var(--color-surface-alt) !important;
+  border: 1px solid var(--color-shadow) !important;
+  border-left: 3px solid var(--color-dark) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px var(--color-border-muted) !important;
+}
+
+/* Sub-grupos anidados */
+.dtsb-group .dtsb-group {
+  background: var(--feedback-changed-bg) !important;
+  border-color: var(--color-info) !important;
+  border-left-color: var(--color-info) !important;
+  margin-top: 2px !important;
+}
+
+.dtsb-group .dtsb-group .dtsb-group {
+  background: var(--feedback-info-bg) !important;
+  border-left-color: var(--color-info-strong) !important;
+}
+
+/* ── Lógica Y / O ── */
+.dtsb-logicContainer {
+  position: static !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 2px !important;
+  width: auto !important;
+  align-self: flex-start !important;
+}
+
+.dtsb-clearGroup {
+  flex: 0 0 auto !important;
+  height: auto !important;
+}
+
+/* ── Criterio individual ── */
+.dtsb-criteria {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 5px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 6px 8px !important;
+  background: var(--feedback-neutral-bg) !important;
+  border: 1px solid var(--color-border-muted) !important;
+  border-radius: 5px !important;
+}
+
+/* Dato — acento rojo/dark */
+.dtsb-criteria select.dtsb-data {
+  flex: 1 1 120px !important;
+  min-width: 80px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  border-bottom: 2px solid var(--color-dark) !important;
+}
+
+/* Condición — acento verde */
+.dtsb-criteria select.dtsb-condition {
+  flex: 1 1 120px !important;
+  min-width: 80px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  border-bottom: 2px solid var(--color-success) !important;
+}
+
+/* Valor — acento azul */
+.dtsb-inputCont {
+  flex: 2 1 140px !important;
+  min-width: 80px !important;
+  display: flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+}
+
+.dtsb-inputCont .dtsb-value,
+.dtsb-inputCont input {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  border-bottom: 2px solid var(--color-info) !important;
+}
+
+/* ── Botones ── */
+.dtsb-buttonContainer {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.dtsb-delete {
+  flex: 0 0 auto !important;
+}
+
+.dtsb-add {
+  align-self: flex-start !important;
+  white-space: nowrap !important;
+}
+
+.dtsb-clearAll {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+/* ── Tooltip global (inyectado por searchbuilder-tooltips.js) ── */
+#dtsb-global-tooltip {
+  position: fixed !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 480px) {
+  .dtsb-criteria {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .dtsb-criteria select.dtsb-data,
+  .dtsb-criteria select.dtsb-condition,
+  .dtsb-inputCont {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .dtsb-buttonContainer {
+    justify-content: flex-end !important;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 768px) {
+  .dtsb-criteria select.dtsb-data,
+  .dtsb-criteria select.dtsb-condition {
+    flex: 1 1 100px !important;
+  }
+
+  .dtsb-inputCont {
+    flex: 2 1 120px !important;
+  }
+}
