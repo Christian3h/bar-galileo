@@ -599,6 +599,14 @@
 {% endblock %}
 
 {% block extra_js %}
+    <!-- DataTables Responsive -->
+    <script src="{% static 'js/DataTables/dataTables.responsive.min.js' %}"></script>
+    <!-- DataTables SearchBuilder -->
+    <script src="{% static 'js/DataTables/dataTables.searchBuilder.min.js' %}"></script>
+    <!-- DataTables Buttons -->
+    <script src="{% static 'js/DataTables/dataTables.buttons.min.js' %}"></script>
+    <!-- Botones de exportación HTML5 -->
+    <script src="{% static 'js/DataTables/buttons.html5.min.js' %}"></script>
     <!-- JSZip y pdfmake para exportación (no incluidos en el bundle) -->
     <script src="{% static 'js/DataTables/jszip.min.js' %}"></script>
     <script src="{% static 'js/DataTables/pdfmake.min.js' %}"></script>
