@@ -146,7 +146,7 @@ $(document).ready(function() {
 
     $(sel).DataTable({
         language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-        responsive: true,
+        responsive: { details: { type: 'inline' } },
         pageLength: 10,
         lengthChange: true,
         ordering: true,

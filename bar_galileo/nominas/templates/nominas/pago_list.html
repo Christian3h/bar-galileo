@@ -163,7 +163,7 @@ $(document).ready(function() {
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
-        responsive: true,
+        responsive: { details: { type: 'inline' } },
         order: [[1, 'desc']],
         columnDefs: [
             { targets: '_all', defaultContent: '' },
