@@ -35,8 +35,8 @@ services:
       DB_NAME: ${DB_NAME:-bar_galileo}
       DB_USER: ${DB_USER:-bar_galileo_user}
       DB_PASSWORD: ${DB_PASSWORD:-Galileo2025}
-      DEBUG: ${DEBUG:-True}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-dominiopruebaprigma.xyz,www.dominiopruebaprigma.xyz}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       emailHost: ${emailHost:-}
       emailPassword: ${emailPassword:-}
