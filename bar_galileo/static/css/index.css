@@ -1112,3 +1112,111 @@ body {
     padding: 0;
   }
 }
+
+/* ===== MANUAL DE USUARIO SECTION ===== */
+/* ===== MANUAL DE USUARIO SECTION ===== */
+.nav-manual-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: 8px;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37 !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-manual-btn:hover {
+  background: rgba(212, 175, 55, 0.22);
+  border-color: rgba(212, 175, 55, 0.75);
+  color: #ebd55c !important;
+}
+
+.manual-usuario-section {
+  background: linear-gradient(135deg, #141418 0%, #1e1e24 100%);
+  border-top: 1px solid rgba(212, 175, 55, 0.25);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+  padding: 3.5rem 0;
+}
+
+.manual-usuario-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.manual-usuario-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.1);
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  color: #d4af37;
+  flex-shrink: 0;
+}
+
+.manual-usuario-text {
+  max-width: 440px;
+}
+
+.manual-usuario-text h2 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #d4af37;
+  margin: 0 0 0.45rem 0;
+  letter-spacing: 0.04em;
+  font-family: 'Playfair Display', serif;
+}
+
+.manual-usuario-text p {
+  font-size: 0.97rem;
+  color: #a0aec0;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.manual-usuario-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.75rem;
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.1);
+  color: #d4af37;
+  border: 1.5px solid rgba(212, 175, 55, 0.45);
+  text-decoration: none;
+  font-size: 0.97rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, color 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.manual-usuario-btn:hover {
+  background: rgba(212, 175, 55, 0.22);
+  border-color: rgba(212, 175, 55, 0.75);
+  transform: translateY(-2px);
+  color: #ebd55c;
+}
+
+@media (max-width: 680px) {
+  .manual-usuario-inner {
+    flex-direction: column;
+    gap: 1.4rem;
+    text-align: center;
+  }
+  .manual-usuario-text {
+    text-align: center;
+  }
+}
