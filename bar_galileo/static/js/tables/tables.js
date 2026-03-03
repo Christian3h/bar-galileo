@@ -52,30 +52,34 @@ const confirmAction = (title, message) => {
 // ===== WEBSOCKETS PARA STOCK EN TIEMPO REAL =====
 
 function setupWebSocket() {
-  const protocol = window.location.protocol === "https" ? "wss" : "ws";
   const ws = new WebSocket(
-    `${protocol}://${window.location.host}/ws/stock_updates/`,
+    `wss://${window.location.host}/ws/stock_updates/`,
   );
 
-  ws.onopen = () =>
-    //console.log("[WebSocket] Conectado al canal de stock.");
-    (ws.onclose = () =>
-      //console.log("[WebSocket] Desconectado del canal de stock.");
-      (ws.onerror = (
-        err, //console.error("[WebSocket] Error:", err);
-      ) =>
-        (ws.onmessage = (e) => {
-          const data = JSON.parse(e.data);
-          if (data.type === "stock_update") {
-            const { product_id, delta } = data.message;
-            if (virtualStock[product_id] !== undefined) {
-              virtualStock[product_id] += delta;
-            }
-            // Actualizar la UI siempre, no solo si el modal está abierto
-            actualizarListaProductosUI();
-            actualizarPedidoItemsUI();
-          }
-        })));
+  ws.onopen = () => {
+    // Conectado al canal de stock.
+  };
+
+  ws.onclose = () => {
+    // Desconectado del canal de stock.
+  };
+
+  ws.onerror = (err) => {
+    // Error en WebSocket.
+  };
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === "stock_update") {
+      const { product_id, delta } = data.message;
+      if (virtualStock[product_id] !== undefined) {
+        virtualStock[product_id] += delta;
+      }
+      // Actualizar la UI siempre, no solo si el modal está abierto
+      actualizarListaProductosUI();
+      actualizarPedidoItemsUI();
+    }
+  };
 }
 
 // ===== MANEJO DE ERRORES Y PETICIONES API =====
