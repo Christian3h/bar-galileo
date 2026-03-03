@@ -213,11 +213,16 @@ textarea:focus {
     background: var(--color-light);
     border: 2px solid var(--color-primary);
     border-radius: 12px;
-    margin: 5% auto;
+    margin: 0 auto;
+    margin-top: 60px; /* altura del navbar */
     padding: 2rem;
     width: 85%;
     max-width: 900px;
+    max-height: calc(100vh - 80px); /* viewport menos navbar y margen */
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 8px 32px var(--color-primary);
+    overflow: hidden;
 }
 
 .modal-header {
@@ -254,16 +259,19 @@ textarea:focus {
 .modal-body {
     display: flex;
     gap: 2rem;
+    flex: 1;
+    overflow: hidden; /* el scroll lo manejan los hijos */
+    min-height: 0;
 }
 
 .productos-lista {
     flex: 1;
-    max-height: 400px;
     overflow-y: auto;
     border: 2px solid var(--color-primary);
     border-radius: 8px;
     padding: 1rem;
     background: transparent;
+    min-height: 0;
 }
 
 .producto-item {
@@ -291,6 +299,8 @@ textarea:focus {
     border-radius: 8px;
     padding: 1rem;
     background: transparent;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .cantidad-badge {
@@ -336,16 +346,18 @@ textarea:focus {
 
     .modal-body {
         flex-direction: column;
+        overflow-y: auto; /* scroll vertical en mobile dentro del modal */
     }
 
     .modal {
-        overflow: scroll;
+        overflow: hidden; /* el scroll NO es del overlay */
     }
 
     .modal-content {
         width: 95%;
-        margin: 2% auto;
+        margin-top: 56px;
         padding: 1rem;
+        max-height: calc(100vh - 66px);
     }
 
     h2 {
@@ -364,7 +376,7 @@ textarea:focus {
     }
 
     .modal {
-        overflow: scroll;
+        overflow: hidden;
     }
 
     .acciones {
