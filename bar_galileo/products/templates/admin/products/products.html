@@ -5,13 +5,13 @@
 {% block extra_css%}
     <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
     <!-- DataTables SearchBuilder CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'js/DataTables/searchBuilder.dataTables.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main/products/searchbuilder-full.css' %}">
     <!-- DataTables Buttons CSS -->
     <script src="{% static 'js/products/searchbuilder-tooltips.js' %}"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'js/DataTables/buttons.dataTables.min.css' %}">
     <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'js/DataTables/responsive.dataTables.min.css' %}">
     <style>
         /* Estilos personalizados para DataTable usando las clases del proyecto */
 
@@ -599,19 +599,11 @@
 {% endblock %}
 
 {% block extra_js %}
-    <!-- DataTables Responsive -->
-    <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
-    <!-- DataTables SearchBuilder -->
-    <script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.min.js"></script>
-    <!-- DataTables Buttons -->
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <!-- JSZip para Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="{% static 'js/DataTables/jszip.min.js' %}"></script>
     <!-- pdfmake para PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <!-- Botones de exportación -->
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="{% static 'js/DataTables/pdfmake.min.js' %}"></script>
+    <script src="{% static 'js/DataTables/vfs_fonts.js' %}"></script>
 
     <script>
     // Permisos del usuario
