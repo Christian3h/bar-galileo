@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --fix-missing \
     libgl1 \
     libglib2.0-0 \
     netcat-openbsd \
+    flite \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar dependencias Python
