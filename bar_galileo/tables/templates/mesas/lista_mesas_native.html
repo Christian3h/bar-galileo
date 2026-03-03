@@ -25,7 +25,7 @@
   <div class="mesas-container">
     {% for mesa in mesas %}
     <div class="mesa-card {{ mesa.estado|slugify }}">
-      {% if mesa.pedidos.exists %}
+      {% if mesa.tiene_pedidos_en_proceso %}
       <span class="pedido-activo">Pedido activo</span>
       {% endif %}
 

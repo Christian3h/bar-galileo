@@ -206,23 +206,20 @@ textarea:focus {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .modal-content {
     background: var(--color-light);
     border: 2px solid var(--color-primary);
     border-radius: 12px;
-    margin: 0 auto;
-    margin-top: 60px; /* altura del navbar */
+    margin: 70px auto 20px auto;
     padding: 2rem;
     width: 85%;
     max-width: 900px;
-    max-height: calc(100vh - 80px); /* viewport menos navbar y margen */
     display: flex;
     flex-direction: column;
     box-shadow: 0 8px 32px var(--color-primary);
-    overflow: hidden;
 }
 
 .modal-header {
@@ -259,19 +256,16 @@ textarea:focus {
 .modal-body {
     display: flex;
     gap: 2rem;
-    flex: 1;
-    overflow: hidden; /* el scroll lo manejan los hijos */
-    min-height: 0;
 }
 
 .productos-lista {
     flex: 1;
+    max-height: 450px;
     overflow-y: auto;
     border: 2px solid var(--color-primary);
     border-radius: 8px;
     padding: 1rem;
     background: transparent;
-    min-height: 0;
 }
 
 .producto-item {
@@ -295,12 +289,12 @@ textarea:focus {
 
 .pedido-items {
     flex: 1;
+    max-height: 450px;
+    overflow-y: auto;
     border: 2px solid var(--color-primary);
     border-radius: 8px;
     padding: 1rem;
     background: transparent;
-    overflow-y: auto;
-    min-height: 0;
 }
 
 .cantidad-badge {
@@ -346,18 +340,24 @@ textarea:focus {
 
     .modal-body {
         flex-direction: column;
-        overflow-y: auto; /* scroll vertical en mobile dentro del modal */
     }
 
     .modal {
-        overflow: hidden; /* el scroll NO es del overlay */
+        overflow-y: auto;
     }
 
     .modal-content {
         width: 95%;
-        margin-top: 56px;
+        margin: 76px auto 20px auto;
         padding: 1rem;
-        max-height: calc(100vh - 66px);
+    }
+
+    .productos-lista {
+        max-height: 300px;
+    }
+
+    .pedido-items {
+        max-height: none;
     }
 
     h2 {
@@ -376,7 +376,7 @@ textarea:focus {
     }
 
     .modal {
-        overflow: hidden;
+        overflow-y: auto;
     }
 
     .acciones {

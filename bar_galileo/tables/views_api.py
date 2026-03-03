@@ -78,7 +78,8 @@ def _broadcast_panel_update(pedido):
 
 def mesa_pedido_api(request, mesa_id):
     mesa = get_object_or_404(Mesa, id=mesa_id)
-    pedido, _ = Pedido.objects.get_or_create(mesa=mesa, estado='en_proceso')
+    # Solo obtener pedido si ya existe con items — no crear automáticamente
+    pedido = Pedido.objects.filter(mesa=mesa, estado='en_proceso').first()
 
     productos_data = []
     for p in Producto.objects.filter(activo=True).order_by('nombre'):
@@ -97,9 +98,11 @@ def mesa_pedido_api(request, mesa_id):
         for item in PedidoItem.objects.filter(pedido__estado='en_proceso').values('producto_id').annotate(cantidad_total=Sum('cantidad'))
     }
 
+    pedido_data = _serialize_pedido(pedido) if pedido else {'id': None, 'items': [], 'total': 0, 'usuarios': []}
+
     return JsonResponse({
         'mesa': {'id': mesa.id, 'nombre': mesa.nombre},
-        'pedido': _serialize_pedido(pedido),
+        'pedido': pedido_data,
         'productos': productos_data,
         'reservas_stock': reservas_stock
     })
