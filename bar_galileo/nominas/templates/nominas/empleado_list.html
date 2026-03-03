@@ -141,7 +141,7 @@
         
         if (confirmed) {
             const form = document.getElementById('delete-empleado-form');
-            form.action = `/nominas/empleados/${empleadoId}/eliminar/`;
+            form.action = `/nominas/eliminar/${empleadoId}/`;
             form.submit();
         }
     }

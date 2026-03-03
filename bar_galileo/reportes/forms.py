@@ -131,7 +131,9 @@ class ReporteFilterForm(forms.Form):
     )
     
     usuario = forms.ModelChoiceField(
-        queryset=User.objects.all().order_by('username'),
+        queryset=User.objects.filter(
+            reportes_creados__isnull=False
+        ).distinct().order_by('username'),
         required=False,
         empty_label='Todos los usuarios',
         widget=forms.Select(attrs={'class': 'form-control'})

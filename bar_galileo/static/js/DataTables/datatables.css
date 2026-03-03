@@ -24,6 +24,10 @@
   --dt-html-background: rgb(33, 37, 41);
 }
 
+div.dtsb-searchBuilder button, div.dtsb-searchBuilder select.dtsb-dropDown, div.dtsb-searchBuilder input {
+    background: var(--color-light) !important ;
+}
+
 table.dataTable tbody td.dt-control {
   text-align: center;
   cursor: pointer;

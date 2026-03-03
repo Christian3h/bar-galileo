@@ -205,7 +205,7 @@
         <p style="margin:0 0 1.5rem;color:var(--color-secondary);font-size:0.95rem;">¿Estás seguro de que deseas cerrar sesión?</p>
         <div style="display:flex;gap:0.75rem;justify-content:center;">
             <button type="button" id="logout-cancel-btn" style="padding:0.55rem 1.5rem;border-radius:8px;border:1px solid var(--color-border-muted);background:transparent;color:var(--color-secondary);font-size:0.9rem;cursor:pointer;transition:background 0.2s;">Cancelar</button>
-            <form method="post" action="{% url 'account_logout' %}" style="margin:0;">
+            <form id="form_cerrar_sesion_botones" method="post" action="{% url 'account_logout' %}" style="margin:0;">
                 {% csrf_token %}
                 <button type="submit" style="padding:0.55rem 1.5rem;border-radius:8px;border:none;background:var(--color-danger,#dc3545);color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s;">Sí, cerrar sesión</button>
             </form>

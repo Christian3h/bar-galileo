@@ -1,21 +1,22 @@
-#!/usr/bin/env bash
+#!/bin/sh
 set -e
 
-# Wait for DB if env provided
-if [[ -n "$DB_HOST" ]]; then
+if [ -n "$DB_HOST" ]; then
   echo "Waiting for database at $DB_HOST:${DB_PORT:-3306}..."
-  for i in {1..30}; do
-    nc -z "$DB_HOST" "${DB_PORT:-3306}" && break
+  i=0
+  while ! nc -z "$DB_HOST" "${DB_PORT:-3306}"; do
+    i=$(( i + 1 ))
+    if [ $i -ge 30 ]; then break; fi
     sleep 1
   done
 fi
 
-cd /app/bar_galileo
-
-# Apply migrations
+cd /app
 python manage.py migrate --noinput
+
+# Setup site_images module and permissions
+python manage.py setup_site_images
 
 # Collect static files
 python manage.py collectstatic --noinput
-
 exec "$@"
