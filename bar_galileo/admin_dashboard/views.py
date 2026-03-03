@@ -220,7 +220,7 @@ def export_dashboard(request, fmt):
             ws.append(['Métrica', 'Valor'])
             ws.append(['Ingresos Totales', float(ctx['ingresos_totales'])])
             ws.append(['Ganancia Total', float(ctx['ganancia_total'])])
-            ws.append(['Valor Total del Inventario', float(ctx['valor_total_stock'])])
+            ws.append(['Valor Total del Stock', float(ctx['valor_total_stock'])])
             ws.append(['Gastos Totales', float(ctx['gastos_totales'])])
             ws.append([])
             ws.append(['Ventas por Día'])
@@ -280,7 +280,7 @@ def export_dashboard(request, fmt):
         writer.writerow(['Métrica', 'Valor'])
         writer.writerow(['Ingresos Totales', f"{float(ctx['ingresos_totales']):.2f}"])
         writer.writerow(['Ganancia Total', f"{float(ctx['ganancia_total']):.2f}"])
-        writer.writerow(['Valor Total del Inventario', f"{float(ctx['valor_total_stock']):.2f}"])
+        writer.writerow(['Valor Total del Stock', f"{float(ctx['valor_total_stock']):.2f}"])
         writer.writerow(['Gastos Totales', f"{float(ctx['gastos_totales']):.2f}"])
         writer.writerow([])
         writer.writerow(['Ventas por Día'])
@@ -319,7 +319,7 @@ def export_dashboard(request, fmt):
         y -= 18
         p.drawString(x, y, f"Ganancia Total: {ctx['ganancia_total']}")
         y -= 18
-        p.drawString(x, y, f"Valor Total del Inventario: {ctx['valor_total_stock']}")
+        p.drawString(x, y, f"Valor Total del Stock: {ctx['valor_total_stock']}")
         y -= 18
         p.drawString(x, y, f"Gastos Totales: {ctx['gastos_totales']}")
         y -= 24
