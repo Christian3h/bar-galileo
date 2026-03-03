@@ -816,7 +816,10 @@
                         name: "stock",
                         className: 'text-center col-stock',
                         render: function(data, type, row) {
-                            const stock = data || 0;
+                            const stock = parseInt(data) || 0;
+                            if (type === 'sort' || type === 'type' || type === 'filter') {
+                                return stock;
+                            }
                             let badge = '';
                             if (stock <= 0) {
                                 badge = '<span class="badge bg-danger">Sin stock</span>';
