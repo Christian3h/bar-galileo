@@ -215,8 +215,8 @@ textarea:focus {
     border-radius: 12px;
     margin: 70px auto 20px auto;
     padding: 2rem;
-    width: 85%;
-    max-width: 900px;
+    width: 95%;
+    max-width: 1300px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 8px 32px var(--color-primary);
@@ -255,17 +255,19 @@ textarea:focus {
 
 .modal-body {
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
+    align-items: flex-start;
 }
 
 .productos-lista {
-    flex: 1;
-    max-height: 450px;
+    flex: 3;
+    max-height: 500px;
     overflow-y: auto;
     border: 2px solid var(--color-primary);
     border-radius: 8px;
     padding: 1rem;
     background: transparent;
+    min-width: 0;
 }
 
 .producto-item {
@@ -288,13 +290,14 @@ textarea:focus {
 }
 
 .pedido-items {
-    flex: 1;
-    max-height: 450px;
+    flex: 2;
+    max-height: 500px;
     overflow-y: auto;
     border: 2px solid var(--color-primary);
     border-radius: 8px;
     padding: 1rem;
     background: transparent;
+    min-width: 0;
 }
 
 .cantidad-badge {
@@ -340,6 +343,32 @@ textarea:focus {
 
     .modal-body {
         flex-direction: column;
+        overflow-y: visible;
+    }
+
+    .productos-lista,
+    .pedido-items {
+        flex: none;
+        width: 100%;
+        max-height: 250px;
+    }
+
+    .user-management-section {
+        width: 100%;
+    }
+}
+
+/* Desktop: ancho fijo para la sección de clientes */
+@media (min-width: 769px) {
+    .user-management-section {
+        flex: 0 0 260px;
+        max-width: 260px;
+        min-width: 200px;
+        max-height: 500px;
+        overflow-y: auto;
+        border: 2px solid var(--color-primary);
+        border-radius: 8px;
+        padding: 1rem;
     }
 
     .modal {
