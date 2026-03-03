@@ -921,15 +921,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const h = function(e, s) {
         let a = !1;
-        !s && e && (a = e.currentTarget, s = parseFloat(t.states.fontSize) || 1, a.classList.contains("asw-minus") ? s -= .1 : s += .1, s = Math.max(s, .1), s = Math.min(s, 2), s = parseFloat(s.toFixed(2))), document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,a,dl,dt,li,ol,th,td,span").forEach((function(t) {
-            if (!t.classList.contains("material-icons")) {
+        !s && e && (a = e.currentTarget, s = parseFloat(t.states.fontSize) || 1, a.classList.contains("asw-minus") ? s -= .1 : s += .1, s = Math.max(s, .1), s = Math.min(s, 2), s = parseFloat(s.toFixed(2))), document.querySelectorAll("h1,h2,h3,h4,h5,h6,p,a,dl,dt,li,ol,th,td,span,div,input,button,label,select,textarea").forEach((function(t) {
+            if (!t.classList.contains("material-icons") && !t.classList.contains("asw-menu") && !t.closest('.asw-menu')) {
                 let e = t.getAttribute("data-asw-orgFontSize");
                 e || (e = parseInt(window.getComputedStyle(t, null).getPropertyValue("font-size")), t.setAttribute("data-asw-orgFontSize", e));
                 let a = e * s;
-                t.style["font-size"] = a + "px"
+                t.style.setProperty("font-size", a + "px", "important");
             }
         }));
-        let n = "Default";
+        let n = "Normal";
         1 !== s && (s > 1 ? n = "+" : s < 1 && (n = "-"), n += parseInt(100 * s) + "%"), a && (a.parentElement.querySelector(".asw-amount").innerHTML = n), t.states.fontSize = s
     };
     let m = r.querySelector(".asw-menu"), g = r.querySelector(".asw-overlay");
@@ -943,7 +943,7 @@ document.addEventListener("DOMContentLoaded", function() {
         t.states = {}, p(), u(), h(void 0, 1), document.querySelectorAll(".asw-btn").forEach(function(t) {
             t.classList.remove("asw-selected"), t.setAttribute("aria-pressed", "false")
         }), document.querySelectorAll(".asw-amount").forEach(function(t) {
-            t.innerHTML = "Default"
+            t.innerHTML = "Normal"
         }), e()
     }, !1), m.querySelectorAll(".asw-btn").forEach(function(t) {
         t.addEventListener("click", f, !1)
