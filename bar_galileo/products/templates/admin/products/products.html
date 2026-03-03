@@ -599,9 +599,8 @@
 {% endblock %}
 
 {% block extra_js %}
-    <!-- JSZip para Excel -->
+    <!-- JSZip y pdfmake para exportación (no incluidos en el bundle) -->
     <script src="{% static 'js/DataTables/jszip.min.js' %}"></script>
-    <!-- pdfmake para PDF -->
     <script src="{% static 'js/DataTables/pdfmake.min.js' %}"></script>
     <script src="{% static 'js/DataTables/vfs_fonts.js' %}"></script>
 
