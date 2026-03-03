@@ -14,6 +14,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
+                    <th>Descripción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -21,6 +22,7 @@
                 {% for brand in brands %}
                 <tr>
                     <td>{{ brand.marca }}</td>
+                    <td>{{ brand.descripcion|default:"Sin descripción" }}</td>
                     <td>
                         {% if request.user|has_perm:"brands,editar" %}
                         <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning" title="Editar marca"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
@@ -71,7 +73,7 @@ $(document).ready(function() {
         columnDefs: [
             { targets: '_all', defaultContent: '' }
         ],
-        responsive: true
+        responsive: { details: { type: 'inline' } }
     });
 });
 </script>

@@ -105,7 +105,7 @@
         const sel = '#tabla-productos-simple';
         if ($(sel).length) {
             $(sel).DataTable({
-                responsive: true,
+                responsive: { details: { type: 'inline' } },
                 language: {
                     url: "{% static 'js/DataTables/es-ES.json' %}"
                 },
