@@ -38,6 +38,9 @@
 /* === Grupos de campo === */
 .form-group {
     margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .form-group label {
