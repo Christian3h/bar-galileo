@@ -22,7 +22,7 @@
   {% block extra_css %}{% endblock %}
 
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   <!-- Pantalla de carga del Dashboard -->
   <div id="dashboard-loading-screen" class="dashboard-loading-screen hidden">
     <div class="loading-content">
