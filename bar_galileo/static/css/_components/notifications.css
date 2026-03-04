@@ -127,15 +127,19 @@
   transform: translate3d(16px, 8px, 0);
   opacity: 0;
   box-shadow: var(--feedback-shadow);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
 }
 
 .alert-message.is-toast.is-visible {
   transform: translate3d(0, 0, 0);
   opacity: 1;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
 }
 
 .alert-message.is-toast.is-leaving {
-  animation: feedback-toast-exit 0.25s ease forwards;
+  animation: feedback-toast-exit 0.35s ease forwards;
 }
 
 @keyframes feedback-toast-enter {
@@ -150,9 +154,22 @@
 }
 
 @keyframes feedback-toast-exit {
-  to {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  40% {
+    opacity: 0.7;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  100% {
     opacity: 0;
-    transform: translate3d(16px, 0, 0);
+    transform: translate3d(12px, 0, 0);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 }
 
