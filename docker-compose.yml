@@ -59,7 +59,7 @@ services:
       - ./bar_galileo:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-    command: ["gunicorn", "bar_galileo.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "9", "--bind", "0.0.0.0:8000", "--timeout", "120", "--keepalive", "5", "--log-level", "info"]
+    command: ["gunicorn", "bar_galileo.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "9", "--bind", "0.0.0.0:8000", "--timeout", "120", "--keep-alive", "5", "--log-level", "info"]
     expose:
       - "8000"
 
