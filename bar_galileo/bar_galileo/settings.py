@@ -37,7 +37,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 # SECURITY WARNING: keep the secret key used in production secret!
 # Configuración sensible a entorno
 DEBUG = str(os.getenv("DEBUG", "True")).lower() in ("1", "true", "yes")
-SECRET_KEY = os.getenv("secret_key") or get_random_secret_key()
+SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("secret_key") or get_random_secret_key()
 raw_hosts = os.getenv("ALLOWED_HOSTS", "*" if DEBUG else "")
 ALLOWED_HOSTS = ["*"]
 
