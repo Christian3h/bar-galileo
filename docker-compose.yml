@@ -63,18 +63,6 @@ services:
     expose:
       - "8000"
 
-  nginx:
-    image: nginx:1.25-alpine
-    restart: unless-stopped
-    depends_on:
-      - web
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - static_volume:/app/staticfiles:ro
-      - media_volume:/app/media:ro
-
 volumes:
   db_data:
   redis_data:
