@@ -669,6 +669,7 @@ body {
 
     .card {
         padding: 20px;
+        overflow: scroll;
     }
 
     .bill-amount {
