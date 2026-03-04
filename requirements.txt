@@ -3,6 +3,7 @@
 # Django y extensiones principales
 Django==5.2.4
 channels==4.3.1
+channels-redis==4.2.1
 django-allauth==65.10.0
 django-dbbackup==5.0.0
 django-markdown-deux==1.0.6

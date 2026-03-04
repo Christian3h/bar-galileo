@@ -294,11 +294,41 @@ if not DEBUG:
 # Mantener solo la configuración correcta de WSGI/ASGI definida arriba
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
-    },
-}
+# Redis URL desde variable de entorno (con fallback a InMemory para compatibilidad)
+REDIS_URL = os.getenv("REDIS_URL", "")
+
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django.core.cache.backends.redis.RedisCache",
+            },
+            "TIMEOUT": 300,
+            "KEY_PREFIX": "bargalileo",
+        }
+    }
+else:
+    # Fallback: InMemory (desarrollo o si Redis no está disponible)
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
 
 # Captcha settings
 CAPTCHA_LENGTH = 5
