@@ -1,65 +1,52 @@
 /**
- * Funcionalidad de pantalla de carga para Login
- * Muestra una pantalla de carga con el logo de Bar Galileo durante 3 segundos
- * antes de procesar el login
+ * login-loading.js
+ * ─────────────────────────────────────────────────────────────────
+ * Pantalla de carga para el flujo de login.
+ *
+ * FLUJO:
+ *  1. Usuario envía el formulario.
+ *  2. Si no hay errores visibles → mostrar overlay y enviar el form
+ *     DE INMEDIATO (sin setTimeout).
+ *  3. La página destino (dashboard) arranca cubierta gracias al
+ *     flag de sessionStorage que gestiona dashboard-loading.js.
+ *  4. Si hay errores de validación → no mostrar overlay, dejar que
+ *     el formulario se envíe normalmente para ver los errores.
+ * ─────────────────────────────────────────────────────────────────
  */
 document.addEventListener("DOMContentLoaded", function () {
-  const loginForm = document.querySelector('form');
-  const loadingScreen = document.getElementById('login-loading-screen');
-  
-  if (loginForm && loadingScreen) {
-    // Variable para controlar si ya se mostró la pantalla
-    let loadingShown = false;
-    
-    loginForm.addEventListener('submit', function(e) {
-      // Prevenir el envío inmediato del formulario
-      e.preventDefault();
-      
-      // Solo mostrar la pantalla de carga si no hay errores visibles en el formulario
-      const hasErrors = document.querySelectorAll('.errorlist, .alert-danger').length > 0;
-      
-      if (!hasErrors && !loadingShown) {
-        loadingShown = true;
-        
-        // Mostrar la pantalla de carga
-        loadingScreen.classList.remove('hidden');
-        
-        // Deshabilitar scroll del body
-        document.body.style.overflow = 'hidden';
-        
-        // Agregar animación al contenido
-        const loadingContent = loadingScreen.querySelector('.loading-content');
-        if (loadingContent) {
-          loadingContent.style.animation = 'fadeInUp 0.8s ease';
-        }
-        
-        // Después de 3 segundos, ocultar la pantalla y enviar el formulario
-        setTimeout(function() {
-          loadingScreen.classList.add('hidden');
-          
-          // Restaurar scroll del body
-          document.body.style.overflow = '';
-          
-          // Esperar un poco más para que termine la animación de fade out
-          setTimeout(function() {
-            // Enviar el formulario después de la animación
-            loginForm.submit();
-          }, 500); // 0.5 segundos adicionales para la animación
-          
-        }, 3000); // 3 segundos de pantalla de carga
-      } else {
-        // Si hay errores o ya se mostró, enviar inmediatamente
-        loginForm.submit();
-      }
-    });
+  const loginForm    = document.querySelector("form");
+  const loadingScreen = document.getElementById("login-loading-screen");
+
+  if (!loginForm || !loadingScreen) return;
+
+  // Si la página cargó con errores asegurarse de que el overlay esté oculto
+  const _hasVisibleErrors = function () {
+    return document.querySelectorAll(".errorlist, .alert-danger, .alert-error").length > 0;
+  };
+
+  if (_hasVisibleErrors()) {
+    loadingScreen.classList.add("hidden");
+    document.body.style.overflow = "";
+    return;
   }
 
-  // Si la página se carga con errores, asegurar que la pantalla esté oculta
-  window.addEventListener('load', function() {
-    const hasErrors = document.querySelectorAll('.errorlist, .alert-danger').length > 0;
-    if (hasErrors && loadingScreen) {
-      loadingScreen.classList.add('hidden');
-      document.body.style.overflow = '';
-    }
+  loginForm.addEventListener("submit", function (e) {
+    // Si hay errores de validación del lado cliente, dejar pasar normalmente
+    if (_hasVisibleErrors()) return;
+
+    // Prevenir envío para mostrar el overlay primero
+    e.preventDefault();
+
+    // Marcar para que la página destino sepa que debe arrancar cubierta
+    try {
+      sessionStorage.setItem("bg_cover_next_page", "1");
+    } catch (_) {}
+
+    // Mostrar el overlay
+    loadingScreen.classList.remove("hidden", "fade-out", "page-entering");
+    document.body.style.overflow = "hidden";
+
+    // Enviar el formulario de inmediato — sin espera artificial
+    loginForm.submit();
   });
 });

@@ -113,7 +113,7 @@
                     </div>
                     <div class="header-actions">
                         <a href="{% url 'site_images:site_image_section_edit' section.id %}" class="btn btn-secondary btn-sm">⚙️ Editar sección</a>
-                        <a href="{% url 'site_images:site_image_create' %}?section={{ section.id }}" class="btn btn-success btn-sm">AgregarAgregar imagen</a>
+                        <a href="{% url 'site_images:site_image_create' %}?section={{ section.id }}" class="btn btn-success btn-sm">Agregar imagen</a>
                     </div>
                 </div>
 
@@ -151,21 +151,22 @@
                 {% else %}
                 <div class="empty-state empty-state-sm">
                     <p>No hay imágenes en esta sección.</p>
-                    <a href="{% url 'site_images:site_image_create' %}?section={{ section.id }}" class="btn btn-success btn-sm">Agregar                </div>
+                    <a href="{% url 'site_images:site_image_create' %}?section={{ section.id }}" class="btn btn-success btn-sm">Agregar imagen</a>
+                </div>
                 {% endif %}
                 {% endwith %}
             </div>
             {% endfor %}
 
             <div class="sections-footer">
-                <a href="{% url 'site_images:site_image_section_create' %}" class="btn btn-secondary">Crear nueva nuevaCrear sección</a>
+                <a href="{% url 'site_images:site_image_section_create' %}" class="btn btn-secondary">Crear nueva sección</a>
             </div>
         {% else %}
         <div class="empty-state">
             <div class="empty-state-icon">📁</div>
             <h3>No hay secciones configuradas</h3>
             <p>Crea secciones para organizar las imágenes del sitio.</p>
-            <a href="{% url 'site_images:site_image_section_create' %}" class="btn btn-success">CrearCrear sección</a>
+            <a href="{% url 'site_images:site_image_section_create' %}" class="btn btn-success">Crear sección</a>
         </div>
         {% endif %}
     </div>
