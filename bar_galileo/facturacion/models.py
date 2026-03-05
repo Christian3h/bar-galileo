@@ -102,6 +102,9 @@ class FacturacionManager:
         Obtiene estadísticas básicas de facturación usando SQL directo
         """
         try:
+            # Fecha local de hoy (respeta la zona horaria configurada en Django)
+            hoy = timezone.localdate()
+
             with connection.cursor() as cursor:
                 # Total de facturas
                 cursor.execute("SELECT COUNT(*) FROM tables_factura")
@@ -112,12 +115,12 @@ class FacturacionManager:
                 total_ingresos_raw = cursor.fetchone()[0]
                 total_ingresos = float(total_ingresos_raw) if total_ingresos_raw else 0
                 
-                # Facturas de hoy (simplificado)
-                cursor.execute("SELECT COUNT(*) FROM tables_factura WHERE DATE(fecha) = DATE('now')")
+                # Facturas de hoy usando fecha local como parámetro
+                cursor.execute("SELECT COUNT(*) FROM tables_factura WHERE DATE(fecha) = %s", [hoy])
                 facturas_hoy = cursor.fetchone()[0]
                 
-                # Ingresos de hoy (simplificado)
-                cursor.execute("SELECT SUM(CAST(total AS REAL)) FROM tables_factura WHERE DATE(fecha) = DATE('now') AND total IS NOT NULL")
+                # Ingresos de hoy usando fecha local como parámetro
+                cursor.execute("SELECT SUM(CAST(total AS REAL)) FROM tables_factura WHERE DATE(fecha) = %s AND total IS NOT NULL", [hoy])
                 ingresos_hoy_raw = cursor.fetchone()[0]
                 ingresos_hoy = float(ingresos_hoy_raw) if ingresos_hoy_raw else 0
                 
