@@ -1,3 +1,4 @@
+import json
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
@@ -244,10 +245,10 @@ def user_list(request):
         )
     ).order_by('is_user_role', 'username')
     roles = Role.objects.all()
-    
+
     if request.method == 'POST':
         action = request.POST.get('action', 'change_role')
-        
+
         if action == 'change_role':
             user_id = request.POST.get('user_id')
             rol_id = request.POST.get('rol_id')
@@ -264,8 +265,48 @@ def user_list(request):
                 notificar_usuario(request.user, mensaje)
             messages.success(request, 'Cambios guardados correctamente.')
             return redirect('users:user_list')
-    
-    return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
+
+    # Construir mapa de perfiles y emergencias para el modal de datos personales
+    def fmt_tel(tel):
+        if tel and tel.startswith('+57'):
+            return '+57 ' + tel[3:]
+        elif tel:
+            return '+57 ' + tel
+        return ''
+
+    perfiles_qs = PerfilUsuario.objects.filter(
+        user__in=users
+    ).select_related('user', 'emergencia')
+
+    perfiles_map = {}
+    for perfil in perfiles_qs:
+        try:
+            emergencia = perfil.emergencia
+        except Exception:
+            emergencia = None
+
+        perfiles_map[str(perfil.user_id)] = {
+            'nombre': perfil.nombre or '',
+            'cedula': perfil.cedula or '',
+            'telefono': fmt_tel(perfil.telefono),
+            'direccion': perfil.direccion or '',
+            'email': perfil.user.email or '',
+            'emergencia_nombre': emergencia.nombre if emergencia else '',
+            'emergencia_relacion': emergencia.relacion if emergencia else '',
+            'emergencia_telefono': fmt_tel(emergencia.telefono) if emergencia else '',
+            'emergencia_telefono_alt': fmt_tel(emergencia.telefono_alt) if emergencia else '',
+            'emergencia_sangre': emergencia.sangre if emergencia else '',
+            'emergencia_alergias': emergencia.alergias if emergencia else '',
+        }
+
+    # Serializar a JSON para el modal JS
+    perfiles_json = json.dumps(perfiles_map)
+
+    return render(request, 'users/user_list.html', {
+        'users': users,
+        'roles': roles,
+        'perfiles_json': perfiles_json,
+    })
 
 from django.http import JsonResponse
 

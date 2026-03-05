@@ -815,7 +815,6 @@ a.btn-secondary {
     text-decoration: none;
     border: 2px solid var(--color-secondary);
     display: inline-block;
-    margin-bottom: 1.5rem;
     transition: all 0.3s ease;
 }
 
@@ -878,4 +877,3 @@ small {
         padding-top: 0;
     }
 }
-
