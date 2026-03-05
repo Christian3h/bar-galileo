@@ -1,5 +1,6 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load roles_tags %}
 
 {% block title %}Gestión de Imágenes - Admin{% endblock %}
 
@@ -17,15 +18,19 @@
             <p class="page-subtitle">Administra el carrusel y las imágenes de cada sección del sitio.</p>
         </div>
         <div class="page-header-actions">
+            {% if request.user|has_perm:"site_images,ver" %}
             <a href="{% url 'site_images:site_content_list' %}" class="btn btn-secondary">
                  Editar el texto de la página de inicio
             </a>
+            {% endif %}
+            {% if request.user|has_perm:"site_images,crear" %}
             <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success">
                  Nueva imagen de carrusel
             </a>
             <a href="{% url 'site_images:site_image_create' %}" class="btn btn-primary">
                  Nueva imagen del sitio
             </a>
+            {% endif %}
         </div>
     </div>
 
@@ -49,9 +54,11 @@
                     <h2> Carrusel Principal</h2>
                     <p class="section-desc">Arrastra las tarjetas para reordenar. El primer elemento visible se muestra primero en el sitio.</p>
                 </div>
+                {% if request.user|has_perm:"site_images,crear" %}
                 <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success btn-sm">
                      Agregar imagen
                 </a>
+                {% endif %}
             </div>
 
             {% if carousel_images %}
@@ -76,11 +83,15 @@
                         <p class="image-caption">{{ image.caption|truncatewords:12 }}</p>
                         {% endif %}
                         <div class="image-actions">
+                            {% if request.user|has_perm:"site_images,editar" %}
                             <a href="{% url 'site_images:carousel_image_edit' image.id %}" class="btn btn-primary btn-xs">Editar</a>
                             <button class="btn btn-warning btn-xs toggle-active" data-id="{{ image.id }}" data-type="carousel">
                                 {% if image.is_active %}Ocultar{% else %}Mostrar{% endif %}
                             </button>
+                            {% endif %}
+                            {% if request.user|has_perm:"site_images,eliminar" %}
                             <button class="btn btn-danger btn-xs delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="carousel">Eliminar</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -91,7 +102,9 @@
                 <div class="empty-state-icon"></div>
                 <h3>El carrusel está vacío</h3>
                 <p>Agrega la primera imagen para que aparezca en la portada del sitio.</p>
+                {% if request.user|has_perm:"site_images,crear" %}
                 <a href="{% url 'site_images:carousel_image_create' %}" class="btn btn-success"> Agregar primera imagen</a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -112,8 +125,12 @@
                         <span class="section-type-badge">{{ section.get_section_type_display }}</span>
                     </div>
                     <div class="header-actions">
+                        {% if request.user|has_perm:"site_images,editar" %}
                         <a href="{% url 'site_images:site_image_section_edit' section.id %}" class="btn btn-secondary btn-sm">⚙️ Editar sección</a>
+                        {% endif %}
+                        {% if request.user|has_perm:"site_images,crear" %}
                         <a href="{% url 'site_images:site_image_create' %}?section={{ section.id }}" class="btn btn-success btn-sm">Agregar imagen</a>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -138,11 +155,15 @@
                             <p class="image-caption"> {{ image.alt_text|truncatewords:10 }}</p>
                             {% endif %}
                             <div class="image-actions">
+                                {% if request.user|has_perm:"site_images,editar" %}
                                 <a href="{% url 'site_images:site_image_edit' image.id %}" class="btn btn-primary btn-xs">Editar</a>
                                 <button class="btn btn-warning btn-xs toggle-active" data-id="{{ image.id }}" data-type="site">
                                     {% if image.is_active %}Ocultar{% else %}Mostrar{% endif %}
                                 </button>
+                                {% endif %}
+                                {% if request.user|has_perm:"site_images,eliminar" %}
                                 <button class="btn btn-danger btn-xs delete-image" data-id="{{ image.id }}" data-name="{{ image.title }}" data-type="site">Eliminar</button>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -151,7 +172,9 @@
                 {% else %}
                 <div class="empty-state empty-state-sm">
                     <p>No hay imágenes en esta sección.</p>
+                    {% if request.user|has_perm:"site_images,crear" %}
                     <a href="{% url 'site_images:site_image_create' %}?section={{ section.id }}" class="btn btn-success btn-sm">Agregar imagen</a>
+                    {% endif %}
                 </div>
                 {% endif %}
                 {% endwith %}
@@ -159,14 +182,18 @@
             {% endfor %}
 
             <div class="sections-footer">
+                {% if request.user|has_perm:"site_images,crear" %}
                 <a href="{% url 'site_images:site_image_section_create' %}" class="btn btn-secondary">Crear nueva sección</a>
+                {% endif %}
             </div>
         {% else %}
         <div class="empty-state">
             <div class="empty-state-icon">📁</div>
             <h3>No hay secciones configuradas</h3>
             <p>Crea secciones para organizar las imágenes del sitio.</p>
+            {% if request.user|has_perm:"site_images,crear" %}
             <a href="{% url 'site_images:site_image_section_create' %}" class="btn btn-success">Crear sección</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>
