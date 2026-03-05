@@ -142,6 +142,27 @@ class EmpleadoUpdateView(SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("nominas:empleado_list")
     success_message = "Datos del empleado actualizados exitosamente"
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        empleado = self.object
+
+        # Inyectar empleado_id en el data-url del campo de búsqueda
+        # para que la API devuelva también el usuario ya vinculado
+        form.fields['buscar_usuario'].widget.attrs['data-url'] = (
+            f'/nominas/api/buscar-usuarios/?empleado_id={empleado.pk}'
+        )
+
+        # Ampliar queryset: usuarios sin empleado + el usuario actual del empleado
+        from django.db.models import Q as _Q
+        qs_base = User.objects.filter(empleado__isnull=True)
+        if empleado.user:
+            qs_base = User.objects.filter(
+                _Q(empleado__isnull=True) | _Q(pk=empleado.user.pk)
+            )
+        form.fields['usuario_existente'].queryset = qs_base
+
+        return form
+
     def form_valid(self, form):
         # Obtener el rol seleccionado
         rol_cargo = form.cleaned_data.get('rol_cargo')
@@ -369,22 +390,38 @@ def agregar_bonificacion(request, empleado_id):
 # Vista API para buscar usuarios disponibles
 def buscar_usuarios_disponibles(request):
     """
-    API endpoint para buscar usuarios sin empleado asignado
+    API endpoint para buscar usuarios sin empleado asignado.
+    Si se pasa ?empleado_id=<id> también incluye el usuario que ya
+    tiene ese empleado (necesario al editar un empleado existente).
     """
     query = request.GET.get('q', '').strip()
+    empleado_id = request.GET.get('empleado_id', None)
 
     if len(query) < 2:
         return JsonResponse({'results': []})
 
-    # Buscar usuarios sin empleado asignado
-    usuarios = User.objects.filter(
-        empleado__isnull=True
-    ).filter(
-        Q(username__icontains=query) |
-        Q(email__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query)
-    )[:10]  # Limitar a 10 resultados
+    # Usuarios sin empleado asignado
+    qs_filter = Q(username__icontains=query) | Q(email__icontains=query) | \
+                Q(first_name__icontains=query) | Q(last_name__icontains=query)
+
+    usuarios_disponibles = User.objects.filter(empleado__isnull=True).filter(qs_filter)
+
+    # Si estamos editando un empleado existente, incluir su usuario actual
+    # aunque ya esté vinculado (para que aparezca en la búsqueda)
+    usuario_actual_qs = User.objects.none()
+    if empleado_id:
+        try:
+            from .models import Empleado
+            empleado = Empleado.objects.get(pk=empleado_id)
+            if empleado.user:
+                usuario_actual_qs = User.objects.filter(
+                    pk=empleado.user.pk
+                ).filter(qs_filter)
+        except Exception:
+            pass
+
+    from django.db.models import QuerySet
+    usuarios = (usuarios_disponibles | usuario_actual_qs).distinct()[:10]
 
     resultados = []
     for usuario in usuarios:
