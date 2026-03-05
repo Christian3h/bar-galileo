@@ -8,9 +8,22 @@
 <div class="dashboard-container empleado-confirm">
     <h2 class="dashboard-title">Confirmar Eliminación</h2>
 
+    {% if tiene_pagos %}
+    <div class="alert alert-warning" role="alert">
+        <i class="fa fa-exclamation-triangle"></i>
+        <strong>Atención:</strong> El empleado <strong>{{ object.nombre }}</strong> tiene
+        <strong>{{ total_pagos }}</strong> pago(s) registrado(s) y <strong>no puede ser eliminado</strong>.
+        {% if object.user %}
+        Al confirmar, su rol será cambiado a <strong>Usuario</strong> en lugar de eliminar el registro.
+        {% else %}
+        Debe eliminar todos sus pagos antes de poder eliminar al empleado.
+        {% endif %}
+    </div>
+    {% else %}
     <p class="mb-3 empleado-delete-text">
         Esta acción no se puede deshacer. ¿Deseas eliminar al empleado <strong>{{ object.nombre }}</strong>?
     </p>
+    {% endif %}
 
     <section class="perfil-panel empleado-delete-panel">
         <ul class="perfil-datos">
@@ -26,6 +39,10 @@
                 <span class="label">Estado actual:</span>
                 <span class="value">{{ object.get_estado_display }}</span>
             </li>
+            <li>
+                <span class="label">Pagos registrados:</span>
+                <span class="value">{{ total_pagos }}</span>
+            </li>
         </ul>
     </section>
 
@@ -33,7 +50,19 @@
         {% csrf_token %}
         <div class="buttons-group right">
             <a href="{% url 'nominas:empleado_list' %}" class="btn btn-secondary">Cancelar</a>
+            {% if tiene_pagos %}
+                {% if object.user %}
+                <button type="submit" class="btn btn-warning">
+                    <i class="fa fa-user"></i> Cambiar rol a Usuario
+                </button>
+                {% else %}
+                <a href="{% url 'nominas:empleado_detail' object.pk %}" class="btn btn-primary">
+                    <i class="fa fa-arrow-left"></i> Ver pagos del empleado
+                </a>
+                {% endif %}
+            {% else %}
             <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            {% endif %}
         </div>
     </form>
 </div>

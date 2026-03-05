@@ -241,7 +241,47 @@ class EmpleadoDeleteView(SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy("nominas:empleado_list")
     success_message = "Empleado eliminado exitosamente"
 
-    def delete(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        empleado = self.get_object()
+        context['total_pagos'] = empleado.pagos.count()
+        context['tiene_pagos'] = context['total_pagos'] > 0
+        return context
+
+    def post(self, request, *args, **kwargs):
+        empleado = self.get_object()
+        tiene_pagos = empleado.pagos.exists()
+
+        if tiene_pagos:
+            # No se puede eliminar si tiene pagos registrados.
+            # Si tiene usuario vinculado, degradar su rol a 'Usuario'.
+            if empleado.user:
+                rol_usuario = Role.objects.filter(nombre__iexact='Usuario').first()
+                if rol_usuario:
+                    UserProfile.objects.update_or_create(
+                        user=empleado.user,
+                        defaults={'rol': rol_usuario}
+                    )
+                    messages.warning(
+                        request,
+                        f"El empleado '{empleado.nombre}' tiene {empleado.pagos.count()} pago(s) registrado(s) "
+                        "y no puede ser eliminado. Su rol fue cambiado a 'Usuario'."
+                    )
+                else:
+                    messages.error(
+                        request,
+                        f"El empleado '{empleado.nombre}' tiene pagos registrados y no puede ser eliminado. "
+                        "Elimine primero todos sus pagos."
+                    )
+            else:
+                messages.error(
+                    request,
+                    f"El empleado '{empleado.nombre}' tiene {empleado.pagos.count()} pago(s) registrado(s) "
+                    "y no puede ser eliminado. Elimine primero todos sus pagos."
+                )
+            return redirect(self.success_url)
+
+        # Sin pagos: eliminar normalmente
         messages.success(self.request, self.success_message)
         return super(EmpleadoDeleteView, self).delete(request, *args, **kwargs)
 
@@ -365,6 +405,23 @@ def agregar_pago(request, empleado_id):
         'form': form,
         'empleado': empleado
     })
+
+def eliminar_pago(request, pago_id):
+    """Elimina un pago. Solo acepta POST."""
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    pago = get_object_or_404(Pago, pk=pago_id)
+    empleado_pk = pago.empleado.pk
+
+    if request.method == 'POST':
+        pago.delete()
+        messages.success(request, 'Pago eliminado exitosamente.')
+    else:
+        messages.error(request, 'Método no permitido.')
+
+    return redirect('nominas:empleado_detail', pk=empleado_pk)
+
 
 def agregar_bonificacion(request, empleado_id):
     empleado = get_object_or_404(Empleado, pk=empleado_id)
