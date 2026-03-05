@@ -106,8 +106,8 @@
     padding: 0.75rem 1rem;
     border: 2px solid var(--color-secondary);
     border-radius: 6px;
-    background: transparent;
-    color: var(--color-text);
+    background: var(--color-surface-alt);
+    color: var(--color-secondary);
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
@@ -119,13 +119,25 @@
     box-shadow: 0 0 5px var(--color-primary);
 }
 
+/* Flecha select - tema claro (secondary = #4a4a4a) */
 .field-group select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23A68932' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='feather feather-chevron-down'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%234a4a4a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 1em;
     padding-right: 2.5rem;
+}
+
+/* Flecha select - tema oscuro (secondary = #a68932) */
+[data-theme="dark"] .field-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a68932' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
+}
+
+/* Options heredan el fondo del tema */
+.field-group select option {
+    background: var(--color-surface-alt);
+    color: var(--color-secondary);
 }
 
 .buttons-group {
