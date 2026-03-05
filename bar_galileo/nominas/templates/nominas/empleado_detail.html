@@ -178,6 +178,7 @@
                                 <th>Monto</th>
                                 <th class="descripcionCol">Descripción</th>
                                 <th class="comprobanteCol" {% if not pagos %}style="display: none;"{% endif %}>Comprobante</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -199,10 +200,16 @@
                                         <span class="text-muted">Sin comprobante</span>
                                     {% endif %}
                                 </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar pago"
+                                            onclick="confirmarEliminarPago('{% url 'nominas:pago_eliminar' pago.id %}', '{{ pago.monto|format_price }}', '{{ pago.fecha_pago }}')">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="5" class="text-center" style="color: var(--color-secondary);">No hay pagos registrados</td>
+                                <td colspan="6" class="text-center" style="color: var(--color-secondary);">No hay pagos registrados</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -445,5 +452,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Eliminar pago con modal de confirmación (global para que el onclick lo encuentre)
+async function confirmarEliminarPago(actionUrl, monto, fecha) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Pago',
+        message: `¿Estás seguro de que deseas eliminar el pago de $${monto} del ${fecha}? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    if (confirmed) {
+        const form = document.getElementById('delete-pago-form');
+        form.action = actionUrl;
+        form.submit();
+    }
+}
 </script>
+
+<!-- Formulario oculto para eliminar pagos -->
+<form id="delete-pago-form" method="post" style="display:none;">
+    {% csrf_token %}
+</form>
 {% endblock %}

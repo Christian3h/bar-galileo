@@ -225,7 +225,7 @@ class PagoForm(forms.ModelForm):
             'monto': forms.NumberInput(attrs={'class': 'form-control'}),
             'tipo': forms.Select(attrs={'class': 'form-control'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'comprobante': forms.FileInput(attrs={'class': 'form-control'}),
+            'comprobante': forms.FileInput(attrs={'class': 'form-control', 'accept': '.jpg,.jpeg,.png,.pdf'}),
         }
 
     def clean_monto(self):
@@ -255,16 +255,29 @@ class PagoForm(forms.ModelForm):
         return empleado
     
     def clean_comprobante(self):
+        import os
         comprobante = self.cleaned_data.get('comprobante')
         if comprobante:
             # Validar tamaño (máximo 5MB)
             if comprobante.size > 5 * 1024 * 1024:
                 raise forms.ValidationError('El archivo no puede superar 5MB.')
-            
-            # Validar tipo de archivo
+
+            # Validar extensión del archivo
+            allowed_extensions = ['.jpg', '.jpeg', '.png', '.pdf']
+            ext = os.path.splitext(comprobante.name)[1].lower()
+            if ext not in allowed_extensions:
+                raise forms.ValidationError(
+                    f'Formato no permitido ({ext or "sin extensión"}). '
+                    'Solo se aceptan imágenes JPG/PNG o archivos PDF.'
+                )
+
+            # Validar content_type como segunda capa de seguridad
             allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf']
             if comprobante.content_type not in allowed_types:
-                raise forms.ValidationError('Solo se permiten imágenes (JPG, PNG) o archivos PDF.')
+                raise forms.ValidationError(
+                    'El tipo de archivo no está permitido. '
+                    'Solo se aceptan imágenes JPG/PNG o archivos PDF.'
+                )
         return comprobante
 
 class BonificacionForm(forms.ModelForm):
