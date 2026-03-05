@@ -150,7 +150,7 @@ $(document).ready(function() {
         pageLength: 10,
         lengthChange: true,
         ordering: true,
-        columnDefs: [ { targets: '_all', defaultContent: '' } ]
+        columnDefs: [ { targets: '_all', defaultContent: '' }, { targets: -1, orderable: false, searchable: false } ]
     });
 });
 </script>

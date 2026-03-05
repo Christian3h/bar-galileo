@@ -71,7 +71,8 @@ $(document).ready(function() {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
         columnDefs: [
-            { targets: '_all', defaultContent: '' }
+            { targets: '_all', defaultContent: '' },
+            { targets: -1, orderable: false, searchable: false }  // Acciones
         ],
         responsive: { details: { type: 'inline' } }
     });
