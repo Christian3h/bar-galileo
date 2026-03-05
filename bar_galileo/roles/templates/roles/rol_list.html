@@ -73,7 +73,8 @@
         }
         $(sel).DataTable({
             columnDefs: [
-                { targets: '_all', defaultContent: '' }
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false, searchable: false }  // Acciones
             ],
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"

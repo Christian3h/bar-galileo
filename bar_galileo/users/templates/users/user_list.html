@@ -542,7 +542,9 @@ $(document).ready(function() {
     $(sel).DataTable({
         columnDefs: [
             { targets: '_all', defaultContent: '' },
-            { targets: -1, orderable: false }
+            { targets: [0, 1], searchable: true },   // Nombre y Correo: buscables
+            { targets: '_all', searchable: false },   // Todo lo demás: no buscable
+            { targets: -1, orderable: false }         // Acciones: no ordenable
         ],
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"

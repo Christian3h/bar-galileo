@@ -366,7 +366,7 @@
                 dom: 'rt<"d-flex justify-content-between align-items-center mt-3"ip>',
                 columnDefs: [
                     { targets: '_all', defaultContent: '' },
-                    { targets: 5, orderable: false } // Columna de acciones no ordenable
+                    { targets: 5, orderable: false, searchable: false } // Columna de acciones no ordenable ni buscable
                 ],
                 language: {
                     url: "{% static 'js/DataTables/es-ES.json' %}"

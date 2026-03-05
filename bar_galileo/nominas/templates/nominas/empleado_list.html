@@ -178,7 +178,11 @@
                     first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior'
                 }
             },
-            order: [[0, 'asc']]
+            order: [[0, 'asc']],
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false, searchable: false }  // Acciones
+            ]
         });
     });
 </script>
