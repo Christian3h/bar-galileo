@@ -279,7 +279,7 @@
                     <tr>
                         <th class="col-1">Nombre de Usuario</th>
                         <th class="col-2">Correo Electrónico</th>
-                        <th class="col-3">Rol</th>
+                        {% if request.user|has_perm:"users,editar" %}<th class="col-3">Rol</th>{% endif %}
                         <th class="col-4">Acciones</th>
                     </tr>
                 </thead>
@@ -288,6 +288,7 @@
                     <tr>
                         <td class="col-1">{{ user.username }}</td>
                         <td class="col-2">{{ user.email }}</td>
+                        {% if request.user|has_perm:"users,editar" %}
                         <td class="col-3">
                             <form method="post" action="{% url 'users:user_list' %}" style="margin:0; display: inline-block;">
                                 {% csrf_token %}
@@ -308,6 +309,7 @@
                                 <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
                             </form>
                         </td>
+                        {% endif %}
                         <td class="col-4 actions-cell">
                             {% if request.user|has_perm:"users,editar" %}
                                 <button type="button"
