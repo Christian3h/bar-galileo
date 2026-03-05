@@ -15,7 +15,7 @@ class ExpenseForm(forms.ModelForm):
             'receipt': 'Recibo',
         }
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
+            'date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
         }
     
     def clean_amount(self):

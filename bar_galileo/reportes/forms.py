@@ -35,11 +35,11 @@ class ReporteForm(forms.ModelForm):
             'fecha_inicio': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
-            }),
+            }, format='%Y-%m-%d'),
             'fecha_fin': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
-            }),
+            }, format='%Y-%m-%d'),
             'archivo': forms.FileInput(attrs={
                 'class': 'form-control'
             }),
