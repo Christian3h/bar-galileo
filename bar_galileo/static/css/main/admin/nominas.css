@@ -487,8 +487,8 @@
         gap: 0.5rem;
     }
 
-    /* Responsive table columns - Ocultar en tablets */
-    .estadoCol, .tipoContratoCol {
+    /* Responsive table columns - En móvil solo mostrar Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
 }
@@ -506,8 +506,8 @@
         font-size: 1.5rem;
     }
 
-    /* Ocultar más columnas en móviles pequeños */
-    .fechaContratacionCol, .usuarioCol {
+    /* En móviles pequeños también solo Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
 
@@ -544,15 +544,15 @@
    RESPONSIVE TABLE COLUMNS
 ======================================= */
 @media (max-width: 992px) {
-    /* Tablets - Ocultar columnas secundarias */
-    .estadoCol, .tipoContratoCol {
+    /* Tablets - Ocultar algunas columnas para dar más espacio */
+    .col-3, .estadoCol, .tipoContratoCol {
         display: none;
     }
 }
 
 @media (max-width: 768px) {
-    /* Móviles - Ocultar más columnas */
-    .fechaContratacionCol {
+    /* Móviles - Solo mostrar Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
     .empleado-perfil-page .perfil-panel {
@@ -561,8 +561,8 @@
 }
 
 @media (max-width: 576px) {
-    /* Móviles pequeños - Mantener solo lo esencial */
-    .usuarioCol {
+    /* Móviles pequeños - Solo mostrar Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
 

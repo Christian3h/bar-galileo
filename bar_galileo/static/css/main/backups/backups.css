@@ -2,6 +2,7 @@
  * Estilos para el módulo de Gestión de Backups
  * Bar Galileo - Sistema de Backups Encriptados
  */
+@import "../../_variables/_colors.css";
 
 /* Badges de tipo de backup */
 .backup-type-badge {
@@ -58,30 +59,30 @@
 }
 
 .modal-content {
-    background-color: var(--card-bg, #262626);
+    background-color: var(--color-light);
     margin: 10% auto;
     padding: 25px;
-    border: 1px solid var(--border-color, #444);
+    border: 1px solid var(--color-gray);
     width: 90%;
     max-width: 600px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative;
-    color: var(--text-color, #fff);
+    color: var(--color-secondary);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-color, #444);
+    border-bottom: 1px solid var(--color-gray);
     padding-bottom: 15px;
     margin-bottom: 20px;
 }
 
 .modal-header h3 {
     margin: 0;
-    color: var(--primary-color, #d4af37);
+    color: var(--color-secondary);
     font-size: 1.5rem;
 }
 
@@ -95,12 +96,12 @@
 }
 
 .modal-body strong {
-    color: var(--primary-color, #d4af37);
+    color: var(--color-secondary);
     word-break: break-all;
 }
 
 .modal-footer {
-    border-top: 1px solid var(--border-color, #444);
+    border-top: 1px solid var(--color-gray);
     padding-top: 20px;
     margin-top: 20px;
     display: flex;
@@ -132,30 +133,18 @@
     display: block;
     margin-bottom: 5px;
     font-weight: 600;
-    color: var(--text-color, #fff);
+    color: var(--color-secondary);
 }
 
 .field-group select,
 .field-group input {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--border-color, #444);
+    border: 1px solid var(--color-gray);
     border-radius: 5px;
-    background-color: var(--input-bg, #1a1a1a);
-    color: var(--text-color, #fff);
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
     font-size: 14px;
-}
-
-.alert-warning {
-    background-color: rgba(255, 193, 7, 0.1);
-    border-left: 4px solid #ffc107;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 15px 0;
-}
-
-.alert-warning strong {
-    color: #ffc107;
 }
 
 /* Tabs del modal de restauración */
@@ -165,19 +154,19 @@
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    color: #888;
+    color: var(--color-gray);
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .tab-btn.active {
-    border-bottom: 3px solid var(--primary-color, #d4af37);
-    color: var(--primary-color, #d4af37);
+    border-bottom: 3px solid var(--color-secondary);
+    color: var(--color-secondary);
 }
 
 .tab-btn:hover {
-    color: var(--primary-color, #d4af37);
+    color: var(--color-secondary);
 }
 
 /* Responsive */

@@ -22,7 +22,7 @@
                             <th>Imagen</th>
                             <th>Nombre</th>
                             <th>Precio Venta</th>
-                            <th>Stock</th>
+                            <th>Cantidad</th>
                             <th>Categoría</th>
                             <th>Acciones</th>
                         </tr>
@@ -58,9 +58,10 @@
                                         </a>
                                     {% endif %}
                                     {% if request.user|has_perm:"products,eliminar" %}
-                                        <a href="{% url 'products:producto_eliminar' producto.id_producto %}" class="btn btn-sm btn-danger" title="Eliminar {{ producto.nombre }}">
+                                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar {{ producto.nombre }}"
+                                            onclick="confirmarEliminarProducto({{ producto.id_producto }}, '{{ producto.nombre|escapejs }}')">
                                             <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar" style="width:16px; height:16px;">
-                                        </a>
+                                        </button>
                                     {% endif %}
                                 </div>
                             </td>
@@ -76,10 +77,30 @@
         </div>
     </div>
 
+    <!-- Formulario oculto para eliminación de producto -->
+    <form id="delete-producto-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+
 {% endblock %}
 
 {% block extra_js %}
     <script>
+    async function confirmarEliminarProducto(productoId, productoNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Producto',
+            message: `¿Estás seguro de que deseas eliminar el producto "${productoNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-producto-form');
+            form.action = `/adminD/products/delete/${productoId}/`;
+            form.submit();
+        }
+    }
+
     $(document).ready(function() {
         const sel = '#tabla-productos-simple';
         if ($(sel).length) {

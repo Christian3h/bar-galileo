@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", function() {
         buttonColor: getCSSVariable('--color-primary') || '#62733d',
         buttonIconColor: getCSSVariable('--color-secondary') || '#a68932',
         highlightColor: getCSSVariable('--color-secondary') || '#a68932',
-        menuBackgroundColor: getCSSVariable('--color-light') || '#262626',
-        menuTextColor: getCSSVariable('--color-accent') || '#ffffff',
+        menuBackgroundColor: 'var(--color-surface-alt)',
+        menuTextColor: 'var(--color-secondary)',
         customLabels: {}
     };
 
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .asw-menu-header div[role=button]:hover, .asw-minus:hover, .asw-plus:hover { opacity: .8; }
         .asw-menu-header div[role=button] img { filter: brightness(0) invert(1); transition: opacity 0.3s; }
         .asw-items { display: flex; gap: 10px; padding: 0; list-style: none; flex-wrap: wrap; justify-content: space-between; }
-        .asw-btn { width: 140px; height: 120px; border-radius: 8px; padding: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: #fff; background: #3a3a3a; border: 3px solid #3a3a3a; transition: all .3s; cursor: pointer; }
+        .asw-btn { width: 140px; height: 120px; border-radius: 8px; padding: 15px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; color: var(--color-secondary); background: var(--color-surface); border: 3px solid var(--color-surface); transition: all .3s; cursor: pointer; }
         .asw-btn .material-icons { margin-bottom: 16px; }
         .asw-btn:hover { border-color: ${options.highlightColor}; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         .asw-btn.asw-selected { !important; border-color: ${options.highlightColor} !important; box-shadow: 0 0 0 3px rgba(166, 137, 50, 0.3), 0 4px 12px rgba(166, 137, 50, 0.5) !important; transform: scale(1.02); font-weight: 600; }
@@ -137,8 +137,8 @@ document.addEventListener("DOMContentLoaded", function() {
         .asw-footer a { text-decoration: underline; color: #fff; background: 0 0 !important; }
         .asw-menu-content { overflow: scroll; max-height: calc(100% - 80px); }
         .asw-card { margin: 0 15px 30px; }
-        .asw-card-title { font-size: 18px; padding: 15px 0; color: #4a4a4a; font-weight: 600; }
-        .asw-adjust-font { background: #3a3a3a; padding: 20px 25px; margin-bottom: 16px; color: #fff; }
+        .asw-card-title { font-size: 18px; padding: 15px 0; color: var(--color-secondary); font-weight: 600; }
+        .asw-adjust-font { background: var(--color-surface); padding: 20px 25px; margin-bottom: 16px; color: var(--color-secondary); }
         .asw-adjust-font .label { display: flex; align-items: center; }
         .asw-adjust-font > div { display: flex; justify-content: space-between; margin-top: 20px; align-items: center; font-size: 16px; font-weight: 700; }
         .asw-adjust-font div[role=button] { background: #62733d; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; }
@@ -951,7 +951,15 @@ document.addEventListener("DOMContentLoaded", function() {
         t.addEventListener("click", function(t) {
             h(t), e()
         }, !1)
-    }), document.body.appendChild(r), s && (u(), 1 !== t.states.fontSize && h(null, t.states.fontSize), t.states.contrast && p(t.states.contrast));
+    }), document.body.appendChild(r),
+    // Inyectar overrides de tema en <head> para que var() resuelva correctamente con el tema activo
+    c(`
+        .asw-menu { background: var(--color-surface-alt) !important; color: var(--color-secondary) !important; }
+        .asw-btn { background: var(--color-surface) !important; color: var(--color-secondary) !important; border-color: var(--color-surface) !important; }
+        .asw-adjust-font { background: var(--color-surface) !important; color: var(--color-secondary) !important; }
+        .asw-card-title { color: var(--color-secondary) !important; }
+    `, "asw-theme-overrides"),
+    s && (u(), 1 !== t.states.fontSize && h(null, t.states.fontSize), t.states.contrast && p(t.states.contrast));
 
     // Inicializar tema desde localStorage
     const savedTheme = localStorage.getItem('bar-galileo-theme');

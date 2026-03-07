@@ -4,7 +4,7 @@ attrs==25.3.0
 autobahn==24.4.2
 Automat==25.4.16
 certifi==2025.7.14
-cffi==1.17.1
+cffi>=1.17.1
 channels==4.3.1
 charset-normalizer==3.4.2
 click==8.2.1
@@ -33,7 +33,7 @@ playwright==1.55.0
 psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
-pycparser==2.22
+pycparser>=2.22
 pyee==13.0.0
 PyJWT==2.10.1
 pyOpenSSL==25.1.0

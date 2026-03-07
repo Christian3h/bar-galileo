@@ -30,7 +30,7 @@
         <div class="notification-icon" id="notification-icon">
             <span id="icono-notification"> <img width="50px" src="{% static 'img/icons/notifications.svg' %}" alt=""> </span>
             <span class="notification-badge" id="notification-badge">0</span>
-            <div class="notifications-panel" id="notifications-panel">
+            <div class="notifications-panel sidebar-panel" id="notifications-panel">
                 <div class="notification-header">
                     <h4>Notificaciones</h4>
                     <button id="mark-all-as-read">Marcar todas como leídas</button>
@@ -51,7 +51,7 @@
             <img src="{% static 'img/icons/group.svg' %}" alt="Panel">Panel de Usuario
           </a>
           <a href="{% url 'account_email' %}" class="menu-btn">
-            <img src="{% static 'img/icons/email.svg' %}" alt="Email">Email
+            <img src="{% static 'img/icons/email.svg' %}" alt="Correo">Correo
           </a>
           <a href="{% url 'account_change_password' %}" class="menu-btn">
             <img src="{% static 'img/icons/password.svg' %}" alt="Contraseña">Cambiar Contraseña
@@ -136,7 +136,11 @@
                   <label for="avatar-upload" class="edit-btn">Subir/Cambiar Foto</label>
                   <input id="avatar-upload" type="file" name="avatar" accept="image/*" class="hidden-input" onchange="this.form.submit()">
                   {% if datos.avatar_url %}
-                      <button type="submit" name="delete_avatar" value="1" class="edit-btn" onclick="return confirm('¿Seguro que quieres eliminar tu foto de perfil?');">Eliminar Foto</button>
+                      <button type="submit" name="delete_avatar" value="1" class="edit-btn"
+                          data-feedback-confirm="¿Seguro que quieres eliminar tu foto de perfil?"
+                          data-feedback-confirm-title="Eliminar Foto"
+                          data-feedback-confirm-ok="Eliminar"
+                          data-feedback-confirm-cancel="Cancelar">Eliminar Foto</button>
                   {% endif %}
               </form>
           </div>
@@ -154,7 +158,7 @@
                   <div class="info-input text-left">{% if datos.telefono %}{% if datos.telefono|slice:":3" == '+57' %}+57 {{ datos.telefono|slice:"3:" }}{% else %}+57 {{ datos.telefono }}{% endif %}{% else %}{{ datos.telefono }}{% endif %}</div>
             </div>
             <div class="form-field-col">
-              <label class="form-label">Email:</label>
+              <label class="form-label">Correo electrónico:</label>
               <div class="info-input text-left">{{ datos.email }}</div>
             </div>
             <div class="form-field-col">
@@ -179,7 +183,7 @@
               <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:":3" == '+57' %}{{ datos.telefono|slice:"3:" }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
-              <label for="email" class="form-label">Email:</label>
+              <label for="email" class="form-label">Correo electrónico:</label>
               <input type="email" id="email" name="email" value="{{ datos.email }}" class="info-input">{% if datos.info_errors.email %}<div class="form-error">{{ datos.info_errors.email }}</div>{% endif %}
             </div>
             <div class="form-field-col">
@@ -188,7 +192,11 @@
             </div>
 
             <button type="submit">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_info' %}" onclick="return confirm('¿Seguro que deseas borrar tu información personal?');">Borrar Información</button>
+            <button type="submit" formaction="{% url 'users:borrar_info' %}"
+                data-feedback-confirm="¿Seguro que deseas borrar tu información personal?"
+                data-feedback-confirm-title="Borrar Información"
+                data-feedback-confirm-ok="Borrar"
+                data-feedback-confirm-cancel="Cancelar">Borrar Información</button>
             <button type="button" onclick="toggleInfoForm(false)">Cancelar</button>
           </form>
         </div>
@@ -267,7 +275,11 @@
               <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input">
             </div>
             <button type="submit">Guardar Cambios</button>
-            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}" onclick="return confirm('¿Seguro que deseas borrar el contacto de emergencia?');">Borrar Contacto</button>
+            <button type="submit" formaction="{% url 'users:borrar_emergencia' %}"
+                data-feedback-confirm="¿Seguro que deseas borrar el contacto de emergencia?"
+                data-feedback-confirm-title="Borrar Contacto"
+                data-feedback-confirm-ok="Borrar"
+                data-feedback-confirm-cancel="Cancelar">Borrar Contacto</button>
             <button type="button" onclick="toggleEmergenciaForm(false)">Cancelar</button>
           </form>
         </div>
@@ -299,11 +311,9 @@
                 </div>
 
                 <div class="footer-section">
-                    <h4>Servicios</h4>
+                    <h4>Manual de Usuario</h4>
                     <ul>
-                        <li><a href="{% url 'core:store' %}">Tienda</a></li>
-                        <li><a href="{% url 'core:index' %}#reservas-section">Reservas</a></li>
-                        <li><a href="{% url 'core:index' %}#cocktails-section">Eventos Privados</a></li>
+                        <li><a href="{% static 'docs/MANUAL_USUARIO.pdf' %}" target="_blank" rel="noopener">📄 Manual de Cliente</a></li>
                     </ul>
                 </div>
 
@@ -320,7 +330,7 @@
                         </div>
                         <div class="contact-item">
                             <i>📍</i>
-                            <span>Sogamoso,Boyaca</span>
+                            <span>Sogamoso, Boyacá</span>
                         </div>
                         <div class="contact-item">
                             <i>🕒</i>
@@ -344,6 +354,7 @@
     </footer>
 
     <!-- Scripts -->
+    <script src="{% static 'js/ui/feedback.js' %}"></script>
     <script src="{% static 'js/panel_usuario.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
     <script src="{% static 'accessibility/sienna.js' %}"></script>
