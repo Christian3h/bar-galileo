@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.html import strip_tags
 from .models import SiteImage, CarouselImage, SiteImageSection
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import UploadedFile
@@ -23,6 +24,18 @@ class SiteImageSectionForm(forms.ModelForm):
                 'rows': 3
             }),
         }
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if name:
+            name = strip_tags(name)
+        return name
+
+    def clean_description(self):
+        description = self.cleaned_data.get('description')
+        if description:
+            description = strip_tags(description)
+        return description
 
 
 class SiteImageForm(forms.ModelForm):
@@ -74,6 +87,18 @@ class SiteImageForm(forms.ModelForm):
                 )
 
         return image
+
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+        if title:
+            title = strip_tags(title)
+        return title
+
+    def clean_alt_text(self):
+        alt_text = self.cleaned_data.get('alt_text')
+        if alt_text:
+            alt_text = strip_tags(alt_text)
+        return alt_text
 
 
 class CarouselImageForm(forms.ModelForm):
@@ -130,6 +155,24 @@ class CarouselImageForm(forms.ModelForm):
                 )
 
         return image
+
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+        if title:
+            title = strip_tags(title)
+        return title
+
+    def clean_alt_text(self):
+        alt_text = self.cleaned_data.get('alt_text')
+        if alt_text:
+            alt_text = strip_tags(alt_text)
+        return alt_text
+
+    def clean_caption(self):
+        caption = self.cleaned_data.get('caption')
+        if caption:
+            caption = strip_tags(caption)
+        return caption
 
 
 class BulkCarouselReorderForm(forms.Form):
