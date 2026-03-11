@@ -248,11 +248,22 @@ function renderizarResultadosBusquedaUsuarios(terminoBusqueda) {
 
 async function gestionarUsuarioEnPedido(userId, action) {
   try {
-    await apiFetch(`/api/pedidos/${pedidoActual.id}/usuarios/`, {
+    let url, body;
+    if (pedidoActual.id === null || pedidoActual.id === undefined) {
+      url = `/api/pedidos/usuarios/`;
+      body = JSON.stringify({ user_id: userId, action: action, mesa_id: mesaActualId });
+    } else {
+      url = `/api/pedidos/${pedidoActual.id}/usuarios/`;
+      body = JSON.stringify({ user_id: userId, action: action });
+    }
+    const result = await apiFetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
-      body: JSON.stringify({ user_id: userId, action: action }),
+      body: body,
     });
+    if (result.pedido_id && !pedidoActual.id) {
+      pedidoActual.id = result.pedido_id;
+    }
 
     const data = await apiFetch(`/api/mesas/${mesaActualId}/pedido/`);
     pedidoActual = data.pedido;
