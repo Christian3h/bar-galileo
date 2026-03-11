@@ -56,7 +56,6 @@ def editar_info(request):
     request.user.email = email
     request.user.save()
     notificar_usuario(request.user, '¡Información personal actualizada correctamente!')
-    messages.success(request, 'Cambios guardados correctamente.')
     return redirect('users:panel_usuario')
 
 @require_POST
@@ -79,7 +78,6 @@ def borrar_info(request):
     request.user.email = ''
     request.user.save()
     notificar_usuario(request.user, '¡Información personal y contacto de emergencia borrados correctamente!')
-    messages.success(request, 'Registro eliminado correctamente.')
     return redirect('users:panel_usuario')
 
 @require_POST
@@ -126,7 +124,6 @@ def editar_emergencia(request):
     emergencia.alergias = alergias
     emergencia.save()
     notificar_usuario(request.user, '¡Contacto de emergencia actualizado correctamente!')
-    messages.success(request, 'Cambios guardados correctamente.')
     return redirect('users:panel_usuario')
 
 @require_POST
@@ -145,7 +142,6 @@ def borrar_emergencia(request):
         emergencia.save()
         logger.warning(f"Emergencia borrada para perfil {perfil.id}: {emergencia.__dict__}")
         notificar_usuario(request.user, '¡Contacto de emergencia borrado correctamente!')
-        messages.success(request, 'Registro eliminado correctamente.')
     else:
         logger.warning(f"No se encontró emergencia para perfil {perfil.id}")
     return redirect('users:panel_usuario')
@@ -159,7 +155,6 @@ def panel_usuario(request):
             if perfil.avatar:
                 perfil.avatar.delete(save=True)
                 notificar_usuario(request.user, '¡Foto de perfil eliminada!')
-                messages.success(request, 'Registro eliminado correctamente.')
             return redirect('users:panel_usuario')
 
         if 'avatar' in request.FILES:
@@ -173,11 +168,9 @@ def panel_usuario(request):
                 file_name = f"{request.user.id}_avatar.webp"
                 perfil.avatar.save(file_name, ContentFile(buffer.read()), save=True)
                 notificar_usuario(request.user, '¡Foto de perfil actualizada!')
-                messages.success(request, 'Cambios guardados correctamente.')
 
             except Exception as e:
                 notificar_usuario(request.user, f"Error al procesar la imagen: {e}")
-                messages.error(request, 'Ocurrió un error. Intente nuevamente.')
 
             return redirect('users:panel_usuario')
 
@@ -263,7 +256,6 @@ def user_list(request):
             # Solo notificar si el usuario está autenticado
             if request.user.is_authenticated:
                 notificar_usuario(request.user, mensaje)
-            messages.success(request, 'Cambios guardados correctamente.')
             return redirect('users:user_list')
 
     # Construir mapa de perfiles y emergencias para el modal de datos personales
@@ -375,11 +367,9 @@ def cambiar_password(request):
         
         # Notificar éxito
         notificar_usuario(request.user, f'La contraseña de "{usuario.username}" ha sido cambiada exitosamente. Este cambio ha sido registrado en el sistema de auditoría.')
-        messages.success(request, 'Cambios guardados correctamente.')
         
     except Exception as e:
         notificar_usuario(request.user, f'Error al cambiar la contraseña: {str(e)}')
-        messages.error(request, 'Ocurrió un error. Intente nuevamente.')
     
     return redirect('users:user_list')
 
