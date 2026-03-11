@@ -143,3 +143,42 @@ table.dataTable tfoot th {
   text-align: left !important;
   margin-bottom: 0.5rem !important;
 }
+
+/* =======================================
+ * CENTRAR BOTONES DE ACCIÓN EN TABLAS
+ * ======================================= */
+
+/* Para tablas DataTables, centrar contenido de la última columna (acciones) */
+.dataTables_wrapper table.dataTable td:last-child,
+.dataTables_wrapper table.dataTable th:last-child {
+  text-align: center !important;
+}
+
+/* Contenedor flex para botones de acción en celdas */
+.dataTables_wrapper table.dataTable td:last-child {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+/* Asegurar que botones dentro de celdas de acción se vean bien */
+.dataTables_wrapper table.dataTable td:last-child .btn,
+.dataTables_wrapper table.dataTable td:last-child button,
+.dataTables_wrapper table.dataTable td:last-child a.btn {
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Para tablas específicas que ya tienen actions-cell, mantener compatibilidad */
+.actions-cell {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.actions-cell .btn {
+  margin: 0 !important;
+}

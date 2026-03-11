@@ -24,7 +24,7 @@
                         <tr>
                             <td class="col-1">{{ categoria.nombre_categoria }}</td>
                             <td class="col-2">{{ categoria.descripcion }}</td>
-                            <td>
+                            <td class="actions-cell">
                                 {% if request.user|has_perm:"categories,editar" %}
                                     <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning" title="Editar categoría"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                                 {% endif %}

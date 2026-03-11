@@ -2,6 +2,7 @@ from django import forms
 from allauth.account.forms import LoginForm, AddEmailForm
 from allauth.account.models import EmailAddress
 from captcha.fields import CaptchaField
+from django.utils.html import strip_tags
 
 class CustomLoginForm(LoginForm):
     captcha = CaptchaField(label='Captcha')
@@ -11,6 +12,12 @@ class CustomLoginForm(LoginForm):
         self.fields['login'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Usuario'})
         self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Contraseña'})
 
+    def clean_login(self):
+        login = super().clean_login()
+        if login:
+            login = strip_tags(login)
+        return login
+
 class CustomAddEmailForm(AddEmailForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
@@ -18,6 +25,8 @@ class CustomAddEmailForm(AddEmailForm):
 
     def clean_email(self):
         email = super().clean_email()
+        if email:
+            email = strip_tags(email)
         if self.request and self.request.user.is_authenticated:
             if self.request.user.emailaddress_set.filter(email__iexact=email).exists():
                 raise forms.ValidationError("Esta dirección de correo ya está asociada a tu cuenta.")
