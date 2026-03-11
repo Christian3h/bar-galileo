@@ -49,7 +49,6 @@ class MesaCreateView(CreateView):
         
         mensaje = f"Se ha creado la nueva mesa: '{self.object.nombre}'."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(self.request, 'Registro creado correctamente.')
             
         return response
 
@@ -70,7 +69,6 @@ class MesaUpdateView(UpdateView):
 
         mensaje = f"La mesa '{self.object.nombre}' ha sido actualizada."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(self.request, 'Cambios guardados correctamente.')
 
         return response
 
@@ -107,7 +105,6 @@ class MesaDeleteView(DeleteView):
 
         mensaje = f"Mesa '{mesa_nombre}' eliminada correctamente."
         notificar_usuario(request.user, mensaje)
-        messages.success(request, 'Registro eliminado correctamente.')
         
         return response
 
