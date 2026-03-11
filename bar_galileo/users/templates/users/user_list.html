@@ -451,7 +451,7 @@
 
 <script>
 // ── Datos de perfiles desde Django ──────────────────────────────────────
-const PERFILES_DATA = {{ perfiles_json|safe }};
+const PERFILES_DATA = {{ perfiles_json|escapejs }};
 
 function val(v) {
     return (v && v.trim()) ? v.trim() : null;

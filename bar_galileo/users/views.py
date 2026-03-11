@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, Value, IntegerField
+from django.utils.html import strip_tags
 from roles.models import UserProfile, Role
 from roles.forms import UserProfileForm
 from .models_historial import HistorialMensual
@@ -23,11 +24,11 @@ def get_perfil(user):
 def editar_info(request):
     perfil = get_perfil(request.user)
     errors = {}
-    nombre = request.POST.get('nombre', perfil.nombre)
-    cedula = request.POST.get('cedula', perfil.cedula)
-    telefono = request.POST.get('telefono', perfil.telefono)
-    direccion = request.POST.get('direccion', perfil.direccion)
-    email = request.POST.get('email', request.user.email)
+    nombre = strip_tags(request.POST.get('nombre', perfil.nombre))
+    cedula = strip_tags(request.POST.get('cedula', perfil.cedula))
+    telefono = strip_tags(request.POST.get('telefono', perfil.telefono))
+    direccion = strip_tags(request.POST.get('direccion', perfil.direccion))
+    email = strip_tags(request.POST.get('email', request.user.email))
     if not nombre:
         errors['nombre'] = 'El nombre es obligatorio.'
     if not cedula or not cedula.isdigit():
@@ -85,12 +86,12 @@ def editar_emergencia(request):
     perfil = get_perfil(request.user)
     emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
     errors = {}
-    nombre = request.POST.get('emergencia_nombre', emergencia.nombre)
-    relacion = request.POST.get('emergencia_relacion', emergencia.relacion)
-    telefono = request.POST.get('emergencia_telefono', emergencia.telefono)
-    telefono_alt = request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt)
-    sangre = request.POST.get('emergencia_sangre', emergencia.sangre)
-    alergias = request.POST.get('emergencia_alergias', emergencia.alergias)
+    nombre = strip_tags(request.POST.get('emergencia_nombre', emergencia.nombre))
+    relacion = strip_tags(request.POST.get('emergencia_relacion', emergencia.relacion))
+    telefono = strip_tags(request.POST.get('emergencia_telefono', emergencia.telefono))
+    telefono_alt = strip_tags(request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt))
+    sangre = strip_tags(request.POST.get('emergencia_sangre', emergencia.sangre))
+    alergias = strip_tags(request.POST.get('emergencia_alergias', emergencia.alergias))
     if not nombre:
         errors['nombre'] = 'El nombre es obligatorio.'
     if not telefono or not telefono.isdigit():
