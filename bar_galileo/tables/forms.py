@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.html import strip_tags
 from .models import Mesa
 
 class MesaForm(forms.ModelForm):
@@ -22,6 +23,7 @@ class MesaForm(forms.ModelForm):
             raise forms.ValidationError('El nombre de la mesa es obligatorio.')
         
         nombre = nombre.strip()
+        nombre = strip_tags(nombre)
         
         # Validar longitud
         if len(nombre) > 50:
@@ -41,8 +43,10 @@ class MesaForm(forms.ModelForm):
     
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get('descripcion')
-        if descripcion and len(descripcion) > 200:
-            raise forms.ValidationError('La descripción no puede exceder 200 caracteres.')
+        if descripcion:
+            descripcion = strip_tags(descripcion)
+            if len(descripcion) > 200:
+                raise forms.ValidationError('La descripción no puede exceder 200 caracteres.')
         return descripcion
     
     def clean_estado(self):
