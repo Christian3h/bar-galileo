@@ -1,6 +1,28 @@
-/* Centrar todas las tablas de administración */
-#tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas {
-  margin: 0 auto !important;
+/* Ancho completo para tablas de administración en desktop */
+@media (min-width: 768px) {
+  #tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas,
+  #tabla-backups-db, #tabla-backups-media, #reportes-table, #pagos-table, #empleados-table {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  /* Wrapper de DataTables ancho completo */
+  .dataTables_wrapper {
+    width: 100% !important;
+  }
+  
+  /* Tablas dentro del wrapper */
+  .dataTables_wrapper table.dataTable {
+    width: 100% !important;
+  }
+}
+
+/* Centrar solo en móvil */
+@media (max-width: 767px) {
+  #tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas,
+  #tabla-backups-db, #tabla-backups-media, #reportes-table, #pagos-table, #empleados-table {
+    margin: 0 auto !important;
+  }
 }
 
 /* Ocultar columnas de fecha y tipo en pantallas pequeñas */
