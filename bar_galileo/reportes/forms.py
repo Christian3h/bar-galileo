@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.html import strip_tags
 from .models import Reporte
 
 
@@ -66,7 +67,15 @@ class ReporteForm(forms.ModelForm):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre del reporte es obligatorio.')
-        return nombre.strip()
+        nombre = nombre.strip()
+        nombre = strip_tags(nombre)
+        return nombre
+    
+    def clean_descripcion(self):
+        descripcion = self.cleaned_data.get('descripcion')
+        if descripcion:
+            descripcion = strip_tags(descripcion)
+        return descripcion
     
     def clean_tipo(self):
         tipo = self.cleaned_data.get('tipo')
@@ -167,3 +176,9 @@ class ReporteFilterForm(forms.Form):
             'placeholder': 'Buscar por nombre o descripción...'
         })
     )
+    
+    def clean_busqueda(self):
+        busqueda = self.cleaned_data.get('busqueda')
+        if busqueda:
+            busqueda = strip_tags(busqueda)
+        return busqueda
