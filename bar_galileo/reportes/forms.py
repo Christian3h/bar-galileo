@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .models import Reporte
 
 
@@ -54,7 +55,13 @@ class ReporteForm(forms.ModelForm):
             'fecha_fin': 'Fecha de Fin',
             'archivo': 'Archivo del Reporte'
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['fecha_inicio'].widget.attrs['max'] = hoy
+        self.fields['fecha_fin'].widget.attrs['max'] = hoy
+
     def clean_nombre(self):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
@@ -94,6 +101,14 @@ class ReporteForm(forms.ModelForm):
                 raise forms.ValidationError('Solo se permiten archivos PDF, Excel o CSV.')
         return archivo
     
+    def clean_fecha_inicio(self):
+        fecha_inicio = self.cleaned_data.get('fecha_inicio')
+        if fecha_inicio:
+            hoy = timezone.localdate()
+            if fecha_inicio > hoy:
+                raise forms.ValidationError('La fecha de inicio no puede ser una fecha futura.')
+        return fecha_inicio
+
     def clean(self):
         cleaned_data = super().clean()
         fecha_inicio = cleaned_data.get('fecha_inicio')
