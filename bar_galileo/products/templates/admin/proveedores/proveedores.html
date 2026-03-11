@@ -105,6 +105,8 @@
 
         $(sel).DataTable({
             language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
+            width: '100%',
+            autoWidth: false,
             responsive: { details: { type: 'inline' } },
             pageLength: 10,
             lengthChange: true,
