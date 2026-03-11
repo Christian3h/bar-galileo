@@ -79,6 +79,7 @@ def lista_facturas(request):
         'fecha_inicio': fecha_inicio,
         'fecha_fin': fecha_fin,
         'estadisticas': estadisticas,
+        'today': timezone.localdate().isoformat(),
     }
 
     return render(request, 'facturacion/lista_facturas.html', context)
