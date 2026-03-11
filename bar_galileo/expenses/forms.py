@@ -17,7 +17,12 @@ class ExpenseForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['date'].widget.attrs['max'] = hoy
+
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
         if amount is None:
