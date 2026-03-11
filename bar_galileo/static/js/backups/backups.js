@@ -32,6 +32,8 @@ function initDataTables() {
             lengthChange: true,
             ordering: true,
             order: [[2, 'desc']], // Ordenar por fecha descendente
+            width: '100%',
+            autoWidth: false,
             columnDefs: [{ targets: '_all', defaultContent: '' }]
         });
     }
@@ -49,6 +51,8 @@ function initDataTables() {
             lengthChange: true,
             ordering: true,
             order: [[2, 'desc']], // Ordenar por fecha descendente
+            width: '100%',
+            autoWidth: false,
             columnDefs: [{ targets: '_all', defaultContent: '' }]
         });
     }
@@ -257,15 +261,28 @@ function validarArchivoSubida() {
     const file = fileInput.files[0];
     const filename = file.name;
 
-    // Validar extensión
-    if (!filename.endsWith('.psql.gpg') && !filename.endsWith('.media.zip.gpg')) {
+    // Validar extensión — formatos aceptados (con y sin encriptación GPG)
+    const isDBBackup = filename.endsWith('.psql.gpg') ||
+                       filename.endsWith('.psql') ||
+                       filename.endsWith('.sql.gpg') ||
+                       filename.endsWith('.sql') ||
+                       filename.endsWith('.mysql.gpg') ||
+                       filename.endsWith('.mysql') ||
+                       (filename.endsWith('.gpg') && filename.toLowerCase().includes('db'));
+
+    const isMediaBackup = filename.endsWith('.media.zip.gpg') ||
+                          filename.endsWith('.media.zip') ||
+                          filename.endsWith('.zip.gpg') ||
+                          (filename.endsWith('.gpg') && filename.toLowerCase().includes('media'));
+
+    if (!isDBBackup && !isMediaBackup) {
         fileInput.value = '';
         uploadInfo.style.display = 'none';
         btnRestaurar.disabled = true;
 
         // Mostrar error en el uploadInfo
-        document.getElementById('uploadFileName').textContent = '❌ Archivo no válido';
-        document.getElementById('uploadFileSize').textContent = 'Debe ser .psql.gpg o .media.zip.gpg';
+        document.getElementById('uploadFileName').textContent = '❌ Archivo no válido: ' + filename;
+        document.getElementById('uploadFileSize').textContent = 'Formatos aceptados: .psql, .psql.gpg, .sql.gpg, .media.zip, .media.zip.gpg, .zip.gpg';
         uploadInfo.style.display = 'block';
         uploadInfo.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
         uploadInfo.style.borderLeft = '4px solid #e74c3c';

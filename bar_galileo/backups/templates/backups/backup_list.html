@@ -229,9 +229,9 @@
         box-sizing: border-box !important;
     }
 
-    #toast-container .toast-msg.toast-success { background: #2e7d32 !important; }
-    #toast-container .toast-msg.toast-error   { background: #c62828 !important; }
-    #toast-container .toast-msg.toast-info    { background: #1565c0 !important; }
+    #toast-container .toast-msg.toast-success { background: var(--color-success-strong) !important; }
+    #toast-container .toast-msg.toast-error   { background: var(--color-danger-strong) !important; }
+    #toast-container .toast-msg.toast-info    { background: var(--color-info-strong) !important; }
     #toast-container .toast-msg span {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
         font-size: 0.875rem !important;
@@ -257,7 +257,17 @@
         const toast = document.createElement('div');
         toast.className = `toast-msg toast-${type}`;
         const icons = { success: '\u2705', error: '\u274c', info: '\u2139\ufe0f' };
-        toast.innerHTML = `<span style="font-size:1rem !important;line-height:1 !important;display:inline !important;padding:0 !important;margin:0 !important;background:none !important;border:none !important">${icons[type] || ''}</span><span style="all:unset !important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif !important;font-size:.875rem !important;font-weight:500 !important;color:#fff !important;line-height:1.4 !important;display:inline !important;padding:0 !important;margin:0 !important;background:none !important;border:none !important">${message}</span>`;
+
+        const iconSpan = document.createElement('span');
+        iconSpan.setAttribute('style', 'font-size:1rem !important;line-height:1 !important;display:inline !important;padding:0 !important;margin:0 !important;background:none !important;border:none !important');
+        iconSpan.textContent = icons[type] || '';
+
+        const msgSpan = document.createElement('span');
+        msgSpan.setAttribute('style', 'all:unset !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;font-size:.875rem !important;font-weight:500 !important;color:#fff !important;line-height:1.4 !important;display:inline !important;padding:0 !important;margin:0 !important;background:none !important;border:none !important');
+        msgSpan.textContent = message;
+
+        toast.appendChild(iconSpan);
+        toast.appendChild(msgSpan);
         container.appendChild(toast);
         setTimeout(() => toast.remove(), duration);
     }
@@ -286,6 +296,8 @@
                     lengthChange: true,
                     ordering: true,
                     order: [[2, 'desc']], // Ordenar por fecha descendente
+                    width: '100%',
+                    autoWidth: false,
                     columnDefs: [
                         { targets: '_all', defaultContent: '' },
                         { responsivePriority: 1, targets: 0 }, // Tipo
@@ -318,6 +330,8 @@
                     lengthChange: true,
                     ordering: true,
                     order: [[2, 'desc']], // Ordenar por fecha descendente
+                    width: '100%',
+                    autoWidth: false,
                     columnDefs: [
                         { targets: '_all', defaultContent: '' },
                         { responsivePriority: 1, targets: 0 }, // Tipo
@@ -331,12 +345,6 @@
         }
 
         // Event listeners para cerrar modales al hacer clic fuera
-        document.getElementById('deleteModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                cerrarModal();
-            }
-        });
-
         document.getElementById('createModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 cerrarModalCrear();

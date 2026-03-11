@@ -1,0 +1,87 @@
+/* 
+ * CSS para corregir el ancho de DataTables en desktop
+ * Asegura que las tablas con pocas columnas ocupen el 100% del ancho disponible
+ */
+
+/* Wrapper principal de DataTables - ancho completo */
+.dataTables_wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+/* Tabla dentro del wrapper - ancho completo */
+.dataTables_wrapper table.dataTable {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: auto !important;
+}
+
+/* Contenedor de scroll de DataTables */
+.dt-scroll {
+  width: 100% !important;
+}
+
+/* Header y footer de DataTables */
+.dataTables_scrollHead,
+.dataTables_scrollFoot {
+  width: 100% !important;
+}
+
+/* Body de scroll - ancho completo */
+.dataTables_scrollBody {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Para tablas con responsive habilitado */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+}
+
+/* Asegurar que las columnas se distribuyan proporcionalmente */
+table.dataTable thead th,
+table.dataTable tfoot th {
+  white-space: nowrap;
+}
+
+/* En móvil, mantener comportamiento responsive */
+@media (max-width: 767px) {
+  .dataTables_wrapper {
+    overflow-x: auto !important;
+  }
+  
+  table.dataTable {
+    min-width: 100% !important;
+  }
+}
+
+/* Para tablas específicas que necesitan ajuste */
+#tabla-backups-db,
+#tabla-backups-media,
+#reportes-table,
+#pagos-table,
+#empleados-table,
+#tabla-productos,
+#tabla-proveedores,
+#tabla-categorias,
+#expenses-table,
+#tabla-facturas {
+  width: 100% !important;
+}
+
+/* Contenedor de paginación también ancho completo */
+.dataTables_paginate {
+  width: 100% !important;
+  text-align: center !important;
+}
+
+/* Info de paginación */
+.dataTables_info {
+  width: 100% !important;
+  text-align: left !important;
+  margin-bottom: 0.5rem !important;
+}
