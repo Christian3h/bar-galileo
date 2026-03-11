@@ -61,7 +61,7 @@ body {
 }
 
 .nav-menu a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .nav-buttons {
@@ -72,7 +72,7 @@ body {
 }
 
 .nav-button {
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   padding: 12px 30px;
   border: none;
@@ -107,7 +107,7 @@ body {
 }
 
 .quick-btn {
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #222;
   padding: 8px 22px;
   border: none;
@@ -125,7 +125,7 @@ body {
 }
 
 .quick-btn:hover {
-  background: #f4d467;
+  background: var(--color-brand-light);
   color: #000;
   box-shadow: 0 4px 20px rgba(212, 175, 55, 0.18);
   transform: translateY(-1px) scale(1.03);
@@ -137,7 +137,7 @@ body {
   background: transparent;
   border: none;
   font-size: 2.2rem;
-  color: #d4af37;
+  color: var(--color-brand);
   cursor: pointer;
   margin-left: 10px;
   z-index: 1100;
@@ -223,7 +223,7 @@ body {
 }
 
 .hero-dot.active {
-  background: #d4af37;
+  background: var(--color-brand);
   border-color: rgba(255, 255, 255, 0.3);
   transform: scale(1.2);
 }
@@ -292,7 +292,7 @@ body {
   font-size: 48px;
   font-weight: 300;
   margin-bottom: 30px;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .about-content p {
@@ -325,7 +325,7 @@ body {
   font-size: 48px;
   font-weight: 300;
   margin-bottom: 20px;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .services-subtitle {
@@ -353,7 +353,7 @@ body {
 .service-number {
   font-size: 48px;
   font-weight: 700;
-  color: #d4af37;
+  color: var(--color-brand);
   margin-bottom: 20px;
 }
 
@@ -380,7 +380,7 @@ body {
   font-size: 48px;
   font-weight: 300;
 
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .products-grid {
@@ -422,12 +422,12 @@ body {
 .product-name {
   font-size: 24px;
   margin-bottom: 15px;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .product-price {
   font-size: 20px;
-  color: #d4af37;
+  color: var(--color-brand);
   font-weight: 600;
   margin-bottom: 15px;
 }
@@ -440,7 +440,7 @@ body {
 }
 
 .btn-green {
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   padding: 12px 30px;
   border: none;
@@ -484,7 +484,7 @@ body {
   font-size: 48px;
   font-weight: 300;
   margin-bottom: 20px;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .signature-subtitle {
@@ -516,7 +516,7 @@ body {
   position: absolute;
   top: 15px;
   right: 15px;
-  background: #d4af37;
+  background: var(--color-brand);
   color: #000;
   padding: 5px 15px;
   border-radius: 15px;
@@ -571,7 +571,7 @@ body {
   font-weight: 700;
   letter-spacing: 3px;
   margin-bottom: 20px;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .footer-brand p {
@@ -584,7 +584,7 @@ body {
 .footer-section h4 {
   font-size: 20px;
   margin-bottom: 25px;
-  color: #d4af37;
+  color: var(--color-brand);
   font-weight: 600;
 }
 
@@ -608,7 +608,7 @@ body {
 }
 
 .footer-section ul li a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
   padding-left: 10px;
 }
 
@@ -624,7 +624,7 @@ body {
   justify-content: center;
   width: 45px;
   height: 45px;
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   text-decoration: none;
   border-radius: 50%;
@@ -652,7 +652,7 @@ body {
 
 .contact-item i {
   margin-right: 12px;
-  color: #d4af37;
+  color: var(--color-brand);
   width: 20px;
   font-size: 16px;
 }
@@ -664,7 +664,7 @@ body {
 }
 
 .contact-item a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .footer-bottom {
@@ -695,7 +695,7 @@ body {
 }
 
 .footer-bottom-right a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .newsletter {
@@ -720,11 +720,11 @@ body {
 
 .newsletter-input:focus {
   outline: none;
-  border-color: #d4af37;
+  border-color: var(--color-brand);
 }
 
 .newsletter-button {
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   border: none;
   padding: 12px 25px;
@@ -852,14 +852,14 @@ body {
 
 .user-avatar:hover,
 .user-avatar-initials:hover {
-  border-color: #d4af37;
+  border-color: var(--color-brand);
   box-shadow: 0 2px 16px rgba(212, 175, 55, 0.3);
   transform: scale(1.05);
 }
 
 .user-avatar-initials {
   background: linear-gradient(135deg, var(--color-accent) 0%, #1a1a2e 100%);
-  color: #d4af37;
+  color: var(--color-brand);
   letter-spacing: 0.5px;
 }
 
@@ -883,7 +883,7 @@ body {
 }
 
 .user-avatar-dropdown-content a {
-  color: #d4af37;
+  color: var(--color-brand);
   padding: 12px 20px;
   display: block;
   text-decoration: none;
@@ -1121,7 +1121,7 @@ body {
   padding: 5px 14px;
   border-radius: 8px;
   background: rgba(212, 175, 55, 0.1);
-  color: #d4af37 !important;
+  color: var(--color-brand) !important;
   border: 1.5px solid rgba(212, 175, 55, 0.45);
   font-size: 0.85rem;
   font-weight: 600;
@@ -1161,7 +1161,7 @@ body {
   border-radius: 50%;
   background: rgba(212, 175, 55, 0.1);
   border: 1.5px solid rgba(212, 175, 55, 0.4);
-  color: #d4af37;
+  color: var(--color-brand);
   flex-shrink: 0;
 }
 
@@ -1172,7 +1172,7 @@ body {
 .manual-usuario-text h2 {
   font-size: 1.45rem;
   font-weight: 700;
-  color: #d4af37;
+  color: var(--color-brand);
   margin: 0 0 0.45rem 0;
   letter-spacing: 0.04em;
   font-family: 'Playfair Display', serif;
@@ -1192,7 +1192,7 @@ body {
   padding: 0.8rem 1.75rem;
   border-radius: 10px;
   background: rgba(212, 175, 55, 0.1);
-  color: #d4af37;
+  color: var(--color-brand);
   border: 1.5px solid rgba(212, 175, 55, 0.45);
   text-decoration: none;
   font-size: 0.97rem;
