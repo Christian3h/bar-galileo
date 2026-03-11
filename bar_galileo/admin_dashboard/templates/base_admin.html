@@ -84,6 +84,16 @@
     <script src="{% static 'js/admin/home-navigation.js' %}"></script>
     <script src="{% static 'js/table-mobile-details.js' %}"></script>
     {% block extra_js %}{% endblock %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            if (!input.max || input.max > today) {
+                input.max = today;
+            }
+        });
+    });
+    </script>
     <script src="{% static 'accessibility/sienna.js' %}"></script>
     <script src="{% static 'accessibility/custom.js' %}"></script>
 </body>
