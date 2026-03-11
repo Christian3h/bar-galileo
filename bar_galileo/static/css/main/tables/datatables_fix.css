@@ -3,11 +3,35 @@
  * Asegura que las tablas con pocas columnas ocupen el 100% del ancho disponible
  */
 
+/* FORZAR ancho completo en cualquier contexto */
+.dashboard-container .dataTables_wrapper,
+.container .dataTables_wrapper,
+.table-contenedor .dataTables_wrapper,
+.table-responsive .dataTables_wrapper,
+.table-responsive-wrapper .dataTables_wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  overflow-x: auto !important;
+}
+
 /* Wrapper principal de DataTables - ancho completo */
 .dataTables_wrapper {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: auto !important;
+}
+
+/* Tabla dentro del wrapper - ancho completo en cualquier contexto */
+.dashboard-container .dataTables_wrapper table.dataTable,
+.container .dataTables_wrapper table.dataTable,
+.table-contenedor .dataTables_wrapper table.dataTable,
+.table-responsive .dataTables_wrapper table.dataTable,
+.table-responsive-wrapper .dataTables_wrapper table.dataTable {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  table-layout: auto !important;
 }
 
 /* Tabla dentro del wrapper - ancho completo */
@@ -59,22 +83,52 @@ table.dataTable tfoot th {
   }
 }
 
-/* Para tablas específicas que necesitan ajuste */
-#tabla-backups-db,
-#tabla-backups-media,
-#reportes-table,
-#pagos-table,
-#tabla-empleados,
-#tabla-productos,
-#tabla-proveedores,
-#tabla-categorias,
-#brands-table,
-#expenses-table,
-#tabla-facturas,
-#roles-table,
-#users-table,
-#historial-table {
+/* Para tablas específicas que necesitan ajuste - FORZAR ancho completo */
+.dashboard-container #tabla-backups-db,
+.dashboard-container #tabla-backups-media,
+.dashboard-container #reportes-table,
+.dashboard-container #pagos-table,
+.dashboard-container #tabla-empleados,
+.dashboard-container #tabla-productos,
+.dashboard-container #tabla-proveedores,
+.dashboard-container #tabla-categorias,
+.dashboard-container #brands-table,
+.dashboard-container #expenses-table,
+.dashboard-container #tabla-facturas,
+.dashboard-container #roles-table,
+.dashboard-container #users-table,
+.dashboard-container #historial-table,
+.container #tabla-backups-db,
+.container #tabla-backups-media,
+.container #reportes-table,
+.container #pagos-table,
+.container #tabla-empleados,
+.container #tabla-productos,
+.container #tabla-proveedores,
+.container #tabla-categorias,
+.container #brands-table,
+.container #expenses-table,
+.container #tabla-facturas,
+.container #roles-table,
+.container #users-table,
+.container #historial-table,
+.table-contenedor #tabla-backups-db,
+.table-contenedor #tabla-backups-media,
+.table-contenedor #reportes-table,
+.table-contenedor #pagos-table,
+.table-contenedor #tabla-empleados,
+.table-contenedor #tabla-productos,
+.table-contenedor #tabla-proveedores,
+.table-contenedor #tabla-categorias,
+.table-contenedor #brands-table,
+.table-contenedor #expenses-table,
+.table-contenedor #tabla-facturas,
+.table-contenedor #roles-table,
+.table-contenedor #users-table,
+.table-contenedor #historial-table {
   width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
 }
 
 /* Contenedor de paginación también ancho completo */
