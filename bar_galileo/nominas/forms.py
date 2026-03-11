@@ -337,6 +337,17 @@ class BonificacionForm(forms.ModelForm):
         fecha_inicio = cleaned_data.get('fecha_inicio')
         fecha_fin = cleaned_data.get('fecha_fin')
         empleado = cleaned_data.get('empleado')
+        hoy = timezone.localdate()
+        
+        # Validar que no sean fechas futuras
+        if fecha_inicio and fecha_inicio > hoy:
+            raise ValidationError({
+                'fecha_inicio': 'La fecha de inicio no puede ser una fecha futura.'
+            })
+        if fecha_fin and fecha_fin > hoy:
+            raise ValidationError({
+                'fecha_fin': 'La fecha de fin no puede ser una fecha futura.'
+            })
         
         # Validar que fecha_fin sea posterior a fecha_inicio
         if fecha_inicio and fecha_fin:
