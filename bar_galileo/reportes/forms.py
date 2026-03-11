@@ -113,6 +113,12 @@ class ReporteForm(forms.ModelForm):
         cleaned_data = super().clean()
         fecha_inicio = cleaned_data.get('fecha_inicio')
         fecha_fin = cleaned_data.get('fecha_fin')
+        hoy = timezone.localdate()
+        
+        if fecha_fin and fecha_fin > hoy:
+            raise forms.ValidationError({
+                'fecha_fin': 'La fecha de fin no puede ser una fecha futura.'
+            })
         
         if fecha_inicio and fecha_fin:
             if fecha_fin < fecha_inicio:
