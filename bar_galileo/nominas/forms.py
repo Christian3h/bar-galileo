@@ -108,6 +108,8 @@ class EmpleadoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['fecha_contratacion'].widget.attrs['max'] = hoy
 
         # Si estamos editando un empleado existente
         if self.instance and self.instance.pk:
@@ -232,6 +234,11 @@ class PagoForm(forms.ModelForm):
             'comprobante': forms.FileInput(attrs={'class': 'form-control', 'accept': '.jpg,.jpeg,.png,.pdf'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['fecha_pago'].widget.attrs['max'] = hoy
+
     def clean_monto(self):
         monto = self.cleaned_data.get('monto')
         if monto is None:
@@ -296,7 +303,13 @@ class BonificacionForm(forms.ModelForm):
             'fecha_inicio': DateInput(attrs={'class': 'form-control'}),
             'fecha_fin': DateInput(attrs={'class': 'form-control'}),
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['fecha_inicio'].widget.attrs['max'] = hoy
+        self.fields['fecha_fin'].widget.attrs['max'] = hoy
+
     def clean_nombre(self):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
