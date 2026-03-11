@@ -70,6 +70,8 @@ $(document).ready(function() {
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
+        width: '100%',
+        autoWidth: false,
         columnDefs: [
             { targets: '_all', defaultContent: '' },
             { targets: -1, orderable: false, searchable: false }  // Acciones

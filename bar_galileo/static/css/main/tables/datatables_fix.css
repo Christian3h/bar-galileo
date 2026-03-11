@@ -68,6 +68,7 @@ table.dataTable tfoot th {
 #tabla-productos,
 #tabla-proveedores,
 #tabla-categorias,
+#brands-table,
 #expenses-table,
 #tabla-facturas {
   width: 100% !important;
