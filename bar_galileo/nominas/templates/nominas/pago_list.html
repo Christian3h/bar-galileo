@@ -160,6 +160,8 @@ $(document).ready(function() {
     }
 
     $(sel).DataTable({
+        width: '100%',
+        autoWidth: false,
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
