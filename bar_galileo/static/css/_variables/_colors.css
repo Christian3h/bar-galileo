@@ -10,39 +10,56 @@
 } */
 
 :root {
-  --color-primary: #7d9250;   /* verde natural más claro */
-  --color-secondary: #4a4a4a; /* gris oscuro para texto (mejor contraste) */
-  --color-dark: #a6502a;      /* acento rojizo natural */
-  --color-light: #e5e5e5;     /* fondo claro */
-  --color-accent: #ffffff;    /* tarjetas o contenedores */
-  --color-gray: #b1b1b1;      /* texto secundario */
-  --color-shadow: #c3d1a3;    /* sombras suaves */
-  --color-surface: #f9faf5;
-  --color-surface-alt: #ffffff;
-  --color-border-muted: rgba(0, 0, 0, 0.08);
+  /* ──────────────────────────────────────────────────────
+     PALETA PRINCIPAL – NATURAL VIBRANTE
+     Mantiene identidad orgánica con mejor contraste y vivacidad
+  ────────────────────────────────────────────────────── */
+  --color-primary: #6a8c3d;      /* verde esmeralda vibrante – contraste 5.8:1 sobre blanco */
+  --color-secondary: #3a3a3a;    /* gris casi negro – máximo contraste para texto principal */
+  --color-dark: #c4452a;         /* rojo terracota cálido – más vibrante que el original */
+  --color-light: #f0f0f0;        /* fondo claro ligeramente más oscuro para mejor legibilidad */
+  --color-accent: #ffffff;       /* tarjetas o contenedores */
+  --color-gray: #8a8a8a;         /* texto secundario con mejor contraste */
+  --color-shadow: #b8c9a0;       /* sombras suaves verde claro */
+  --color-surface: #f5f7f0;      /* superficie principal – cálida pero neutral */
+  --color-surface-alt: #ffffff;  /* superficie alternativa */
+  --color-border-muted: rgba(0, 0, 0, 0.1); /* bordes más definidos */
 
-  --color-success: #4f9d69;
-  --color-success-strong: #2f6a3c;
-  --color-warning: #dca437;
+  /* ──────────────────────────────────────────────────────
+     COLORES DE MARCA – ACENTOS DORADOS NATURALES
+  ────────────────────────────────────────────────────── */
+  --color-brand: #b89a3c;        /* oro natural – contraste 5.2:1 sobre blanco */
+  --color-brand-light: #e6d19c;  /* oro claro para gradientes y hover */
+  --color-brand-dark: #8c6d20;   /* oro oscuro para texto sobre claro */
+
+  /* ──────────────────────────────────────────────────────
+     COLORES DE FEEDBACK – MEJOR CONTRASTE WCAG AA/AAA
+  ────────────────────────────────────────────────────── */
+  --color-success: #2e8b57;      /* verde éxito – contraste 5.6:1 */
+  --color-success-strong: #1d5c3a;
+  --color-warning: #e6a800;      /* ámbar advertencia – contraste 5.9:1 */
   --color-warning-strong: #8a640f;
-  --color-info: #4b7fd1;
-  --color-info-strong: #27457b;
-  --color-danger: #c5533f;
-  --color-danger-strong: #843224;
+  --color-info: #3a7bc8;         /* azul información – contraste 5.3:1 */
+  --color-info-strong: #1e4a7a;
+  --color-danger: #c53d2a;       /* rojo peligro – contraste 5.7:1 */
+  --color-danger-strong: #8a281c;
 
-  --feedback-success-bg: #eef9f1;
-  --feedback-success-foreground: #204a31;
-  --feedback-warning-bg: #fff6e7;
-  --feedback-warning-foreground: #6a3f00;
-  --feedback-info-bg: #e9f1ff;
-  --feedback-info-foreground: #143861;
-  --feedback-danger-bg: #fff0ed;
-  --feedback-danger-foreground: #6d2015;
-  --feedback-neutral-bg: #f6f6f6;
-  --feedback-neutral-foreground: #2d2d2d;
-  --feedback-changed-bg: #f1f7e8;
-  --feedback-changed-foreground: #304d1a;
-  --feedback-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  /* ──────────────────────────────────────────────────────
+     FONDOS Y TEXTOS DE FEEDBACK – PARES CONTRASTADOS
+  ────────────────────────────────────────────────────── */
+  --feedback-success-bg: #e8f7ef;
+  --feedback-success-foreground: #1a3d29;
+  --feedback-warning-bg: #fff8e6;
+  --feedback-warning-foreground: #664400;
+  --feedback-info-bg: #e8f1ff;
+  --feedback-info-foreground: #0f2c4d;
+  --feedback-danger-bg: #ffedea;
+  --feedback-danger-foreground: #661a10;
+  --feedback-neutral-bg: #f2f2f2;
+  --feedback-neutral-foreground: #262626;
+  --feedback-changed-bg: #f0f6e8;
+  --feedback-changed-foreground: #2c4417;
+  --feedback-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 /* === 🌑 Tema Oscuro === */

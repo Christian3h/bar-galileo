@@ -129,9 +129,9 @@
     padding-right: 2.5rem;
 }
 
-/* Flecha select - tema oscuro (secondary = #a68932) */
+/* Flecha select - tema oscuro (secondary = #b89a3c) */
 [data-theme="dark"] .field-group select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a68932' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23b89a3c' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
 }
 
 /* Options heredan el fondo del tema */

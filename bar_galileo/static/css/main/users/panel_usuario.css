@@ -251,7 +251,7 @@ body {
     color: var(--color-light);
     border: 2px solid var(--color-secondary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 4px 12px rgba(184, 154, 60, 0.3);
 }
 
 .delete-btn {
@@ -462,7 +462,7 @@ body {
 }
 
 .bill-details {
-    background: rgba(212, 175, 55, 0.07);
+    background: rgba(184, 154, 60, 0.07);
     border-radius: 10px;
     padding: 15px;
     margin-top: 15px;
