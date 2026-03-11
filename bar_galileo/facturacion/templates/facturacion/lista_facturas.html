@@ -47,15 +47,17 @@
                 </div>
                 <div class="field-group">
                     <label>Fecha Inicio:</label>
-                    <input type="date"
-                           name="fecha_inicio"
-                           value="{{ fecha_inicio }}">
+                     <input type="date"
+                            name="fecha_inicio"
+                            value="{{ fecha_inicio }}"
+                            max="{{ today }}">
                 </div>
                 <div class="field-group">
                     <label>Fecha Fin:</label>
-                    <input type="date"
-                           name="fecha_fin"
-                           value="{{ fecha_fin }}">
+                     <input type="date"
+                            name="fecha_fin"
+                            value="{{ fecha_fin }}"
+                            max="{{ today }}">
                 </div>
             </div>
             <div class="field-group buttons-group">
