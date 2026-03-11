@@ -268,7 +268,7 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
 .sidebar-logout {
   padding: 1rem 10px;
   margin-top: auto;
-  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  border-top: 1px solid rgba(184, 154, 60, 0.2);
 }
 
 .sidebar-logout-btn {
