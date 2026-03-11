@@ -30,7 +30,6 @@ class RolCreateView(LoginRequiredMixin, CreateView):
         role = form.save()
         mensaje = f"Se ha creado el nuevo rol: '{role.nombre}'."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(self.request, 'Registro creado correctamente.')
         return redirect('roles:rol_permisos', role.id)
 
 @method_decorator(permission_required('roles', 'editar'), name='dispatch')
@@ -44,7 +43,6 @@ class RolUpdateView(LoginRequiredMixin, UpdateView):
         role = form.save()
         mensaje = f"El rol '{role.nombre}' ha sido actualizado."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(self.request, 'Cambios guardados correctamente.')
         return redirect(self.success_url)
 
 from .models import UserProfile  # Importa el modelo correcto desde el mismo módulo
@@ -73,7 +71,6 @@ class RolDeleteView(LoginRequiredMixin, DeleteView):
         role.delete()
         mensaje = f"El rol '{role.nombre}' ha sido eliminado."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(request, f"Rol '{role.nombre}' eliminado correctamente.")
         return redirect(self.success_url)
 
     def get(self, request, *args, **kwargs):
@@ -111,5 +108,4 @@ class RolPermisosView(LoginRequiredMixin, View):
 
         mensaje = f"Los permisos para el rol '{role.nombre}' han sido actualizados."
         notificar_usuario(request.user, mensaje)
-        messages.success(request, 'Cambios guardados correctamente.')
         return redirect('roles:rol_list')
