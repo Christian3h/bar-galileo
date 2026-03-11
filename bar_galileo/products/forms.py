@@ -6,6 +6,7 @@ Utiliza el modelo Producto y permite crear y editar productos desde el frontend.
 import re
 
 from django import forms
+from django.utils.html import strip_tags
 
 from .models import Categoria, Marca, Producto, Proveedor
 
@@ -92,6 +93,7 @@ class ProductoForm(forms.ModelForm):
             raise forms.ValidationError("El nombre del producto es obligatorio.")
 
         nombre = nombre.strip()
+        nombre = strip_tags(nombre)
 
         # Validar longitud máxima
         if len(nombre) > 200:
@@ -114,6 +116,12 @@ class ProductoForm(forms.ModelForm):
                 )
 
         return nombre
+
+    def clean_descripcion(self):
+        descripcion = self.cleaned_data.get("descripcion")
+        if descripcion:
+            descripcion = strip_tags(descripcion)
+        return descripcion
 
     def clean_precio_compra(self):
         precio_compra = self.cleaned_data.get("precio_compra")
@@ -203,8 +211,15 @@ class CategoriaForm(forms.ModelForm):
         nombre = self.cleaned_data.get("nombre_categoria")
         if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre de la categoría es obligatorio.")
-        return nombre.strip()
+        nombre = nombre.strip()
+        nombre = strip_tags(nombre)
+        return nombre
 
+    def clean_descripcion(self):
+        descripcion = self.cleaned_data.get("descripcion")
+        if descripcion:
+            descripcion = strip_tags(descripcion)
+        return descripcion
 
 class ProveedorForm(forms.ModelForm):
     class Meta:
@@ -248,7 +263,9 @@ class ProveedorForm(forms.ModelForm):
         nombre = self.cleaned_data.get("nombre")
         if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre del proveedor es obligatorio.")
-        return nombre.strip()
+        nombre = nombre.strip()
+        nombre = strip_tags(nombre)
+        return nombre
 
     def clean_contacto(self):
         import re
@@ -258,6 +275,7 @@ class ProveedorForm(forms.ModelForm):
             raise forms.ValidationError("El contacto es obligatorio.")
 
         contacto = contacto.strip()
+        contacto = strip_tags(contacto)
 
         # Si parece ser un email, validar formato
         if "@" in contacto:
@@ -271,7 +289,9 @@ class ProveedorForm(forms.ModelForm):
         direccion = self.cleaned_data.get("direccion")
         if not direccion or not direccion.strip():
             raise forms.ValidationError("La dirección es obligatoria.")
-        return direccion.strip()
+        direccion = direccion.strip()
+        direccion = strip_tags(direccion)
+        return direccion
 
     def clean_telefono(self):
         telefono = self.cleaned_data.get("telefono")
@@ -300,4 +320,12 @@ class MarcaForm(forms.ModelForm):
         marca = self.cleaned_data.get("marca")
         if not marca or not marca.strip():
             raise forms.ValidationError("El nombre de la marca es obligatorio.")
-        return marca.strip()
+        marca = marca.strip()
+        marca = strip_tags(marca)
+        return marca
+
+    def clean_descripcion(self):
+        descripcion = self.cleaned_data.get("descripcion")
+        if descripcion:
+            descripcion = strip_tags(descripcion)
+        return descripcion

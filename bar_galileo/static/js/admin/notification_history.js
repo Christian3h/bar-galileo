@@ -63,11 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
     notifications.forEach((n) => {
       const li = document.createElement("li");
       li.className = "notification-item" + (n.leida ? "" : " unread");
-      li.innerHTML = `
-        <a href="#" data-id="${n.id}">
-          <p>${n.mensaje}</p>
-          <span class="timestamp">${new Date(n.fecha).toLocaleString()}</span>
-        </a>`;
+
+      const a = document.createElement("a");
+      a.href = "#";
+      a.dataset.id = n.id;
+
+      const p = document.createElement("p");
+      p.textContent = n.mensaje;
+
+      const span = document.createElement("span");
+      span.className = "timestamp";
+      span.textContent = new Date(n.fecha).toLocaleString();
+
+      a.appendChild(p);
+      a.appendChild(span);
+      li.appendChild(a);
       list.appendChild(li);
     });
   }

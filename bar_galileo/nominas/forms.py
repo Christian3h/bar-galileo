@@ -1,5 +1,6 @@
 from django import forms
 from django.utils import timezone
+from django.utils.html import strip_tags
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Q
@@ -136,25 +137,33 @@ class EmpleadoForm(forms.ModelForm):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre del empleado es obligatorio.')
-        return nombre.strip()
+        nombre = nombre.strip()
+        nombre = strip_tags(nombre)
+        return nombre
     
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if not email or not email.strip():
             raise forms.ValidationError('El email es obligatorio.')
-        return email.strip()
+        email = email.strip()
+        email = strip_tags(email)
+        return email
     
     def clean_telefono(self):
         telefono = self.cleaned_data.get('telefono')
         if not telefono or not telefono.strip():
             raise forms.ValidationError('El teléfono es obligatorio.')
-        return telefono.strip()
+        telefono = telefono.strip()
+        telefono = strip_tags(telefono)
+        return telefono
     
     def clean_direccion(self):
         direccion = self.cleaned_data.get('direccion')
         if not direccion or not direccion.strip():
             raise forms.ValidationError('La dirección es obligatoria.')
-        return direccion.strip()
+        direccion = direccion.strip()
+        direccion = strip_tags(direccion)
+        return direccion
 
     def clean_salario(self):
         salario = self.cleaned_data.get('salario')
