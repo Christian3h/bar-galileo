@@ -72,7 +72,8 @@ table.dataTable tfoot th {
 #expenses-table,
 #tabla-facturas,
 #roles-table,
-#users-table {
+#users-table,
+#historial-table {
   width: 100% !important;
 }
 

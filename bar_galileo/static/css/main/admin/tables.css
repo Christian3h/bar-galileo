@@ -2,7 +2,7 @@
 @media (min-width: 768px) {
   #tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas,
   #tabla-backups-db, #tabla-backups-media, #reportes-table, #pagos-table, #tabla-empleados,
-  #brands-table, #roles-table, #users-table {
+  #brands-table, #roles-table, #users-table, #historial-table {
     width: 100% !important;
     margin: 0 !important;
   }
@@ -22,7 +22,7 @@
 @media (max-width: 767px) {
   #tabla-productos, #tabla-proveedores, #tabla-categorias, #expenses-table, #tabla-facturas,
   #tabla-backups-db, #tabla-backups-media, #reportes-table, #pagos-table, #tabla-empleados,
-  #brands-table, #roles-table, #users-table {
+  #brands-table, #roles-table, #users-table, #historial-table {
     margin: 0 auto !important;
   }
 }
