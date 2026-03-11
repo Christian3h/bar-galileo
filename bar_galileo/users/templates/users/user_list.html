@@ -540,6 +540,8 @@ $(document).ready(function() {
         $(sel).DataTable().destroy();
     }
     $(sel).DataTable({
+        width: '100%',
+        autoWidth: false,
         columnDefs: [
             { targets: '_all', defaultContent: '' },
             { targets: [0, 1], searchable: true },   // Nombre y Correo: buscables
