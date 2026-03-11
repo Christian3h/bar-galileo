@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file:
+      - bar_galileo/.env
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bar_galileo}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_seguro}
+      MYSQL_USER: ${MYSQL_USER:-bar_galileo_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-Galileo2025}
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-root_seguro}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - bar_galileo/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-bar_galileo.settings}
+      DB_HOST: db
+      DB_PORT: ${DB_PORT:-3306}
+      DB_NAME: ${DB_NAME:-bar_galileo}
+      DB_USER: ${DB_USER:-bar_galileo_user}
+      DB_PASSWORD: ${DB_PASSWORD:-Galileo2025}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-dominiopruebaprigma.xyz,www.dominiopruebaprigma.xyz}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      emailHost: ${emailHost:-}
+      emailPassword: ${emailPassword:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./bar_galileo:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "bar_galileo.asgi:application"]
+
+volumes:
+  db_data:
+  static_volume:
+  media_volume:
