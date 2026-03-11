@@ -10,41 +10,38 @@
 } */
 
 :root {
-  --color-primary: #5d8130;   /* verde natural más vibrante y con mejor contraste */
+  --color-primary: #7d9250;   /* verde natural más claro */
   --color-secondary: #4a4a4a; /* gris oscuro para texto (mejor contraste) */
-  --color-dark: #c44c1f;      /* acento rojizo natural más vibrante */
+  --color-dark: #a6502a;      /* acento rojizo natural */
   --color-light: #e5e5e5;     /* fondo claro */
   --color-accent: #ffffff;    /* tarjetas o contenedores */
   --color-gray: #b1b1b1;      /* texto secundario */
-  --color-shadow: #d4e0b5;    /* sombras suaves verde claro */
+  --color-shadow: #c3d1a3;    /* sombras suaves */
   --color-surface: #f9faf5;
   --color-surface-alt: #ffffff;
   --color-border-muted: rgba(0, 0, 0, 0.08);
 
-  --color-brand: #8c6a15;     /* oro principal más vibrante con mejor contraste */
-  --color-brand-light: #d4b03c; /* oro claro para gradientes */
+  --color-success: #4f9d69;
+  --color-success-strong: #2f6a3c;
+  --color-warning: #dca437;
+  --color-warning-strong: #8a640f;
+  --color-info: #4b7fd1;
+  --color-info-strong: #27457b;
+  --color-danger: #c5533f;
+  --color-danger-strong: #843224;
 
-  --color-success: #2e7d45;
-  --color-success-strong: #1e5d35;
-  --color-warning: #8c6410;
-  --color-warning-strong: #6d4a0a;
-  --color-info: #2a5ca9;
-  --color-info-strong: #1a4c89;
-  --color-danger: #b54532;
-  --color-danger-strong: #953522;
-
-  --feedback-success-bg: #edf9f1;
-  --feedback-success-foreground: #204a2c;
-  --feedback-warning-bg: #fff7e6;
-  --feedback-warning-foreground: #6a4700;
-  --feedback-info-bg: #e8f1ff;
-  --feedback-info-foreground: #143261;
-  --feedback-danger-bg: #ffefed;
-  --feedback-danger-foreground: #6d2114;
+  --feedback-success-bg: #eef9f1;
+  --feedback-success-foreground: #204a31;
+  --feedback-warning-bg: #fff6e7;
+  --feedback-warning-foreground: #6a3f00;
+  --feedback-info-bg: #e9f1ff;
+  --feedback-info-foreground: #143861;
+  --feedback-danger-bg: #fff0ed;
+  --feedback-danger-foreground: #6d2015;
   --feedback-neutral-bg: #f6f6f6;
   --feedback-neutral-foreground: #2d2d2d;
-  --feedback-changed-bg: #f0f6e8;
-  --feedback-changed-foreground: #364d1a;
+  --feedback-changed-bg: #f1f7e8;
+  --feedback-changed-foreground: #304d1a;
   --feedback-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
@@ -57,8 +54,6 @@
   --color-accent: #0d0d0d;
   --color-gray: #a68932;
   --color-shadow: #62733d;
-  --color-brand: #d4af37;     /* oro original para tema oscuro */
-  --color-brand-light: #f4d467; /* oro claro para gradientes en tema oscuro */
   --color-surface: #151515;
   --color-surface-alt: #1f1f1f;
   --color-border-muted: rgba(255, 255, 255, 0.1);
