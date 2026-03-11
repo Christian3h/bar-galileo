@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
 from .models import Role, UserProfile, RolePermission
 from django.contrib.auth.models import User
 
@@ -22,6 +23,7 @@ class RoleForm(forms.ModelForm):
             raise forms.ValidationError('El nombre del rol es obligatorio.')
         
         nombre = nombre.strip()
+        nombre = strip_tags(nombre)
         
         # Validar longitud
         if len(nombre) > 100:
@@ -41,8 +43,10 @@ class RoleForm(forms.ModelForm):
     
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get('descripcion')
-        if descripcion and len(descripcion) > 500:
-            raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
+        if descripcion:
+            descripcion = strip_tags(descripcion)
+            if len(descripcion) > 500:
+                raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
         return descripcion
 
 class UserProfileForm(forms.ModelForm):
@@ -95,13 +99,17 @@ class RolePermissionForm(forms.ModelForm):
         modulo = self.cleaned_data.get('modulo')
         if not modulo or not modulo.strip():
             raise forms.ValidationError('El módulo es obligatorio.')
-        return modulo.strip()
+        modulo = modulo.strip()
+        modulo = strip_tags(modulo)
+        return modulo
     
     def clean_accion(self):
         accion = self.cleaned_data.get('accion')
         if not accion or not accion.strip():
             raise forms.ValidationError('La acción es obligatoria.')
-        return accion.strip()
+        accion = accion.strip()
+        accion = strip_tags(accion)
+        return accion
 
 RolePermissionFormSet = forms.modelformset_factory(
     RolePermission,
