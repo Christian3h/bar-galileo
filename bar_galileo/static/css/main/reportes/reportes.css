@@ -184,7 +184,7 @@
 }
 
 .btn-filter:hover {
-  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
+  background: linear-gradient(135deg, #d4af37, #f4d467);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
 }
@@ -322,7 +322,7 @@
 }
 
 .btn-create:hover {
-  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
+  background: linear-gradient(135deg, #d4af37, #f4d467);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
 }
@@ -359,15 +359,6 @@
 .dataTables_wrapper .dataTables_info {
   color: var(--color-secondary);
   padding-top: 20px;
-}
-
-.dataTables_wrapper .dt-bottom-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 0.75rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 /* Responsive */
@@ -757,7 +748,7 @@ form input[type="file"]::file-selector-button {
 }
 
 form input[type="file"]::file-selector-button:hover {
-    background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
+    background: linear-gradient(135deg, #d4af37, #f4d467);
     transform: translateY(-2px);
 }
 
@@ -829,7 +820,7 @@ form input[type="file"]::file-selector-button:hover {
 }
 
 .form-actions .btn-primary:hover {
-    background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
+    background: linear-gradient(135deg, #d4af37, #f4d467);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(166, 137, 50, 0.4);
 }
