@@ -210,6 +210,8 @@
                 $(sel).DataTable().destroy();
             }
             $(sel).DataTable({
+                width: '100%',
+                autoWidth: false,
                 columnDefs: [
                     { targets: '_all', defaultContent: '' },
                     { targets: 4, searchable: false },                    // Recibo (archivo/imagen)

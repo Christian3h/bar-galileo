@@ -70,7 +70,9 @@ table.dataTable tfoot th {
 #tabla-categorias,
 #brands-table,
 #expenses-table,
-#tabla-facturas {
+#tabla-facturas,
+#roles-table,
+#users-table {
   width: 100% !important;
 }
 
