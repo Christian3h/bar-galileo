@@ -1,6 +1,7 @@
 
 from django import forms
 from django.utils import timezone
+from django.utils.html import strip_tags
 from .models import Expense
 
 class ExpenseForm(forms.ModelForm):
@@ -49,8 +50,10 @@ class ExpenseForm(forms.ModelForm):
     
     def clean_description(self):
         description = self.cleaned_data.get('description')
-        if description and len(description) > 500:
-            raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
+        if description:
+            description = strip_tags(description)
+            if len(description) > 500:
+                raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
         return description
     
     def clean_receipt(self):
