@@ -97,6 +97,98 @@ p select {
     box-sizing: border-box;
 }
 
+/* === Fortaleza de contraseña y feedback === */
+.password-strength-container {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.strength-bar-wrapper {
+    flex: 1;
+    height: 6px;
+    background: var(--color-border-muted);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.4s, background-color 0.4s;
+    background-color: var(--color-danger);
+}
+.strength-bar.weak   { background-color: var(--color-danger); }
+.strength-bar.fair   { background-color: var(--color-warning); }
+.strength-bar.good   { background-color: var(--color-info); }
+.strength-bar.strong { background-color: var(--color-success); }
+
+.strength-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 70px;
+    color: var(--color-secondary);
+}
+
+.requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.6rem 0 0;
+}
+.req {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.6rem;
+    padding: 0.2rem 0;
+    color: var(--color-gray);
+    transition: color 0.3s;
+}
+.req-icon {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.req.ok {
+    color: var(--color-success-strong);
+}
+.req.fail {
+    color: var(--color-danger-strong);
+}
+
+.match-feedback {
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    font-weight: 600;
+    min-height: 1.2em;
+    transition: color 0.3s;
+}
+.match-feedback.ok { color: var(--color-success-strong); }
+.match-feedback.fail { color: var(--color-danger-strong); }
+
+/* Botón mostrar/ocultar contraseña */
+.toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    margin-left: -2.2em;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.toggle-password:hover { opacity: 1; }
+.toggle-password svg {
+    width: 1.3em;
+    height: 1.3em;
+    fill: var(--color-gray);
+}
+
 /* Focus para inputs, textareas y selects */
 input[type="text"]:focus,
 input[type="number"]:focus,
