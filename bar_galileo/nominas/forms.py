@@ -7,6 +7,7 @@ from django.db.models import Q
 from django.urls import reverse
 from roles.models import Role
 from .models import Empleado, Pago, Bonificacion
+from core.security.validators import NameSSTIValidator, EmailSSTIValidator, PhoneSSTIValidator, GenericSSTIValidator, DescriptionSSTIValidator
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -97,14 +98,14 @@ class EmpleadoForm(forms.ModelForm):
             "estado", "tipo_contrato", "email", "telefono", "direccion"
         ]
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre completo', 'required': True}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre completo', 'required': True, 'data-validate': 'name'}),
             'salario': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Salario base', 'required': True}),
             'fecha_contratacion': DateInput(attrs={'class': 'form-control', 'required': True}),
             'estado': forms.Select(attrs={'class': 'form-control', 'required': True}),
             'tipo_contrato': forms.Select(attrs={'class': 'form-control', 'required': True}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correo@ejemplo.com', 'required': True}),
-            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+123456789', 'required': True}),
-            'direccion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Dirección completa', 'required': True}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'correo@ejemplo.com', 'required': True, 'data-validate': 'email'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '+123456789', 'required': True, 'data-validate': 'phone'}),
+            'direccion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Dirección completa', 'required': True, 'data-validate': 'any'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -138,7 +139,9 @@ class EmpleadoForm(forms.ModelForm):
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre del empleado es obligatorio.')
         nombre = nombre.strip()
-        nombre = strip_tags(nombre)
+        # Usar validador SSTI
+        validator = NameSSTIValidator()
+        validator(nombre)
         return nombre
     
     def clean_email(self):
@@ -146,7 +149,9 @@ class EmpleadoForm(forms.ModelForm):
         if not email or not email.strip():
             raise forms.ValidationError('El email es obligatorio.')
         email = email.strip()
-        email = strip_tags(email)
+        # Usar validador SSTI
+        validator = EmailSSTIValidator()
+        validator(email)
         return email
     
     def clean_telefono(self):
@@ -154,7 +159,9 @@ class EmpleadoForm(forms.ModelForm):
         if not telefono or not telefono.strip():
             raise forms.ValidationError('El teléfono es obligatorio.')
         telefono = telefono.strip()
-        telefono = strip_tags(telefono)
+        # Usar validador SSTI
+        validator = PhoneSSTIValidator()
+        validator(telefono)
         return telefono
     
     def clean_direccion(self):
@@ -162,7 +169,9 @@ class EmpleadoForm(forms.ModelForm):
         if not direccion or not direccion.strip():
             raise forms.ValidationError('La dirección es obligatoria.')
         direccion = direccion.strip()
-        direccion = strip_tags(direccion)
+        # Usar validador SSTI
+        validator = GenericSSTIValidator()
+        validator(direccion)
         return direccion
 
     def clean_salario(self):
@@ -306,7 +315,7 @@ class BonificacionForm(forms.ModelForm):
         fields = ["empleado", "nombre", "monto", "recurrente", "fecha_inicio", "fecha_fin"]
         widgets = {
             'empleado': forms.Select(attrs={'class': 'form-control'}),
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la bonificación'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la bonificación', 'data-validate': 'any'}),
             'monto': forms.NumberInput(attrs={'class': 'form-control'}),
             'recurrente': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'fecha_inicio': DateInput(attrs={'class': 'form-control'}),
@@ -323,7 +332,11 @@ class BonificacionForm(forms.ModelForm):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre de la bonificación es obligatorio.')
-        return nombre.strip()
+        nombre = nombre.strip()
+        # Usar validador SSTI
+        validator = GenericSSTIValidator()
+        validator(nombre)
+        return nombre
     
     def clean_monto(self):
         monto = self.cleaned_data.get('monto')

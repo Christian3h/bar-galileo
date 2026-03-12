@@ -3,14 +3,15 @@ from django.core.exceptions import ValidationError
 from django.utils.html import strip_tags
 from .models import Role, UserProfile, RolePermission
 from django.contrib.auth.models import User
+from core.security.validators import NameSSTIValidator, DescriptionSSTIValidator, GenericSSTIValidator
 
 class RoleForm(forms.ModelForm):
     class Meta:
         model = Role
         fields = ['nombre', 'descripcion']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del rol'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción del rol'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del rol', 'data-validate': 'name'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción del rol', 'data-validate': 'description'}),
         }
         labels = {
             'nombre': 'Nombre del Rol',
@@ -23,7 +24,10 @@ class RoleForm(forms.ModelForm):
             raise forms.ValidationError('El nombre del rol es obligatorio.')
         
         nombre = nombre.strip()
-        nombre = strip_tags(nombre)
+        
+        # Usar validador SSTI
+        validator = NameSSTIValidator()
+        validator(nombre)
         
         # Validar longitud
         if len(nombre) > 100:
@@ -44,7 +48,9 @@ class RoleForm(forms.ModelForm):
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get('descripcion')
         if descripcion:
-            descripcion = strip_tags(descripcion)
+            # Usar validador SSTI
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
             if len(descripcion) > 500:
                 raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
         return descripcion
@@ -80,8 +86,8 @@ class RolePermissionForm(forms.ModelForm):
         fields = ['rol', 'modulo', 'accion']
         widgets = {
             'rol': forms.Select(attrs={'class': 'form-control'}),
-            'modulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del módulo'}),
-            'accion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Acción permitida'}),
+            'modulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del módulo', 'data-validate': 'any'}),
+            'accion': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Acción permitida', 'data-validate': 'any'}),
         }
         labels = {
             'rol': 'Rol',
@@ -100,7 +106,9 @@ class RolePermissionForm(forms.ModelForm):
         if not modulo or not modulo.strip():
             raise forms.ValidationError('El módulo es obligatorio.')
         modulo = modulo.strip()
-        modulo = strip_tags(modulo)
+        # Usar validador SSTI
+        validator = GenericSSTIValidator()
+        validator(modulo)
         return modulo
     
     def clean_accion(self):
@@ -108,7 +116,9 @@ class RolePermissionForm(forms.ModelForm):
         if not accion or not accion.strip():
             raise forms.ValidationError('La acción es obligatoria.')
         accion = accion.strip()
-        accion = strip_tags(accion)
+        # Usar validador SSTI
+        validator = GenericSSTIValidator()
+        validator(accion)
         return accion
 
 RolePermissionFormSet = forms.modelformset_factory(
