@@ -1,68 +1,72 @@
-/* Colores principales para el e-commerce Vive Natural */
-/* :root {
-  --color-primary: #62733d;
-  --color-secondary: #a68932;
-  --color-dark: #bf452a;
-  --color-light: #262626;
-  --color-accent: #0d0d0d;
-  --color-gray: #a68932;
-  --color-shadow: #62733d;
-} */
+/* Paleta de colores - Tema claro (rediseño)
+ *
+ * Nota:
+ * - El bloque del tema oscuro se mantiene exactamente igual (no tocado).
+ * - El color de marca `#b89a3c` NO se modifica.
+ *
+ * Esta hoja define variables CSS reutilizables (design tokens) pensadas
+ * para garantizar contraste y coherencia visual en el tema claro.
+ * Ajusta valores según sea necesario para casos particulares.
+ */
 
+/* =========================
+   TEMA CLARO - ROOT
+   ========================= */
 :root {
-  /* ──────────────────────────────────────────────────────
-     PALETA PRINCIPAL – NATURAL VIBRANTE
-     Mantiene identidad orgánica con mejor contraste y vivacidad
-  ────────────────────────────────────────────────────── */
-  --color-primary: #6a8c3d;      /* verde esmeralda vibrante – contraste 5.8:1 sobre blanco */
-  --color-secondary: #3a3a3a;    /* gris casi negro – máximo contraste para texto principal */
-  --color-dark: #c4452a;         /* rojo terracota cálido – más vibrante que el original */
-  --color-light: #f0f0f0;        /* fondo claro ligeramente más oscuro para mejor legibilidad */
-  --color-accent: #ffffff;       /* tarjetas o contenedores */
-  --color-gray: #8a8a8a;         /* texto secundario con mejor contraste */
-  --color-shadow: #b8c9a0;       /* sombras suaves verde claro */
-  --color-surface: #f5f7f0;      /* superficie principal – cálida pero neutral */
-  --color-surface-alt: #ffffff;  /* superficie alternativa */
-  --color-border-muted: rgba(0, 0, 0, 0.1); /* bordes más definidos */
+  /* Identidad principal */
+  --color-primary: #2f7a52;      /* verde principal (fresco, natural) */
+  --color-secondary: #2b2b2b;    /* texto principal / iconos (alto contraste) */
+  --color-dark: #bb4a31;         /* acento oscuro / acciones importantes */
+  --color-light: #fbfbf8;        /* fondo general muy claro */
+  --color-accent: #ffffff;       /* contenedores / cards */
+  --color-gray: #6e6e6e;         /* texto secundario y metadatos */
+  --color-shadow: #cfe0c1;       /* color para sombras suaves (tonalidad verde tenue) */
 
-  /* ──────────────────────────────────────────────────────
-     COLORES DE MARCA – ACENTOS DORADOS NATURALES
-  ────────────────────────────────────────────────────── */
-  --color-brand: #b89a3c;        /* oro natural – contraste 5.2:1 sobre blanco */
-  --color-brand-light: #e6d19c;  /* oro claro para gradientes y hover */
-  --color-brand-dark: #8c6d20;   /* oro oscuro para texto sobre claro */
+  /* Superficies y bordes */
+  --color-surface: #ffffff;          /* tarjetas / inputs */
+  --color-surface-alt: #fbfcf7;      /* superficies alternas */
+  --color-border-muted: rgba(16, 24, 16, 0.06); /* bordes sutiles en claro */
 
-  /* ──────────────────────────────────────────────────────
-     COLORES DE FEEDBACK – MEJOR CONTRASTE WCAG AA/AAA
-  ────────────────────────────────────────────────────── */
-  --color-success: #2e8b57;      /* verde éxito – contraste 5.6:1 */
-  --color-success-strong: #1d5c3a;
-  --color-warning: #e6a800;      /* ámbar advertencia – contraste 5.9:1 */
+  /* =========================
+     COLOR DE MARCA (NO MODIFICAR)
+     ========================= */
+  --color-brand: #b89a3c;        /* oro natural — mantener exactamente este valor */
+  --color-brand-light: #e9dca0;  /* uso en hover / gradientes suaves */
+  --color-brand-dark: #8b6a1f;   /* uso en textos sobre fondos claros */
+
+  /* =========================
+     Feedback / Estados
+     ========================= */
+  --color-success: #2e8b57;      /* verde de éxito ( legible sobre fondo blanco ) */
+  --color-success-strong: #1f5f3a;
+  --color-warning: #d08900;      /* ámbar/amarillo cálido */
   --color-warning-strong: #8a640f;
-  --color-info: #3a7bc8;         /* azul información – contraste 5.3:1 */
-  --color-info-strong: #1e4a7a;
-  --color-danger: #c53d2a;       /* rojo peligro – contraste 5.7:1 */
+  --color-info: #2f6fb8;         /* azul informativo */
+  --color-info-strong: #1d4b7a;
+  --color-danger: #c53d2a;       /* rojo para errores importantes */
   --color-danger-strong: #8a281c;
 
-  /* ──────────────────────────────────────────────────────
-     FONDOS Y TEXTOS DE FEEDBACK – PARES CONTRASTADOS
-  ────────────────────────────────────────────────────── */
+  /* =========================
+     Fondos y textos de feedback (pares contrastados)
+     ========================= */
   --feedback-success-bg: #e8f7ef;
-  --feedback-success-foreground: #1a3d29;
-  --feedback-warning-bg: #fff8e6;
-  --feedback-warning-foreground: #664400;
-  --feedback-info-bg: #e8f1ff;
+  --feedback-success-foreground: #11402a;
+  --feedback-warning-bg: #fff7e0;
+  --feedback-warning-foreground: #5a3f00;
+  --feedback-info-bg: #eaf1ff;
   --feedback-info-foreground: #0f2c4d;
-  --feedback-danger-bg: #ffedea;
-  --feedback-danger-foreground: #661a10;
-  --feedback-neutral-bg: #f2f2f2;
-  --feedback-neutral-foreground: #262626;
-  --feedback-changed-bg: #f0f6e8;
-  --feedback-changed-foreground: #2c4417;
-  --feedback-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --feedback-danger-bg: #fff0ee;
+  --feedback-danger-foreground: #5b1a12;
+  --feedback-neutral-bg: #f6f6f6;
+  --feedback-neutral-foreground: #2b2b2b;
+  --feedback-changed-bg: #f3fae9;
+  --feedback-changed-foreground: #254e1a;
+  --feedback-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
 }
 
-/* === 🌑 Tema Oscuro === */
+/* =========================
+   TEMA OSCURO (SIN CAMBIOS)
+   ========================= */
 [data-theme="dark"] {
   --color-primary: #62733d;
   --color-secondary: #a68932;

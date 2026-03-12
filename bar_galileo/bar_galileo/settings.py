@@ -96,6 +96,7 @@ AUTHENTICATION_BACKENDS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.security.middleware.SecurityValidationMiddleware",  # SSTI/XSS protection
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "roles.middleware.PermissionMiddleware",
@@ -106,6 +107,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
+
+# Configuración de seguridad SSTI
+SECURITY_MIDDLEWARE_ENABLED = True
+SECURITY_MIDDLEWARE_LOG_ONLY = False  # True = solo log, no bloquear
 
 ROOT_URLCONF = "bar_galileo.urls"
 # Configuración explícita de django-allauth para registro

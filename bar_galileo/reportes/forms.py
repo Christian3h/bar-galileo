@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.html import strip_tags
 from .models import Reporte
+from core.security.validators import ProductSSTIValidator, DescriptionSSTIValidator, GenericSSTIValidator
 
 
 class ReporteForm(forms.ModelForm):
@@ -15,7 +16,8 @@ class ReporteForm(forms.ModelForm):
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nombre del reporte',
-                'required': True
+                'required': True,
+                'data-validate': 'product'
             }),
             'tipo': forms.Select(attrs={
                 'class': 'form-control',
@@ -32,7 +34,8 @@ class ReporteForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Descripción del reporte (opcional)'
+                'placeholder': 'Descripción del reporte (opcional)',
+                'data-validate': 'description'
             }),
             'fecha_inicio': forms.DateInput(attrs={
                 'class': 'form-control',
@@ -68,13 +71,17 @@ class ReporteForm(forms.ModelForm):
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre del reporte es obligatorio.')
         nombre = nombre.strip()
-        nombre = strip_tags(nombre)
+        # Usar validador SSTI
+        validator = ProductSSTIValidator()
+        validator(nombre)
         return nombre
     
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get('descripcion')
         if descripcion:
-            descripcion = strip_tags(descripcion)
+            # Usar validador SSTI
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
         return descripcion
     
     def clean_tipo(self):
@@ -173,12 +180,15 @@ class ReporteFilterForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Buscar por nombre o descripción...'
+            'placeholder': 'Buscar por nombre o descripción...',
+            'data-validate': 'any'
         })
     )
     
     def clean_busqueda(self):
         busqueda = self.cleaned_data.get('busqueda')
         if busqueda:
-            busqueda = strip_tags(busqueda)
+            # Usar validador SSTI
+            validator = GenericSSTIValidator()
+            validator(busqueda)
         return busqueda

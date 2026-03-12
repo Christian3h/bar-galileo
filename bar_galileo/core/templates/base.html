@@ -180,6 +180,9 @@
   </script>
 
   <script src="{% static 'js/dashboard-loading.js' %}"></script>
+  
+  <!-- Security: Validación SSTI/XSS en frontend -->
+  <script src="{% static 'js/security.js' %}"></script>
 
   {% block extra_js %}{% endblock %}
 

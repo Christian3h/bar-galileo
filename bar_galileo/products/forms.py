@@ -9,6 +9,14 @@ from django import forms
 from django.utils.html import strip_tags
 
 from .models import Categoria, Marca, Producto, Proveedor
+from core.security.validators import (
+    ProductSSTIValidator, 
+    DescriptionSSTIValidator, 
+    NameSSTIValidator, 
+    PhoneSSTIValidator,
+    EmailSSTIValidator,
+    GenericSSTIValidator
+)
 
 
 class ProductoForm(forms.ModelForm):
@@ -31,6 +39,7 @@ class ProductoForm(forms.ModelForm):
                     "class": "form-control",
                     "placeholder": "Nombre del producto",
                     "required": True,
+                    "data-validate": "product",
                 }
             ),
             "precio_compra": forms.NumberInput(
@@ -64,6 +73,7 @@ class ProductoForm(forms.ModelForm):
                     "class": "form-control",
                     "rows": 3,
                     "placeholder": "Descripción del producto (opcional)",
+                    "data-validate": "description",
                 }
             ),
             "id_categoria": forms.Select(
@@ -93,8 +103,11 @@ class ProductoForm(forms.ModelForm):
             raise forms.ValidationError("El nombre del producto es obligatorio.")
 
         nombre = nombre.strip()
-        nombre = strip_tags(nombre)
-
+        
+        # Usar validador SSTI
+        validator = ProductSSTIValidator()
+        validator(nombre)
+        
         # Validar longitud máxima
         if len(nombre) > 200:
             raise forms.ValidationError("El nombre no puede exceder 200 caracteres.")
@@ -120,7 +133,9 @@ class ProductoForm(forms.ModelForm):
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get("descripcion")
         if descripcion:
-            descripcion = strip_tags(descripcion)
+            # Usar validador SSTI
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
         return descripcion
 
     def clean_precio_compra(self):
@@ -202,9 +217,9 @@ class CategoriaForm(forms.ModelForm):
         fields = ["nombre_categoria", "descripcion"]
         widgets = {
             "nombre_categoria": forms.TextInput(
-                attrs={"class": "form-control", "required": True}
+                attrs={"class": "form-control", "required": True, "data-validate": "product"}
             ),
-            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 2, "data-validate": "description"}),
         }
 
     def clean_nombre_categoria(self):
@@ -212,13 +227,16 @@ class CategoriaForm(forms.ModelForm):
         if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre de la categoría es obligatorio.")
         nombre = nombre.strip()
-        nombre = strip_tags(nombre)
+        # Usar validador SSTI
+        validator = ProductSSTIValidator()
+        validator(nombre)
         return nombre
 
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get("descripcion")
         if descripcion:
-            descripcion = strip_tags(descripcion)
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
         return descripcion
 
 class ProveedorForm(forms.ModelForm):
@@ -231,6 +249,7 @@ class ProveedorForm(forms.ModelForm):
                     "class": "form-control",
                     "placeholder": "Nombre del proveedor",
                     "required": True,
+                    "data-validate": "name",
                 }
             ),
             "contacto": forms.TextInput(
@@ -238,10 +257,11 @@ class ProveedorForm(forms.ModelForm):
                     "class": "form-control",
                     "placeholder": "Persona de contacto/Email",
                     "required": True,
+                    "data-validate": "any",
                 }
             ),
             "telefono": forms.NumberInput(
-                attrs={"class": "form-control", "placeholder": "Teléfono"}
+                attrs={"class": "form-control", "placeholder": "Teléfono", "data-validate": "phone"}
             ),
             "direccion": forms.Textarea(
                 attrs={
@@ -249,6 +269,7 @@ class ProveedorForm(forms.ModelForm):
                     "rows": 2,
                     "placeholder": "Dirección completa",
                     "required": True,
+                    "data-validate": "any",
                 }
             ),
         }
@@ -264,7 +285,9 @@ class ProveedorForm(forms.ModelForm):
         if not nombre or not nombre.strip():
             raise forms.ValidationError("El nombre del proveedor es obligatorio.")
         nombre = nombre.strip()
-        nombre = strip_tags(nombre)
+        # Usar validador SSTI
+        validator = NameSSTIValidator()
+        validator(nombre)
         return nombre
 
     def clean_contacto(self):
@@ -275,13 +298,15 @@ class ProveedorForm(forms.ModelForm):
             raise forms.ValidationError("El contacto es obligatorio.")
 
         contacto = contacto.strip()
-        contacto = strip_tags(contacto)
 
-        # Si parece ser un email, validar formato
+        # Si parece ser un email, validar con validador SSTI
         if "@" in contacto:
-            email_regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-            if not re.match(email_regex, contacto):
-                raise forms.ValidationError("El formato del email no es válido.")
+            validator = EmailSSTIValidator()
+            validator(contacto)
+        else:
+            # Si no es email, usar validador genérico
+            validator = GenericSSTIValidator()
+            validator(contacto)
 
         return contacto
 
@@ -290,7 +315,9 @@ class ProveedorForm(forms.ModelForm):
         if not direccion or not direccion.strip():
             raise forms.ValidationError("La dirección es obligatoria.")
         direccion = direccion.strip()
-        direccion = strip_tags(direccion)
+        # Usar validador genérico
+        validator = GenericSSTIValidator()
+        validator(direccion)
         return direccion
 
     def clean_telefono(self):
@@ -298,6 +325,9 @@ class ProveedorForm(forms.ModelForm):
         if telefono:
             # Convert BigIntegerField to string for regex validation
             telefono_str = str(telefono)
+            # Usar validador SSTI
+            validator = PhoneSSTIValidator()
+            validator(telefono_str)
             # Colombian phone number regex: starts with 3, 10 digits long
             colombian_phone_regex = r"^3\d{9}$"
             if not re.match(colombian_phone_regex, telefono_str):
@@ -312,8 +342,8 @@ class MarcaForm(forms.ModelForm):
         model = Marca
         fields = ["marca", "descripcion"]
         widgets = {
-            "marca": forms.TextInput(attrs={"class": "form-control", "required": True}),
-            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
+            "marca": forms.TextInput(attrs={"class": "form-control", "required": True, "data-validate": "product"}),
+            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 2, "data-validate": "description"}),
         }
 
     def clean_marca(self):
@@ -321,11 +351,14 @@ class MarcaForm(forms.ModelForm):
         if not marca or not marca.strip():
             raise forms.ValidationError("El nombre de la marca es obligatorio.")
         marca = marca.strip()
-        marca = strip_tags(marca)
+        # Usar validador SSTI
+        validator = ProductSSTIValidator()
+        validator(marca)
         return marca
 
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get("descripcion")
         if descripcion:
-            descripcion = strip_tags(descripcion)
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
         return descripcion
