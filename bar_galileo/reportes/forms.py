@@ -2,7 +2,10 @@
 
 from django import forms
 from django.contrib.auth.models import User
+from django.utils import timezone
+from django.utils.html import strip_tags
 from .models import Reporte
+from core.security.validators import ProductSSTIValidator, DescriptionSSTIValidator, GenericSSTIValidator
 
 
 class ReporteForm(forms.ModelForm):
@@ -16,7 +19,8 @@ class ReporteForm(forms.ModelForm):
             'nombre': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nombre del reporte',
-                'required': True
+                'required': True,
+                'data-validate': 'product'
             }),
             'tipo': forms.Select(attrs={
                 'class': 'form-control',
@@ -33,16 +37,17 @@ class ReporteForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Descripción del reporte (opcional)'
+                'placeholder': 'Descripción del reporte (opcional)',
+                'data-validate': 'description'
             }),
             'fecha_inicio': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
-            }),
+            }, format='%Y-%m-%d'),
             'fecha_fin': forms.DateInput(attrs={
                 'class': 'form-control',
                 'type': 'date'
-            }),
+            }, format='%Y-%m-%d'),
             'archivo': forms.FileInput(attrs={
                 'class': 'form-control'
             }),
@@ -57,12 +62,30 @@ class ReporteForm(forms.ModelForm):
             'fecha_fin': 'Fecha de Fin',
             'archivo': 'Archivo del Reporte'
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['fecha_inicio'].widget.attrs['max'] = hoy
+        self.fields['fecha_fin'].widget.attrs['max'] = hoy
+
     def clean_nombre(self):
         nombre = self.cleaned_data.get('nombre')
         if not nombre or not nombre.strip():
             raise forms.ValidationError('El nombre del reporte es obligatorio.')
-        return nombre.strip()
+        nombre = nombre.strip()
+        # Usar validador SSTI
+        validator = ProductSSTIValidator()
+        validator(nombre)
+        return nombre
+    
+    def clean_descripcion(self):
+        descripcion = self.cleaned_data.get('descripcion')
+        if descripcion:
+            # Usar validador SSTI
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
+        return descripcion
     
     def clean_tipo(self):
         tipo = self.cleaned_data.get('tipo')
@@ -97,10 +120,24 @@ class ReporteForm(forms.ModelForm):
                 raise forms.ValidationError('Solo se permiten archivos PDF, Excel o CSV.')
         return archivo
     
+    def clean_fecha_inicio(self):
+        fecha_inicio = self.cleaned_data.get('fecha_inicio')
+        if fecha_inicio:
+            hoy = timezone.localdate()
+            if fecha_inicio > hoy:
+                raise forms.ValidationError('La fecha de inicio no puede ser una fecha futura.')
+        return fecha_inicio
+
     def clean(self):
         cleaned_data = super().clean()
         fecha_inicio = cleaned_data.get('fecha_inicio')
         fecha_fin = cleaned_data.get('fecha_fin')
+        hoy = timezone.localdate()
+        
+        if fecha_fin and fecha_fin > hoy:
+            raise forms.ValidationError({
+                'fecha_fin': 'La fecha de fin no puede ser una fecha futura.'
+            })
         
         if fecha_inicio and fecha_fin:
             if fecha_fin < fecha_inicio:
@@ -147,6 +184,15 @@ class ReporteFilterForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Buscar por nombre o descripción...'
+            'placeholder': 'Buscar por nombre o descripción...',
+            'data-validate': 'any'
         })
     )
+    
+    def clean_busqueda(self):
+        busqueda = self.cleaned_data.get('busqueda')
+        if busqueda:
+            # Usar validador SSTI
+            validator = GenericSSTIValidator()
+            validator(busqueda)
+        return busqueda

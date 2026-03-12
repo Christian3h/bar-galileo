@@ -5,11 +5,13 @@
 {% block extra_css%}
     <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
     <!-- DataTables SearchBuilder CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.7.1/css/searchBuilder.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'js/DataTables/searchBuilder.dataTables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main/products/searchbuilder-full.css' %}">
     <!-- DataTables Buttons CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    <script src="{% static 'js/products/searchbuilder-tooltips.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'js/DataTables/buttons.dataTables.min.css' %}">
     <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="{% static 'js/DataTables/responsive.dataTables.min.css' %}">
     <style>
         /* Estilos personalizados para DataTable usando las clases del proyecto */
 
@@ -31,6 +33,26 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            position: relative;
+        }
+
+        /* Tooltip para SearchBuilder */
+        .dt-search-builder .tooltip {
+            position: absolute;
+            top: -1.5rem;
+            left: 0;
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            z-index: 10;
+            display: none;
+        }
+
+        .dt-search-builder:hover .tooltip {
+            display: block;
         }
 
         /* SearchBuilder ocupa todo el ancho */
@@ -470,6 +492,9 @@
                 height: 14px !important;
             }
         }
+
+
+
     </style>
 {% endblock %}
 
@@ -490,7 +515,7 @@
                             <th class="col-nombre">Nombre</th>
                             <th class="col-precio-compra">Precio Compra</th>
                             <th class="col-precio-venta">Precio Venta</th>
-                            <th class="col-stock">Stock</th>
+                            <th class="col-stock">Cantidad</th>
                             <th class="col-descripcion">Descripción</th>
                             <th class="col-categoria">Categoría</th>
                             <th class="col-proveedor">Proveedor</th>
@@ -517,7 +542,7 @@
                             <th class="col-imagen">Imagen</th>
                             <th class="col-nombre">Nombre</th>
                             <th class="col-precio-venta">Precio Venta</th>
-                            <th class="col-stock">Stock</th>
+                            <th class="col-stock">Cantidad</th>
                             <th class="col-categoria">Categoría</th>
                             <th class="col-acciones">Acciones</th>
                         </tr>
@@ -537,7 +562,7 @@
                             <td class="text-center col-stock">
                                 {{ producto.stock }}
                                 {% if producto.stock <= 0 %}
-                                    <span class="badge bg-danger">Sin stock</span>
+                                    <span class="badge bg-danger">Sin cantidad</span>
                                 {% elif producto.stock <= 10 %}
                                     <span class="badge bg-warning">Bajo</span>
                                 {% endif %}
@@ -575,18 +600,17 @@
 
 {% block extra_js %}
     <!-- DataTables Responsive -->
-    <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
+    <script src="{% static 'js/DataTables/dataTables.responsive.min.js' %}"></script>
     <!-- DataTables SearchBuilder -->
-    <script src="https://cdn.datatables.net/searchbuilder/1.7.1/js/dataTables.searchBuilder.min.js"></script>
+    <script src="{% static 'js/DataTables/dataTables.searchBuilder.min.js' %}"></script>
     <!-- DataTables Buttons -->
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-    <!-- JSZip para Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- pdfmake para PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <!-- Botones de exportación -->
-    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="{% static 'js/DataTables/dataTables.buttons.min.js' %}"></script>
+    <!-- Botones de exportación HTML5 -->
+    <script src="{% static 'js/DataTables/buttons.html5.min.js' %}"></script>
+    <!-- JSZip y pdfmake para exportación (no incluidos en el bundle) -->
+    <script src="{% static 'js/DataTables/jszip.min.js' %}"></script>
+    <script src="{% static 'js/DataTables/pdfmake.min.js' %}"></script>
+    <script src="{% static 'js/DataTables/vfs_fonts.js' %}"></script>
 
     <script>
     // Permisos del usuario
@@ -676,10 +700,15 @@
                 serverSide: false,
                 responsive: { details: { type: 'inline' } },
                 autoWidth: false,
-                // Configurar SearchBuilder
-                searchBuilder: true,
+                // Configurar SearchBuilder con tooltips y diseño mejorado
+                searchBuilder: {
+                    createTooltip: 'Añadir una nueva condición de búsqueda',
+                    logicTooltip: 'Seleccionar lógica entre condiciones (Y/O)',
+                    deleteTooltip: 'Eliminar esta condición',
+                    clearAllTooltip: 'Limpiar todas las condiciones',
+                },
                 // Configurar DOM reorganizado:
-                // Q = SearchBuilder (arriba)
+                // Q = SearchBuilder (arriba con tooltips)
                 // l = Length (arriba)
                 // f = Filter/Search (arriba)
                 // r = processing
@@ -786,7 +815,10 @@
                         name: "stock",
                         className: 'text-center col-stock',
                         render: function(data, type, row) {
-                            const stock = data || 0;
+                            const stock = parseInt(data) || 0;
+                            if (type === 'sort' || type === 'type' || type === 'filter') {
+                                return stock;
+                            }
                             let badge = '';
                             if (stock <= 0) {
                                 badge = '<span class="badge bg-danger">Sin stock</span>';

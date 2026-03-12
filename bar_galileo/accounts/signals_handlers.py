@@ -12,9 +12,14 @@ from io import BytesIO
 
 @receiver(user_logged_in)
 def handle_user_logged_in(sender, request, user, **kwargs):
+    """
+    Maneja el login del usuario.
+    NOTIFICACIÓN DESACTIVADA - ya no se muestra "¡Bienvenido de nuevo!" por cada vista.
+    Si necesitas notificaciones de login, implementalas en otro lugar.
+    """
     print(f"[DEBUG][Signals] Signal user_logged_in received for user: {user.username}")
-    mensaje = _("¡Bienvenido de nuevo! Has iniciado sesión correctamente.")
-    notificar_usuario(user, str(mensaje))
+    # DESACTIVADO: mensaje = _("¡Bienvenido de nuevo! Has iniciado sesión correctamente.")
+    # notificar_usuario(user, str(mensaje))
 
     sociallogin = kwargs.get('sociallogin')
     if not sociallogin:

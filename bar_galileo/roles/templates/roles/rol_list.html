@@ -23,13 +23,17 @@
                         <td>{{ rol.nombre }}</td>
                         <td>{{ rol.descripcion }}</td>
                         <td>
-                            {% if request.user|has_perm:"roles,editar" %}
-                                <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info" title="Gestionar permisos del rol">Permisos</a>
-                                <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary" title="Editar rol"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
-                            {% endif %}
-                            {% if request.user|has_perm:"roles,eliminar" %}
-                                <button type="button" class="btn btn-sm btn-danger" title="Eliminar rol"
-                                    onclick="confirmarEliminarRol({{ rol.pk }}, '{{ rol.nombre }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
+                            {% if rol.nombre|lower != "usuario" %}
+                                {% if request.user|has_perm:"roles,editar" %}
+                                    <a href="{% url 'roles:rol_permisos' rol.id %}" class="btn btn-sm btn-info" title="Gestionar permisos del rol">Permisos</a>
+                                    <a href="{% url 'roles:rol_update' rol.pk %}" class="btn btn-sm btn-primary" title="Editar rol"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
+                                {% endif %}
+                                {% if request.user|has_perm:"roles,eliminar" %}
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar rol"
+                                        onclick="confirmarEliminarRol({{ rol.pk }}, '{{ rol.nombre }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
+                                {% endif %}
+                            {% else %}
+                                <span title="Este es el rol base del sistema. Para garantizar la estabilidad de la plataforma, el perfil de Usuario no puede ser modificado ni eliminado." > Rol Protegido</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -53,10 +57,10 @@
             confirmLabel: 'Eliminar',
             cancelLabel: 'Cancelar'
         });
-        
+
         if (confirmed) {
             const form = document.getElementById('delete-rol-form');
-            form.action = `/roles/${rolId}/eliminar/`;
+            form.action = "{% url 'roles:rol_delete' pk=0 %}".replace('0', rolId);
             form.submit();
         }
     }
@@ -68,8 +72,11 @@
             $(sel).DataTable().destroy();
         }
         $(sel).DataTable({
+            width: '100%',
+            autoWidth: false,
             columnDefs: [
-                { targets: '_all', defaultContent: '' }
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false, searchable: false }  // Acciones
             ],
             "language": {
                 "url": "{% static 'js/DataTables/es-ES.json' %}"

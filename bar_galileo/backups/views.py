@@ -13,6 +13,7 @@ Todas las vistas requieren permisos específicos del módulo 'backups'.
 
 from django.views.generic import TemplateView, View
 from django.http import JsonResponse, FileResponse, Http404
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -20,7 +21,103 @@ from django.conf import settings
 from django.core.management import call_command
 from roles.decorators import permission_required
 from pathlib import Path
+import re
 from datetime import datetime
+
+
+def validate_sql_file(file_path):
+    """
+    Valida que un archivo sea un SQL válido.
+    - Verifica que el archivo exista y no esté vacío.
+    - Verifica que sea texto (no binario) leyendo los primeros bytes.
+    - Busca palabras clave SQL comunes para confirmar que es un dump.
+    """
+    if not file_path.exists():
+        raise ValidationError(f"El archivo no existe: {file_path}")
+    
+    if file_path.stat().st_size == 0:
+        raise ValidationError("El archivo SQL está vacío.")
+    
+    # Leer primeros 512 bytes para detectar binario
+    try:
+        with open(file_path, 'rb') as f:
+            first_bytes = f.read(512)
+            # Si hay bytes nulos (0x00) es probablemente binario
+            if b'\x00' in first_bytes:
+                raise ValidationError("El archivo parece binario, no es un SQL válido.")
+            # Convertir a texto ASCII/UTF-8
+            try:
+                sample = first_bytes.decode('utf-8')
+            except UnicodeDecodeError:
+                raise ValidationError("El archivo no es texto válido UTF-8.")
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo: {e}")
+    
+    # Buscar palabras clave SQL (case-insensitive)
+    sql_keywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 
+                    'ALTER', 'TABLE', 'DATABASE', 'VALUES', 'INTO', 'FROM', 'WHERE']
+    # Leer el archivo completo para buscar palabras clave (limitado a primeros 64KB)
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read(65536)  # 64KB suficiente para detectar
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo para validación: {e}")
+    
+    content_upper = content.upper()
+    found = any(keyword in content_upper for keyword in sql_keywords)
+    if not found:
+        raise ValidationError("El archivo no contiene palabras clave SQL comunes. ¿Es un dump válido?")
+    
+    # Validación exitosa
+    return True
+
+
+def validate_uploaded_sql_file(uploaded_file):
+    """
+    Valida un archivo subido (UploadedFile) que sea un SQL válido.
+    - Verifica que no esté vacío.
+    - Verifica que sea texto (no binario) leyendo los primeros bytes.
+    - Busca palabras clave SQL comunes para confirmar que es un dump.
+    """
+    if uploaded_file.size == 0:
+        raise ValidationError("El archivo SQL está vacío.")
+    
+    # Leer primeros 512 bytes para detectar binario
+    try:
+        uploaded_file.seek(0)
+        first_bytes = uploaded_file.read(512)
+        # Si hay bytes nulos (0x00) es probablemente binario
+        if b'\x00' in first_bytes:
+            raise ValidationError("El archivo parece binario, no es un SQL válido.")
+        # Convertir a texto UTF-8
+        try:
+            sample = first_bytes.decode('utf-8')
+        except UnicodeDecodeError:
+            raise ValidationError("El archivo no es texto válido UTF-8.")
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo: {e}")
+    finally:
+        uploaded_file.seek(0)  # Reset para lectura posterior
+    
+    # Buscar palabras clave SQL (case-insensitive)
+    sql_keywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 
+                    'ALTER', 'TABLE', 'DATABASE', 'VALUES', 'INTO', 'FROM', 'WHERE']
+    # Leer el archivo completo para buscar palabras clave (limitado a primeros 64KB)
+    try:
+        uploaded_file.seek(0)
+        content = uploaded_file.read(65536).decode('utf-8', errors='ignore')
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo para validación: {e}")
+    finally:
+        uploaded_file.seek(0)
+    
+    content_upper = content.upper()
+    found = any(keyword in content_upper for keyword in sql_keywords)
+    if not found:
+        raise ValidationError("El archivo no contiene palabras clave SQL comunes. ¿Es un dump válido?")
+    
+    # Validación exitosa
+    return True
 
 
 @method_decorator(permission_required('backups', 'ver'), name='dispatch')
@@ -436,6 +533,9 @@ class BackupRestoreView(View):
                     db_config = settings.DATABASES['default']
                     restore_file_path = backup_dir / restore_filename
 
+                    # Validar que el archivo sea un SQL válido
+                    validate_sql_file(restore_file_path)
+
                     conn = MySQLdb.connect(
                         host=db_config.get('HOST', 'localhost'),
                         port=int(db_config.get('PORT', 3306)),
@@ -586,6 +686,23 @@ class BackupUploadView(View):
                     'success': False,
                     'error': 'Tipo de archivo no válido. Formatos aceptados: .psql, .psql.gpg, .sql, .sql.gpg, .media.zip, .media.zip.gpg'
                 }, status=400)
+
+            # Validar archivo vacío
+            if backup_file.size == 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'El archivo está vacío.'
+                }, status=400)
+
+            # Validar contenido de archivos SQL no encriptados
+            if tipo == 'db' and not filename.endswith('.gpg'):
+                try:
+                    validate_uploaded_sql_file(backup_file)
+                except ValidationError as e:
+                    return JsonResponse({
+                        'success': False,
+                        'error': f'Archivo SQL no válido: {e}'
+                    }, status=400)
 
             # Crear directorio si no existe
             backup_dir.mkdir(parents=True, exist_ok=True)

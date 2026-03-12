@@ -309,7 +309,7 @@
                                 {% endif %}
                                 {% if request.user|has_perm:"reportes,eliminar" %}
                                     <button type="button" class="btn btn-sm btn-danger" title="Eliminar"
-                                        onclick="confirmarEliminarReporte({{ reporte.pk }}, '{{ reporte.titulo|escapejs }}')">
+                                        onclick="confirmarEliminarReporte({{ reporte.pk }}, '{{ reporte.nombre|escapejs }}')">
                                         <img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar">
                                     </button>
                                 {% endif %}
@@ -346,7 +346,7 @@
         
         if (confirmed) {
             const form = document.getElementById('delete-reporte-form');
-            form.action = `/reportes/${reporteId}/eliminar/`;
+            form.action = `/reportes/eliminar/${reporteId}/`;
             form.submit();
         }
     }
@@ -363,10 +363,11 @@
                 $(sel).DataTable().destroy();
             }
             $(sel).DataTable({
-                dom: 'rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+                dom: 'rt<"dt-bottom-bar"ip>',
+                width: '100%',
                 columnDefs: [
                     { targets: '_all', defaultContent: '' },
-                    { targets: 5, orderable: false } // Columna de acciones no ordenable
+                    { targets: 5, orderable: false, searchable: false } // Columna de acciones no ordenable ni buscable
                 ],
                 language: {
                     url: "{% static 'js/DataTables/es-ES.json' %}"

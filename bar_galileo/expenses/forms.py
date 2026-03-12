@@ -1,6 +1,7 @@
 
 from django import forms
 from django.utils import timezone
+from django.utils.html import strip_tags
 from .models import Expense
 
 class ExpenseForm(forms.ModelForm):
@@ -15,9 +16,14 @@ class ExpenseForm(forms.ModelForm):
             'receipt': 'Recibo',
         }
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
+            'date': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        hoy = timezone.localdate().isoformat()
+        self.fields['date'].widget.attrs['max'] = hoy
+
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
         if amount is None:
@@ -44,8 +50,10 @@ class ExpenseForm(forms.ModelForm):
     
     def clean_description(self):
         description = self.cleaned_data.get('description')
-        if description and len(description) > 500:
-            raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
+        if description:
+            description = strip_tags(description)
+            if len(description) > 500:
+                raise forms.ValidationError('La descripción no puede exceder 500 caracteres.')
         return description
     
     def clean_receipt(self):

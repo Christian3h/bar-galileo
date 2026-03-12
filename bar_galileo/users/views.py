@@ -1,9 +1,11 @@
+import json
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, Value, IntegerField
+from django.utils.html import strip_tags
 from roles.models import UserProfile, Role
 from roles.forms import UserProfileForm
 from .models_historial import HistorialMensual
@@ -22,11 +24,11 @@ def get_perfil(user):
 def editar_info(request):
     perfil = get_perfil(request.user)
     errors = {}
-    nombre = request.POST.get('nombre', perfil.nombre)
-    cedula = request.POST.get('cedula', perfil.cedula)
-    telefono = request.POST.get('telefono', perfil.telefono)
-    direccion = request.POST.get('direccion', perfil.direccion)
-    email = request.POST.get('email', request.user.email)
+    nombre = strip_tags(request.POST.get('nombre', perfil.nombre))
+    cedula = strip_tags(request.POST.get('cedula', perfil.cedula))
+    telefono = strip_tags(request.POST.get('telefono', perfil.telefono))
+    direccion = strip_tags(request.POST.get('direccion', perfil.direccion))
+    email = strip_tags(request.POST.get('email', request.user.email))
     if not nombre:
         errors['nombre'] = 'El nombre es obligatorio.'
     if not cedula or not cedula.isdigit():
@@ -84,12 +86,12 @@ def editar_emergencia(request):
     perfil = get_perfil(request.user)
     emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
     errors = {}
-    nombre = request.POST.get('emergencia_nombre', emergencia.nombre)
-    relacion = request.POST.get('emergencia_relacion', emergencia.relacion)
-    telefono = request.POST.get('emergencia_telefono', emergencia.telefono)
-    telefono_alt = request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt)
-    sangre = request.POST.get('emergencia_sangre', emergencia.sangre)
-    alergias = request.POST.get('emergencia_alergias', emergencia.alergias)
+    nombre = strip_tags(request.POST.get('emergencia_nombre', emergencia.nombre))
+    relacion = strip_tags(request.POST.get('emergencia_relacion', emergencia.relacion))
+    telefono = strip_tags(request.POST.get('emergencia_telefono', emergencia.telefono))
+    telefono_alt = strip_tags(request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt))
+    sangre = strip_tags(request.POST.get('emergencia_sangre', emergencia.sangre))
+    alergias = strip_tags(request.POST.get('emergencia_alergias', emergencia.alergias))
     if not nombre:
         errors['nombre'] = 'El nombre es obligatorio.'
     if not telefono or not telefono.isdigit():
@@ -237,10 +239,10 @@ def user_list(request):
         )
     ).order_by('is_user_role', 'username')
     roles = Role.objects.all()
-    
+
     if request.method == 'POST':
         action = request.POST.get('action', 'change_role')
-        
+
         if action == 'change_role':
             user_id = request.POST.get('user_id')
             rol_id = request.POST.get('rol_id')
@@ -255,10 +257,49 @@ def user_list(request):
             # Solo notificar si el usuario está autenticado
             if request.user.is_authenticated:
                 notificar_usuario(request.user, mensaje)
-
             return redirect('users:user_list')
-    
-    return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
+
+    # Construir mapa de perfiles y emergencias para el modal de datos personales
+    def fmt_tel(tel):
+        if tel and tel.startswith('+57'):
+            return '+57 ' + tel[3:]
+        elif tel:
+            return '+57 ' + tel
+        return ''
+
+    perfiles_qs = PerfilUsuario.objects.filter(
+        user__in=users
+    ).select_related('user', 'emergencia')
+
+    perfiles_map = {}
+    for perfil in perfiles_qs:
+        try:
+            emergencia = perfil.emergencia
+        except Exception:
+            emergencia = None
+
+        perfiles_map[str(perfil.user_id)] = {
+            'nombre': perfil.nombre or '',
+            'cedula': perfil.cedula or '',
+            'telefono': fmt_tel(perfil.telefono),
+            'direccion': perfil.direccion or '',
+            'email': perfil.user.email or '',
+            'emergencia_nombre': emergencia.nombre if emergencia else '',
+            'emergencia_relacion': emergencia.relacion if emergencia else '',
+            'emergencia_telefono': fmt_tel(emergencia.telefono) if emergencia else '',
+            'emergencia_telefono_alt': fmt_tel(emergencia.telefono_alt) if emergencia else '',
+            'emergencia_sangre': emergencia.sangre if emergencia else '',
+            'emergencia_alergias': emergencia.alergias if emergencia else '',
+        }
+
+    # Serializar a JSON para el modal JS
+    perfiles_json = json.dumps(perfiles_map)
+
+    return render(request, 'users/user_list.html', {
+        'users': users,
+        'roles': roles,
+        'perfiles_json': perfiles_json,
+    })
 
 from django.http import JsonResponse
 

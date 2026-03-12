@@ -13,7 +13,7 @@
         <option value="all" {% if selected_period == 'all' %}selected{% endif %}>Todo el Historial</option>
       </select>
     </form>
-    
+
   </div>
 
   <section class="dashboard-cards">
@@ -26,7 +26,7 @@
       <p>{{ ganancia_total|format_price }}</p>
     </div>
     <div class="card">
-      <h3>Valor Total del Stock</h3>
+      <h3>Valor Total del Inventario</h3>
       <p>{{ valor_total_stock|format_price }}</p>
     </div>
     <div class="card">
@@ -41,14 +41,7 @@
       <h3>Empleados Activos</h3>
       <p>{{ total_empleados }}</p>
     </div>
-    <div class="card">
-      <h3>Bonificaciones Pagadas</h3>
-      <p>{{ bonificaciones_pagadas|format_price }}</p>
-    </div>
-    <div class="card">
-      <h3>Bonificaciones Activas</h3>
-      <p>{{ bonificaciones_activas }}</p>
-    </div>
+
   </section>
 
   <h2 class="dashboard-title">Gráficos</h2>
@@ -76,7 +69,7 @@
     </article>
 
     <article class="chart-box">
-      <h4>Productos con Más Stock</h4>
+      <h4>Productos con Mayor Cantidad</h4>
       <div style="overflow-x: auto;">
         <div id="mas-stock-chart" style="width: 100%; height: 400px;"></div>
       </div>

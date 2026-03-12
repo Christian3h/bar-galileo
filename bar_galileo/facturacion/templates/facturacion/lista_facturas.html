@@ -31,15 +31,7 @@
             <h3>Ingresos Totales</h3>
             <p>{{ estadisticas.total_ingresos|format_price }}</p>
         </div>
-        <div class="card">
-            <h3>Facturas Hoy</h3>
-            <p>{{ estadisticas.facturas_hoy }}</p>
 
-        </div>
-        <div class="card">
-            <h3>Ingresos Hoy</h3>
-            <p>{{ estadisticas.ingresos_hoy|format_price }}</p>
-        </div>
     </section>
 
     <!-- Filtros de búsqueda -->
@@ -55,15 +47,17 @@
                 </div>
                 <div class="field-group">
                     <label>Fecha Inicio:</label>
-                    <input type="date"
-                           name="fecha_inicio"
-                           value="{{ fecha_inicio }}">
+                     <input type="date"
+                            name="fecha_inicio"
+                            value="{{ fecha_inicio }}"
+                            max="{{ today }}">
                 </div>
                 <div class="field-group">
                     <label>Fecha Fin:</label>
-                    <input type="date"
-                           name="fecha_fin"
-                           value="{{ fecha_fin }}">
+                     <input type="date"
+                            name="fecha_fin"
+                            value="{{ fecha_fin }}"
+                            max="{{ today }}">
                 </div>
             </div>
             <div class="field-group buttons-group">
@@ -131,7 +125,7 @@ async function confirmarEliminarFactura(facturaId, facturaNumero) {
     
     if (confirmed) {
         const form = document.getElementById('delete-factura-form');
-        form.action = `/facturacion/factura/${facturaId}/eliminar/`;
+        form.action = `/facturacion/eliminar/${facturaId}/`;
         form.submit();
     }
 }
@@ -145,12 +139,14 @@ $(document).ready(function() {
     }
 
     $(sel).DataTable({
+        width: '100%',
+        autoWidth: false,
         language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-        responsive: true,
+        responsive: { details: { type: 'inline' } },
         pageLength: 10,
         lengthChange: true,
         ordering: true,
-        columnDefs: [ { targets: '_all', defaultContent: '' } ]
+        columnDefs: [ { targets: '_all', defaultContent: '' }, { targets: -1, orderable: false, searchable: false } ]
     });
 });
 </script>

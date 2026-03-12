@@ -210,13 +210,17 @@
                 $(sel).DataTable().destroy();
             }
             $(sel).DataTable({
+                width: '100%',
+                autoWidth: false,
                 columnDefs: [
-                    { targets: '_all', defaultContent: '' }
+                    { targets: '_all', defaultContent: '' },
+                    { targets: 4, searchable: false },                    // Recibo (archivo/imagen)
+                    { targets: -1, orderable: false, searchable: false }  // Acciones
                 ],
                 "language": {
                     "url": "{% static 'js/DataTables/es-ES.json' %}"
                 },
-                responsive: true
+                responsive: { details: { type: 'inline' } }
             });
         }
 

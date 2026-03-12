@@ -10,7 +10,7 @@
     <div class="hero-carousel">
       {% if carousel_images %}
         {% for image in carousel_images %}
-          <div class="hero-slide {% if forloop.first %}active{% endif %}" 
+          <div class="hero-slide {% if forloop.first %}active{% endif %}"
                style="background-image: url('{{ image.image.url }}')">
           </div>
         {% endfor %}
@@ -181,7 +181,7 @@
       <p style="font-size: 18px; margin-bottom: 40px;">
         {{ content_reservations.reservations_text|default:"¡Reserva tu mesa y asegura tu lugar en Bar Galileo!" }}
       </p>
-       <a href="https://wa.me/{{ content_reservations.reservations_whatsapp|default:'573044029343' }}" class="nav-button">{{ content_reservations.reservations_button_text|default:"Reservar por WhatsApp" }}</a>
+       <a href="https://wa.me/{{ content_reservations.reservations_whatsapp|default:'573044029343' }}" target="_blank" class="nav-button">{{ content_reservations.reservations_button_text|default:"Reservar por WhatsApp" }}</a>
     </div>
   </section>
 {% endblock %}

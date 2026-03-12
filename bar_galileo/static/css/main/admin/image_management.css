@@ -45,6 +45,7 @@
 
 .section-card-header {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
@@ -533,8 +534,8 @@
    BANNER ENLACE A IMÁGENES
 ============================================= */
 .content-images-banner {
-    background: linear-gradient(135deg, var(--color-secondary), var(--color-dark));
-    color: var(--color-accent);
+    background: rgba(166, 137, 50, 0.08);
+    border: 2px solid var(--color-secondary);
     border-radius: 10px;
     padding: 24px 28px;
     display: flex;
@@ -547,12 +548,13 @@
 .content-images-banner h3 {
     margin: 0 0 6px;
     font-size: 1.1rem;
-    color: var(--color-accent);
+    color: var(--color-secondary);
 }
 
 .content-images-banner p {
     margin: 0;
     font-size: 0.88rem;
+    color: var(--color-secondary);
     opacity: 0.85;
 }
 

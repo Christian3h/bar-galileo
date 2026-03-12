@@ -181,6 +181,15 @@ document.addEventListener('DOMContentLoaded', function() {
             captchaContainer.appendChild(captchaErrors);
         }
 
+        // Convertir input captcha a minusculas en tiempo real
+        if (captchaTextInput) {
+            captchaTextInput.addEventListener("input", function() {
+                const pos = this.selectionStart;
+                this.value = this.value.toLowerCase();
+                this.setSelectionRange(pos, pos);
+            });
+        }
+
         // Add event listener to toggle link
         toggleLink.addEventListener('click', function(e) {
             e.preventDefault();

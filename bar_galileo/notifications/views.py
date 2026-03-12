@@ -2,7 +2,6 @@ from django.views import View
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
 from .models import Notificacion
 import json
 
@@ -32,7 +31,7 @@ class NotificacionHistoryView(View):
         
         return JsonResponse({'history': history, 'unread_count': unread_count})
 
-@method_decorator([csrf_exempt, login_required], name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class MarkAsReadView(View):
     """
     Marca una o todas las notificaciones como leídas.
@@ -57,8 +56,9 @@ class NotificacionesPendientesView(View):
         
         data = [{"id": n.id, "mensaje": n.mensaje, "fecha": n.fecha.isoformat()} for n in notificaciones]
 
-        # Marcarlas como leídas
-        notificaciones.update(leida=True)
+        # NOTA: Ya NO se marcan automáticamente como leídas
+        # El usuario debe marcarlas manualmente desde la interfaz
+        # notificaciones.update(leida=True)
 
         return JsonResponse(data, safe=False)
 

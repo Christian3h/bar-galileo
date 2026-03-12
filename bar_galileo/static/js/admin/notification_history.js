@@ -1,6 +1,7 @@
 /**
  * Sistema de Notificaciones - Bar Galileo
  * Maneja el panel de notificaciones, badge y marcado como leídas.
+ * Usa sessionStorage para persistir notificaciones a través de redirecciones.
  */
 document.addEventListener("DOMContentLoaded", () => {
   "use strict";
@@ -24,8 +25,43 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastPopupTime = 0;
 
   /* ==================================================
-     UTILIDADES
+     UTILIDADES - sessionStorage para persistir notificaciones
   ================================================== */
+
+  /**
+   * Guarda una notificación pendiente para mostrar después de una redirección
+   */
+  function savePendingNotification(message) {
+    if (!message) return;
+    
+    // Obtener notificaciones pendientes actuales
+    const pending = JSON.parse(sessionStorage.getItem('pending_notifications') || '[]');
+    
+    // Agregar la nueva (evitar duplicados)
+    if (!pending.includes(message)) {
+      pending.push(message);
+      sessionStorage.setItem('pending_notifications', JSON.stringify(pending));
+    }
+  }
+
+  /**
+   * Muestra y limpia las notificaciones pendientes de sessionStorage
+   */
+  function showPendingNotifications() {
+    const pending = JSON.parse(sessionStorage.getItem('pending_notifications') || '[]');
+    
+    if (pending.length > 0) {
+      // Mostrar cada notificación pendiente como popup
+      pending.forEach((msg, index) => {
+        setTimeout(() => {
+          showPopup(msg);
+        }, index * 500); // Mostrar una cada 500ms para no saturar
+      });
+      
+      // Limpiar después de mostrarlas
+      sessionStorage.removeItem('pending_notifications');
+    }
+  }
 
   /**
    * Obtiene el valor de una cookie por nombre
@@ -63,11 +99,21 @@ document.addEventListener("DOMContentLoaded", () => {
     notifications.forEach((n) => {
       const li = document.createElement("li");
       li.className = "notification-item" + (n.leida ? "" : " unread");
-      li.innerHTML = `
-        <a href="#" data-id="${n.id}">
-          <p>${n.mensaje}</p>
-          <span class="timestamp">${new Date(n.fecha).toLocaleString()}</span>
-        </a>`;
+
+      const a = document.createElement("a");
+      a.href = "#";
+      a.dataset.id = n.id;
+
+      const p = document.createElement("p");
+      p.textContent = n.mensaje;
+
+      const span = document.createElement("span");
+      span.className = "timestamp";
+      span.textContent = new Date(n.fecha).toLocaleString();
+
+      a.appendChild(p);
+      a.appendChild(span);
+      li.appendChild(a);
       list.appendChild(li);
     });
   }
@@ -106,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function markAllAsRead() {
     const csrfToken = getCookie("csrftoken");
     //console.log('[Notificaciones] Marcando todas como leídas...');
-    //console.log('[Notificaciones] CSRF Token:', csrfToken ? 'presente' : 'NO ENCONTRADO');
 
     return fetch("/api/notifications/mark-as-read/", {
       method: "POST",
@@ -118,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify({ ids: [] }),
     })
       .then((response) => {
-        //console.log('[Notificaciones] Respuesta mark-as-read:', response.status);
         if (response.status === 403) {
           showPopup(
             "No tienes permisos para marcar notificaciones como leídas.",
@@ -133,27 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return data;
       })
       .catch((error) => {
-        //console.error('[Notificaciones] Error cargando pop-ups:', error);
+        //console.error('[Notificaciones] Error en mark-as-read:', error);
         throw error;
-      });
-  }
-
-  /**
-   * Carga popups pendientes (notificaciones nuevas para mostrar como toast)
-   */
-  function fetchPendingPopups() {
-    return fetch("/api/notificaciones/pendientes/", {
-      method: "GET",
-      credentials: "same-origin",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          data.forEach((n) => n.mensaje && showPopup(n.mensaje));
-        }
-      })
-      .catch((error) => {
-        //console.error("[Notificaciones] Error cargando pop-ups:", error);
       });
   }
 
@@ -178,13 +203,11 @@ document.addEventListener("DOMContentLoaded", () => {
       fallback.textContent = msg;
       floater.prepend(fallback);
       setTimeout(() => fallback.remove(), 5000);
-    } else {
-      //console.info('[Notificaciones]', msg);
     }
   }
 
   /* ==================================================
-     WEBSOCKET (opcional, para tiempo real)
+     WEBSOCKET - Guardar notificación si hay redirección pendiente
   ================================================== */
 
   function initWebSocket() {
@@ -194,17 +217,30 @@ document.addEventListener("DOMContentLoaded", () => {
       const ws = new WebSocket(wsPath);
 
       ws.onopen = () => {
-        //console.log('[Notificaciones] WebSocket cerrado');
+        //console.log('[Notificaciones] WebSocket conectado');
         fetchNotifications();
-        fetchPendingPopups();
+        
+        // Mostrar notificaciones pendientes de redirecciones anteriores
+        showPendingNotifications();
       };
 
       ws.onmessage = (e) => {
         try {
           const data = JSON.parse(e.data);
           if (data.message) {
-            fetchNotifications();
-            showPopup(data.message);
+            // Verificar si hay una redirección pendiente
+            // Si la hay, guardar en sessionStorage en vez de mostrar inmediatamente
+            const isRedirecting = sessionStorage.getItem('pending_redirect');
+            
+            if (isRedirecting) {
+              // Guardar para después de la redirección
+              savePendingNotification(data.message);
+              sessionStorage.removeItem('pending_redirect');
+            } else {
+              // Mostrar inmediatamente (no hay redirección)
+              fetchNotifications();
+              showPopup(data.message);
+            }
           }
         } catch (err) {
           //console.warn('[Notificaciones] Error parseando mensaje WS:', err);
@@ -212,12 +248,15 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       ws.onerror = () => {
-        //console.warn('[Notificaciones] Error en WebSocket, usando polling');
+        //console.warn('[Notificaciones] Error en WebSocket');
       };
 
       ws.onclose = () => {
         //console.log("[Notificaciones] WebSocket cerrado");
       };
+      
+      // Guardar referencia al WebSocket para uso global
+      window.notificationWebSocket = ws;
     } catch (err) {
       //console.warn('[Notificaciones] WebSocket no disponible:', err);
     }
@@ -236,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isOpening) {
       //console.log('[Notificaciones] Abriendo panel...');
-      // Solo cargar las notificaciones, NO marcar como leídas
       fetchNotifications();
     }
   });
@@ -301,11 +339,32 @@ document.addEventListener("DOMContentLoaded", () => {
      INICIALIZACIÓN
   ================================================== */
 
-  // Cargar notificaciones al inicio
+  // Cargar notificaciones al inicio (solo para el panel, NO como popup)
   fetchNotifications();
+
+  // Mostrar notificaciones pendientes de redirecciones anteriores
+  showPendingNotifications();
 
   // Intentar conectar WebSocket para tiempo real
   initWebSocket();
 
   //console.log('[Notificaciones] Sistema inicializado');
+});
+
+/* ==================================================
+   FUNCIÓN GLOBAL PARA INTERCEPTAR REDIRECCIONES
+   Llamar antes de cualquier redirect que siga a una acción
+================================================== */
+
+window.savePendingRedirect = function() {
+  sessionStorage.setItem('pending_redirect', 'true');
+};
+
+// Auto-guardar redirect en formularios
+document.addEventListener('submit', (event) => {
+  const form = event.target;
+  // Solo interceptar formularios que probablemente generan notificaciones
+  if (form.method.toLowerCase() === 'post' && !form.dataset.noNotify) {
+    sessionStorage.setItem('pending_redirect', 'true');
+  }
 });

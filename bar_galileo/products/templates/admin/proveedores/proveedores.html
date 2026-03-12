@@ -24,7 +24,7 @@
         {% endif %}
         <div class="table-contenedor">
             <div class="table-responsive">
-                <table id="tabla-proveedores" class="table table-striped">
+                 <table id="tabla-proveedores" class="table table-striped" style="width:100%">
                     <caption class="sr-only visually-hidden">Tabla con la lista de proveedores</caption>
                     <thead>
                         <tr>
@@ -105,13 +105,15 @@
 
         $(sel).DataTable({
             language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
-            responsive: true,
+            width: '100%',
+            autoWidth: false,
+            responsive: { details: { type: 'inline' } },
             pageLength: 10,
             lengthChange: true,
             ordering: true,
             columnDefs: [
                 { targets: '_all', defaultContent: '' },
-                { targets: -1, orderable: false }
+                { targets: -1, orderable: false, searchable: false }  // Acciones
             ]
         });
     });

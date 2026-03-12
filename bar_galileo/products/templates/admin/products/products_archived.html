@@ -17,7 +17,7 @@
         <tr>
           <th class="col-1">Nombre</th>
           <th class="col-2">Precio Venta</th>
-          <th class="col-3">Stock</th>
+          <th class="col-3">Cantidad</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -63,7 +63,7 @@ $(document).ready(function() {
         columnDefs: [
             { targets: '_all', defaultContent: '' }
         ],
-        responsive: true,
+        responsive: { details: { type: 'inline' } },
         pageLength: 10,
         lengthChange: true,
         ordering: true

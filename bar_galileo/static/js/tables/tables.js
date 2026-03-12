@@ -52,30 +52,34 @@ const confirmAction = (title, message) => {
 // ===== WEBSOCKETS PARA STOCK EN TIEMPO REAL =====
 
 function setupWebSocket() {
-  const protocol = window.location.protocol === "https" ? "wss" : "ws";
   const ws = new WebSocket(
-    `${protocol}://${window.location.host}/ws/stock_updates/`,
+    `wss://${window.location.host}/ws/stock_updates/`,
   );
 
-  ws.onopen = () =>
-    //console.log("[WebSocket] Conectado al canal de stock.");
-    (ws.onclose = () =>
-      //console.log("[WebSocket] Desconectado del canal de stock.");
-      (ws.onerror = (
-        err, //console.error("[WebSocket] Error:", err);
-      ) =>
-        (ws.onmessage = (e) => {
-          const data = JSON.parse(e.data);
-          if (data.type === "stock_update") {
-            const { product_id, delta } = data.message;
-            if (virtualStock[product_id] !== undefined) {
-              virtualStock[product_id] += delta;
-            }
-            // Actualizar la UI siempre, no solo si el modal está abierto
-            actualizarListaProductosUI();
-            actualizarPedidoItemsUI();
-          }
-        })));
+  ws.onopen = () => {
+    // Conectado al canal de stock.
+  };
+
+  ws.onclose = () => {
+    // Desconectado del canal de stock.
+  };
+
+  ws.onerror = (err) => {
+    // Error en WebSocket.
+  };
+
+  ws.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if (data.type === "stock_update") {
+      const { product_id, delta } = data.message;
+      if (virtualStock[product_id] !== undefined) {
+        virtualStock[product_id] += delta;
+      }
+      // Actualizar la UI siempre, no solo si el modal está abierto
+      actualizarListaProductosUI();
+      actualizarPedidoItemsUI();
+    }
+  };
 }
 
 // ===== MANEJO DE ERRORES Y PETICIONES API =====
@@ -244,11 +248,22 @@ function renderizarResultadosBusquedaUsuarios(terminoBusqueda) {
 
 async function gestionarUsuarioEnPedido(userId, action) {
   try {
-    await apiFetch(`/api/pedidos/${pedidoActual.id}/usuarios/`, {
+    let url, body;
+    if (pedidoActual.id === null || pedidoActual.id === undefined) {
+      url = `/api/pedidos/usuarios/`;
+      body = JSON.stringify({ user_id: userId, action: action, mesa_id: mesaActualId });
+    } else {
+      url = `/api/pedidos/${pedidoActual.id}/usuarios/`;
+      body = JSON.stringify({ user_id: userId, action: action });
+    }
+    const result = await apiFetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-CSRFToken": csrfToken },
-      body: JSON.stringify({ user_id: userId, action: action }),
+      body: body,
     });
+    if (result.pedido_id && !pedidoActual.id) {
+      pedidoActual.id = result.pedido_id;
+    }
 
     const data = await apiFetch(`/api/mesas/${mesaActualId}/pedido/`);
     pedidoActual = data.pedido;
@@ -482,14 +497,17 @@ document.addEventListener("DOMContentLoaded", () => {
     .forEach(actualizarVisibilidadBotonPedido);
   setupWebSocket();
 
-  document.getElementById("userSearchInput").addEventListener("input", (e) => {
-    renderizarResultadosBusquedaUsuarios(e.target.value);
-  });
+  const userSearchInput = document.getElementById("userSearchInput");
+  if (userSearchInput) {
+    userSearchInput.addEventListener("input", (e) => {
+      renderizarResultadosBusquedaUsuarios(e.target.value);
+    });
+  }
 });
 
 document.addEventListener("change", (event) => {
   if (event.target.matches('select[name="estado"]')) {
-    select.closest("form").submit();
+    event.target.closest("form").submit();
   }
 });
 
@@ -497,16 +515,20 @@ function cerrarModal() {
   document.getElementById("pedidoModal").style.display = "none";
 }
 
-document.getElementById("buscarProducto").addEventListener("input", (e) => {
-  const busqueda = e.target.value.toLowerCase();
-  document.querySelectorAll(".producto-item").forEach((item) => {
-    const nombre = item.querySelector("strong").textContent.toLowerCase();
-    item.style.display = nombre.includes(busqueda) ? "" : "none";
+const buscarProductoInput = document.getElementById("buscarProducto");
+if (buscarProductoInput) {
+  buscarProductoInput.addEventListener("input", (e) => {
+    const busqueda = e.target.value.toLowerCase();
+    document.querySelectorAll(".producto-item").forEach((item) => {
+      const nombre = item.querySelector("strong").textContent.toLowerCase();
+      item.style.display = nombre.includes(busqueda) ? "" : "none";
+    });
   });
-});
+}
 
 window.onclick = (event) => {
-  if (event.target == document.getElementById("pedidoModal")) {
+  const pedidoModal = document.getElementById("pedidoModal");
+  if (pedidoModal && event.target == pedidoModal) {
     cerrarModal();
   }
 };

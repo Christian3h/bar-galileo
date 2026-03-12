@@ -1,7 +1,8 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load roles_tags %}
 
-{% block title %}Contenido de la Home - Admin{% endblock %}
+{% block title %}Contenido de la página de inicio - Admin{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/main/admin/image_management.css' %}">
@@ -54,9 +55,11 @@
                         <span class="csc-updated">Última edición: {{ section.updated_at|date:"d/m/Y H:i" }}</span>
                     </div>
                 </div>
+                {% if request.user|has_perm:"site_images,editar" %}
                 <a href="{% url 'site_images:site_content_edit' section.section %}" class="btn btn-primary">
                     Editar textos
                 </a>
+                {% endif %}
             </div>
 
             <!-- Vista previa de los campos principales -->

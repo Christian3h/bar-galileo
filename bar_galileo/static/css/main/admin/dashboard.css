@@ -16,9 +16,14 @@
     padding: 8px 12px;
     border: 2px solid var(--color-primary);
     border-radius: 8px;
-    background: transparent;
+    background-color: var(--color-accent);
     color: var(--color-secondary);
     transition: all 0.3s ease;
+}
+
+.form-select option {
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
 }
 
 .form-select:focus,
@@ -113,7 +118,7 @@ body {
 .card p {
   font-size: 1.8rem;
   font-weight: bold;
-  color: var(--color-accent);
+  color: var(--color-secondary);
 }
 
 .dashboard-charts {

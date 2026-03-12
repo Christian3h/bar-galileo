@@ -20,11 +20,25 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
     restart: unless-stopped
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     env_file:
       - bar_galileo/.env
@@ -35,20 +49,22 @@ services:
       DB_NAME: ${DB_NAME:-bar_galileo}
       DB_USER: ${DB_USER:-bar_galileo_user}
       DB_PASSWORD: ${DB_PASSWORD:-Galileo2025}
-      DEBUG: ${DEBUG:-True}
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DEBUG: ${DEBUG:-False}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-dominiopruebaprigma.xyz,www.dominiopruebaprigma.xyz}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
       emailHost: ${emailHost:-}
       emailPassword: ${emailPassword:-}
-    ports:
-      - "8000:8000"
+      REDIS_URL: redis://redis:6379/1
     volumes:
       - ./bar_galileo:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
-    command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "bar_galileo.asgi:application"]
+    command: ["gunicorn", "bar_galileo.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--workers", "9", "--bind", "0.0.0.0:8000", "--timeout", "120", "--keep-alive", "5", "--log-level", "info"]
+    ports:
+      - "127.0.0.1:8000:8000"
 
 volumes:
   db_data:
+  redis_data:
   static_volume:
   media_volume:

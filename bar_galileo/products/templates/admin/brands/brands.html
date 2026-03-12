@@ -10,10 +10,11 @@
 
 <div class="table-contenedor">
     <div class="table-responsive">
-        <table id="brands-table" class="table display">
+        <table id="brands-table" class="table display" style="width:100%">
             <thead>
                 <tr>
                     <th>Nombre</th>
+                    <th>Descripción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -21,7 +22,8 @@
                 {% for brand in brands %}
                 <tr>
                     <td>{{ brand.marca }}</td>
-                    <td>
+                    <td>{{ brand.descripcion|default:"Sin descripción" }}</td>
+                    <td class="actions-cell">
                         {% if request.user|has_perm:"brands,editar" %}
                         <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning" title="Editar marca"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                         {% endif %}
@@ -68,10 +70,13 @@ $(document).ready(function() {
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
+        width: '100%',
+        autoWidth: false,
         columnDefs: [
-            { targets: '_all', defaultContent: '' }
+            { targets: '_all', defaultContent: '' },
+            { targets: -1, orderable: false, searchable: false }  // Acciones
         ],
-        responsive: true
+        responsive: { details: { type: 'inline' } }
     });
 });
 </script>

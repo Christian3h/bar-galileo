@@ -1,13 +1,15 @@
 from django import forms
+from django.utils.html import strip_tags
 from .models import Mesa
+from core.security.validators import ProductSSTIValidator, DescriptionSSTIValidator
 
 class MesaForm(forms.ModelForm):
     class Meta:
         model = Mesa
         fields = ['nombre', 'descripcion', 'estado']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la mesa'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción (opcional)'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de la mesa', 'data-validate': 'product'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Descripción (opcional)', 'data-validate': 'description'}),
             'estado': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
@@ -22,6 +24,10 @@ class MesaForm(forms.ModelForm):
             raise forms.ValidationError('El nombre de la mesa es obligatorio.')
         
         nombre = nombre.strip()
+        
+        # Usar validador SSTI
+        validator = ProductSSTIValidator()
+        validator(nombre)
         
         # Validar longitud
         if len(nombre) > 50:
@@ -41,8 +47,12 @@ class MesaForm(forms.ModelForm):
     
     def clean_descripcion(self):
         descripcion = self.cleaned_data.get('descripcion')
-        if descripcion and len(descripcion) > 200:
-            raise forms.ValidationError('La descripción no puede exceder 200 caracteres.')
+        if descripcion:
+            # Usar validador SSTI
+            validator = DescriptionSSTIValidator()
+            validator(descripcion)
+            if len(descripcion) > 200:
+                raise forms.ValidationError('La descripción no puede exceder 200 caracteres.')
         return descripcion
     
     def clean_estado(self):

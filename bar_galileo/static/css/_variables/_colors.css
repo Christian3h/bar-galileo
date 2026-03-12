@@ -1,51 +1,72 @@
-/* Colores principales para el e-commerce Vive Natural */
-/* :root {
-  --color-primary: #62733d;
-  --color-secondary: #a68932;
-  --color-dark: #bf452a;
-  --color-light: #262626;
-  --color-accent: #0d0d0d;
-  --color-gray: #a68932;
-  --color-shadow: #62733d;
-} */
+/* Paleta de colores - Tema claro (rediseño)
+ *
+ * Nota:
+ * - El bloque del tema oscuro se mantiene exactamente igual (no tocado).
+ * - El color de marca `#b89a3c` NO se modifica.
+ *
+ * Esta hoja define variables CSS reutilizables (design tokens) pensadas
+ * para garantizar contraste y coherencia visual en el tema claro.
+ * Ajusta valores según sea necesario para casos particulares.
+ */
 
+/* =========================
+   TEMA CLARO - ROOT
+   ========================= */
 :root {
-  --color-primary: #7d9250;   /* verde natural más claro */
-  --color-secondary: #4a4a4a; /* gris oscuro para texto (mejor contraste) */
-  --color-dark: #a6502a;      /* acento rojizo natural */
-  --color-light: #e5e5e5;     /* fondo claro */
-  --color-accent: #ffffff;    /* tarjetas o contenedores */
-  --color-gray: #b1b1b1;      /* texto secundario */
-  --color-shadow: #c3d1a3;    /* sombras suaves */
-  --color-surface: #f9faf5;
-  --color-surface-alt: #ffffff;
-  --color-border-muted: rgba(0, 0, 0, 0.08);
+  /* Identidad principal */
+  --color-primary: #2f7a52;      /* verde principal (fresco, natural) */
+  --color-secondary: #2b2b2b;    /* texto principal / iconos (alto contraste) */
+  --color-dark: #bb4a31;         /* acento oscuro / acciones importantes */
+  --color-light: #fbfbf8;        /* fondo general muy claro */
+  --color-accent: #ffffff;       /* contenedores / cards */
+  --color-gray: #6e6e6e;         /* texto secundario y metadatos */
+  --color-shadow: #cfe0c1;       /* color para sombras suaves (tonalidad verde tenue) */
 
-  --color-success: #4f9d69;
-  --color-success-strong: #2f6a3c;
-  --color-warning: #dca437;
+  /* Superficies y bordes */
+  --color-surface: #ffffff;          /* tarjetas / inputs */
+  --color-surface-alt: #fbfcf7;      /* superficies alternas */
+  --color-border-muted: rgba(16, 24, 16, 0.06); /* bordes sutiles en claro */
+
+  /* =========================
+     COLOR DE MARCA (NO MODIFICAR)
+     ========================= */
+  --color-brand: #b89a3c;        /* oro natural — mantener exactamente este valor */
+  --color-brand-light: #e9dca0;  /* uso en hover / gradientes suaves */
+  --color-brand-dark: #8b6a1f;   /* uso en textos sobre fondos claros */
+
+  /* =========================
+     Feedback / Estados
+     ========================= */
+  --color-success: #2e8b57;      /* verde de éxito ( legible sobre fondo blanco ) */
+  --color-success-strong: #1f5f3a;
+  --color-warning: #d08900;      /* ámbar/amarillo cálido */
   --color-warning-strong: #8a640f;
-  --color-info: #4b7fd1;
-  --color-info-strong: #27457b;
-  --color-danger: #c5533f;
-  --color-danger-strong: #843224;
+  --color-info: #2f6fb8;         /* azul informativo */
+  --color-info-strong: #1d4b7a;
+  --color-danger: #c53d2a;       /* rojo para errores importantes */
+  --color-danger-strong: #8a281c;
 
-  --feedback-success-bg: #eef9f1;
-  --feedback-success-foreground: #204a31;
-  --feedback-warning-bg: #fff6e7;
-  --feedback-warning-foreground: #6a3f00;
-  --feedback-info-bg: #e9f1ff;
-  --feedback-info-foreground: #143861;
-  --feedback-danger-bg: #fff0ed;
-  --feedback-danger-foreground: #6d2015;
+  /* =========================
+     Fondos y textos de feedback (pares contrastados)
+     ========================= */
+  --feedback-success-bg: #e8f7ef;
+  --feedback-success-foreground: #11402a;
+  --feedback-warning-bg: #fff7e0;
+  --feedback-warning-foreground: #5a3f00;
+  --feedback-info-bg: #eaf1ff;
+  --feedback-info-foreground: #0f2c4d;
+  --feedback-danger-bg: #fff0ee;
+  --feedback-danger-foreground: #5b1a12;
   --feedback-neutral-bg: #f6f6f6;
-  --feedback-neutral-foreground: #2d2d2d;
-  --feedback-changed-bg: #f1f7e8;
-  --feedback-changed-foreground: #304d1a;
-  --feedback-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  --feedback-neutral-foreground: #2b2b2b;
+  --feedback-changed-bg: #f3fae9;
+  --feedback-changed-foreground: #254e1a;
+  --feedback-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
 }
 
-/* === 🌑 Tema Oscuro === */
+/* =========================
+   TEMA OSCURO (SIN CAMBIOS)
+   ========================= */
 [data-theme="dark"] {
   --color-primary: #62733d;
   --color-secondary: #a68932;

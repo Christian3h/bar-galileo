@@ -5,7 +5,7 @@
   right: 18px;
   z-index: 1001;
   background-color: var(--color-light);
-  color: var(--color-secondary);
+  color: var(--color-warning, #dca437);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -23,9 +23,9 @@
   color: var(--color-secondary);
 }
 
-/* Eliminar scroll del sidebar cuando está abierto en móvil */
+/* Permitir scroll del sidebar cuando está abierto */
 .sidebar.mobile-show {
-  overflow: hidden;
+  overflow-y: auto;
 }
 header {
   background-color: var(--color-light);
@@ -46,6 +46,8 @@ header {
   transition: all 0.3s ease;
   overflow-y: auto;
   border-right: 1px solid var(--color-gray);
+  display: flex;
+  flex-direction: column;
 }
 
 .collapsed {
@@ -121,6 +123,7 @@ header {
 .main-content {
   flex: 1;
   padding: 2rem;
+  padding-top: calc(54px + 1.5rem);
   transition: all 0.3s ease;
 }
 
@@ -137,16 +140,22 @@ header {
 /* === Toggle Button === */
 .toggle-sidebar-btn {
   color: var(--color-secondary);
-  background-color: var(--color-light);
+  background-color: transparent;
   border: none;
   font-size: 3rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
   display: none;
-  z-index: 1000; /* Ensure it's above the sidebar */
-  position: relative; /* Needed for span positioning */
+  z-index: 1000;
+  position: relative;
   width: 40px;
   height: 40px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.toggle-sidebar-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .toggle-sidebar-btn span {
@@ -154,7 +163,7 @@ header {
     position: absolute;
     height: 3px;
     width: 100%;
-    background: var(--color-secondary);
+    background: var(--color-warning, #dca437);
     border-radius: 3px;
     opacity: 1;
     left: 0;
@@ -231,13 +240,14 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
   }
 
   .sidebar {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: -220px;
-    height: 100%;
+    height: 100dvh;
     z-index: 999;
     min-width: 220px;
     max-width: 220px;
+    overflow-y: auto;
   }
 
   .sidebar.mobile-show {
@@ -246,9 +256,53 @@ body.sidebar-is-open .toggle-sidebar-btn span:nth-child(3) {
 
   .main-content {
     padding: 1rem;
+    padding-top: calc(54px + 1rem);
   }
 
   .toggle-sidebar-btn {
     display: inline-block;
   }
+}
+
+/* === Bot\u00f3n Cerrar Sesi\u00f3n (fondo del sidebar) === */
+.sidebar-logout {
+  padding: 1rem 10px;
+  margin-top: auto;
+  border-top: 1px solid rgba(184, 154, 60, 0.2);
+}
+
+.sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 0.6rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  cursor: pointer;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.sidebar-logout-btn:hover {
+  background: rgba(220, 53, 69, 0.2);
+  color: #ff4d5e;
+  border-color: rgba(220, 53, 69, 0.4);
+  transform: translateY(-1px);
+}
+
+.sidebar-logout-btn img {
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) saturate(100%) invert(27%) sepia(91%) saturate(2353%) hue-rotate(340deg) brightness(93%) contrast(92%);
+}
+
+#form_cerrar_sesion_botones{
+    padding: 0 !important;
 }

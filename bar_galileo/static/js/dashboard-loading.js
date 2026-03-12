@@ -1,58 +1,103 @@
 /**
- * Funcionalidad de pantalla de carga del Dashboard
- * Muestra una pantalla de carga con el logo de Bar Galileo por 3 segundos
- * antes de navegar al dashboard
+ * dashboard-loading.js
+ * ─────────────────────────────────────────────────────────────────
+ * Lógica de la pantalla de carga de Bar Galileo.
+ *
+ * FLUJO CORRECTO:
+ *  1. Usuario hace clic en el enlace al dashboard.
+ *  2. Se muestra el overlay (fade-in rápido).
+ *  3. Se redirige DE INMEDIATO (sin esperar animación).
+ *  4. La nueva página arranca con el overlay visible
+ *     y lo desvanece cuando el DOM está listo.
+ *
+ * Así nunca se ve el contenido anterior ni hay espera artificial.
+ * ─────────────────────────────────────────────────────────────────
  */
-document.addEventListener("DOMContentLoaded", function () {
-  const dashboardLink = document.getElementById("dashboard-link");
-  const loadingScreen = document.getElementById("dashboard-loading-screen");
 
-  if (dashboardLink && loadingScreen) {
-    dashboardLink.addEventListener("click", function(e) {
-      e.preventDefault(); // Prevenir la navegación inmediata
+(function () {
+  "use strict";
 
-      // Mostrar la pantalla de carga con una pequeña animación de entrada
-      loadingScreen.classList.remove("hidden");
+  /* ── 1. En cuanto el script se parsea, cubrir la página si venimos
+          de una navegación interna (sessionStorage flag). ─────────── */
+  const COVER_KEY = "bg_cover_next_page";
 
-      // Deshabilitar scroll del body mientras se muestra la pantalla
-      document.body.style.overflow = "hidden";
+  if (sessionStorage.getItem(COVER_KEY)) {
+    sessionStorage.removeItem(COVER_KEY);
 
-      // Guardar la URL del dashboard
-      const dashboardUrl = this.href;
+    // Crear overlay temporal lo antes posible (antes del DOMContentLoaded)
+    // para que nunca haya un frame sin cubrir.
+    const early = document.createElement("div");
+    early.id = "early-cover";
+    early.style.cssText = [
+      "position:fixed",
+      "inset:0",
+      "z-index:99999",
+      "background-color:var(--color-accent,#fff)",
+      "display:flex",
+      "justify-content:center",
+      "align-items:center",
+      "opacity:1",
+      "transition:opacity 0.4s ease",
+    ].join(";");
+    document.documentElement.appendChild(early);
 
-      // Agregar clase de animación al contenido
-      const loadingContent = loadingScreen.querySelector('.loading-content');
-      if (loadingContent) {
-        loadingContent.style.animation = 'fadeInUp 0.8s ease';
+    // En cuanto el DOM esté listo, reemplazar por el overlay real y hacer fade-out
+    document.addEventListener("DOMContentLoaded", function () {
+      early.remove();
+
+      const screen = document.getElementById("dashboard-loading-screen");
+      if (screen) {
+        // Asegurar que es visible
+        screen.classList.remove("hidden", "fade-out");
+        screen.classList.add("page-entering");
       }
-
-      // Después de 3 segundos, iniciar animación de salida y navegar simultáneamente
-      setTimeout(function() {
-        // Agregar animación de salida
-        if (loadingContent) {
-          loadingContent.style.animation = 'fadeOutDown 0.5s ease';
-        }
-
-        // Navegar inmediatamente cuando inicia la animación de salida
-        window.location.href = dashboardUrl;
-
-      }, 3000); // 3 segundos de pantalla de carga
     });
   }
 
-  // Agregar animación de salida al CSS dinámicamente
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes fadeOutDown {
-      from {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(30px);
-      }
+  /* ── 2. Al hacer clic en el enlace del dashboard → mostrar overlay
+          y redirigir de inmediato. ─────────────────────────────────── */
+  document.addEventListener("DOMContentLoaded", function () {
+
+    // ── Enlace principal del dashboard (desde la home pública)
+    const dashboardLink = document.getElementById("dashboard-link");
+    if (dashboardLink) {
+      dashboardLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        _goTo(this.href);
+      });
     }
-  `;
-  document.head.appendChild(style);
-});
+
+    // ── Botón "home" dentro del nav del admin (nav-admin.html)
+    const homeBtn = document.getElementById("home-page-btn");
+    if (homeBtn) {
+      homeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        _goTo(this.dataset.url || this.getAttribute("data-url") || this.href);
+      });
+    }
+
+  });
+
+  /* ── Helper: muestra el overlay correspondiente y navega. ───────── */
+  function _goTo(url) {
+    if (!url) return;
+
+    // Marca para que la página destino sepa que debe arrancarse cubierta
+    sessionStorage.setItem(COVER_KEY, "1");
+
+    // Mostrar el overlay del documento ACTUAL
+    const screen =
+      document.getElementById("dashboard-loading-screen") ||
+      document.getElementById("home-loading-screen");
+
+    if (screen) {
+      screen.classList.remove("hidden", "fade-out", "page-entering");
+      // forzar reflow para que la transición CSS aplique
+      void screen.offsetWidth;
+    }
+
+    // Redirigir de inmediato — sin setTimeout
+    window.location.href = url;
+  }
+
+})();

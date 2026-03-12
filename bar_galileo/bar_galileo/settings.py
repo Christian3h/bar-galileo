@@ -37,9 +37,9 @@ MEDIA_ROOT = BASE_DIR / "media"
 # SECURITY WARNING: keep the secret key used in production secret!
 # Configuración sensible a entorno
 DEBUG = str(os.getenv("DEBUG", "True")).lower() in ("1", "true", "yes")
-SECRET_KEY = os.getenv("secret_key") or get_random_secret_key()
+SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("secret_key") or get_random_secret_key()
 raw_hosts = os.getenv("ALLOWED_HOSTS", "*" if DEBUG else "")
-ALLOWED_HOSTS = [h.strip() for h in raw_hosts.split(",") if h.strip()]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -96,6 +96,7 @@ AUTHENTICATION_BACKENDS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.security.middleware.SecurityValidationMiddleware",  # SSTI/XSS protection
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "roles.middleware.PermissionMiddleware",
@@ -106,6 +107,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
+
+# Configuración de seguridad SSTI
+SECURITY_MIDDLEWARE_ENABLED = True
+SECURITY_MIDDLEWARE_LOG_ONLY = False  # True = solo log, no bloquear
 
 ROOT_URLCONF = "bar_galileo.urls"
 # Configuración explícita de django-allauth para registro
@@ -144,6 +149,7 @@ ASGI_APPLICATION = "bar_galileo.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# Configuración original de MySQL (comentada temporalmente)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -158,6 +164,8 @@ DATABASES = {
         },
     }
 }
+
+
 
 
 # Password validation
@@ -291,14 +299,41 @@ if not DEBUG:
 # Mantener solo la configuración correcta de WSGI/ASGI definida arriba
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",  # Solo para desarrollo
-    },
-}
+# Redis URL desde variable de entorno (con fallback a InMemory para compatibilidad)
+REDIS_URL = os.getenv("REDIS_URL", "")
+
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
+            "TIMEOUT": 300,
+            "KEY_PREFIX": "bargalileo",
+        }
+    }
+else:
+    # Fallback: InMemory (desarrollo o si Redis no está disponible)
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
 
 # Captcha settings
-CAPTCHA_LENGTH = 1
+CAPTCHA_LENGTH = 5
 CAPTCHA_IMAGE_SIZE = (225, 75)
 CAPTCHA_FONT_SIZE = 40
 CAPTCHA_FLITE_PATH = "/usr/bin/flite"

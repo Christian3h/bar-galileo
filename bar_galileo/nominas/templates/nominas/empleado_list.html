@@ -141,7 +141,7 @@
         
         if (confirmed) {
             const form = document.getElementById('delete-empleado-form');
-            form.action = `/nominas/empleados/${empleadoId}/eliminar/`;
+            form.action = `/nominas/eliminar/${empleadoId}/`;
             form.submit();
         }
     }
@@ -167,6 +167,8 @@
 
         // Inicialización completa con idioma
         var tabla = $('#tabla-empleados').DataTable({
+            width: '100%',
+            autoWidth: false,
             language: {
                 emptyTable: 'No hay empleados registrados',
                 zeroRecords: 'No se encontraron resultados',
@@ -178,7 +180,11 @@
                     first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior'
                 }
             },
-            order: [[0, 'asc']]
+            order: [[0, 'asc']],
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false, searchable: false }  // Acciones
+            ]
         });
     });
 </script>
