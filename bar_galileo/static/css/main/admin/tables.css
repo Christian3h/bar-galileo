@@ -38,7 +38,7 @@
 /* Wrapper para tablas con scroll horizontal controlado */
 .table-contenedor {
   width: 100%;
-  overflow-x: visible;
+  overflow-x: auto;
   overflow-y: visible;
   margin-bottom: 1rem;
 }
