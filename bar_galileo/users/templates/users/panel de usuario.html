@@ -172,23 +172,23 @@
             {% csrf_token %}
             <div class="form-field-col">
               <label for="nombre" class="form-label">Nombre:</label>
-              <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" class="info-input">{% if datos.info_errors.nombre %}<div class="form-error">{{ datos.info_errors.nombre }}</div>{% endif %}
+              <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" class="info-input" data-validate="name">{% if datos.info_errors.nombre %}<div class="form-error">{{ datos.info_errors.nombre }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="cedula" class="form-label">Cédula:</label>
-              <input type="number" id="cedula" name="cedula" value="{{ datos.cedula }}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.cedula %}<div class="form-error">{{ datos.info_errors.cedula }}</div>{% endif %}
+              <input type="number" id="cedula" name="cedula" value="{{ datos.cedula }}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input" data-validate="any">{% if datos.info_errors.cedula %}<div class="form-error">{{ datos.info_errors.cedula }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="telefono" class="form-label">Teléfono:</label>
-              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:":3" == '+57' %}{{ datos.telefono|slice:"3:" }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
+              <input type="number" id="telefono" name="telefono" value="{% if datos.telefono and datos.telefono|slice:":3" == '+57' %}{{ datos.telefono|slice:"3:" }}{% else %}{{ datos.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input" data-validate="phone">{% if datos.info_errors.telefono %}<div class="form-error">{{ datos.info_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="email" class="form-label">Correo electrónico:</label>
-              <input type="email" id="email" name="email" value="{{ datos.email }}" class="info-input">{% if datos.info_errors.email %}<div class="form-error">{{ datos.info_errors.email }}</div>{% endif %}
+              <input type="email" id="email" name="email" value="{{ datos.email }}" class="info-input" data-validate="email">{% if datos.info_errors.email %}<div class="form-error">{{ datos.info_errors.email }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="direccion" class="form-label">Dirección:</label>
-              <input type="text" id="direccion" name="direccion" value="{{ datos.direccion }}" class="info-input">
+              <input type="text" id="direccion" name="direccion" value="{{ datos.direccion }}" class="info-input" data-validate="any">{% if datos.info_errors.direccion %}<div class="form-error">{{ datos.info_errors.direccion }}</div>{% endif %}
             </div>
 
             <button type="submit">Guardar Cambios</button>
@@ -242,23 +242,23 @@
             {% csrf_token %}
             <div class="form-field-col">
               <label for="emergencia_nombre" class="form-label">Nombre:</label>
-              <input type="text" id="emergencia_nombre" name="emergencia_nombre" value="{{ datos.emergencia.nombre }}" class="info-input">{% if datos.emergencia_errors.nombre %}<div class="form-error">{{ datos.emergencia_errors.nombre }}</div>{% endif %}
+              <input type="text" id="emergencia_nombre" name="emergencia_nombre" value="{{ datos.emergencia.nombre }}" class="info-input" data-validate="name">{% if datos.emergencia_errors.nombre %}<div class="form-error">{{ datos.emergencia_errors.nombre }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_relacion" class="form-label">Relación:</label>
-              <input type="text" id="emergencia_relacion" name="emergencia_relacion" value="{{ datos.emergencia.relacion }}" class="info-input">
+              <input type="text" id="emergencia_relacion" name="emergencia_relacion" value="{{ datos.emergencia.relacion }}" class="info-input" data-validate="any">
             </div>
             <div class="form-field-col">
               <label for="emergencia_telefono" class="form-label">Teléfono:</label>
-              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:":3" == '+57' %}{{ datos.emergencia.telefono|slice:"3:" }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
+              <input type="number" id="emergencia_telefono" name="emergencia_telefono" value="{% if datos.emergencia.telefono and datos.emergencia.telefono|slice:":3" == '+57' %}{{ datos.emergencia.telefono|slice:"3:" }}{% else %}{{ datos.emergencia.telefono }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input" data-validate="phone">{% if datos.emergencia_errors.telefono %}<div class="form-error">{{ datos.emergencia_errors.telefono }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_telefono_alt" class="form-label">Teléfono Alternativo:</label>
-              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:":3" == '+57' %}{{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
+              <input type="number" id="emergencia_telefono_alt" name="emergencia_telefono_alt" value="{% if datos.emergencia.telefono_alt and datos.emergencia.telefono_alt|slice:":3" == '+57' %}{{ datos.emergencia.telefono_alt|slice:"3:" }}{% else %}{{ datos.emergencia.telefono_alt }}{% endif %}" pattern="\d*" inputmode="numeric" title="Solo números" maxlength="20" class="info-input" data-validate="phone">{% if datos.emergencia_errors.telefono_alt %}<div class="form-error">{{ datos.emergencia_errors.telefono_alt }}</div>{% endif %}
             </div>
             <div class="form-field-col">
               <label for="emergencia_sangre" class="form-label">Tipo de Sangre:</label>
-              <select id="emergencia_sangre" name="emergencia_sangre" class="info-input" required>
+              <select id="emergencia_sangre" name="emergencia_sangre" class="info-input" data-validate="any" required>
                 <option value="" disabled {% if not datos.emergencia.sangre %}selected{% endif %}>Selecciona el tipo</option>
                 <option value="A+" {% if datos.emergencia.sangre == 'A+' %}selected{% endif %}>A+</option>
                 <option value="A-" {% if datos.emergencia.sangre == 'A-' %}selected{% endif %}>A-</option>
@@ -272,7 +272,7 @@
             </div>
             <div class="form-field-col">
               <label for="emergencia_alergias" class="form-label">Alergias:</label>
-              <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input">
+              <input type="text" id="emergencia_alergias" name="emergencia_alergias" value="{{ datos.emergencia.alergias }}" class="info-input" data-validate="description">{% if datos.emergencia_errors.alergias %}<div class="form-error">{{ datos.emergencia_errors.alergias }}</div>{% endif %}
             </div>
             <button type="submit">Guardar Cambios</button>
             <button type="submit" formaction="{% url 'users:borrar_emergencia' %}"

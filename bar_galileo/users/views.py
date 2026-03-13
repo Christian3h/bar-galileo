@@ -15,6 +15,11 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
 from tables.models import Pedido
+from core.security.validators import (
+    NameSSTIValidator, EmailSSTIValidator, PhoneSSTIValidator, 
+    GenericSSTIValidator, DescriptionSSTIValidator
+)
+from django.core.exceptions import ValidationError
 
 # Editar información personal
 def get_perfil(user):
@@ -24,19 +29,51 @@ def get_perfil(user):
 def editar_info(request):
     perfil = get_perfil(request.user)
     errors = {}
-    nombre = strip_tags(request.POST.get('nombre', perfil.nombre))
-    cedula = strip_tags(request.POST.get('cedula', perfil.cedula))
-    telefono = strip_tags(request.POST.get('telefono', perfil.telefono))
-    direccion = strip_tags(request.POST.get('direccion', perfil.direccion))
-    email = strip_tags(request.POST.get('email', request.user.email))
-    if not nombre:
-        errors['nombre'] = 'El nombre es obligatorio.'
+    nombre = request.POST.get('nombre', perfil.nombre)
+    cedula = request.POST.get('cedula', perfil.cedula)
+    telefono = request.POST.get('telefono', perfil.telefono)
+    direccion = request.POST.get('direccion', perfil.direccion)
+    email = request.POST.get('email', request.user.email)
+    
+    # Validaciones SSTI
+    try:
+        if nombre:
+            nombre_validator = NameSSTIValidator()
+            nombre_validator(nombre.strip())
+        else:
+            errors['nombre'] = 'El nombre es obligatorio.'
+    except ValidationError as e:
+        errors['nombre'] = str(e.message)
+    
+    try:
+        if email:
+            email_validator = EmailSSTIValidator()
+            email_validator(email.strip())
+        else:
+            errors['email'] = 'El email es obligatorio.'
+    except ValidationError as e:
+        errors['email'] = str(e.message)
+    
+    try:
+        if telefono:
+            telefono_validator = PhoneSSTIValidator()
+            telefono_validator(telefono.strip())
+        else:
+            errors['telefono'] = 'El teléfono es obligatorio.'
+    except ValidationError as e:
+        errors['telefono'] = str(e.message)
+    
+    try:
+        if direccion:
+            direccion_validator = GenericSSTIValidator()
+            direccion_validator(direccion.strip())
+    except ValidationError as e:
+        errors['direccion'] = str(e.message)
+    
+    # Validar cédula (solo números)
     if not cedula or not cedula.isdigit():
         errors['cedula'] = 'La cédula es obligatoria y debe ser numérica.'
-    if not telefono or not telefono.isdigit() or len(telefono) < 10:
-        errors['telefono'] = 'El teléfono es obligatorio, debe ser numérico y tener al menos 10 dígitos.'
-    if not email or '@' not in email:
-        errors['email'] = 'El email debe ser un correo válido.'
+    
     if errors:
         datos = {
             'nombre': nombre,
@@ -47,6 +84,11 @@ def editar_info(request):
             'info_errors': errors,
         }
         return render(request, 'users/panel de usuario.html', {'datos': datos})
+    
+    # Aplicar strip_tags después de validar
+    nombre = strip_tags(nombre)
+    direccion = strip_tags(direccion)
+    
     perfil.nombre = nombre
     perfil.cedula = cedula
     if telefono and not telefono.startswith('+57'):
@@ -86,18 +128,61 @@ def editar_emergencia(request):
     perfil = get_perfil(request.user)
     emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
     errors = {}
-    nombre = strip_tags(request.POST.get('emergencia_nombre', emergencia.nombre))
-    relacion = strip_tags(request.POST.get('emergencia_relacion', emergencia.relacion))
-    telefono = strip_tags(request.POST.get('emergencia_telefono', emergencia.telefono))
-    telefono_alt = strip_tags(request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt))
-    sangre = strip_tags(request.POST.get('emergencia_sangre', emergencia.sangre))
-    alergias = strip_tags(request.POST.get('emergencia_alergias', emergencia.alergias))
-    if not nombre:
-        errors['nombre'] = 'El nombre es obligatorio.'
-    if not telefono or not telefono.isdigit():
-        errors['telefono'] = 'El teléfono es obligatorio y debe ser numérico.'
-    if telefono_alt and not telefono_alt.isdigit():
-        errors['telefono_alt'] = 'El teléfono alternativo debe ser numérico.'
+    
+    nombre = request.POST.get('emergencia_nombre', emergencia.nombre)
+    relacion = request.POST.get('emergencia_relacion', emergencia.relacion)
+    telefono = request.POST.get('emergencia_telefono', emergencia.telefono)
+    telefono_alt = request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt)
+    sangre = request.POST.get('emergencia_sangre', emergencia.sangre)
+    alergias = request.POST.get('emergencia_alergias', emergencia.alergias)
+    
+    # Validaciones SSTI
+    try:
+        if nombre:
+            nombre_validator = NameSSTIValidator()
+            nombre_validator(nombre.strip())
+        else:
+            errors['nombre'] = 'El nombre es obligatorio.'
+    except ValidationError as e:
+        errors['nombre'] = str(e.message)
+    
+    try:
+        if relacion:
+            relacion_validator = GenericSSTIValidator()
+            relacion_validator(relacion.strip())
+    except ValidationError as e:
+        errors['relacion'] = str(e.message)
+    
+    try:
+        if telefono:
+            telefono_validator = PhoneSSTIValidator()
+            telefono_validator(telefono.strip())
+        else:
+            errors['telefono'] = 'El teléfono es obligatorio.'
+    except ValidationError as e:
+        errors['telefono'] = str(e.message)
+    
+    try:
+        if telefono_alt:
+            telefono_alt_validator = PhoneSSTIValidator()
+            telefono_alt_validator(telefono_alt.strip())
+    except ValidationError as e:
+        errors['telefono_alt'] = str(e.message)
+    
+    try:
+        if sangre:
+            sangre_validator = GenericSSTIValidator()
+            sangre_validator(sangre.strip())
+    except ValidationError as e:
+        errors['sangre'] = str(e.message)
+    
+    try:
+        if alergias:
+            alergias_validator = DescriptionSSTIValidator()
+            alergias_validator(alergias.strip())
+    except ValidationError as e:
+        errors['alergias'] = str(e.message)
+    
     if errors:
         emergencia.nombre = nombre
         emergencia.relacion = relacion
@@ -117,12 +202,14 @@ def editar_emergencia(request):
             'emergencia_errors': errors
         }
         return render(request, 'users/panel de usuario.html', {'datos': datos})
-    emergencia.nombre = nombre
-    emergencia.relacion = relacion
-    emergencia.telefono = telefono
-    emergencia.telefono_alt = telefono_alt
-    emergencia.sangre = sangre
-    emergencia.alergias = alergias
+    
+    # Aplicar strip_tags después de validar
+    emergencia.nombre = strip_tags(nombre)
+    emergencia.relacion = strip_tags(relacion)
+    emergencia.telefono = strip_tags(telefono)
+    emergencia.telefono_alt = strip_tags(telefono_alt)
+    emergencia.sangre = strip_tags(sangre)
+    emergencia.alergias = strip_tags(alergias)
     emergencia.save()
     notificar_usuario(request.user, '¡Contacto de emergencia actualizado correctamente!')
     return redirect('users:panel_usuario')
