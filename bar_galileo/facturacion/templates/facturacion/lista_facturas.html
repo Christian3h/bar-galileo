@@ -47,17 +47,15 @@
                 </div>
                 <div class="field-group">
                     <label>Fecha Inicio:</label>
-                     <input type="date"
-                            name="fecha_inicio"
-                            value="{{ fecha_inicio }}"
-                            max="{{ today }}">
+                    <input type="date"
+                           name="fecha_inicio"
+                           value="{{ fecha_inicio }}">
                 </div>
                 <div class="field-group">
                     <label>Fecha Fin:</label>
-                     <input type="date"
-                            name="fecha_fin"
-                            value="{{ fecha_fin }}"
-                            max="{{ today }}">
+                    <input type="date"
+                           name="fecha_fin"
+                           value="{{ fecha_fin }}">
                 </div>
             </div>
             <div class="field-group buttons-group">
@@ -139,8 +137,6 @@ $(document).ready(function() {
     }
 
     $(sel).DataTable({
-        width: '100%',
-        autoWidth: false,
         language: { url: "{% static 'js/DataTables/es-ES.json' %}" },
         responsive: { details: { type: 'inline' } },
         pageLength: 10,

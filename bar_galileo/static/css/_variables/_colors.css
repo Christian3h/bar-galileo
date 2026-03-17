@@ -18,7 +18,7 @@
   --color-secondary: #2b2b2b;    /* texto principal / iconos (alto contraste) */
   --color-dark: #bb4a31;         /* acento oscuro / acciones importantes */
   --color-light: #fbfbf8;        /* fondo general muy claro */
-  --color-accent: #ffffff;       /* contenedores / cards */
+  --color-accent: #c4c4c4;       /* contenedores / cards */
   --color-gray: #6e6e6e;         /* texto secundario y metadatos */
   --color-shadow: #cfe0c1;       /* color para sombras suaves (tonalidad verde tenue) */
 
