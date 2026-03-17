@@ -102,3 +102,7 @@
   --feedback-changed-foreground: #f2ffe3;
   --feedback-shadow: 0 30px 55px rgba(0, 0, 0, 0.6);
 }
+
+col{
+   background-color: var(--color-accent);
+}
