@@ -234,6 +234,29 @@
         display: inline-block;
     }
 
+    .actions-cell {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .role-form {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .role-select {
+        min-width: 190px;
+        width: 100%;
+        max-width: 100%;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+
     @media (max-width: 768px) {
         .btn-datos-icon { display: flex; }
         .btn-datos-text { display: none; }
@@ -290,9 +313,9 @@
                         <td class="col-2">{{ user.email }}</td>
                         {% if request.user|has_perm:"users,editar" %}
                         <td class="col-3">
-                            <form method="post" action="{% url 'users:user_list' %}" style="margin:0; display: inline-block;">
+                            <form method="post" action="{% url 'users:user_list' %}" class="role-form">
                                 {% csrf_token %}
-                                <select name="rol_id" style="padding: 5px; border-radius: 4px;">
+                                <select name="rol_id" class="role-select form-select">
                                     {% for rol in roles %}
                                         <option value="{{ rol.id }}"
                                             {% if user.userprofile and user.userprofile.rol and user.userprofile.rol.id == rol.id %}
@@ -306,7 +329,7 @@
                                 </select>
                                 <input type="hidden" name="user_id" value="{{ user.id }}">
                                 <input type="hidden" name="action" value="change_role">
-                                <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
+                                <button type="submit" class="btn btn-sm btn-primary btn-role-change">Cambiar</button>
                             </form>
                         </td>
                         {% endif %}
