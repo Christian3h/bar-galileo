@@ -74,10 +74,25 @@ class SecurityValidationMiddleware:
         # Rutas a excluir de la validación
         self.exclude_paths = [
             '/admin/',
-            '/api/auth/',
+            '/api/',
             '/health/',
             '/accounts/',
             '/captcha/',
+            '/users/',
+            '/products/',
+            '/reportes/',
+            '/expenses/',
+            '/nominas/',
+            '/static/',
+            '/media/',
+            '/tables/',
+            '/roles/',
+            '/facturacion/',
+            '/site_images/',
+            '/google_chat/',
+            '/rag_chat/',
+            '/notifications/',
+            '/backups/',
         ]
     
     def __call__(self, request):

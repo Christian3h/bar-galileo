@@ -116,7 +116,7 @@ MIDDLEWARE = [
 
 # Configuración de seguridad SSTI
 SECURITY_MIDDLEWARE_ENABLED = True
-SECURITY_MIDDLEWARE_LOG_ONLY = False  # True = solo log, no bloquear
+SECURITY_MIDDLEWARE_LOG_ONLY = True  # True = solo log, no bloquear (cambio a True para diagnóstico)
 
 ROOT_URLCONF = "bar_galileo.urls"
 # Configuración explícita de django-allauth para registro
