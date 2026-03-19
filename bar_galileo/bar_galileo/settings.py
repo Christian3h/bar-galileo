@@ -37,6 +37,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 # SECURITY WARNING: keep the secret key used in production secret!
 # Configuración sensible a entorno
 DEBUG = str(os.getenv("DEBUG", "True")).lower() in ("1", "true", "yes")
+FORCE_HTTPS = str(os.getenv("FORCE_HTTPS", "False" if DEBUG else "True")).lower() in (
+    "1",
+    "true",
+    "yes",
+)
 SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("secret_key") or get_random_secret_key()
 raw_hosts = os.getenv("ALLOWED_HOSTS", "*" if DEBUG else "")
 ALLOWED_HOSTS = ["*"]
@@ -96,6 +101,7 @@ AUTHENTICATION_BACKENDS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "core.security.middleware.SecurityValidationMiddleware",  # SSTI/XSS protection
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -150,13 +156,17 @@ ASGI_APPLICATION = "bar_galileo.asgi.application"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Configuración original de MySQL (comentada temporalmente)
+db_host = os.getenv("DB_HOST", "localhost")
+if db_host in ("localhost", "127.0.0.1") and Path("/.dockerenv").exists():
+    db_host = "db"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": os.getenv("DB_NAME", "bar_galileo"),
         "USER": os.getenv("DB_USER", "bar_galileo_user"),
         "PASSWORD": os.getenv("DB_PASSWORD", "Galileo2025"),
-        "HOST": os.getenv("DB_HOST", "localhost"),
+        "HOST": db_host,
         "PORT": os.getenv("DB_PORT", "3306"),
         "OPTIONS": {
             "charset": "utf8mb4",
@@ -219,7 +229,7 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
     "dbbackup": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -281,7 +291,7 @@ print("DEFAULT_FROM_EMAIL:", DEFAULT_FROM_EMAIL)
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Endpoints de seguridad para producción
-if not DEBUG:
+if FORCE_HTTPS:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -382,13 +392,13 @@ DBBACKUP_CONNECTORS = {
 # ==================== Configuraciones de Seguridad ====================
 # Configuraciones de seguridad adaptadas al entorno (desarrollo/producción)
 
-# Cookies de sesión seguras (solo HTTPS en producción)
-SESSION_COOKIE_SECURE = not DEBUG
+# Cookies de sesión seguras (solo HTTPS cuando FORCE_HTTPS=True)
+SESSION_COOKIE_SECURE = FORCE_HTTPS
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 
-# Cookies CSRF seguras (solo HTTPS en producción)
-CSRF_COOKIE_SECURE = not DEBUG
+# Cookies CSRF seguras (solo HTTPS cuando FORCE_HTTPS=True)
+CSRF_COOKIE_SECURE = FORCE_HTTPS
 CSRF_COOKIE_HTTPONLY = False  # Debe ser False para que JavaScript pueda leer el token CSRF en solicitudes AJAX
 CSRF_COOKIE_SAMESITE = "Lax"
 
@@ -414,8 +424,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = "DENY"
 
-# Configuraciones SSL/HTTPS (solo en producción)
-if not DEBUG:
+# Configuraciones SSL/HTTPS (solo cuando FORCE_HTTPS=True)
+if FORCE_HTTPS:
     # HTTP Strict Transport Security
     SECURE_HSTS_SECONDS = 31536000  # 1 año
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True

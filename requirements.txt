@@ -25,6 +25,7 @@ PyJWT==2.10.1
 
 # Base de datos MySQL/MariaDB
 mysqlclient==2.2.7
+whitenoise==6.9.0
 
 # Paquetes para exportación de datos
 openpyxl==3.1.5
