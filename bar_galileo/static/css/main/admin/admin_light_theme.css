@@ -720,6 +720,7 @@ fieldset {
   box-shadow: 0 28px 50px rgba(15, 28, 43, 0.24);
   color: var(--admin-text);
   animation: admin-scale-in 260ms var(--admin-transition) both;
+  margin-top: 15dvh;
 }
 
 .logout-modal-content {

@@ -474,7 +474,14 @@
 
 <script>
 // ── Datos de perfiles desde Django ──────────────────────────────────────
-const PERFILES_DATA = {{ perfiles_json|escapejs }};
+const PERFILES_DATA = (() => {
+    try {
+        return JSON.parse('{{ perfiles_json|escapejs }}');
+    } catch (error) {
+        console.error('No se pudo parsear perfiles_json en user_list:', error);
+        return {};
+    }
+})();
 
 function val(v) {
     return (v && v.trim()) ? v.trim() : null;
