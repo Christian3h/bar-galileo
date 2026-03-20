@@ -235,6 +235,10 @@
     }
 
     .actions-cell {
+        vertical-align: middle;
+    }
+
+    .actions-cell-content {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
@@ -262,7 +266,7 @@
         .btn-datos-text { display: none; }
 
         /* celda de acciones: flex para alinear botones */
-        .actions-cell {
+        .actions-cell-content {
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
@@ -334,33 +338,35 @@
                         </td>
                         {% endif %}
                         <td class="col-4 actions-cell">
-                            {% if request.user|has_perm:"users,editar" %}
-                                <button type="button"
-                                        class="btn btn-sm btn-warning"
-                                        onclick="openPasswordModal('{{ user.id }}', '{{ user.username }}')"
-                                        title="Cambiar contraseña">
-                                    Cambiar Contraseña
-                                </button>
-                            {% endif %}
-                            {% if request.user|has_perm:"users,ver" %}
-                                <!-- Botón texto (desktop) -->
-                                <button type="button"
-                                        class="btn btn-sm btn-secondary btn-datos-text"
-                                        onclick="openDatosModal('{{ user.id }}', '{{ user.username }}')"
-                                        title="Ver datos personales y de emergencia">
-                                    Datos Personales
-                                </button>
-                                <!-- Botón ícono (mobile) -->
-                                <button type="button"
-                                        class="btn-datos-icon"
-                                        onclick="openDatosModal('{{ user.id }}', '{{ user.username }}')"
-                                        title="Ver datos personales y de emergencia">
-                                    <!-- ícono person_search / contact info -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-                                        <path d="M440-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T520-640q0-33-23.5-56.5T440-720q-33 0-56.5 23.5T360-640q0 33 23.5 56.5T440-560ZM884-20 756-148q-21 12-45 20t-51 8q-75 0-127.5-52.5T480-300q0-75 52.5-127.5T660-480q75 0 127.5 52.5T840-300q0 27-8 51t-20 45L940-76l-56 56ZM660-200q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29ZM120-240v-28q0-34 17.5-62.5T184-375q31-15 65.5-25t71.5-16q-9 20-14.5 41.5T300-332q-27 6-50.5 14T208-300q-8 4-8 12v28h92q5 21 13 40.5T327-180H120v-60Zm320-240Z"/>
-                                    </svg>
-                                </button>
-                            {% endif %}
+                            <div class="actions-cell-content">
+                                {% if request.user|has_perm:"users,editar" %}
+                                    <button type="button"
+                                            class="btn btn-sm btn-warning"
+                                            onclick="openPasswordModal('{{ user.id }}', '{{ user.username }}')"
+                                            title="Cambiar contraseña">
+                                        Cambiar Contraseña
+                                    </button>
+                                {% endif %}
+                                {% if request.user|has_perm:"users,ver" %}
+                                    <!-- Botón texto (desktop) -->
+                                    <button type="button"
+                                            class="btn btn-sm btn-secondary btn-datos-text"
+                                            onclick="openDatosModal('{{ user.id }}', '{{ user.username }}')"
+                                            title="Ver datos personales y de emergencia">
+                                        Datos Personales
+                                    </button>
+                                    <!-- Botón ícono (mobile) -->
+                                    <button type="button"
+                                            class="btn-datos-icon"
+                                            onclick="openDatosModal('{{ user.id }}', '{{ user.username }}')"
+                                            title="Ver datos personales y de emergencia">
+                                        <!-- ícono person_search / contact info -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                                            <path d="M440-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T520-640q0-33-23.5-56.5T440-720q-33 0-56.5 23.5T360-640q0 33 23.5 56.5T440-560ZM884-20 756-148q-21 12-45 20t-51 8q-75 0-127.5-52.5T480-300q0-75 52.5-127.5T660-480q75 0 127.5 52.5T840-300q0 27-8 51t-20 45L940-76l-56 56ZM660-200q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29ZM120-240v-28q0-34 17.5-62.5T184-375q31-15 65.5-25t71.5-16q-9 20-14.5 41.5T300-332q-27 6-50.5 14T208-300q-8 4-8 12v28h92q5 21 13 40.5T327-180H120v-60Zm320-240Z"/>
+                                        </svg>
+                                    </button>
+                                {% endif %}
+                            </div>
                         </td>
                     </tr>
                     {% empty %}
