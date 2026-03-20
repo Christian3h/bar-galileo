@@ -15,6 +15,9 @@
   --admin-info: #2b67b8;
   --admin-danger: #cb4736;
   --admin-warning: #be7e22;
+  --admin-icon-color: #245547;
+  --admin-icon-muted: #667284;
+  --admin-icon-danger: #b6382c;
   --admin-shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.06);
   --admin-shadow-sm: 0 8px 24px rgba(17, 24, 39, 0.08);
   --admin-shadow-md: 0 18px 44px rgba(17, 24, 39, 0.12);
@@ -339,7 +342,7 @@ table.dataTable,
 .table thead th,
 table.dataTable thead th,
 table.dataTable thead td {
-  background: linear-gradient(140deg, #2f836a 0%, #236953 52%, #b79244 100%) !important;
+  background: #2f7f67 !important;
   color: #fdfaf3 !important;
   border: 0 !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.24) !important;
@@ -424,6 +427,50 @@ table.dataTable tbody tr:hover {
 .dataTables_wrapper .dt-paging-button:hover {
   transform: translateY(-1px);
   box-shadow: var(--admin-shadow-xs);
+}
+
+/* Botones de exportacion DataTables (PDF/Excel/CSV) */
+.dataTables_wrapper .dt-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.7rem;
+}
+
+.dataTables_wrapper .dt-buttons .dt-button,
+div.dt-buttons > button.dt-button,
+button.dt-button,
+a.dt-button {
+  background: #fff !important;
+  color: var(--admin-text) !important;
+  border: 1px solid var(--admin-border-strong) !important;
+  border-radius: 10px !important;
+  min-height: 38px;
+  padding: 0.45rem 0.82rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em;
+  box-shadow: var(--admin-shadow-xs);
+}
+
+.dataTables_wrapper .dt-buttons .dt-button:hover,
+div.dt-buttons > button.dt-button:hover,
+button.dt-button:hover,
+a.dt-button:hover,
+.dataTables_wrapper .dt-buttons .dt-button:focus,
+div.dt-buttons > button.dt-button:focus,
+button.dt-button:focus,
+a.dt-button:focus {
+  background: #2d7e66 !important;
+  color: #fff !important;
+  border-color: #235745 !important;
+}
+
+.dataTables_wrapper .dt-buttons .dt-button:disabled,
+div.dt-buttons > button.dt-button:disabled,
+button.dt-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .btn,
@@ -628,9 +675,29 @@ form {
   animation: admin-fade-up 420ms var(--admin-transition) both;
 }
 
+/* Centrado consistente de formularios admin */
+.main-content form {
+  width: min(100%, 920px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Excepciones: formularios de filtros y formularios embebidos en tablas */
+.main-content .filter-section form,
+.main-content .period-filter-form,
+.main-content .search-form,
+.main-content .dataTables_wrapper form,
+.main-content .table-contenedor form,
+.main-content table form {
+  width: auto;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 form p {
   width: 100%;
-  align-items: flex-start;
+  align-items: center;
 }
 
 fieldset {

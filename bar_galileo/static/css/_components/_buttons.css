@@ -167,16 +167,97 @@ html:not([data-theme='dark']) .btn-secondary,
 html:not([data-theme='dark']) .btn-success,
 html:not([data-theme='dark']) .btn-danger,
 html:not([data-theme='dark']) .btn-warning,
-html:not([data-theme='dark']) .btn-info,
-html:not([data-theme='dark']) .btn:hover,
-html:not([data-theme='dark']) .btn:focus,
-html:not([data-theme='dark']) .btn:active,
-html:not([data-theme='dark']) .btn:focus-visible {
+html:not([data-theme='dark']) .btn-info {
   color: #111 !important;
 }
 
 html:not([data-theme='dark']) .btn svg {
   fill: currentColor;
+}
+
+html:not([data-theme='dark']) .btn:hover,
+html:not([data-theme='dark']) .btn:focus,
+html:not([data-theme='dark']) .btn:active,
+html:not([data-theme='dark']) .btn:focus-visible {
+  color: #fff !important;
+}
+
+html:not([data-theme='dark']) .btn:hover svg,
+html:not([data-theme='dark']) .btn:focus svg,
+html:not([data-theme='dark']) .btn:active svg,
+html:not([data-theme='dark']) .btn:focus-visible svg,
+html:not([data-theme='dark']) .btn:hover i,
+html:not([data-theme='dark']) .btn:focus i,
+html:not([data-theme='dark']) .btn:active i,
+html:not([data-theme='dark']) .btn:focus-visible i {
+  color: #fff !important;
+  fill: #fff !important;
+}
+
+html:not([data-theme='dark']) .btn:hover img,
+html:not([data-theme='dark']) .btn:focus img,
+html:not([data-theme='dark']) .btn:active img,
+html:not([data-theme='dark']) .btn:focus-visible img {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Excepcion: botones claros (fondo blanco) mantienen texto/icono oscuro en hover */
+html:not([data-theme='dark']) .btn.btn-secondary:hover,
+html:not([data-theme='dark']) .btn.btn-secondary:focus,
+html:not([data-theme='dark']) .btn.btn-secondary:active,
+html:not([data-theme='dark']) .btn.btn-secondary:focus-visible,
+html:not([data-theme='dark']) .btn.btn-light:hover,
+html:not([data-theme='dark']) .btn.btn-light:focus,
+html:not([data-theme='dark']) .btn.btn-light:active,
+html:not([data-theme='dark']) .btn.btn-light:focus-visible,
+html:not([data-theme='dark']) .btn.btn-clear:hover,
+html:not([data-theme='dark']) .btn.btn-clear:focus,
+html:not([data-theme='dark']) .btn.btn-clear:active,
+html:not([data-theme='dark']) .btn.btn-clear:focus-visible,
+html:not([data-theme='dark']) a.btn.btn-secondary:hover,
+html:not([data-theme='dark']) a.btn.btn-secondary:focus,
+html:not([data-theme='dark']) a.btn.btn-secondary:active,
+html:not([data-theme='dark']) a.btn.btn-secondary:focus-visible {
+  color: #111 !important;
+}
+
+html:not([data-theme='dark']) .btn.btn-secondary:hover img,
+html:not([data-theme='dark']) .btn.btn-secondary:focus img,
+html:not([data-theme='dark']) .btn.btn-secondary:active img,
+html:not([data-theme='dark']) .btn.btn-secondary:focus-visible img,
+html:not([data-theme='dark']) .btn.btn-light:hover img,
+html:not([data-theme='dark']) .btn.btn-light:focus img,
+html:not([data-theme='dark']) .btn.btn-light:active img,
+html:not([data-theme='dark']) .btn.btn-light:focus-visible img,
+html:not([data-theme='dark']) .btn.btn-clear:hover img,
+html:not([data-theme='dark']) .btn.btn-clear:focus img,
+html:not([data-theme='dark']) .btn.btn-clear:active img,
+html:not([data-theme='dark']) .btn.btn-clear:focus-visible img,
+html:not([data-theme='dark']) a.btn.btn-secondary:hover img,
+html:not([data-theme='dark']) a.btn.btn-secondary:focus img,
+html:not([data-theme='dark']) a.btn.btn-secondary:active img,
+html:not([data-theme='dark']) a.btn.btn-secondary:focus-visible img {
+  filter: none !important;
+}
+
+html:not([data-theme='dark']) .btn.btn-secondary:hover svg,
+html:not([data-theme='dark']) .btn.btn-secondary:focus svg,
+html:not([data-theme='dark']) .btn.btn-secondary:active svg,
+html:not([data-theme='dark']) .btn.btn-secondary:focus-visible svg,
+html:not([data-theme='dark']) .btn.btn-light:hover svg,
+html:not([data-theme='dark']) .btn.btn-light:focus svg,
+html:not([data-theme='dark']) .btn.btn-light:active svg,
+html:not([data-theme='dark']) .btn.btn-light:focus-visible svg,
+html:not([data-theme='dark']) .btn.btn-clear:hover svg,
+html:not([data-theme='dark']) .btn.btn-clear:focus svg,
+html:not([data-theme='dark']) .btn.btn-clear:active svg,
+html:not([data-theme='dark']) .btn.btn-clear:focus-visible svg,
+html:not([data-theme='dark']) a.btn.btn-secondary:hover svg,
+html:not([data-theme='dark']) a.btn.btn-secondary:focus svg,
+html:not([data-theme='dark']) a.btn.btn-secondary:active svg,
+html:not([data-theme='dark']) a.btn.btn-secondary:focus-visible svg {
+  color: #111 !important;
+  fill: #111 !important;
 }
 
 /* =======================================
