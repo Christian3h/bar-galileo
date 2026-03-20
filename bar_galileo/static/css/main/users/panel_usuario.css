@@ -346,6 +346,7 @@ body {
     background: var(--color-light);
     border-radius: 20px;
     box-shadow: 0 20px 40px rgba(166, 137, 50, 0.15);
+    overflow: hidden;
     backdrop-filter: blur(10px);
     border: 1px solid var(--color-secondary);
 }

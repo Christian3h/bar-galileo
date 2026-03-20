@@ -1,3 +1,5 @@
+# Modelo del sistema de reportes. Flujo: crear reporte → generar datos → exportar.
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -6,7 +8,8 @@ import json
 
 
 class Reporte(models.Model):
-    """Modelo base para reportes generados"""
+    # Guarda la configuración del reporte (tipo, fechas, formato) y los datos generados en caché como JSON.
+    # Tipo del reporte → determina qué función de utils.py se llama para obtener los datos
     TIPO_CHOICES = [
         ('ventas', 'Ventas'),
         ('inventario', 'Inventario'),
@@ -17,6 +20,7 @@ class Reporte(models.Model):
         ('general', 'General'),
     ]
     
+    # Periodo informativo; el filtrado real usa fecha_inicio y fecha_fin
     PERIODO_CHOICES = [
         ('diario', 'Diario'),
         ('semanal', 'Semanal'),
@@ -26,6 +30,7 @@ class Reporte(models.Model):
         ('personalizado', 'Personalizado'),
     ]
     
+    # Formato de exportación: pdf=reportlab, excel=openpyxl, csv=stdlib
     FORMATO_CHOICES = [
         ('pdf', 'PDF'),
         ('excel', 'Excel'),
@@ -60,20 +65,20 @@ class Reporte(models.Model):
     
     @property
     def duracion_dias(self):
-        """Retorna la duración del periodo en días"""
+        # Días que cubre el reporte (incluye ambos extremos: un solo día = 1, no 0)
         if self.fecha_inicio and self.fecha_fin:
             return (self.fecha_fin - self.fecha_inicio).days + 1
         return 0
     
     @property
     def esta_vencido(self):
-        """Verifica si el reporte está desactualizado (más de 30 días)"""
+        # True si el reporte fue creado hace más de 30 días (señal para regenerar)
         if self.fecha_creacion:
             return (timezone.now() - self.fecha_creacion).days > 30
         return False
     
     def get_datos(self):
-        """Obtiene los datos del reporte desde JSON"""
+        # Lee datos_json y lo deserializa; devuelve {} si está vacío o malformado
         if self.datos_json:
             try:
                 return json.loads(self.datos_json)
@@ -82,6 +87,6 @@ class Reporte(models.Model):
         return {}
     
     def set_datos(self, datos):
-        """Guarda los datos del reporte en JSON"""
+        # Serializa el dict de datos a JSON y actualiza ultima_generacion; llama .save() después
         self.datos_json = json.dumps(datos, ensure_ascii=False)
         self.ultima_generacion = timezone.now()
