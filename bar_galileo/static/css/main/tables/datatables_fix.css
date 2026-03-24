@@ -1,4 +1,4 @@
-/* 
+/*
  * CSS para corregir el ancho de DataTables en desktop
  * Asegura que las tablas con pocas columnas ocupen el 100% del ancho disponible
  */
@@ -77,7 +77,7 @@ table.dataTable tfoot th {
   .dataTables_wrapper {
     overflow-x: auto !important;
   }
-  
+
   table.dataTable {
     min-width: 100% !important;
   }
@@ -173,7 +173,6 @@ table.dataTable tfoot th {
 
 /* Para tablas específicas que ya tienen actions-cell, mantener compatibilidad */
 .actions-cell {
-  display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   gap: 8px !important;

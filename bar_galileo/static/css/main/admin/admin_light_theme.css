@@ -328,6 +328,7 @@ button {
   border-radius: var(--admin-radius-md);
   box-shadow: var(--admin-shadow-sm);
   overflow: hidden;
+  padding: 30px;
 }
 
 .table,
@@ -495,6 +496,7 @@ a.btn,
   letter-spacing: 0.012em;
   transition: transform var(--admin-transition), box-shadow var(--admin-transition), background-color var(--admin-transition), border-color var(--admin-transition), color var(--admin-transition);
   cursor: pointer;
+  width: 200px;
 }
 
 .btn::before,
