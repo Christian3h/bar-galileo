@@ -356,7 +356,6 @@ body {
     padding: 30px;
     text-align: left;
     position: relative;
-    overflow: hidden;
     border-bottom: 2px solid var(--color-secondary);
 }
 
