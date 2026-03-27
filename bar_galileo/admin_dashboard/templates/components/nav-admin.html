@@ -42,9 +42,9 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('brands-submenu')"><img src="{% static 'img/icons/shopping_basket.svg' %}" alt="Marcas"> Marcas</button>
                     <ul id="brands-submenu" class="submenu hidden">
-                        <li><a href="{% url 'products:brands_admin' %}">Lista de Marcas</a></li>
+                        <li><a href="{% url 'products:brands_admin' %}">Lista de marcas</a></li>
                         {% if request.user|has_perm:"brands,crear" %}
-                        <li><a href="{% url 'products:brands_create_admin' %}">Crear Marca</a></li>
+                        <li><a href="{% url 'products:brands_create_admin' %}">Crear marca</a></li>
                         {% endif %}
                     </ul>
                 </li>
@@ -54,7 +54,7 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('Proveedores-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Proveedores"> Proveedores</button>
                     <ul id="Proveedores-submenu" class="submenu hidden">
-                        <li><a href="{% url 'products:proveedores_admin' %}">Listar proveedores</a></li>
+                        <li><a href="{% url 'products:proveedores_admin' %}">Lista de proveedores</a></li>
                         {% if request.user|has_perm:"providers,crear" %}
                         <li><a href="{% url 'products:proveedores_create_admin' %}">Crear proveedor</a></li>
                         {% endif %}
@@ -67,9 +67,9 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('mesas-submenu')"><img src="{% static 'img/icons/table.svg' %}" alt="Mesas"> Mesas</button>
                     <ul id="mesas-submenu" class="submenu hidden">
-                        <li><a href="{% url 'tables:mesas_lista' %}">Lista de Mesas</a></li>
+                        <li><a href="{% url 'tables:mesas_lista' %}">Lista de mesas</a></li>
                         {% if request.user|has_perm:"tables,crear" %}
-                        <li><a href="{% url 'tables:crear_mesa' %}">Crear Mesa</a></li>
+                        <li><a href="{% url 'tables:crear_mesa' %}">Crear mesa</a></li>
                         {% endif %}
                     </ul>
                 </li>
@@ -110,9 +110,9 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('gastos-submenu')"><img src="{% static 'img/icons/payments.svg' %}" alt="Gastos"> Gastos</button>
                     <ul id="gastos-submenu" class="submenu hidden">
-                        <li><a href="{% url 'expenses:expense_list' %}">Lista de Gastos</a></li>
+                        <li><a href="{% url 'expenses:expense_list' %}">Lista de gastos</a></li>
                         {% if request.user|has_perm:"expenses,crear" %}
-                        <li><a href="{% url 'expenses:expense_create' %}">Crear Gasto</a></li>
+                        <li><a href="{% url 'expenses:expense_create' %}">Crear gasto</a></li>
                         {% endif %}
                     </ul>
                 </li>
@@ -122,13 +122,13 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('nominas-submenu')"><img src="{% static 'img/icons/group.svg' %}" alt="Nóminas"> Nóminas</button>
                     <ul id="nominas-submenu" class="submenu hidden">
-                        <li><a href="{% url 'nominas:empleado_list' %}">Lista de Empleados</a></li>
+                        <li><a href="{% url 'nominas:empleado_list' %}">Lista de empleados</a></li>
                         {% if request.user|has_perm:"nominas,crear" %}
-                        <li><a href="{% url 'nominas:empleado_crear' %}">Registrar Empleado</a></li>
+                        <li><a href="{% url 'nominas:empleado_crear' %}">Registrar empleado</a></li>
                         {% endif %}
-                        <li><a href="{% url 'nominas:pago_list' %}">Lista de Pagos</a></li>
+                        <li><a href="{% url 'nominas:pago_list' %}">Lista de pagos</a></li>
                         {% if request.user|has_perm:"nominas,crear" %}
-                        <li><a href="{% url 'nominas:pago_crear' %}">Registrar Pago</a></li>
+                        <li><a href="{% url 'nominas:pago_crear' %}">Registrar pago</a></li>
                         {% endif %}
                     </ul>
                 </li>
@@ -138,7 +138,7 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('backups-submenu')"><img src="{% static 'img/icons/backup.svg' %}" alt="Copias de seguridad"> Copias de seguridad</button>
                     <ul id="backups-submenu" class="submenu hidden">
-                        <li><a href="{% url 'backups:backup_list' %}">Gestión de Copias de Seguridad</a></li>
+                        <li><a href="{% url 'backups:backup_list' %}">Gestión de copias de seguridad</a></li>
                     </ul>
                 </li>
                 {% endif %}
@@ -147,36 +147,71 @@
                 <li>
                                         <button class="menu-btn" onclick="toggleMenu('reportes-submenu')"><img src="{% static 'img/icons/bar_chart.svg' %}" alt="Reportes"> Reportes</button>
                     <ul id="reportes-submenu" class="submenu hidden">
-                        <li><a href="{% url 'reportes:reporte_list' %}">Lista de Reportes</a></li>
+                        <li><a href="{% url 'reportes:reporte_list' %}">Lista de reportes</a></li>
                         {% if request.user|has_perm:"reportes,crear" %}
-                        <li><a href="{% url 'reportes:reporte_create' %}">Crear Reporte</a></li>
+                        <li><a href="{% url 'reportes:reporte_create' %}">Crear reporte</a></li>
                         {% endif %}
                     </ul>
                 </li>
                 {% endif %}
 
-                <!-- Chat RAG con Documentos -->
+                {% if request.user|has_perm:"site_images,ver" %}
                 <li>
-                    <button class="menu-btn" onclick="window.location.href='{% url 'rag_chat:chat' %}'">
+                    <button class="menu-btn" onclick="toggleMenu('imagenes-submenu')"><img src="{% static 'img/icons/images.svg' %}" alt="Gestión de Imágenes">Imágenes</button>
+                    <ul id="imagenes-submenu" class="submenu hidden">
+                        <li><a href="{% url 'site_images:image_management' %}">Gestión de imágenes</a></li>
+                        <li><a href="{% url 'site_images:site_content_list' %}">Contenido de la página de inicio</a></li>
+                        {% if request.user|has_perm:"site_images,crear" %}
+                        <li><a href="{% url 'site_images:carousel_image_create' %}">Agregar al carrusel</a></li>
+                        <li><a href="{% url 'site_images:site_image_create' %}">Agregar imagen</a></li>
+                        <li><a href="{% url 'site_images:site_image_section_create' %}">Nueva sección</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+
+                <!-- Chat RAG con Documentos (mostrar solo si la URL está registrada) -->
+                {% url 'rag_chat:chat' as rag_chat_url %}
+                {% if rag_chat_url %}
+                <li>
+                    <button class="menu-btn" onclick="window.location.href='{{ rag_chat_url }}'">
                         <img src="{% static 'img/icons/group.svg' %}" alt="Chat RAG">
                         Chat con Documentos
                     </button>
                 </li>
+                {% endif %}
 
-
-                <!-- {% if request.user|has_perm:"dashboard,ver" %}
-            <li>
-                <button class="menu-btn" onclick="toggleMenu('ajustes-submenu')">Ajustes</button>
-                <ul id="ajustes-submenu" class="submenu hidden">
-                    <li><a href="#">Crear</a></li>
-                    <li><a href="#">Listar</a></li>
-                </ul>
-            </li>
-            {% endif %} -->
-            <!-- Comentario de prueba -->
             </ul>
+
+            <!-- Cerrar sesión al fondo del sidebar -->
+            <div class="sidebar-logout">
+                <button type="button" class="sidebar-logout-btn" id="btn-open-logout-modal">
+                    <img src="{% static 'img/icons/logout.svg' %}" alt="Cerrar sesión">
+                    Cerrar Sesión
+                </button>
+            </div>
         </nav>
 </header>
+
+<!-- Modal de confirmación para cerrar sesión -->
+<div id="logout-modal" class="modal">
+    <div class="modal-content logout-modal-content">
+        <div class="logout-modal-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48" fill="var(--color-warning,#dca437)">
+                <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/>
+            </svg>
+        </div>
+        <h3 class="logout-modal-title">Cerrar Sesión</h3>
+        <p class="logout-modal-text">¿Estás seguro de que deseas cerrar sesión?</p>
+        <div class="logout-modal-actions">
+            <button type="button" id="logout-cancel-btn" class="btn btn-secondary">Cancelar</button>
+            <form id="form_cerrar_sesion_botones" method="post" action="{% url 'account_logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sí, cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Pantalla de carga para navegación a página principal -->
 <div id="home-loading-screen" class="dashboard-loading-screen hidden">
@@ -195,19 +230,25 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var homeBtn = document.getElementById('home-page-btn');
-    var loadingScreen = document.getElementById('home-loading-screen');
-    homeBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Oculta todo el contenido excepto la pantalla de carga
-        document.body.querySelectorAll(':scope > *:not(#home-loading-screen)').forEach(function(el) {
-            el.style.display = 'none';
+    // El home-page-btn ahora es manejado por dashboard-loading.js
+
+    // Modal de cerrar sesión
+    var logoutModal = document.getElementById('logout-modal');
+    var openBtn = document.getElementById('btn-open-logout-modal');
+    var cancelBtn = document.getElementById('logout-cancel-btn');
+
+    if (openBtn && logoutModal) {
+        openBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'block';
         });
-        loadingScreen.classList.remove('hidden');
-        // Redirige a la página principal después de un breve delay
-        setTimeout(function() {
-            window.location.href = homeBtn.getAttribute('data-url');
-        }, 500);
-    });
+        cancelBtn.addEventListener('click', function() {
+            logoutModal.style.display = 'none';
+        });
+        logoutModal.addEventListener('click', function(e) {
+            if (e.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+    }
 });
 </script>

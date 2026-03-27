@@ -1,13 +1,16 @@
+# Admin del módulo de reportes: listado, filtros, búsqueda y fieldsets agrupados.
+
 from django.contrib import admin
 from .models import Reporte
 
 
 @admin.register(Reporte)
 class ReporteAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'tipo', 'periodo', 'formato', 'creado_por', 'fecha_creacion', 'generado')
+    # Registra Reporte en el admin. datos_json solo lectura y colapsado para no saturar la UI.
+    list_display = ('nombre', 'tipo', 'periodo', 'formato', 'creado_por', 'fecha_creacion', 'generado', 'ultima_generacion')
     list_filter = ('tipo', 'periodo', 'formato', 'generado', 'fecha_creacion')
     search_fields = ('nombre', 'descripcion', 'creado_por__username')
-    readonly_fields = ('fecha_creacion', 'archivo')
+    readonly_fields = ('fecha_creacion', 'ultima_generacion', 'datos_json')
     fieldsets = (
         ('Información Básica', {
             'fields': ('nombre', 'tipo', 'descripcion')
@@ -16,6 +19,10 @@ class ReporteAdmin(admin.ModelAdmin):
             'fields': ('periodo', 'formato', 'fecha_inicio', 'fecha_fin')
         }),
         ('Estado', {
-            'fields': ('generado', 'archivo', 'creado_por', 'fecha_creacion')
-        })
+            'fields': ('generado', 'archivo', 'creado_por', 'fecha_creacion', 'ultima_generacion')
+        }),
+        ('Datos del Reporte', {
+            'fields': ('datos_json',),
+            'classes': ('collapse',),
+        }),
     )

@@ -8,6 +8,32 @@
 @import "../../_components/_forms.css";
 
 /* =======================================
+   ESTILOS PARA .form-select (copiados de tables.css)
+======================================= */
+.form-select,
+.form-control {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--color-primary);
+    border-radius: 8px;
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
+    transition: all 0.3s ease;
+}
+
+.form-select option {
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
+}
+
+.form-select:focus,
+.form-control:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(98, 115, 61, 0.25);
+    transform: translateY(-1px);
+}
+
+/* =======================================
    BASE
 ======================================= */
 /* Este aplica a toda la página */
@@ -92,7 +118,7 @@ body {
 .card p {
   font-size: 1.8rem;
   font-weight: bold;
-  color: var(--color-accent);
+  color: var(--color-secondary);
 }
 
 .dashboard-charts {

@@ -45,7 +45,7 @@ body {
 .container-menu .logo {
   font-size: 28px;
   font-weight: 700;
-  color: #d4af37;
+  color: var(--color-brand);
   letter-spacing: 3px;
   margin-left: 40px;
   text-decoration: none;
@@ -70,7 +70,7 @@ body {
 }
 
 .container-menu a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 /* =======================================
@@ -203,7 +203,7 @@ body {
   letter-spacing: 3px;
   margin-bottom: 20px;
   text-transform: uppercase;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .container-login p {
@@ -243,8 +243,8 @@ body {
 
 .container-login form input:focus {
   outline: none;
-  border-color: #d4af37;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 20px rgba(184, 154, 60, 0.3);
 }
 
 .container-login form input::placeholder {
@@ -252,7 +252,7 @@ body {
 }
 
 .container-login form button {
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   padding: 15px 40px;
   border: none;
@@ -268,11 +268,11 @@ body {
 
 .container-login form button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 10px 30px rgba(184, 154, 60, 0.3);
 }
 
 .container-login a {
-  color: #d4af37;
+  color: var(--color-brand);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s;
@@ -280,7 +280,7 @@ body {
 }
 
 .container-login a:hover {
-  color: #f4d467;
+  color: var(--color-brand-light);
 }
 
 /* =======================================
@@ -302,8 +302,8 @@ body {
 
 .container-login .button-group button {
   background: transparent;
-  border: 2px solid #d4af37;
-  color: #d4af37;
+  border: 2px solid var(--color-brand);
+  color: var(--color-brand);
   padding: 12px 25px;
   border-radius: 6px;
   transition: all 0.3s;
@@ -311,7 +311,7 @@ body {
 }
 
 .container-login .button-group button:hover {
-  background: #d4af37;
+  background: var(--color-brand);
   color: #000;
   transform: translateY(-2px);
 }
@@ -338,35 +338,26 @@ body {
    ALERTAS Y MENSAJES
 >>>>>>>
 ======================================= */
-.container-messages {
-  position: fixed;
-  top: 100px;
-  left: 20px;
-  right: 20px;
-  z-index: 1001;
-  max-width: 500px;
+.auth-page .container-messages {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  max-width: min(520px, calc(100vw - 40px));
 }
 
-.alert-message {
-  background: #1a1a1a;
-  border-left: 4px solid #d4af37;
-  padding: 15px 20px;
+.auth-page .alert-message {
+  --alert-bg: rgba(12, 12, 12, 0.9);
+  --alert-border: rgba(184, 154, 60, 0.55);
+  --alert-color: #f3f3f3;
   margin-bottom: 15px;
-  border-radius: 6px;
-  color: #ccc;
-  border: 1px solid #333;
-  position: relative;
+  animation: slideInDown 0.5s ease-out;
 }
 
-.close-btn {
+.auth-page .alert-message .close-btn {
+  color: inherit;
   position: absolute;
   top: 8px;
   right: 12px;
-  background: transparent;
-  border: none;
-  color: #d4af37;
-  cursor: pointer;
-  font-size: 1.2rem;
 }
 
 /* =======================================
@@ -392,9 +383,9 @@ body {
    MENSAJES DE CONFIRMACIÓN Y ERROR
 ======================================= */
 .container-login .alert-message.error {
-  background: rgba(255, 107, 107, 0.1);
-  border-left-color: #ff6b6b;
-  color: #ff6b6b;
+  --alert-bg: rgba(255, 107, 107, 0.12);
+  --alert-border: #ff6b6b;
+  --alert-color: #ff6b6b;
 }
 
 .container-login .alert-message.error h3 {
@@ -405,9 +396,9 @@ body {
 }
 
 .container-login .alert-message.success {
-  background: rgba(74, 222, 128, 0.1);
-  border-left-color: #4ade80;
-  color: #4ade80;
+  --alert-bg: rgba(74, 222, 128, 0.12);
+  --alert-border: #4ade80;
+  --alert-color: #4ade80;
 }
 
 .container-login .alert-message.success h3 {
@@ -501,7 +492,7 @@ body {
 }
 
 .menu-toggle:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 @media (max-width: 768px) {
@@ -558,7 +549,7 @@ body {
 
 .container-login label {
   display: block;
-  color: #ccc;
+  color: var (--color-secondary);
   font-size: 14px;
   margin-bottom: 8px;
   font-weight: 500;
@@ -584,21 +575,21 @@ body {
 .container-login input[type="email"]:focus,
 .container-login input[type="password"]:focus {
   outline: none;
-  border-color: #d4af37;
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+  border-color: var(--color-brand);
+  box-shadow: 0 0 20px rgba(184, 154, 60, 0.3);
 }
 
 /* Checkbox styles */
 .container-login input[type="checkbox"] {
   width: auto;
   margin-right: 8px;
-  accent-color: #d4af37;
+  accent-color: var(--color-brand);
 }
 
 /* Botones específicos para allauth */
 .container-login button[type="submit"],
 .container-login input[type="submit"] {
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   padding: 15px 40px;
   border: none;
@@ -617,13 +608,13 @@ body {
 .container-login button[type="submit"]:hover,
 .container-login input[type="submit"]:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 10px 30px rgba(184, 154, 60, 0.3);
 }
 
 /* Enlaces específicos */
 .container-login .form-group a,
 .container-login .field-wrapper a {
-  color: #d4af37;
+  color: var(--color-brand);
   text-decoration: none;
   font-size: 14px;
   transition: color 0.3s;
@@ -631,7 +622,7 @@ body {
 
 .container-login .form-group a:hover,
 .container-login .field-wrapper a:hover {
-  color: #f4d467;
+  color: var(--color-brand-light);
   text-decoration: underline;
 }
 
@@ -640,7 +631,6 @@ body {
 ======================================= */
 /* Contenedor principal centrado */
 .container-login > div {
-  background: #1a1a1a;
   border-radius: 10px;
   padding: 40px;
   max-width: 450px;
@@ -696,8 +686,8 @@ body {
 .container-login button[form="logout-from-stage"]:hover,
 .container-login .button-cancel:hover,
 .container-login button[tags*="cancel"]:hover {
-  border-color: #d4af37;
-  color: #d4af37;
+  border-color: var(--color-brand);
+  color: var(--color-brand);
   transform: translateY(-2px);
 }
 
@@ -705,7 +695,7 @@ body {
 .container-login .status-message {
   background: #1a1a1a;
   border: 1px solid #333;
-  border-left: 4px solid #d4af37;
+  border-left: 4px solid var(--color-brand);
   padding: 20px;
   border-radius: 6px;
   margin-bottom: 30px;
@@ -729,7 +719,7 @@ body {
 }
 
 .container-login .nav-links a {
-  color: #d4af37;
+  color: var(--color-brand);
   text-decoration: none;
   font-weight: 500;
   font-size: 14px;
@@ -739,7 +729,7 @@ body {
 }
 
 .container-login .nav-links a:hover {
-  color: #f4d467;
+  color: var(--color-brand-light);
   text-decoration: underline;
 }
 
@@ -797,9 +787,9 @@ body {
 }
 
 .container-login .badge[tags*="primary"] {
-  background: rgba(212, 175, 55, 0.2);
-  color: #d4af37;
-  border: 1px solid #d4af37;
+  background: rgba(184, 154, 60, 0.2);
+  color: var(--color-brand);
+  border: 1px solid var(--color-brand);
 }
 
 /* Radio buttons y checkboxes personalizados */
@@ -807,7 +797,7 @@ body {
   width: 18px;
   height: 18px;
   margin-right: 12px;
-  accent-color: #d4af37;
+  accent-color: var(--color-brand);
   cursor: pointer;
 }
 
@@ -823,7 +813,7 @@ body {
 }
 
 .container-login .field-wrapper:hover {
-  border-color: #d4af37;
+  border-color: var(--color-brand);
 }
 
 .container-login .field-wrapper label {
@@ -847,8 +837,8 @@ body {
 }
 
 .container-login button[tags*="secondary"]:hover {
-  border-color: #d4af37;
-  color: #d4af37;
+  border-color: var(--color-brand);
+  color: var(--color-brand);
   transform: translateY(-2px);
 }
 
@@ -889,7 +879,7 @@ body {
 .container-login h2 {
   font-size: 16px;
   font-weight: 300;
-  color: #d4af37;
+  color: var(--color-brand);
   text-align: center;
   letter-spacing: 1px;
   margin-top: 40px;
@@ -978,7 +968,7 @@ ul {
 }
 
 .container-login .email-info-item:hover {
-  border-color: #d4af37;
+  border-color: var(--color-brand);
 }
 
 .container-login .email-info-item label {
@@ -1108,18 +1098,18 @@ ul {
 
 /* Información adicional */
 .container-login .info-box {
-  background: rgba(212, 175, 55, 0.1);
-  border: 1px solid #d4af37;
+  background: rgba(184, 154, 60, 0.1);
+  border: 1px solid var(--color-brand);
   border-radius: 6px;
   padding: 15px;
   margin: 20px 0;
-  color: #d4af37;
+  color: var(--color-brand);
   font-size: 14px;
   line-height: 1.5;
 }
 
 .container-login .info-box h3 {
-  color: #d4af37;
+  color: var(--color-brand);
   font-size: 16px;
   margin-bottom: 10px;
   font-weight: 600;
@@ -1208,7 +1198,7 @@ body.auth-page .container-login {
   font-weight: 700;
   letter-spacing: 3px;
   margin-bottom: 20px;
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .footer-brand p {
@@ -1221,7 +1211,7 @@ body.auth-page .container-login {
 .footer-section h4 {
   font-size: 20px;
   margin-bottom: 25px;
-  color: #d4af37;
+  color: var(--color-brand);
   font-weight: 600;
 }
 
@@ -1245,7 +1235,7 @@ body.auth-page .container-login {
 }
 
 .footer-section ul li a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
   padding-left: 10px;
 }
 
@@ -1261,7 +1251,7 @@ body.auth-page .container-login {
   justify-content: center;
   width: 45px;
   height: 45px;
-  background: linear-gradient(135deg, #d4af37, #f4d467);
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-light));
   color: #000;
   text-decoration: none;
   border-radius: 50%;
@@ -1272,7 +1262,7 @@ body.auth-page .container-login {
 
 .social-icon:hover {
   transform: translateY(-3px);
-  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 5px 20px rgba(184, 154, 60, 0.3);
 }
 
 .contact-info {
@@ -1289,7 +1279,7 @@ body.auth-page .container-login {
 
 .contact-item i {
   margin-right: 12px;
-  color: #d4af37;
+  color: var(--color-brand);
   width: 20px;
   font-size: 16px;
 }
@@ -1301,7 +1291,7 @@ body.auth-page .container-login {
 }
 
 .contact-item a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 .footer-bottom {
@@ -1332,7 +1322,7 @@ body.auth-page .container-login {
 }
 
 .footer-bottom-right a:hover {
-  color: #d4af37;
+  color: var(--color-brand);
 }
 
 /* Responsive Footer */
@@ -1384,9 +1374,9 @@ body.auth-page .container-login::before {
 
 .provider-link:hover {
   background: var(--color-primary);
-  border-color: #d4af37;
+  border-color: var(--color-brand);
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 8px 24px rgba(184, 154, 60, 0.4);
 }
 
 .provider-icon {
@@ -1511,12 +1501,6 @@ body.auth-page .container-login::before {
 :root:not([data-theme="dark"]) .container-login .button-group button:hover {
   background: var(--color-primary);
   color: white;
-}
-
-:root:not([data-theme="dark"]) .alert-message {
-  background: var(--color-accent);
-  border: 1px solid var(--color-gray);
-  color: var(--color-secondary);
 }
 
 :root:not([data-theme="dark"]) .container-menu {

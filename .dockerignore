@@ -1,0 +1,11 @@
+__pycache__
+*.pyc
+*.pyo
+*.log
+node_modules
+.env
+.env.*
+.git
+.gitignore
+media
+staticfiles

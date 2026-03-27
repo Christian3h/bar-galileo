@@ -1,5 +1,5 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DeleteView
 from products.models import Producto, Categoria
 from tables.models import Mesa, Pedido, PedidoItem, Factura
 from expenses.models import Expense
@@ -8,12 +8,24 @@ from roles.decorators import permission_required
 from django.utils.decorators import method_decorator
 from notifications.utils import notificar_usuario
 from django.db.models import Sum, Count, F, ExpressionWrapper, DecimalField
-from django.db.models.functions import TruncDay
-from datetime import datetime, timedelta
-from django.http import HttpResponse
+from django.db.models.functions import TruncDay, TruncDate
+from datetime import datetime, date, time, timedelta
+from decimal import Decimal
+from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 import csv
 from io import BytesIO
 from django.template.loader import render_to_string
+from django.utils import timezone
+import json
+try:
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+except Exception:
+    openpyxl = None
 
 def get_date_range(period):
     today = datetime.now().date()
@@ -32,9 +44,9 @@ def get_date_range(period):
             end_date = today.replace(year=today.year, month=12, day=31)
         else:
             end_date = (today.replace(month=end_month + 1, day=1)) - timedelta(days=1)
-    else: # all
-        start_date = None
-        end_date = None
+    else: # all - retroceder 2 años para tener datos históricos
+        start_date = today - timedelta(days=730)
+        end_date = today + timedelta(days=1)
     return start_date, end_date
 
 @method_decorator(permission_required('dashboard', 'ver'), name='dispatch')
@@ -47,17 +59,29 @@ class DashboardView(TemplateView):
         period = self.request.GET.get('period', 'month') # Default to month
         start_date, end_date = get_date_range(period)
 
-        # Filtered querysets
-        facturas_periodo = Factura.objects.all()
-        pedidos_periodo = PedidoItem.objects.filter(pedido__factura__isnull=False)
-        gastos_periodo = Expense.objects.all()
-        pagos_periodo = Pago.objects.all()
+        # Convertir start_date y end_date a datetime objects (inicio y final del día)
+        if start_date:
+            start_datetime = timezone.make_aware(datetime.combine(start_date, datetime.min.time()))
+        else:
+            start_datetime = None
 
-        if start_date and end_date:
-            facturas_periodo = facturas_periodo.filter(fecha__date__range=[start_date, end_date])
-            pedidos_periodo = pedidos_periodo.filter(pedido__factura__fecha__date__range=[start_date, end_date])
-            gastos_periodo = gastos_periodo.filter(date__range=[start_date, end_date])
-            pagos_periodo = pagos_periodo.filter(fecha_pago__range=[start_date, end_date])
+        if end_date:
+            end_datetime = timezone.make_aware(datetime.combine(end_date, datetime.max.time()))
+        else:
+            end_datetime = None
+
+        # Filtered querysets - Asegurarse de excluir NULL en fechas
+        facturas_periodo = Factura.objects.filter(fecha__isnull=False)
+        pedidos_periodo = PedidoItem.objects.filter(pedido__factura__isnull=False)
+        gastos_periodo = Expense.objects.filter(date__isnull=False)
+        pagos_periodo = Pago.objects.filter(fecha_pago__isnull=False)
+
+        if start_datetime and end_datetime:
+            # Usar datetime objects para filtrar - funciona mejor con MySQL
+            facturas_periodo = facturas_periodo.filter(fecha__gte=start_datetime, fecha__lte=end_datetime)
+            pedidos_periodo = pedidos_periodo.filter(pedido__factura__fecha__gte=start_datetime, pedido__factura__fecha__lte=end_datetime)
+            gastos_periodo = gastos_periodo.filter(date__gte=start_date, date__lte=end_date)
+            pagos_periodo = pagos_periodo.filter(fecha_pago__gte=start_date, fecha_pago__lte=end_date)
 
         context['productos'] = Producto.objects.count()
         context['categorias'] = Categoria.objects.count()
@@ -72,24 +96,37 @@ class DashboardView(TemplateView):
         context['top_5_productos_mas_vendidos'] = pedidos_periodo.values('producto__nombre').annotate(total_vendido=Sum('cantidad')).order_by('-total_vendido')[:5]
 
         # New data
-        context['ingresos_totales'] = facturas_periodo.aggregate(total=Sum('total'))['total'] or 0
+        # Usar .values() primero para asegurar que total sea un Decimal
+        ingresos_agg = facturas_periodo.aggregate(total=Sum('total'))
+        context['ingresos_totales'] = ingresos_agg.get('total') or Decimal('0')
+
         context['productos_mas_stock'] = Producto.objects.order_by('-stock')[:5]
-        context['valor_total_stock'] = Producto.objects.aggregate(total=Sum(F('stock') * F('precio_compra')))['total'] or 0
+        context['valor_total_stock'] = Producto.objects.aggregate(total=Sum(F('stock') * F('precio_compra')))['total'] or Decimal('0')
 
-        # Monthly sales (or period sales)
-        ventas_periodo = facturas_periodo.annotate(dia=TruncDay('fecha')).values('dia').annotate(total_dia=Sum('total')).order_by('dia')
-        context['ventas_periodo'] = list(ventas_periodo) # Convert to list to be able to serialize it
+        # Monthly sales (or period sales) - Manejar fechas nulas
+        try:
+            ventas_periodo = facturas_periodo.filter(
+                fecha__isnull=False
+            ).annotate(
+                dia=TruncDay('fecha')
+            ).values('dia').annotate(
+                total_dia=Sum('total')
+            ).order_by('dia')
+            context['ventas_periodo'] = list(ventas_periodo) # Convert to list to be able to serialize it
+        except Exception as e:
+            context['ventas_periodo'] = []
 
-        # Total profit
-        ganancia_total = pedidos_periodo.annotate(
+        # Total profit - Calcular ganancia sobre los items de pedidos facturados
+        ganancia_agg = pedidos_periodo.annotate(
             ganancia_item=ExpressionWrapper(
                 (F('precio_unitario') - F('producto__precio_compra')) * F('cantidad'),
                 output_field=DecimalField()
             )
-        ).aggregate(total=Sum('ganancia_item'))['total'] or 0
-        context['ganancia_total'] = ganancia_total
+        ).aggregate(total=Sum('ganancia_item'))
+        context['ganancia_total'] = ganancia_agg.get('total') or Decimal('0')
 
-        context['gastos_totales'] = gastos_periodo.aggregate(total=Sum('amount'))['total'] or 0
+        gastos_agg = gastos_periodo.aggregate(total=Sum('amount'))
+        context['gastos_totales'] = gastos_agg.get('total') or Decimal('0')
 
         # Nóminas data
         context['total_empleados'] = Empleado.objects.filter(estado='activo').count()
@@ -121,9 +158,9 @@ def _build_dashboard_context(request):
     period = request.GET.get('period', 'month')
     start_date, end_date = get_date_range(period)
 
-    facturas_periodo = Factura.objects.all()
+    facturas_periodo = Factura.objects.filter(fecha__isnull=False)
     pedidos_periodo = PedidoItem.objects.filter(pedido__factura__isnull=False)
-    gastos_periodo = Expense.objects.all()
+    gastos_periodo = Expense.objects.filter(date__isnull=False)
 
     if start_date and end_date:
         facturas_periodo = facturas_periodo.filter(fecha__date__range=[start_date, end_date])
@@ -131,7 +168,18 @@ def _build_dashboard_context(request):
         gastos_periodo = gastos_periodo.filter(date__range=[start_date, end_date])
 
     ingresos_totales = facturas_periodo.aggregate(total=Sum('total'))['total'] or 0
-    ventas_periodo = facturas_periodo.annotate(dia=TruncDay('fecha')).values('dia').annotate(total_dia=Sum('total')).order_by('dia')
+
+    try:
+        ventas_periodo = facturas_periodo.filter(
+            fecha__isnull=False
+        ).annotate(
+            dia=TruncDay('fecha')
+        ).values('dia').annotate(
+            total_dia=Sum('total')
+        ).order_by('dia')
+    except Exception:
+        ventas_periodo = []
+
     ganancia_total = pedidos_periodo.annotate(
         ganancia_item=ExpressionWrapper(
             (F('precio_unitario') - F('producto__precio_compra')) * F('cantidad'),
@@ -161,24 +209,88 @@ def export_dashboard(request, fmt):
     except Exception as e:
         return HttpResponse(f"Error generando reporte: {e}", status=500)
 
-    if fmt == 'csv':
+    if fmt == 'csv' or fmt == 'xlsx':
+        # If XLSX requested and openpyxl is available, generate Excel file
+        if fmt == 'xlsx' and openpyxl is not None:
+            wb = openpyxl.Workbook()
+            ws = wb.active
+            ws.title = 'Estadisticas'
+
+            # Encabezados y métricas
+            ws.append(['Métrica', 'Valor'])
+            ws.append(['Ingresos Totales', float(ctx['ingresos_totales'])])
+            ws.append(['Ganancia Total', float(ctx['ganancia_total'])])
+            ws.append(['Valor Total del Stock', float(ctx['valor_total_stock'])])
+            ws.append(['Gastos Totales', float(ctx['gastos_totales'])])
+            ws.append([])
+            ws.append(['Ventas por Día'])
+            ws.append(['Fecha', 'Total'])
+            for v in ctx['ventas_periodo']:
+                    fecha = v.get('dia')
+                    total = v.get('total_dia')
+                    # Keep the date/datetime object so Excel recognizes it as a date
+                    if hasattr(fecha, 'isoformat'):
+                        fecha_val = fecha
+                    else:
+                        try:
+                            fecha_val = datetime.fromisoformat(str(fecha))
+                        except Exception:
+                            fecha_val = None
+                    ws.append([fecha_val, float(total or 0)])
+
+            # Ajustar anchos de columnas
+            for i, col in enumerate(ws.columns, 1):
+                max_length = 0
+                for cell in col:
+                    try:
+                        value = str(cell.value)
+                    except Exception:
+                        value = ''
+                    if value and len(value) > max_length:
+                        max_length = len(value)
+                ws.column_dimensions[get_column_letter(i)].width = min(max_length + 2, 50)
+
+            # Apply number/date formats: detect date cells and totals
+            for row in ws.iter_rows(min_row=2, min_col=1, max_col=2):
+                cell_date = row[0]
+                cell_total = row[1]
+                try:
+                    if isinstance(cell_date.value, (datetime, date)):
+                        cell_date.number_format = 'dd/mm/yyyy'
+                except Exception:
+                    pass
+                try:
+                    cell_total.number_format = '#,##0.00'
+                except Exception:
+                    pass
+
+            output = BytesIO()
+            wb.save(output)
+            output.seek(0)
+            response = HttpResponse(output.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="estadisticas_generales.xlsx"'
+            return response
+
+        # Fallback: generate CSV with formatted values
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="estadisticas_generales.csv"'
         writer = csv.writer(response)
 
         # Escribir métricas principales
         writer.writerow(['Métrica', 'Valor'])
-        writer.writerow(['Ingresos Totales', ctx['ingresos_totales']])
-        writer.writerow(['Ganancia Total', ctx['ganancia_total']])
-        writer.writerow(['Valor Total del Stock', ctx['valor_total_stock']])
-        writer.writerow(['Gastos Totales', ctx['gastos_totales']])
+        writer.writerow(['Ingresos Totales', f"{float(ctx['ingresos_totales']):.2f}"])
+        writer.writerow(['Ganancia Total', f"{float(ctx['ganancia_total']):.2f}"])
+        writer.writerow(['Valor Total del Stock', f"{float(ctx['valor_total_stock']):.2f}"])
+        writer.writerow(['Gastos Totales', f"{float(ctx['gastos_totales']):.2f}"])
         writer.writerow([])
         writer.writerow(['Ventas por Día'])
         writer.writerow(['Fecha', 'Total'])
         for v in ctx['ventas_periodo']:
             fecha = v.get('dia')
             total = v.get('total_dia')
-            writer.writerow([fecha, total])
+            fecha_str = fecha.isoformat() if hasattr(fecha, 'isoformat') else str(fecha)
+            total_str = f"{float(total or 0):.2f}"
+            writer.writerow([fecha_str, total_str])
 
         return response
 
@@ -234,3 +346,4 @@ def export_dashboard(request, fmt):
 
     else:
         return HttpResponse('Formato no soportado', status=400)
+

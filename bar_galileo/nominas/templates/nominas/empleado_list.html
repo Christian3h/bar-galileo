@@ -32,7 +32,7 @@
         </div>
         <div class="card">
             <h3>Salarios (Mensual)</h3>
-            <p>${{ total_salarios }}</p>
+            <p>{{ total_salarios|format_price }} COP</p>
         </div>
     </section>
 
@@ -80,7 +80,7 @@
                 <tr>
                     <td class="col-1">{{ empleado.nombre }}</td>
                     <td class="col-2">{{ empleado.get_cargo_display }}</td>
-                    <td class="col-3">${{ empleado.salario }}</td>
+                    <td class="col-3">{{ empleado.salario|format_price }} COP</td>
                     <td class="estadoCol">
                         <span class="badge {% if empleado.estado == 'activo' %}bg-success{% elif empleado.estado == 'inactivo' %}bg-danger{% elif empleado.estado == 'vacaciones' %}bg-info{% elif empleado.estado == 'permiso' %}bg-warning{% else %}bg-secondary{% endif %}">
                             {{ empleado.get_estado_display }}
@@ -107,9 +107,10 @@
                             <a href="{% url 'nominas:empleado_editar' empleado.pk %}" class="btn btn-sm btn-primary" title="Editar empleado">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a href="{% url 'nominas:empleado_eliminar' empleado.pk %}" class="btn btn-sm btn-danger" title="Eliminar empleado">
+                            <button type="button" class="btn btn-sm btn-danger" title="Eliminar empleado"
+                                onclick="confirmarEliminarEmpleado({{ empleado.pk }}, '{{ empleado.nombre|escapejs }} {{ empleado.apellido|escapejs }}')">
                                 <i class="fa fa-trash"></i>
-                            </a>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -123,8 +124,34 @@
     </div>
 </div>
 
+<style>
+    .btn-sm{
+        width: auto;
+    }
+</style>
+
+<!-- Formulario oculto para eliminación de empleado -->
+<form id="delete-empleado-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 {% load static %}
 <script>
+    async function confirmarEliminarEmpleado(empleadoId, empleadoNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Empleado',
+            message: `¿Estás seguro de que deseas eliminar al empleado "${empleadoNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+
+        if (confirmed) {
+            const form = document.getElementById('delete-empleado-form');
+            form.action = `/nominas/eliminar/${empleadoId}/`;
+            form.submit();
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Inicializar solo si existe la tabla en el DOM
         if (!document.querySelector('#tabla-empleados')) return;
@@ -146,6 +173,8 @@
 
         // Inicialización completa con idioma
         var tabla = $('#tabla-empleados').DataTable({
+            width: '100%',
+            autoWidth: false,
             language: {
                 emptyTable: 'No hay empleados registrados',
                 zeroRecords: 'No se encontraron resultados',
@@ -157,7 +186,11 @@
                     first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior'
                 }
             },
-            order: [[0, 'asc']]
+            order: [[0, 'asc']],
+            columnDefs: [
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false, searchable: false }  // Acciones
+            ]
         });
     });
 </script>

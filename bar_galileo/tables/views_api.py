@@ -78,7 +78,8 @@ def _broadcast_panel_update(pedido):
 
 def mesa_pedido_api(request, mesa_id):
     mesa = get_object_or_404(Mesa, id=mesa_id)
-    pedido, _ = Pedido.objects.get_or_create(mesa=mesa, estado='en_proceso')
+    # Solo obtener pedido si ya existe con items — no crear automáticamente
+    pedido = Pedido.objects.filter(mesa=mesa, estado='en_proceso').first()
 
     productos_data = []
     for p in Producto.objects.filter(activo=True).order_by('nombre'):
@@ -97,9 +98,11 @@ def mesa_pedido_api(request, mesa_id):
         for item in PedidoItem.objects.filter(pedido__estado='en_proceso').values('producto_id').annotate(cantidad_total=Sum('cantidad'))
     }
 
+    pedido_data = _serialize_pedido(pedido) if pedido else {'id': None, 'items': [], 'total': 0, 'usuarios': []}
+
     return JsonResponse({
         'mesa': {'id': mesa.id, 'nombre': mesa.nombre},
-        'pedido': _serialize_pedido(pedido),
+        'pedido': pedido_data,
         'productos': productos_data,
         'reservas_stock': reservas_stock
     })
@@ -201,6 +204,34 @@ def facturar_pedido_api(request, pedido_id):
         'success': True,
         'factura_url': reverse('tables:ver_factura', args=[factura.id])
     })
+
+@transaction.atomic
+def pedido_create_and_manage_user_api(request):
+    """API para añadir un usuario a un pedido, creando el pedido si no existe."""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+    data = json.loads(request.body)
+    mesa_id = data.get('mesa_id')
+    user_id = data.get('user_id')
+    action = data.get('action')
+
+    if not mesa_id or not user_id or action not in ['add', 'remove']:
+        return JsonResponse({'error': 'Datos inválidos'}, status=400)
+
+    mesa = get_object_or_404(Mesa, id=mesa_id)
+    pedido, _ = Pedido.objects.get_or_create(mesa=mesa, estado='en_proceso')
+    user_obj = get_object_or_404(User, id=user_id)
+
+    if action == 'add':
+        if Pedido.objects.filter(usuarios=user_obj, estado='en_proceso').exclude(id=pedido.id).exists():
+            return JsonResponse({'error': f'El cliente {user_obj.username} ya está en otra mesa.'}, status=400)
+        pedido.usuarios.add(user_obj)
+    elif action == 'remove':
+        pedido.usuarios.remove(user_obj)
+
+    transaction.on_commit(lambda: _broadcast_panel_update(pedido))
+    return JsonResponse({'success': True, 'pedido_id': pedido.id})
 
 def pedido_manage_user_api(request, pedido_id):
     """API para añadir o quitar un usuario de un pedido."""

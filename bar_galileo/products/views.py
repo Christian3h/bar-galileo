@@ -551,7 +551,6 @@ class ProductoCreateAdminView(CreateView):
         # Notificar y mostrar mensaje de éxito
         mensaje = f"Se ha creado el nuevo producto: '{producto.nombre}'."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(self.request, "Producto creado correctamente.")
         return response
 
 
@@ -607,7 +606,6 @@ class ProductoDeleteAdminView(DeleteView):
             producto.save(update_fields=['activo'])
         mensaje = f"El producto '{producto.nombre}' ha sido archivado."
         notificar_usuario(request.user, mensaje)
-        messages.success(request, mensaje)
         return redirect(self.success_url)
 
     def delete(self, request, *args, **kwargs):
@@ -682,11 +680,11 @@ class BrandDeleteAdminView(DeleteView):
     def get_object(self, queryset=None):
         return Marca.objects.get(id_marca=self.kwargs.get(self.pk_url_kwarg))
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         brand = self.get_object()
-        mensaje = f"La marca '{brand.marca}' ha sido eliminada."
-        response = super().delete(request, *args, **kwargs)
-        notificar_usuario(request.user, mensaje)
+        nombre = brand.marca
+        response = super().form_valid(form)
+        notificar_usuario(self.request.user, f"La marca '{nombre}' ha sido eliminada.")
         return response
 
 @method_decorator(permission_required('providers', 'ver'), name='dispatch')
@@ -740,11 +738,11 @@ class ProveedorDeleteAdminView(DeleteView):
     def get_object(self, queryset=None):
         return Proveedor.objects.get(id_proveedor=self.kwargs.get(self.pk_url_kwarg))
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         proveedor = self.get_object()
-        mensaje = f"El proveedor '{proveedor.nombre}' ha sido eliminado."
-        response = super().delete(request, *args, **kwargs)
-        notificar_usuario(request.user, mensaje)
+        nombre = proveedor.nombre
+        response = super().form_valid(form)
+        notificar_usuario(self.request.user, f"El proveedor '{nombre}' ha sido eliminado.")
         return response
 
 @method_decorator(permission_required('categories', 'ver'), name='dispatch')
@@ -796,11 +794,11 @@ class CategoriaDeleteAdminView(DeleteView):
     def get_object(self, queryset=None):
         return Categoria.objects.get(id_categoria=self.kwargs.get(self.pk_url_kwarg))
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         categoria = self.get_object()
-        mensaje = f"La categoría '{categoria.nombre_categoria}' ha sido eliminada."
-        response = super().delete(request, *args, **kwargs)
-        notificar_usuario(request.user, mensaje)
+        nombre = categoria.nombre_categoria
+        response = super().form_valid(form)
+        notificar_usuario(self.request.user, f"La categoría '{nombre}' ha sido eliminada.")
         return response
 
 class ProductoDetailView(DetailView):
@@ -885,6 +883,5 @@ class ProductoUpdateAdminView(UpdateView):
 
         mensaje = f"El producto '{producto.nombre}' ha sido actualizado."
         notificar_usuario(self.request.user, mensaje)
-        messages.success(self.request, "Producto actualizado correctamente.")
         return response
 

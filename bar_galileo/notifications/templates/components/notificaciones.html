@@ -1,3 +1,19 @@
 <!-- Componente reutilizable de notificaciones flotantes -->
 {% load static %}
-<div id="notificaciones-flotantes" class="container-messages"></div>
+<div
+	id="notificaciones-flotantes"
+	class="container-messages"
+	data-feedback-stack
+	aria-live="polite"
+	aria-atomic="false"
+></div>
+
+{% if messages %}
+	<script id="django-messages-data" type="application/json">
+		[
+			{% for message in messages %}
+				{"message":"{{ message|escapejs }}","level":"{{ message.tags|default:message.level_tag|escapejs }}"}{% if not forloop.last %},{% endif %}
+			{% endfor %}
+		]
+	</script>
+{% endif %}

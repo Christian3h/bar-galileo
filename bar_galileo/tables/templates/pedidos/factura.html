@@ -23,32 +23,34 @@
         </div>
 
         <!-- Detalles del Pedido -->
-        <table class="factura-table">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-end">Precio Unit.</th>
-                    <th class="text-end">Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in factura.pedido.items.all %}
-                <tr>
-                    <td>{{ item.producto.nombre }}</td>
-                    <td class="text-center">{{ item.cantidad }}</td>
-                    <td class="text-end">{{ item.precio_unitario|format_price }}</td>
-                    <td class="text-end">{{ item.subtotal|format_price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                    <td class="text-end"><strong>{{ factura.total|format_price }}</strong></td>
-                </tr>
-            </tfoot>
-        </table>
+        <div style="overflow-x: auto;">
+            <table class="factura-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th class="text-center">Cantidad</th>
+                        <th class="text-end">Precio Unit.</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in factura.pedido.items.all %}
+                    <tr>
+                        <td>{{ item.producto.nombre }}</td>
+                        <td class="text-center">{{ item.cantidad }}</td>
+                        <td class="text-end">{{ item.precio_unitario|format_price }}</td>
+                        <td class="text-end">{{ item.subtotal|format_price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                        <td class="text-end"><strong>{{ factura.total|format_price }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
 
         <!-- Estado y Pie de Página -->
         <div class="estado-pago">

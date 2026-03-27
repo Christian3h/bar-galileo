@@ -1,3 +1,6 @@
+# Entorno y variables de entorno
+.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -92,6 +95,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# Ignore product media folder (product images)
+bar_galileo/media/productos/
 
 # Spyder project settings
 .spyderproject
@@ -125,3 +130,18 @@ cython_debug/
 
 # Collected static files (Django collectstatic output)
 **/staticfiles/
+
+# Database dumps
+dump-*.sql
+*.sql
+
+# Backup files
+bar_galileo/backups/backup_files/
+-e 
+# Database dumps
+*.sql
+Dump*.sql
+
+# Database dumps
+*.sql
+Dump*.sql
