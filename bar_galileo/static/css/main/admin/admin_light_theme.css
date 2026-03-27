@@ -496,7 +496,6 @@ a.btn,
   letter-spacing: 0.012em;
   transition: transform var(--admin-transition), box-shadow var(--admin-transition), background-color var(--admin-transition), border-color var(--admin-transition), color var(--admin-transition);
   cursor: pointer;
-  width: 200px;
 }
 
 .btn::before,
@@ -610,7 +609,18 @@ button.btn-delete {
   background: linear-gradient(135deg, #d65341 0%, #a62f23 100%);
   color: #fff !important;
   border-color: rgba(138, 35, 25, 0.95);
+  width: auto;
 }
+
+.btn-sm{
+    width: auto;
+}
+
+.alert-message__close{
+    width: auto;
+    height: auto;
+}
+
 
 .btn:disabled,
 button:disabled,

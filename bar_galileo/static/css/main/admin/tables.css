@@ -6,12 +6,12 @@
     width: 100% !important;
     margin: 0 !important;
   }
-  
+
   /* Wrapper de DataTables ancho completo */
   .dataTables_wrapper {
     width: 100% !important;
   }
-  
+
   /* Tablas dentro del wrapper */
   .dataTables_wrapper table.dataTable {
     width: 100% !important;
@@ -107,6 +107,19 @@
 
 .table-contenedor .actions-cell {
   white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-contenedor .actions-cell,
+.table-contenedor td.actions-cell {
+  display: table-cell;
+}
+
+.table-contenedor .actions-cell .btn-group {
+  display: inline-flex;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .table-contenedor .actions-cell .btn,
@@ -114,6 +127,7 @@
   max-width: none;
   overflow: visible;
   text-overflow: clip;
+  width: auto;
 }
 
 /* Ajustes específicos para gestión de usuarios (columna Rol y acciones) */

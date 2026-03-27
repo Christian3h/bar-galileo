@@ -788,3 +788,8 @@
         text-align: center;
     }
 }
+
+
+.btn-sm{
+    width: auto;
+}

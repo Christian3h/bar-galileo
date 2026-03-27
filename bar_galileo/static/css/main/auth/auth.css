@@ -631,7 +631,6 @@ body {
 ======================================= */
 /* Contenedor principal centrado */
 .container-login > div {
-  background: #1a1a1a;
   border-radius: 10px;
   padding: 40px;
   max-width: 450px;

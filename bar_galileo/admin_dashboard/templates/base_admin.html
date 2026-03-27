@@ -29,6 +29,19 @@
     {% block extra_css %}
 
     {% endblock %}
+    <style>
+    .table .actions-cell,
+    table .actions-cell {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .table .actions-cell .btn-group,
+    table .actions-cell .btn-group {
+        display: inline-flex;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+    </style>
 
     <link id="admin-light-theme-css" rel="stylesheet" href="{% static 'css/main/admin/admin_light_theme.css' %}">
     <style>

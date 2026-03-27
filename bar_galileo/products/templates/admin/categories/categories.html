@@ -2,6 +2,20 @@
 {% load static %}
 {% load roles_tags %}
 
+{% block extra_css %}
+<style>
+.table .actions-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+.table .actions-cell .btn-group {
+    display: inline-flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+</style>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Categorías</h1>
