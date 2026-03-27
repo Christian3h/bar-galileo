@@ -95,6 +95,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# Ignore product media folder (product images)
+bar_galileo/media/productos/
 
 # Spyder project settings
 .spyderproject
