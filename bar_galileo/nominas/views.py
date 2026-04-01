@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.views.generic.edit import FormView
 from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
 from django.db.models import Q, Sum, Count
 from django.contrib import messages
 from django.http import HttpResponseRedirect, JsonResponse
@@ -141,6 +142,27 @@ class EmpleadoUpdateView(SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("nominas:empleado_list")
     success_message = "Datos del empleado actualizados exitosamente"
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        empleado = self.object
+
+        # Inyectar empleado_id en el data-url del campo de búsqueda
+        # para que la API devuelva también el usuario ya vinculado
+        form.fields['buscar_usuario'].widget.attrs['data-url'] = (
+            f'/nominas/api/buscar-usuarios/?empleado_id={empleado.pk}'
+        )
+
+        # Ampliar queryset: usuarios sin empleado + el usuario actual del empleado
+        from django.db.models import Q as _Q
+        qs_base = User.objects.filter(empleado__isnull=True)
+        if empleado.user:
+            qs_base = User.objects.filter(
+                _Q(empleado__isnull=True) | _Q(pk=empleado.user.pk)
+            )
+        form.fields['usuario_existente'].queryset = qs_base
+
+        return form
+
     def form_valid(self, form):
         # Obtener el rol seleccionado
         rol_cargo = form.cleaned_data.get('rol_cargo')
@@ -219,7 +241,47 @@ class EmpleadoDeleteView(SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy("nominas:empleado_list")
     success_message = "Empleado eliminado exitosamente"
 
-    def delete(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        empleado = self.get_object()
+        context['total_pagos'] = empleado.pagos.count()
+        context['tiene_pagos'] = context['total_pagos'] > 0
+        return context
+
+    def post(self, request, *args, **kwargs):
+        empleado = self.get_object()
+        tiene_pagos = empleado.pagos.exists()
+
+        if tiene_pagos:
+            # No se puede eliminar si tiene pagos registrados.
+            # Si tiene usuario vinculado, degradar su rol a 'Usuario'.
+            if empleado.user:
+                rol_usuario = Role.objects.filter(nombre__iexact='Usuario').first()
+                if rol_usuario:
+                    UserProfile.objects.update_or_create(
+                        user=empleado.user,
+                        defaults={'rol': rol_usuario}
+                    )
+                    messages.warning(
+                        request,
+                        f"El empleado '{empleado.nombre}' tiene {empleado.pagos.count()} pago(s) registrado(s) "
+                        "y no puede ser eliminado. Su rol fue cambiado a 'Usuario'."
+                    )
+                else:
+                    messages.error(
+                        request,
+                        f"El empleado '{empleado.nombre}' tiene pagos registrados y no puede ser eliminado. "
+                        "Elimine primero todos sus pagos."
+                    )
+            else:
+                messages.error(
+                    request,
+                    f"El empleado '{empleado.nombre}' tiene {empleado.pagos.count()} pago(s) registrado(s) "
+                    "y no puede ser eliminado. Elimine primero todos sus pagos."
+                )
+            return redirect(self.success_url)
+
+        # Sin pagos: eliminar normalmente
         messages.success(self.request, self.success_message)
         return super(EmpleadoDeleteView, self).delete(request, *args, **kwargs)
 
@@ -240,12 +302,44 @@ class EmpleadoDetailView(DetailView):
             empleado=empleado
         ).order_by('-fecha_inicio')
 
-        # Total pagado al empleado
-        context['total_pagado'] = Pago.objects.filter(empleado=empleado).aggregate(
-            total=Sum('monto')
-        )['total'] or 0
+        # Obtener el período seleccionado, predeterminado a 'mensual'
+        periodo = self.request.GET.get('periodo', 'mensual')
+        context['periodo'] = periodo
 
-        # Formularios para agregar pagos y bonificaciones
+        # Filtrar pagos según el período
+        pagos = Pago.objects.filter(empleado=empleado)
+        if periodo == 'mensual':
+            pagos = pagos.filter(
+                fecha_pago__month=timezone.now().month,
+                fecha_pago__year=timezone.now().year
+            )
+        elif periodo == 'semestral':
+            current_month = timezone.now().month
+            if current_month <= 6:
+                pagos = pagos.filter(
+                    fecha_pago__month__gte=1,
+                    fecha_pago__month__lte=6,
+                    fecha_pago__year=timezone.now().year
+                )
+            else:
+                pagos = pagos.filter(
+                    fecha_pago__month__gte=7,
+                    fecha_pago__month__lte=12,
+                    fecha_pago__year=timezone.now().year
+                )
+        elif periodo == 'anual':
+            pagos = pagos.filter(
+                fecha_pago__year=timezone.now().year
+            )
+        elif periodo == 'historial':
+            # Mostrar todos los pagos sin aplicar filtros
+            pagos = Pago.objects.filter(empleado=empleado).order_by('-fecha_pago')
+
+        # Total pagado según el filtro
+        context['total_pagado'] = pagos.aggregate(total=Sum('monto'))['total'] or 0
+
+        # Pagos filtrados para mostrar en la tabla
+        context['pagos'] = pagos.order_by('-fecha_pago')
         context['pago_form'] = PagoForm(initial={'empleado': empleado})
         context['bonificacion_form'] = BonificacionForm(initial={'empleado': empleado})
 
@@ -289,6 +383,9 @@ class BonificacionCreateView(SuccessMessageMixin, CreateView):
 
 # Vistas para crear pagos y bonificaciones desde la vista de detalle
 def agregar_pago(request, empleado_id):
+    if not request.user.is_authenticated:
+        return redirect('login')  # Redirigir al inicio de sesión si el usuario no está autenticado
+
     empleado = get_object_or_404(Empleado, pk=empleado_id)
 
     if request.method == "POST":
@@ -308,6 +405,23 @@ def agregar_pago(request, empleado_id):
         'form': form,
         'empleado': empleado
     })
+
+def eliminar_pago(request, pago_id):
+    """Elimina un pago. Solo acepta POST."""
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    pago = get_object_or_404(Pago, pk=pago_id)
+    empleado_pk = pago.empleado.pk
+
+    if request.method == 'POST':
+        pago.delete()
+        messages.success(request, 'Pago eliminado exitosamente.')
+    else:
+        messages.error(request, 'Método no permitido.')
+
+    return redirect('nominas:empleado_detail', pk=empleado_pk)
+
 
 def agregar_bonificacion(request, empleado_id):
     empleado = get_object_or_404(Empleado, pk=empleado_id)
@@ -333,22 +447,38 @@ def agregar_bonificacion(request, empleado_id):
 # Vista API para buscar usuarios disponibles
 def buscar_usuarios_disponibles(request):
     """
-    API endpoint para buscar usuarios sin empleado asignado
+    API endpoint para buscar usuarios sin empleado asignado.
+    Si se pasa ?empleado_id=<id> también incluye el usuario que ya
+    tiene ese empleado (necesario al editar un empleado existente).
     """
     query = request.GET.get('q', '').strip()
+    empleado_id = request.GET.get('empleado_id', None)
 
     if len(query) < 2:
         return JsonResponse({'results': []})
 
-    # Buscar usuarios sin empleado asignado
-    usuarios = User.objects.filter(
-        empleado__isnull=True
-    ).filter(
-        Q(username__icontains=query) |
-        Q(email__icontains=query) |
-        Q(first_name__icontains=query) |
-        Q(last_name__icontains=query)
-    )[:10]  # Limitar a 10 resultados
+    # Usuarios sin empleado asignado
+    qs_filter = Q(username__icontains=query) | Q(email__icontains=query) | \
+                Q(first_name__icontains=query) | Q(last_name__icontains=query)
+
+    usuarios_disponibles = User.objects.filter(empleado__isnull=True).filter(qs_filter)
+
+    # Si estamos editando un empleado existente, incluir su usuario actual
+    # aunque ya esté vinculado (para que aparezca en la búsqueda)
+    usuario_actual_qs = User.objects.none()
+    if empleado_id:
+        try:
+            from .models import Empleado
+            empleado = Empleado.objects.get(pk=empleado_id)
+            if empleado.user:
+                usuario_actual_qs = User.objects.filter(
+                    pk=empleado.user.pk
+                ).filter(qs_filter)
+        except Exception:
+            pass
+
+    from django.db.models import QuerySet
+    usuarios = (usuarios_disponibles | usuario_actual_qs).distinct()[:10]
 
     resultados = []
     for usuario in usuarios:

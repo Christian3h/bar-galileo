@@ -1,95 +1,120 @@
-/* Pantalla de carga del Dashboard */
+/* =======================================
+   PANTALLA DE CARGA - Bar Galileo
+   Usa variables CSS del tema para
+   adaptarse automáticamente a claro/oscuro
+======================================= */
+
+/* === Pantalla de carga (overlay fijo) === */
 .dashboard-loading-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  background-color: var(--color-accent);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 99999;
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-  backdrop-filter: blur(5px);
+  transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 
 .dashboard-loading-screen.hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  display: none;
 }
 
+/* === Fade-out de salida === */
+.dashboard-loading-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* === Fade-in de entrada (nueva página arranca cubierta y se descubre) === */
+.dashboard-loading-screen.page-entering {
+  opacity: 1;
+  visibility: visible;
+  animation: coverFadeOut 0.5s ease 0.1s forwards;
+}
+
+@keyframes coverFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* === Contenido centrado === */
 .loading-content {
   text-align: center;
-  color: white;
-  animation: fadeInUp 0.8s ease;
+  animation: fadeInUp 0.6s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }
 
+/* === Logo === */
 .loading-logo {
-  margin-bottom: 30px;
-  animation: logoFloat 2s ease-in-out infinite;
-  position: relative;
+  margin-bottom: 28px;
+  animation: logoFloat 2.4s ease-in-out infinite;
 }
 
 .loading-logo img {
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
+  border: 3px solid var(--color-secondary);
   box-shadow:
-    0 10px 30px rgba(255, 215, 0, 0.3),
-    0 0 50px rgba(255, 215, 0, 0.1),
-    inset 0 0 20px rgba(255, 215, 0, 0.1);
-  border: 3px solid #ffd700;
-  transition: transform 0.3s ease;
+    0 8px 24px rgba(0, 0, 0, 0.25),
+    0 0 40px rgba(166, 137, 50, 0.15);
+  display: block;
 }
 
-.loading-logo:hover img {
-  transform: scale(1.05);
-}
-
+/* === Textos === */
 .loading-text h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.5em;
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 2.2em;
   font-weight: 700;
-  color: #ffd700;
-  margin: 0 0 10px 0;
-  letter-spacing: 2px;
-  text-shadow:
-    2px 2px 4px rgba(0, 0, 0, 0.5),
-    0 0 20px rgba(255, 215, 0, 0.3);
-  animation: textGlow 2s ease-in-out infinite alternate;
+  color: var(--color-secondary);
+  margin: 0 0 8px 0;
+  letter-spacing: 3px;
+  animation: textGlow 2.2s ease-in-out infinite alternate;
 }
 
 .loading-text p {
   font-family: 'Inter', sans-serif;
-  font-size: 1.2em;
-  color: #cccccc;
-  margin: 0 0 30px 0;
+  font-size: 1em;
+  color: var(--color-gray);
+  margin: 0 0 28px 0;
   font-weight: 300;
-  opacity: 0.8;
+  opacity: 0.85;
   animation: textFade 2s ease-in-out infinite alternate;
 }
 
+/* === Spinner === */
 .loading-spinner {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 215, 0, 0.2);
-  border-left: 4px solid #ffd700;
-  border-right: 4px solid #ffd700;
+  width: 46px;
+  height: 46px;
+  border: 4px solid rgba(166, 137, 50, 0.18);
+  border-left: 4px solid var(--color-secondary);
+  border-right: 4px solid var(--color-secondary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.9s linear infinite;
   position: relative;
 }
 
@@ -101,16 +126,34 @@
   right: -4px;
   bottom: -4px;
   border: 2px solid transparent;
-  border-top: 2px solid rgba(255, 215, 0, 0.5);
+  border-top: 2px solid var(--color-primary);
   border-radius: 50%;
-  animation: spin 2s linear infinite reverse;
+  animation: spin 1.8s linear infinite reverse;
 }
 
-/* Animaciones */
+/* === Halo de fondo decorativo === */
+.loading-content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(166, 137, 50, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  animation: halo 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* =======================================
+   KEYFRAMES
+======================================= */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -119,104 +162,50 @@
 }
 
 @keyframes logoFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-9px);  }
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes textGlow {
-  0% {
-    text-shadow:
-      2px 2px 4px rgba(0, 0, 0, 0.5),
-      0 0 20px rgba(255, 215, 0, 0.3);
-  }
-  100% {
-    text-shadow:
-      2px 2px 4px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(255, 215, 0, 0.6);
-  }
+  0%   { opacity: 0.75; }
+  100% { opacity: 1;    }
 }
 
 @keyframes textFade {
-  0% {
-    opacity: 0.6;
-  }
-  100% {
-    opacity: 1;
-  }
+  0%   { opacity: 0.55; }
+  100% { opacity: 0.9;  }
 }
 
-/* Efectos adicionales para mejor experiencia */
-.loading-content::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  z-index: -1;
-  animation: pulse 2s ease-in-out infinite;
+@keyframes halo {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);   opacity: 0.25; }
+  50%       { transform: translate(-50%, -50%) scale(1.18); opacity: 0.1;  }
 }
 
-/* Animación de entrada más suave */
-.dashboard-loading-screen:not(.hidden) {
-  animation: screenFadeIn 0.5s ease;
-}
-
-@keyframes screenFadeIn {
-  from {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-  }
-  to {
-    opacity: 1;
-    backdrop-filter: blur(5px);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0.3;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0.1;
-  }
-}
-
-/* Responsive */
+/* =======================================
+   RESPONSIVE
+======================================= */
 @media (max-width: 768px) {
   .loading-logo img {
-    width: 100px;
-    height: 100px;
+    width: 88px;
+    height: 88px;
   }
 
   .loading-text h2 {
-    font-size: 2em;
+    font-size: 1.7em;
+    letter-spacing: 2px;
   }
 
   .loading-text p {
-    font-size: 1em;
+    font-size: 0.92em;
   }
 
   .spinner {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
   }
 }

@@ -17,4 +17,4 @@ class FacturacionManagerTest(TestCase):
 
     def test_filtrar_facturas(self):
         facturas = FacturacionManager.obtener_facturas_con_filtros(busqueda='Mesa 1')
-        self.assertEqual(facturas.count(), 1)
+        self.assertEqual(len(facturas), 1)

@@ -1,8 +1,10 @@
 """
 Embeddings Generator - Genera vectores con sentence-transformers
 """
+
 import logging
 from typing import List, Union
+
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -10,26 +12,30 @@ logger = logging.getLogger(__name__)
 # Intentar importar sentence-transformers
 try:
     from sentence_transformers import SentenceTransformer
+
     HAS_SENTENCE_TRANSFORMERS = True
 except ImportError:
     HAS_SENTENCE_TRANSFORMERS = False
     logger.warning(
         "sentence-transformers no instalado. "
-        "Instala con: pip install sentence-transformers"
+        "Se usará scikit-learn TF-IDF como alternativa liviana."
     )
+
+# Importar scikit-learn para alternativa liviana
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class EmbeddingGenerator:
-    """Generador de embeddings usando sentence-transformers"""
+    """Generador de embeddings usando sentence-transformers o TF-IDF (scikit-learn) como alternativa liviana"""
 
     # Modelos recomendados (ordenados por calidad/tamaño)
     MODELS = {
-        'mini': 'sentence-transformers/all-MiniLM-L6-v2',  # Rápido, 384 dims
-        'multilingual': 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2',  # Español, 384 dims
-        'large': 'intfloat/multilingual-e5-base',  # Mejor calidad, 768 dims
+        "mini": "sentence-transformers/all-MiniLM-L6-v2",  # Rápido, 384 dims
+        "multilingual": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",  # Español, 384 dims
+        "large": "intfloat/multilingual-e5-base",  # Mejor calidad, 768 dims
     }
 
-    def __init__(self, model_name: str = 'multilingual'):
+    def __init__(self, model_name: str = "multilingual"):
         """
         Inicializa el generador de embeddings.
 
@@ -37,28 +43,47 @@ class EmbeddingGenerator:
             model_name: 'mini', 'multilingual', o 'large'
                        También acepta nombre completo del modelo
         """
-        if not HAS_SENTENCE_TRANSFORMERS:
-            raise ImportError(
-                "sentence-transformers requerido. "
-                "Instala con: pip install sentence-transformers"
-            )
+        self.use_sentence_transformers = HAS_SENTENCE_TRANSFORMERS
+        if self.use_sentence_transformers:
+            # Resolver nombre del modelo
+            if model_name in self.MODELS:
+                model_path = self.MODELS[model_name]
+            else:
+                model_path = model_name
 
-        # Resolver nombre del modelo
-        if model_name in self.MODELS:
-            model_path = self.MODELS[model_name]
+            logger.info(f"Cargando modelo de embeddings: {model_path}")
+            self.model = SentenceTransformer(model_path)
+            self.dimension = self.model.get_sentence_embedding_dimension()
+            logger.info(f"Modelo cargado. Dimensión: {self.dimension}")
         else:
-            model_path = model_name
+            logger.warning(
+                "Usando TF-IDF (scikit-learn) como generador de embeddings liviano."
+            )
+            self.model = TfidfVectorizer()
+            self.dimension = None  # Se define tras el primer ajuste
+            self._is_fitted = False  # Indica si el vectorizador ya fue ajustado
 
-        logger.info(f"Cargando modelo de embeddings: {model_path}")
-        self.model = SentenceTransformer(model_path)
-        self.dimension = self.model.get_sentence_embedding_dimension()
-        logger.info(f"Modelo cargado. Dimensión: {self.dimension}")
+    def fit_on_documents(self, documents: List[str]):
+        """
+        Ajusta el vectorizador TF-IDF con todos los documentos.
+        Debe llamarse antes de encode_query.
+        """
+        if self.use_sentence_transformers:
+            # No es necesario para sentence-transformers
+            return
+        if not documents or len(documents) < 1:
+            raise ValueError(
+                "Se requiere al menos un documento para ajustar el vectorizador."
+            )
+        self.model.fit(documents)
+        self.dimension = len(self.model.get_feature_names_out())
+        self._is_fitted = True
 
     def encode(
         self,
         texts: Union[str, List[str]],
         batch_size: int = 32,
-        show_progress: bool = False
+        show_progress: bool = False,
     ) -> np.ndarray:
         """
         Genera embeddings para uno o varios textos.
@@ -73,13 +98,22 @@ class EmbeddingGenerator:
         """
         if isinstance(texts, str):
             texts = [texts]
+        # Asegurar que todos los textos sean string
+        texts = [str(t) for t in texts]
 
-        embeddings = self.model.encode(
-            texts,
-            batch_size=batch_size,
-            show_progress_bar=show_progress,
-            convert_to_numpy=True
-        )
+        if self.use_sentence_transformers:
+            embeddings = self.model.encode(
+                texts,
+                batch_size=batch_size,
+                show_progress_bar=show_progress,
+                convert_to_numpy=True,
+            )
+        else:
+            if not self._is_fitted:
+                raise RuntimeError(
+                    "El vectorizador TF-IDF no ha sido ajustado aún. Llama a fit_on_documents primero."
+                )
+            embeddings = self.model.transform(texts).toarray()
 
         return embeddings
 
@@ -97,9 +131,7 @@ class EmbeddingGenerator:
         return self.encode(query)[0]
 
     def encode_documents(
-        self,
-        documents: List[str],
-        show_progress: bool = True
+        self, documents: List[str], show_progress: bool = True
     ) -> np.ndarray:
         """
         Genera embeddings para múltiples documentos.
@@ -111,6 +143,10 @@ class EmbeddingGenerator:
         Returns:
             Array numpy con los embeddings
         """
+        if not self.use_sentence_transformers:
+            self.fit_on_documents(documents)
+        # Asegurar que todos los documentos sean string
+        documents = [str(d) for d in documents]
         return self.encode(documents, show_progress=show_progress)
 
     def get_dimension(self) -> int:
@@ -122,7 +158,7 @@ class EmbeddingGenerator:
 _global_generator = None
 
 
-def get_embedding_generator(model_name: str = 'multilingual') -> EmbeddingGenerator:
+def get_embedding_generator(model_name: str = "multilingual") -> EmbeddingGenerator:
     """
     Obtiene una instancia global del generador (singleton).
     Útil para evitar cargar el modelo múltiples veces.

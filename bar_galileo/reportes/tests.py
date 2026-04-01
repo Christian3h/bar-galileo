@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils import timezone
 from datetime import date, timedelta
 from .models import Reporte
+from roles.models import Module, Action, Role, RolePermission, UserProfile
 
 
 class ReporteModelTest(TestCase):
@@ -49,6 +50,19 @@ class ReporteViewTest(TestCase):
             username='testuser',
             password='testpass123'
         )
+
+        modulo_reportes, _ = Module.objects.get_or_create(nombre='reportes')
+        accion_ver, _ = Action.objects.get_or_create(nombre='ver')
+        rol_test, _ = Role.objects.get_or_create(nombre='tester')
+        RolePermission.objects.get_or_create(
+            rol=rol_test,
+            modulo=modulo_reportes,
+            accion=accion_ver,
+        )
+        UserProfile.objects.get_or_create(user=self.user, defaults={'rol': rol_test})
+        self.user.userprofile.rol = rol_test
+        self.user.userprofile.save(update_fields=['rol'])
+
         self.reporte = Reporte.objects.create(
             nombre='Reporte de prueba',
             tipo='ventas',

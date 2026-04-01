@@ -2,6 +2,20 @@
 {% load static %}
 {% load roles_tags %}
 
+{% block extra_css %}
+<style>
+.table .actions-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+.table .actions-cell .btn-group {
+    display: inline-flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+</style>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <h1 class="my-4">Lista de Categorías</h1>
@@ -11,7 +25,7 @@
 
         <div class="table-contenedor">
             <div class="table-responsive">
-                <table id="tabla-categorias" class="table table-striped">
+                 <table id="tabla-categorias" class="table table-striped" style="width:100%">
                     <thead>
                         <tr>
                             <th class="col-1">Nombre</th>
@@ -24,12 +38,13 @@
                         <tr>
                             <td class="col-1">{{ categoria.nombre_categoria }}</td>
                             <td class="col-2">{{ categoria.descripcion }}</td>
-                            <td>
+                            <td class="actions-cell">
                                 {% if request.user|has_perm:"categories,editar" %}
                                     <a href="{% url 'products:categories_edit_admin' categoria.id_categoria %}" class="btn btn-sm btn-warning" title="Editar categoría"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                                 {% endif %}
                                 {% if request.user|has_perm:"categories,eliminar" %}
-                                    <a href="{% url 'products:categories_delete_admin' categoria.id_categoria %}" class="btn btn-sm btn-danger" title="Eliminar categoría"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                                    <button type="button" class="btn btn-sm btn-danger" title="Eliminar categoría"
+                                        onclick="confirmarEliminarCategoria({{ categoria.id_categoria }}, '{{ categoria.nombre_categoria }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -40,8 +55,28 @@
         </div>
     </div>
 
+    <!-- Formulario oculto para eliminación -->
+    <form id="delete-categoria-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
+
     <!-- Activación de DataTable -->
     <script>
+    async function confirmarEliminarCategoria(categoriaId, categoriaNombre) {
+        const confirmed = await AppFeedback.confirm({
+            title: 'Eliminar Categoría',
+            message: `¿Estás seguro de que deseas eliminar la categoría "${categoriaNombre}"? Esta acción no se puede deshacer.`,
+            confirmLabel: 'Eliminar',
+            cancelLabel: 'Cancelar'
+        });
+        
+        if (confirmed) {
+            const form = document.getElementById('delete-categoria-form');
+            form.action = `/adminD/categories/delete/${categoriaId}/`;
+            form.submit();
+        }
+    }
+
     $(document).ready(function() {
         var sel = '#tabla-categorias';
         if (!$(sel).length) return;
@@ -52,10 +87,13 @@
             language: {
                 url: "{% static 'js/DataTables/es-ES.json' %}"
             },
+            width: '100%',
+            autoWidth: false,
             columnDefs: [
-                { targets: '_all', defaultContent: '' }
+                { targets: '_all', defaultContent: '' },
+                { targets: -1, orderable: false, searchable: false }  // Acciones
             ],
-            responsive: true,
+            responsive: { details: { type: 'inline' } },
             pageLength: 10,
             lengthChange: true,
             ordering: true

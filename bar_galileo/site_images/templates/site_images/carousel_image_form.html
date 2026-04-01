@@ -1,0 +1,237 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Editar{% else %}Agregar{% endif %} Imagen del Carrusel - Admin
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/image_forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>
+            {% if object %}
+                Editar Imagen del Carrusel
+            {% else %}
+                Agregar Imagen al Carrusel
+            {% endif %}
+        </h1>
+        <p>
+            {% if object %}
+                Actualiza la información de la imagen del carrusel
+            {% else %}
+                Agrega una nueva imagen al carrusel principal de tu sitio
+            {% endif %}
+        </p>
+    </div>
+
+    <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">← Volver</a>
+
+    <div class="validation-requirements">
+        <h4>Requisitos de la imagen:</h4>
+        <ul>
+            <li>Formatos permitidos: JPG, JPEG, PNG, WebP</li>
+            <li>Tamaño máximo: 10MB</li>
+            <li>Dimensiones recomendadas: 1920x1080px (se optimizará automáticamente)</li>
+            <li>La imagen se comprimirá automáticamente para mejor rendimiento</li>
+        </ul>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="carousel-form">
+        {% csrf_token %}
+
+        <div class="form-group {% if form.title.errors %}error{% endif %}">
+            <label for="{{ form.title.id_for_label }}">
+                Título <span class="required">*</span>
+            </label>
+            {{ form.title }}
+            {% if form.title.help_text %}
+                <span class="help-text">{{ form.title.help_text }}</span>
+            {% endif %}
+            {% if form.title.errors %}
+                <ul class="error-list">
+                    {% for error in form.title.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.image.errors %}error{% endif %}">
+            <label for="{{ form.image.id_for_label }}">
+                Imagen <span class="required">*</span>
+            </label>
+            {{ form.image }}
+            {% if form.image.help_text %}
+                <span class="help-text">{{ form.image.help_text }}</span>
+            {% endif %}
+            {% if form.image.errors %}
+                <ul class="error-list">
+                    {% for error in form.image.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if object and object.image %}
+                <div class="current-image">
+                    <p><strong>Imagen actual:</strong></p>
+                    <img src="{{ object.image.url }}" alt="{{ object.alt_text }}">
+                    <p>{{ object.width }}x{{ object.height }}px - {{ object.get_file_size_display }}</p>
+                </div>
+            {% endif %}
+
+            <div class="image-preview-container" id="image-preview">
+                <p><strong>Vista previa:</strong></p>
+                <img id="preview-img" src="" alt="Vista previa">
+            </div>
+        </div>
+
+        <div class="form-group {% if form.alt_text.errors %}error{% endif %}">
+            <label for="{{ form.alt_text.id_for_label }}">
+                Texto alternativo
+            </label>
+            {{ form.alt_text }}
+            <span class="help-text">Descripción de la imagen para accesibilidad (lectores de pantalla)</span>
+            {% if form.alt_text.errors %}
+                <ul class="error-list">
+                    {% for error in form.alt_text.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.caption.errors %}error{% endif %}">
+            <label for="{{ form.caption.id_for_label }}">
+                Texto descriptivo
+            </label>
+            {{ form.caption }}
+            <span class="help-text">Texto que se mostrará sobre la imagen (opcional)</span>
+            {% if form.caption.errors %}
+                <ul class="error-list">
+                    {% for error in form.caption.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.link_url.errors %}error{% endif %}">
+            <label for="{{ form.link_url.id_for_label }}">
+                URL de enlace
+            </label>
+            {{ form.link_url }}
+            <span class="help-text">URL a la que llevará al hacer clic en la imagen (opcional)</span>
+            {% if form.link_url.errors %}
+                <ul class="error-list">
+                    {% for error in form.link_url.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.order.errors %}error{% endif %}">
+            <label for="{{ form.order.id_for_label }}">
+                Orden
+            </label>
+            {{ form.order }}
+            <span class="help-text">Posición en el carrusel (puedes cambiarlo después arrastrando)</span>
+            {% if form.order.errors %}
+                <ul class="error-list">
+                    {% for error in form.order.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group {% if form.is_active.errors %}error{% endif %}">
+            <div class="form-check">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}">
+                    Imagen activa (se mostrará en el carrusel)
+                </label>
+            </div>
+            {% if form.is_active.errors %}
+                <ul class="error-list">
+                    {% for error in form.is_active.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if object %}Guardar Cambios{% else %}➕ Agregar Imagen{% endif %}
+            </button>
+            <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">
+                ❌ Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    const previewContainer = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+
+            if (file) {
+                // Validar tamaño
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                if (file.size > maxSize) {
+                    alert('El archivo es demasiado grande. El tamaño máximo es 10MB.');
+                    imageInput.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+
+                // Validar tipo
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Formato de archivo no válido. Usa JPG, PNG o WebP.');
+                    imageInput.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+
+                // Mostrar preview
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+    }
+
+    // Auto-fill alt text from title if empty
+    const titleInput = document.querySelector('input[name="title"]');
+    const altTextInput = document.querySelector('input[name="alt_text"]');
+
+    if (titleInput && altTextInput) {
+        titleInput.addEventListener('blur', function() {
+            if (!altTextInput.value && titleInput.value) {
+                altTextInput.value = titleInput.value;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,3 +1,6 @@
+# Entorno y variables de entorno
+.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -47,6 +50,7 @@ htmlcov/
 .pytest_cache/
 .hypothesis/
 pytestdebug.log
+evidencias_tests_*.txt
 
 # Translations
 *.mo
@@ -57,6 +61,8 @@ pytestdebug.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+test_db.sqlite3
+bar_galileo/test_db.sqlite3
 
 # Scrapy stuff
 .scrapy
@@ -92,6 +98,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# Ignore product media folder (product images)
+bar_galileo/media/productos/
 
 # Spyder project settings
 .spyderproject
@@ -125,3 +133,18 @@ cython_debug/
 
 # Collected static files (Django collectstatic output)
 **/staticfiles/
+
+# Database dumps
+dump-*.sql
+*.sql
+
+# Backup files
+bar_galileo/backups/backup_files/
+-e 
+# Database dumps
+*.sql
+Dump*.sql
+
+# Database dumps
+*.sql
+Dump*.sql

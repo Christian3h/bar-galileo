@@ -2,22 +2,47 @@ from django import forms
 from allauth.account.forms import LoginForm, AddEmailForm
 from allauth.account.models import EmailAddress
 from captcha.fields import CaptchaField
+from django.utils.html import strip_tags
+from core.security.validators import EmailSSTIValidator, PasswordSSTIValidator
 
 class CustomLoginForm(LoginForm):
     captcha = CaptchaField(label='Captcha')
 
     def __init__(self, *args, **kwargs):
         super(CustomLoginForm, self).__init__(*args, **kwargs)
-        self.fields['login'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Usuario'})
-        self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Contraseña'})
+        self.fields['login'].widget.attrs.update({
+            'class': 'form-control', 
+            'placeholder': 'Usuario o Email',
+            'data-validate': 'any'
+        })
+        self.fields['password'].widget.attrs.update({
+            'class': 'form-control', 
+            'placeholder': 'Contraseña',
+            'data-validate': 'password'
+        })
+
+    def clean_login(self):
+        login = super().clean_login()
+        if login:
+            login = strip_tags(login)
+        return login
 
 class CustomAddEmailForm(AddEmailForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(CustomAddEmailForm, self).__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({
+            'class': 'form-control',
+            'data-validate': 'email'
+        })
 
     def clean_email(self):
         email = super().clean_email()
+        if email:
+            # Usar validador SSTI
+            validator = EmailSSTIValidator()
+            validator(email)
+            email = strip_tags(email)
         if self.request and self.request.user.is_authenticated:
             if self.request.user.emailaddress_set.filter(email__iexact=email).exists():
                 raise forms.ValidationError("Esta dirección de correo ya está asociada a tu cuenta.")

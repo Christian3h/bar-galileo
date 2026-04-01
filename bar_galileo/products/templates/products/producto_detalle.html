@@ -2,6 +2,8 @@
 {% load static %}
 {% load format_tags %}
 
+{% block body_class %}page-store{% endblock %}
+
 {% block title %}{{ producto.nombre }} - Detalle{% endblock %}
 
 {% block extra_css %}
@@ -26,7 +28,7 @@
     <div class="detalle-info">
         <p><strong>Categoría:</strong> {{ producto.id_categoria.nombre_categoria|default:"N/A" }}</p>
         <p><strong>Marca:</strong> {{ producto.id_marca.marca|default:"N/A" }}</p>
-        <p><strong>Stock:</strong> {{ producto.stock|default:"0" }} unidades</p>
+        <p><strong>Cantidad:</strong> {{ producto.stock|default:"0" }} unidades</p>
     </div>
 
     <a href="{% url 'core:store' %}" class="detalle-volver">Volver a la tienda</a>

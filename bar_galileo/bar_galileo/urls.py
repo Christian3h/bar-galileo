@@ -21,7 +21,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 from accounts.views import CustomEmailView
 from django.views.generic import RedirectView
-from django.templatetags.static import static as staticfiles_static
 
 
 urlpatterns = [
@@ -33,6 +32,7 @@ urlpatterns = [
     path('', include(('core.urls', 'core'), namespace='core')),
     path('', include(('tables.urls', 'tables'), namespace='tables')),
     path('dashboard/', include(('admin_dashboard.urls', 'admin_dashboard'), namespace='admin_dashboard')),
+    path('dashboard/images/', include(('site_images.urls', 'site_images'), namespace='site_images')),
     path('rol/', include(('roles.urls', 'roles'), namespace='roles')),
     path('facturacion/', include(('facturacion.urls', 'facturacion'), namespace='facturacion')),
     path('', include(('users.urls', 'users'), namespace='users')),
@@ -45,9 +45,9 @@ urlpatterns = [
     path('rag-chat/', include(('rag_chat.urls', 'rag_chat'), namespace='rag_chat')),
 
     # Evitar 404 para iconos solicitados en la raíz por navegadores
-    path('favicon.ico', RedirectView.as_view(url=staticfiles_static('img/favicon/favicon.ico'), permanent=True)),
-    path('apple-touch-icon.png', RedirectView.as_view(url=staticfiles_static('img/favicon/apple-touch-icon.png'), permanent=True)),
-    path('apple-touch-icon-precomposed.png', RedirectView.as_view(url=staticfiles_static('img/favicon/apple-touch-icon.png'), permanent=True)),
+    path('favicon.ico', RedirectView.as_view(url='/static/img/favicon/favicon.ico', permanent=True)),
+    path('apple-touch-icon.png', RedirectView.as_view(url='/static/img/favicon/apple-touch-icon.png', permanent=True)),
+    path('apple-touch-icon-precomposed.png', RedirectView.as_view(url='/static/img/favicon/apple-touch-icon.png', permanent=True)),
 ]
 
 if settings.DEBUG:

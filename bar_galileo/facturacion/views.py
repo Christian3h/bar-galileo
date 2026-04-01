@@ -5,8 +5,9 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
 from django.core.paginator import Paginator
-from tables.models import Factura
+from tables.models import Factura, Pedido, PedidoItem
 from .models import FacturacionManager
+from django.db import transaction
 from roles.decorators import permission_required
 from django.contrib.auth.decorators import login_required
 from decimal import InvalidOperation
@@ -78,6 +79,7 @@ def lista_facturas(request):
         'fecha_inicio': fecha_inicio,
         'fecha_fin': fecha_fin,
         'estadisticas': estadisticas,
+        'today': timezone.localdate().isoformat(),
     }
 
     return render(request, 'facturacion/lista_facturas.html', context)
@@ -168,18 +170,46 @@ def eliminar_factura(request, factura_id):
 
     if request.method == 'POST':
         try:
-            # Eliminar usando SQL directo para evitar problemas con datos corruptos
-            from django.db import connection
-            with connection.cursor() as cursor:
-                # Obtener el número antes de eliminar
-                cursor.execute("SELECT numero FROM tables_factura WHERE id = %s", [factura_id])
-                numero_result = cursor.fetchone()
-                numero_factura = numero_result[0] if numero_result else f"ID-{factura_id}"
+            with transaction.atomic():
+                # Obtener la factura ORM real para poder navegar las relaciones
+                factura_orm = Factura.objects.select_related('pedido__mesa').get(id=factura_id)
+                numero_factura = factura_orm.numero
+                pedido = factura_orm.pedido
 
-                # Eliminar la factura
-                cursor.execute("DELETE FROM tables_factura WHERE id = %s", [factura_id])
+                # 1. Restaurar stock de cada producto del pedido
+                for item in pedido.items.select_related('producto').all():
+                    producto = item.producto
+                    producto.stock += item.cantidad
+                    producto.save(update_fields=['stock'])
 
-            messages.success(request, f'Factura #{numero_factura} eliminada exitosamente.')
+                # 2. Revertir estado del pedido
+                pedido.estado = 'en_proceso'
+                pedido.save(update_fields=['estado'])
+
+                # 3. Restaurar estado de la mesa si existe
+                if pedido.mesa:
+                    pedido.mesa.estado = 'ocupada'
+                    pedido.mesa.save(update_fields=['estado'])
+
+                # 4. Eliminar la factura
+                factura_orm.delete()
+
+            messages.success(request, f'Factura #{numero_factura} eliminada. Stock restaurado y pedido revertido a "En proceso".')
+            return redirect('facturacion:lista_facturas')
+
+        except Factura.DoesNotExist:
+            # Fallback: eliminar con SQL directo si el ORM falla (datos corruptos)
+            try:
+                from django.db import connection
+                with connection.cursor() as cursor:
+                    cursor.execute("SELECT numero FROM tables_factura WHERE id = %s", [factura_id])
+                    numero_result = cursor.fetchone()
+                    numero_factura = numero_result[0] if numero_result else f"ID-{factura_id}"
+                    cursor.execute("DELETE FROM tables_factura WHERE id = %s", [factura_id])
+                messages.warning(request, f'Factura #{numero_factura} eliminada (datos corruptos: stock no restaurado).')
+            except Exception as e2:
+                logger.error(f"Error SQL al eliminar factura {factura_id}: {e2}")
+                messages.error(request, f'Error al eliminar la factura: {str(e2)}')
             return redirect('facturacion:lista_facturas')
 
         except Exception as e:
@@ -336,7 +366,7 @@ def exportar_facturas_csv(request):
 def exportar_facturas_xlsx(request):
     """Exportar facturas a Excel (XLSX)"""
     if not OPENPYXL_AVAILABLE:
-        messages.error(request, 'La exportación a Excel no está disponible. Instale openpyxl.')
+        messages.error(request, 'La exportación a Excel no está disponible. Instala openpyxl.')
         return redirect('facturacion:lista_facturas')
 
     # Obtener parámetros de filtro
@@ -433,7 +463,7 @@ def export_facturas(request, fmt):
 def exportar_facturas_pdf(request):
     """Exportar facturas a PDF"""
     if not REPORTLAB_AVAILABLE:
-        messages.error(request, 'La exportación a PDF no está disponible. Instale reportlab.')
+        messages.error(request, 'La exportación a PDF no está disponible. Instala reportlab.')
         return redirect('facturacion:lista_facturas')
 
     # Obtener parámetros de filtro
