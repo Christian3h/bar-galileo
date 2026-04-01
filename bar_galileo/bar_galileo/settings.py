@@ -43,8 +43,8 @@ FORCE_HTTPS = str(os.getenv("FORCE_HTTPS", "False" if DEBUG else "True")).lower(
     "yes",
 )
 SECRET_KEY = os.getenv("SECRET_KEY") or os.getenv("secret_key") or get_random_secret_key()
-raw_hosts = os.getenv("ALLOWED_HOSTS", "*" if DEBUG else "")
-ALLOWED_HOSTS = ["*"]
+raw_hosts = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost" if DEBUG else "")
+ALLOWED_HOSTS = [host.strip() for host in raw_hosts.split(",") if host.strip()]
 
 
 # Application definition
@@ -120,9 +120,8 @@ SECURITY_MIDDLEWARE_LOG_ONLY = True  # True = solo log, no bloquear (cambio a Tr
 
 ROOT_URLCONF = "bar_galileo.urls"
 # Configuración explícita de django-allauth para registro
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = True  # Si solo quieres email
-ACCOUNT_AUTHENTICATION_METHOD = "email"  # Opcional, si solo usas email
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["email*", "username*", "password1*", "password2*"]
 
 TEMPLATES = [
     {
@@ -282,10 +281,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
-
-print("EMAIL_HOST_USER:", EMAIL_HOST_USER)
-print("EMAIL_HOST_PASSWORD:", EMAIL_HOST_PASSWORD)
-print("DEFAULT_FROM_EMAIL:", DEFAULT_FROM_EMAIL)
 
 # Para debug: descomentar la siguiente línea para ver emails en consola
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
