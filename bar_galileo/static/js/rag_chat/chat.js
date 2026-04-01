@@ -6,6 +6,34 @@
 // Estado global
 let isProcessing = false;
 
+// Algunas extensiones del navegador inyectan objetos propios (por ejemplo `mgt`)
+// y pueden lanzar errores ajenos a la app. Ignoramos solo ese caso puntual.
+window.addEventListener('error', (event) => {
+  const message = String(event?.message || '');
+  if (message.includes('mgt.clearMarks is not a function')) {
+    event.preventDefault();
+    console.warn('Se ignoro un error de extension del navegador (mgt.clearMarks).');
+    return true;
+  }
+  return false;
+}, true);
+
+// Compatibilidad: algunas vistas dejaron de usar colecciones; si no existe, evitar crash.
+if (typeof window.loadCollections !== 'function') {
+  window.loadCollections = async function noopLoadCollections() {};
+}
+
+function renderMarkdownSafe(text) {
+  try {
+    if (window.marked && typeof window.marked.parse === 'function') {
+      return window.marked.parse(text);
+    }
+  } catch (error) {
+    console.warn('Fallo parseando markdown, se usara texto plano.', error);
+  }
+  return escapeHtml(String(text || ''));
+}
+
 /**
  * Habilita el chat
  */
@@ -214,7 +242,7 @@ async function sendMessage() {
     messageDiv.innerHTML = `
         <div class="message-avatar">AI</div>
         <div class="message-content">
-            <p class="message-text">${marked.parse(text)}</p>
+            <p class="message-text">${renderMarkdownSafe(text)}</p>
             ${sourcesHtml}
             <span class="message-timestamp">${formatTime(new Date())}</span>
         </div>
