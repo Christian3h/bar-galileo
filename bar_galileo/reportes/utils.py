@@ -1,7 +1,12 @@
+# Utilidades del módulo de reportes: exportación (CSV/Excel/PDF) y obtención de datos por tipo.
+# Todas las funciones obtener_datos_* devuelven: {'resumen': {}, 'detalles': [], 'totales': {}}
+# openpyxl requerido para Excel; reportlab requerido para PDF.
+
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.conf import settings
-from django.db.models import Sum, Count, Avg, Q, F
+from django.db.models import Sum, Count, Avg, Q, F, Min, Max
+from django.utils import timezone
 from decimal import Decimal
 import csv
 import io
@@ -29,7 +34,8 @@ except ImportError:
 
 
 def generar_csv_reporte(reporte, datos):
-    """Generar reporte en formato CSV con datos detallados"""
+    # Genera HttpResponse con el CSV del reporte. Incluye BOM UTF-8 para compatibilidad con Excel.
+    # Secciones: encabezado del reporte, resumen, detalles (tabla) y totales.
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     filename = f"reporte_{reporte.tipo}_{reporte.fecha_inicio}_{reporte.fecha_fin}.csv"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
@@ -81,7 +87,8 @@ def generar_csv_reporte(reporte, datos):
 
 
 def generar_excel_reporte(reporte, datos):
-    """Generar reporte en formato Excel (XLSX) con formato profesional"""
+    # Genera HttpResponse XLSX con openpyxl. Lanza ImportError si no está instalado.
+    # Hoja única con título dorado, info del reporte, resumen, tabla de detalles y totales.
     if not OPENPYXL_AVAILABLE:
         raise ImportError("openpyxl no está disponible para exportar a Excel")
     
@@ -225,7 +232,8 @@ def generar_excel_reporte(reporte, datos):
 
 
 def generar_pdf_reporte(reporte, datos):
-    """Generar reporte en formato PDF con diseño profesional"""
+    # Genera HttpResponse PDF con reportlab/Platypus. Lanza ImportError si no está instalado.
+    # Diseño A4 con título, info, resumen, tabla de detalles, totales y pie de página.
     if not REPORTLAB_AVAILABLE:
         raise ImportError("reportlab no está disponible para exportar a PDF")
     
@@ -395,7 +403,7 @@ def generar_pdf_reporte(reporte, datos):
     
     # Pie de página
     elements.append(Spacer(1, 30))
-    footer_text = f"Generado el {datetime.now().strftime('%d/%m/%Y a las %H:%M')}"
+    footer_text = f"Generado el {timezone.now().strftime('%d/%m/%Y a las %H:%M')}"
     footer = Paragraph(footer_text, ParagraphStyle('Footer', parent=styles['Normal'], 
                                                    fontSize=8, textColor=colors.grey, 
                                                    alignment=TA_CENTER))
@@ -407,10 +415,8 @@ def generar_pdf_reporte(reporte, datos):
 
 
 def obtener_datos_reporte_detallado(reporte):
-    """
-    Obtiene datos completos y detallados del reporte según su tipo
-    Retorna un diccionario con 'resumen', 'detalles' y 'totales'
-    """
+    # Dispatcher: llama a la función de datos correcta según reporte.tipo.
+    # En caso de error lo captura y lo mete en resumen['Error'] para no romper la UI.
     datos = {
         'resumen': {},
         'detalles': [],
@@ -439,11 +445,12 @@ def obtener_datos_reporte_detallado(reporte):
 
 
 def obtener_datos_ventas(reporte):
-    """Obtiene datos detallados de ventas"""
+    # Facturas del periodo: total vendido, cantidad y promedio por factura.
+    # Detalle: una fila por factura con mesa, nº items y total.
     from tables.models import Factura, Pedido, PedidoItem
     
     facturas = Factura.objects.filter(
-        fecha__range=[reporte.fecha_inicio, reporte.fecha_fin]
+        fecha__date__range=[reporte.fecha_inicio, reporte.fecha_fin]
     ).select_related('pedido', 'pedido__mesa').prefetch_related('pedido__items__producto')
     
     total_ventas = facturas.aggregate(Sum('total'))['total__sum'] or Decimal('0')
@@ -486,7 +493,8 @@ def obtener_datos_ventas(reporte):
 
 
 def obtener_datos_gastos(reporte):
-    """Obtiene datos detallados de gastos"""
+    # Gastos del periodo agrupados por categoría. Top 5 categorías en el resumen.
+    # Detalle: una fila por gasto con fecha, categoría, descripción, usuario y monto.
     from expenses.models import Expense, ExpenseCategory
     
     gastos = Expense.objects.filter(
@@ -540,11 +548,14 @@ def obtener_datos_gastos(reporte):
 
 
 def obtener_datos_nominas(reporte):
-    """Obtiene datos detallados de nóminas"""
+    # Empleados activos contratados antes de fecha_fin: masa salarial y desglose por tipo de contrato.
+    # NOTA: no consulta pagos históricos, solo el estado actual de la plantilla.
     from nominas.models import Empleado
     
+    # Filtrar empleados activos que fueron contratados antes del fin del periodo
     empleados = Empleado.objects.filter(
-        estado='activo'
+        estado='activo',
+        fecha_contratacion__lte=reporte.fecha_fin
     ).order_by('nombre')
     
     total_empleados = empleados.count()
@@ -559,6 +570,7 @@ def obtener_datos_nominas(reporte):
     
     # Resumen
     resumen = {
+        'Periodo': f"{reporte.fecha_inicio.strftime('%d/%m/%Y')} - {reporte.fecha_fin.strftime('%d/%m/%Y')}",
         'Total de Empleados Activos': total_empleados,
         'Total en Salarios': f"${total_salarios:,.2f}",
         'Promedio Salarial': f"${promedio_salario:,.2f}",
@@ -598,7 +610,8 @@ def obtener_datos_nominas(reporte):
 
 
 def obtener_datos_inventario(reporte):
-    """Obtiene datos detallados del inventario"""
+    # Fotografía actual del inventario (ignora fechas). Hasta 100 productos ordenados por stock asc.
+    # Métricas: total productos, valor inventario, bajo stock (<10) y sin stock.
     from products.models import Producto
     
     productos = Producto.objects.filter(activo=True).select_related(
@@ -649,13 +662,8 @@ def obtener_datos_inventario(reporte):
 
 
 def obtener_datos_productos(reporte):
-    """
-    Obtiene datos detallados de productos con análisis avanzados:
-    - Análisis de rentabilidad (mayor/menor margen, valor potencial)
-    - Alertas de stock (críticos, reorden, exceso)
-    - Estadísticas por proveedor
-    - Estadísticas de precios
-    """
+    # Análisis avanzado del catálogo (ignora fechas): rentabilidad, alertas de stock
+    # (crítico/reorden/exceso), estadísticas por proveedor/categoría y precios. Hasta 200 productos.
     from products.models import Producto, Categoria
     
     productos = Producto.objects.filter(activo=True).select_related(
@@ -712,10 +720,10 @@ def obtener_datos_productos(reporte):
     precios_stats = productos.aggregate(
         precio_compra_promedio=Avg('precio_compra'),
         precio_venta_promedio=Avg('precio_venta'),
-        precio_compra_min=Sum('precio_compra'),
-        precio_compra_max=Sum('precio_compra'),
-        precio_venta_min=Sum('precio_venta'),
-        precio_venta_max=Sum('precio_venta')
+        precio_compra_min=Min('precio_compra'),
+        precio_compra_max=Max('precio_compra'),
+        precio_venta_min=Min('precio_venta'),
+        precio_venta_max=Max('precio_venta')
     )
     
     # Calcular margen promedio
@@ -737,22 +745,15 @@ def obtener_datos_productos(reporte):
     
     # ========== RESUMEN MEJORADO ==========
     resumen = {
-        '=== INFORMACIÓN GENERAL ===': '',
         'Total de Productos': total_productos,
         'Productos Activos': productos_activos,
         'Categorías': categorias_count,
         'Proveedores': por_proveedor.count(),
+        'Margen Promedio': f"{margen_promedio:.2f}%",
+        'Valor Inventario (Compra)': f"${valor_inventario_compra:,.2f}",
+        'Valor Inventario (Venta)': f"${valor_inventario_venta:,.2f}",
+        'Ganancia Potencial Total': f"${ganancia_potencial_total:,.2f}",
     }
-    
-    # Separador
-    resumen['─' * 50] = ''
-    
-    # Análisis de rentabilidad
-    resumen['=== ANÁLISIS DE RENTABILIDAD ==='] = ''
-    resumen['Margen Promedio'] = f"{margen_promedio:.2f}%"
-    resumen['Valor Inventario (Compra)'] = f"${valor_inventario_compra:,.2f}"
-    resumen['Valor Inventario (Venta)'] = f"${valor_inventario_venta:,.2f}"
-    resumen['Ganancia Potencial Total'] = f"${ganancia_potencial_total:,.2f}"
     
     # Agregar productos con mayor y menor margen
     if mayor_margen:
@@ -760,50 +761,34 @@ def obtener_datos_productos(reporte):
     if menor_margen:
         resumen['Producto con Menor Margen'] = f"{menor_margen['producto'].nombre} ({menor_margen['margen']:.1f}%)"
     
-    # Separador
-    resumen['─' * 50 + ' '] = ''
-    
-    # Agregar top productos por valor potencial
-    resumen['=== TOP 5 VALOR POTENCIAL ==='] = ''
+    # Top productos por valor potencial
     for i, item in enumerate(top_valor_potencial, 1):
-        resumen[f"  {i}. {item['producto'].nombre}"] = f"${item['valor_potencial']:,.2f}"
-    
-    # Separador
-    resumen['─' * 50 + '  '] = ''
+        resumen[f"Top {i} Valor Potencial"] = f"{item['producto'].nombre} (${item['valor_potencial']:,.2f})"
     
     # Alertas de stock
-    resumen['=== ALERTAS DE STOCK ==='] = ''
-    resumen['🔴 Stock Crítico (< 5)'] = productos_stock_critico.count()
-    resumen['🟡 Requiere Reorden (5-10)'] = productos_reorden.count()
-    resumen['⚫ Sin Stock'] = productos_sin_stock.count()
-    resumen['🔵 Stock Excesivo (> 100)'] = productos_exceso_stock.count()
+    resumen['Stock Critico (< 5)'] = productos_stock_critico.count()
+    resumen['Requiere Reorden (5-10)'] = productos_reorden.count()
+    resumen['Sin Stock'] = productos_sin_stock.count()
+    resumen['Stock Excesivo (> 100)'] = productos_exceso_stock.count()
     
-    # Separador
-    resumen['─' * 50 + '   '] = ''
-    
-    # Estadísticas por proveedor
-    resumen['=== TOP 5 PROVEEDORES ==='] = ''
+    # Top 5 proveedores
     for prov in por_proveedor[:5]:
         prov_nombre = prov['id_proveedor__nombre'] or 'Sin proveedor'
         valor = prov['valor_compra'] or 0
-        resumen[f"  - {prov_nombre}"] = f"{prov['cantidad']} productos (${valor:,.2f})"
-    
-    # Separador
-    resumen['─' * 50 + '    '] = ''
+        resumen[f"Proveedor - {prov_nombre}"] = f"{prov['cantidad']} productos (${valor:,.2f})"
     
     # Estadísticas de precios
-    resumen['=== ESTADÍSTICAS DE PRECIOS ==='] = ''
     resumen['Precio Compra Promedio'] = f"${precios_stats['precio_compra_promedio'] or 0:,.2f}"
     resumen['Precio Venta Promedio'] = f"${precios_stats['precio_venta_promedio'] or 0:,.2f}"
-    
-    # Separador
-    resumen['─' * 50 + '     '] = ''
+    resumen['Precio Compra Min'] = f"${precios_stats['precio_compra_min'] or 0:,.2f}"
+    resumen['Precio Compra Max'] = f"${precios_stats['precio_compra_max'] or 0:,.2f}"
+    resumen['Precio Venta Min'] = f"${precios_stats['precio_venta_min'] or 0:,.2f}"
+    resumen['Precio Venta Max'] = f"${precios_stats['precio_venta_max'] or 0:,.2f}"
     
     # Top 5 categorías
-    resumen['=== TOP 5 CATEGORÍAS ==='] = ''
     for cat in por_categoria[:5]:
         cat_nombre = cat['id_categoria__nombre_categoria'] or 'Sin categoría'
-        resumen[f"  - {cat_nombre}"] = f"{cat['cantidad']} productos (Stock: {cat['stock_total'] or 0})"
+        resumen[f"Categoria - {cat_nombre}"] = f"{cat['cantidad']} productos (Stock: {cat['stock_total'] or 0})"
     
     # ========== DETALLES MEJORADOS ==========
     detalles = []
@@ -851,30 +836,17 @@ def obtener_datos_productos(reporte):
     
     # ========== TOTALES MEJORADOS ==========
     totales = {
-        '=== INVENTARIO ===': '',
         'TOTAL PRODUCTOS': total_productos,
         'PRODUCTOS ACTIVOS': productos_activos,
         'VALOR INVENTARIO (COMPRA)': f"${valor_inventario_compra:,.2f}",
         'VALOR INVENTARIO (VENTA)': f"${valor_inventario_venta:,.2f}",
+        'GANANCIA POTENCIAL TOTAL': f"${ganancia_potencial_total:,.2f}",
+        'MARGEN PROMEDIO': f"{margen_promedio:.2f}%",
+        'STOCK CRITICO': productos_stock_critico.count(),
+        'REQUIERE REORDEN': productos_reorden.count(),
+        'SIN STOCK': productos_sin_stock.count(),
+        'STOCK EXCESIVO': productos_exceso_stock.count(),
     }
-    
-    # Separador
-    totales['═' * 50] = ''
-    
-    # Rentabilidad
-    totales['=== RENTABILIDAD ==='] = ''
-    totales['GANANCIA POTENCIAL TOTAL'] = f"${ganancia_potencial_total:,.2f}"
-    totales['MARGEN PROMEDIO'] = f"{margen_promedio:.2f}%"
-    
-    # Separador
-    totales['═' * 50 + ' '] = ''
-    
-    # Alertas
-    totales['=== ALERTAS ==='] = ''
-    totales['🔴 STOCK CRÍTICO'] = productos_stock_critico.count()
-    totales['🟡 REQUIERE REORDEN'] = productos_reorden.count()
-    totales['⚫ SIN STOCK'] = productos_sin_stock.count()
-    totales['🔵 STOCK EXCESIVO'] = productos_exceso_stock.count()
     
     return {
         'resumen': resumen,
@@ -884,16 +856,17 @@ def obtener_datos_productos(reporte):
 
 
 def obtener_datos_mesas(reporte):
-    """Obtiene datos detallados de mesas y pedidos"""
+    # Pedidos y facturas del periodo: facturados, cancelados, total cobrado y promedio por pedido.
+    # Detalle: hasta 100 pedidos ordenados por fecha desc.
     from tables.models import Mesa, Pedido, Factura
     
     pedidos = Pedido.objects.filter(
-        fecha_creacion__range=[reporte.fecha_inicio, reporte.fecha_fin]
+        fecha_creacion__date__range=[reporte.fecha_inicio, reporte.fecha_fin]
     ).select_related('mesa').prefetch_related('items')
     
     mesas = Mesa.objects.all()
     facturas = Factura.objects.filter(
-        fecha__range=[reporte.fecha_inicio, reporte.fecha_fin]
+        fecha__date__range=[reporte.fecha_inicio, reporte.fecha_fin]
     )
     
     total_mesas = mesas.count()
@@ -942,14 +915,15 @@ def obtener_datos_mesas(reporte):
 
 
 def obtener_datos_general(reporte):
-    """Obtiene datos generales del sistema"""
+    # Vista global del negocio: ventas vs gastos, utilidad bruta y margen del periodo.
+    # Detalle: resumen diario (solo días con actividad). OJO: lanza 2 queries por día.
     from tables.models import Factura, Pedido
     from expenses.models import Expense
     from products.models import Producto
     from nominas.models import Empleado
     
     # Obtener datos de todos los módulos
-    facturas = Factura.objects.filter(fecha__range=[reporte.fecha_inicio, reporte.fecha_fin])
+    facturas = Factura.objects.filter(fecha__date__range=[reporte.fecha_inicio, reporte.fecha_fin])
     gastos = Expense.objects.filter(date__range=[reporte.fecha_inicio, reporte.fecha_fin])
     
     total_ventas = facturas.aggregate(Sum('total'))['total__sum'] or Decimal('0')

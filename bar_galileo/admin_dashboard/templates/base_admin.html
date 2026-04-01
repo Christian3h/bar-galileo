@@ -13,6 +13,7 @@
     <link rel="icon" href="{% static 'img/favicon/favicon.ico' %}">
     <link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}">
     <link rel="stylesheet" href="{% static 'css/main/admin/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom_file_input.css' %}">
     <link rel="stylesheet" href="{% static 'css/_components/notifications.css' %}">
     <link rel="stylesheet" href="{% static 'css/_components/simple_modal.css' %}">
     <link rel="stylesheet" href="{% static 'css/_components/_footer_admin.css' %}">
@@ -21,57 +22,271 @@
     <link rel="stylesheet" href="{% static 'css/main/tables/mobile_details.css' %}">
     <script src="{% static 'js/DataTables/jquery-3.7.1.min.js' %}"></script>
     <link href="{% static 'js/DataTables/datatables.css' %}" rel="stylesheet">
+    <link href="{% static 'css/main/tables/datatables_fix.css' %}" rel="stylesheet">
 
     <script src="{% static 'js/DataTables/datatables.js' %}"></script>
 
     {% block extra_css %}
 
     {% endblock %}
+    <style>
+    .table .actions-cell,
+    table .actions-cell {
+        text-align: center;
+        vertical-align: middle;
+    }
+    .table .actions-cell .btn-group,
+    table .actions-cell .btn-group {
+        display: inline-flex;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+    </style>
 
+    <link id="admin-light-theme-css" rel="stylesheet" href="{% static 'css/main/admin/admin_light_theme.css' %}">
+    <style>
+        :root {
+            --admin-icon-color: #111111;
+            --admin-icon-danger: #111111;
+            --admin-icon-filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(6%) hue-rotate(346deg) brightness(96%) contrast(102%);
+            --admin-icon-danger-filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(6%) hue-rotate(346deg) brightness(96%) contrast(102%);
+            --admin-icon-hover-filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(212deg) brightness(103%) contrast(104%);
+        }
+
+        [data-theme="dark"] {
+            --admin-icon-color: #ead7ad;
+            --admin-icon-danger: #ff9f95;
+            --admin-icon-filter: brightness(0) saturate(100%) invert(86%) sepia(18%) saturate(479%) hue-rotate(333deg) brightness(96%) contrast(94%);
+            --admin-icon-danger-filter: brightness(0) saturate(100%) invert(78%) sepia(26%) saturate(768%) hue-rotate(311deg) brightness(100%) contrast(101%);
+            --admin-icon-hover-filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7500%) hue-rotate(212deg) brightness(103%) contrast(104%);
+        }
+
+        body.admin-panel svg[data-theme-icon="normal"] {
+            color: var(--admin-icon-color) !important;
+            fill: currentColor !important;
+        }
+
+        body.admin-panel svg[data-theme-icon="danger"] {
+            color: var(--admin-icon-danger) !important;
+            fill: currentColor !important;
+        }
+
+        body.admin-panel img[data-theme-icon="normal"] {
+            filter: var(--admin-icon-filter) !important;
+        }
+
+        body.admin-panel img[data-theme-icon="danger"] {
+            filter: var(--admin-icon-danger-filter) !important;
+        }
+
+        body.admin-panel .btn:hover svg[data-theme-icon],
+        body.admin-panel .btn:focus svg[data-theme-icon],
+        body.admin-panel .btn:active svg[data-theme-icon],
+        body.admin-panel .btn:focus-visible svg[data-theme-icon] {
+            color: #fff !important;
+            fill: #fff !important;
+        }
+
+        body.admin-panel .btn:hover img[data-theme-icon],
+        body.admin-panel .btn:focus img[data-theme-icon],
+        body.admin-panel .btn:active img[data-theme-icon],
+        body.admin-panel .btn:focus-visible img[data-theme-icon] {
+            filter: var(--admin-icon-hover-filter) !important;
+        }
+
+        body.admin-panel .btn.btn-secondary:hover svg[data-theme-icon],
+        body.admin-panel .btn.btn-secondary:focus svg[data-theme-icon],
+        body.admin-panel .btn.btn-secondary:active svg[data-theme-icon],
+        body.admin-panel .btn.btn-secondary:focus-visible svg[data-theme-icon],
+        body.admin-panel .btn.btn-light:hover svg[data-theme-icon],
+        body.admin-panel .btn.btn-light:focus svg[data-theme-icon],
+        body.admin-panel .btn.btn-light:active svg[data-theme-icon],
+        body.admin-panel .btn.btn-light:focus-visible svg[data-theme-icon],
+        body.admin-panel .btn.btn-clear:hover svg[data-theme-icon],
+        body.admin-panel .btn.btn-clear:focus svg[data-theme-icon],
+        body.admin-panel .btn.btn-clear:active svg[data-theme-icon],
+        body.admin-panel .btn.btn-clear:focus-visible svg[data-theme-icon] {
+            color: #111 !important;
+            fill: #111 !important;
+        }
+
+        body.admin-panel .btn.btn-secondary:hover img[data-theme-icon],
+        body.admin-panel .btn.btn-secondary:focus img[data-theme-icon],
+        body.admin-panel .btn.btn-secondary:active img[data-theme-icon],
+        body.admin-panel .btn.btn-secondary:focus-visible img[data-theme-icon],
+        body.admin-panel .btn.btn-light:hover img[data-theme-icon],
+        body.admin-panel .btn.btn-light:focus img[data-theme-icon],
+        body.admin-panel .btn.btn-light:active img[data-theme-icon],
+        body.admin-panel .btn.btn-light:focus-visible img[data-theme-icon],
+        body.admin-panel .btn.btn-clear:hover img[data-theme-icon],
+        body.admin-panel .btn.btn-clear:focus img[data-theme-icon],
+        body.admin-panel .btn.btn-clear:active img[data-theme-icon],
+        body.admin-panel .btn.btn-clear:focus-visible img[data-theme-icon] {
+            filter: var(--admin-icon-filter) !important;
+        }
+    </style>
+
+    <script src="{% static 'js/custom_file_input.js' %}" defer></script>
 </head>
 
-<body>
+<body class="admin-panel">
     {% include "components/notificaciones.html" %}
     {% include "components/nav-admin.html" %}
 
-    <main class="main-content">
+    <div class="topbar-admin">
         <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
             <span></span>
             <span></span>
             <span></span>
         </button>
-        <div class="notification-icon" id="notification-icon">
-            <span id="icono-notification" > <img width="50px" src=" {% static 'img/icons/notifications.svg' %} " alt=""> </span>
-            <span class="notification-badge" id="notification-badge">0</span>
-            <div class="notifications-panel" id="notifications-panel">
-                <div class="notification-header">
-                    <h4>Notificaciones</h4>
-                    <button id="mark-all-as-read">Marcar todas como leídas</button>
 
+        <div class="topbar-admin__actions">
+            <a href="/media/user_manuals/manual.pdf" target="_blank" class="topbar-manual-btn" title="Manual de Usuario">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="currentColor">
+                    <path d="M560-564v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-644q-38 0-73 9.5T560-564Zm0 220v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-424q-38 0-73 9.5T560-344Zm0-110v-68q33-14 67.5-21t72.5-7q26 0 51 4t49 10v64q-24-9-48.5-13.5T700-534q-38 0-73 9.5T560-454ZM260-320q47 0 91.5 10.5T440-278v-394q-41-24-87-36t-93-12q-36 0-71.5 7T120-692v396q35-12 69.5-18t70.5-6Zm260 42q44-21 88.5-31.5T700-320q36 0 70.5 6t69.5 18v-396q-33-14-68.5-21t-71.5-7q-47 0-93 12t-87 36v394Zm-40 118q-48-38-104-59t-116-21q-42 0-82.5 11T100-198q-21 11-40.5-1T40-234v-482q0-11 5.5-21T62-752q46-24 96-36t102-12q58 0 113.5 15T480-740q51-30 106.5-45T700-800q52 0 102 12t96 36q11 5 16.5 15t5.5 21v482q0 23-19.5 35t-40.5 1q-37-20-77.5-31T700-240q-60 0-116 21t-104 59ZM280-494Z"/>
+                </svg>
+                <span class="topbar-manual-btn__text">Manual</span>
+            </a>
+            <div class="notification-icon" id="notification-icon">
+                <svg class="notification-icon__svg" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" aria-hidden="true">
+                    <path d="M160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/>
+                </svg>
+                <span class="notification-badge" id="notification-badge">0</span>
+                <div class="notifications-panel" id="notifications-panel">
+                    <div class="notification-header">
+                        <h4>Notificaciones</h4>
+                        <button id="mark-all-as-read">Marcar todas como leídas</button>
+                    </div>
                     <ul class="notification-list" id="notification-list">
-                    <!-- Las notificaciones se cargarán aquí -->
+                        <!-- Las notificaciones se cargarán aquí -->
                     </ul>
                 </div>
             </div>
         </div>
+    </div>
+
+    <main class="main-content">
         {% block content %}
 
         {% endblock %}
-
-
     </main>
 
     {% include "components/footer.html" %}
 
+    <script src="{% static 'js/ui/feedback.js' %}"></script>
     <script src="{% static 'js/admin/nav_admin.js' %}"></script>
-    <script src="{% static 'js/notifications/notifications.js' %}"></script>
     <script src="{% static 'js/admin/notification_history.js' %}"></script>
-    <script src="{% static 'js/admin/notification_button.js' %}"></script>
+    <script src="{% static 'js/dashboard-loading.js' %}"></script>
+    <!-- Security: Validación SSTI/XSS en frontend -->
+    <script src="{% static 'js/security.js' %}"></script>
     <script src="{% static 'js/admin/home-navigation.js' %}"></script>
     <script src="{% static 'js/table-mobile-details.js' %}"></script>
     {% block extra_js %}{% endblock %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            if (!input.max || input.max > today) {
+                input.max = today;
+            }
+        });
+    });
+    </script>
     <script src="{% static 'accessibility/sienna.js' %}"></script>
     <script src="{% static 'accessibility/custom.js' %}"></script>
+    <script>
+    (function() {
+        const ADMIN_ICON_SCOPE = 'a svg, button svg, .btn svg, .menu-btn svg, .topbar-admin svg, .notification-icon svg';
+        const ADMIN_IMG_SCOPE = 'img[src*="/img/icons/"]';
+
+        function isDangerIconElement(element) {
+            if (!element) {
+                return false;
+            }
+
+            return !!element.closest('.btn-danger, .btn-delete, .sidebar-logout-btn, .logout-modal-actions .btn-primary, [data-icon-tone="danger"]');
+        }
+
+        function applyAdminIconTheme(rootElement) {
+            const root = rootElement || document;
+
+            root.querySelectorAll(ADMIN_ICON_SCOPE).forEach(function(svg) {
+                const tone = isDangerIconElement(svg) ? 'danger' : 'normal';
+                svg.setAttribute('data-theme-icon', tone);
+
+                svg.querySelectorAll('[fill]').forEach(function(node) {
+                    const fill = (node.getAttribute('fill') || '').trim().toLowerCase();
+                    if (fill && fill !== 'none' && fill !== 'currentcolor') {
+                        node.setAttribute('fill', 'currentColor');
+                    }
+                });
+            });
+
+            root.querySelectorAll(ADMIN_IMG_SCOPE).forEach(function(img) {
+                const tone = isDangerIconElement(img) ? 'danger' : 'normal';
+                img.setAttribute('data-theme-icon', tone);
+            });
+        }
+
+        function syncAdminLightThemeStylesheet() {
+            const root = document.documentElement;
+            const lightThemeStylesheet = document.getElementById('admin-light-theme-css');
+            if (!root || !lightThemeStylesheet) {
+                return;
+            }
+
+            const activeTheme = root.getAttribute('data-theme');
+            const isDarkTheme = activeTheme === 'dark';
+            lightThemeStylesheet.disabled = isDarkTheme;
+            applyAdminIconTheme(document);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            syncAdminLightThemeStylesheet();
+            applyAdminIconTheme(document);
+
+            const root = document.documentElement;
+            if (!root) {
+                return;
+            }
+
+            const domObserver = new MutationObserver(function(mutations) {
+                let shouldRefreshIcons = false;
+                for (const mutation of mutations) {
+                    if (mutation.type === 'childList' && (mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0)) {
+                        shouldRefreshIcons = true;
+                        break;
+                    }
+                }
+
+                if (shouldRefreshIcons) {
+                    requestAnimationFrame(function() {
+                        applyAdminIconTheme(document);
+                    });
+                }
+            });
+
+            domObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            const observer = new MutationObserver(function(mutations) {
+                for (const mutation of mutations) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                        syncAdminLightThemeStylesheet();
+                        break;
+                    }
+                }
+            });
+
+            observer.observe(root, {
+                attributes: true,
+                attributeFilter: ['data-theme']
+            });
+        });
+    })();
+    </script>
 </body>
 
 </html>

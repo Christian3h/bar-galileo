@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     EmpleadoListView, EmpleadoCreateView, EmpleadoUpdateView, EmpleadoDeleteView,
     EmpleadoDetailView, PagoCreateView, PagoListView, BonificacionCreateView,
-    agregar_pago, agregar_bonificacion, buscar_usuarios_disponibles
+    agregar_pago, agregar_bonificacion, buscar_usuarios_disponibles, eliminar_pago
 )
 
 app_name = "nominas"
@@ -22,6 +22,7 @@ urlpatterns = [
     path("pagos/", PagoListView.as_view(), name="pago_list"),
     path("pagos/crear/", PagoCreateView.as_view(), name="pago_crear"),
     path("empleado/<int:empleado_id>/agregar-pago/", agregar_pago, name="agregar_pago"),
+    path("pagos/<int:pago_id>/eliminar/", eliminar_pago, name="pago_eliminar"),
 
     # Rutas de bonificaciones
     path("bonificaciones/crear/", BonificacionCreateView.as_view(), name="bonificacion_crear"),

@@ -1,8 +1,22 @@
 {% extends 'base_admin.html' %}
-{% block content %}
 {% load static %}
 {% load roles_tags %}
 
+{% block extra_css %}
+<style>
+.table .actions-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+.table .actions-cell .btn-group {
+    display: inline-flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
 <h1>Lista de marcas</h1>
 {% if request.user|has_perm:"brands,crear" %}
     <a href="{% url 'products:brands_create_admin' %}" class="btn btn-success mb-3">Crear Marca</a>
@@ -10,10 +24,11 @@
 
 <div class="table-contenedor">
     <div class="table-responsive">
-        <table id="brands-table" class="table display">
+        <table id="brands-table" class="table display" style="width:100%">
             <thead>
                 <tr>
                     <th>Nombre</th>
+                    <th>Descripción</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -21,12 +36,14 @@
                 {% for brand in brands %}
                 <tr>
                     <td>{{ brand.marca }}</td>
-                    <td>
+                    <td>{{ brand.descripcion|default:"Sin descripción" }}</td>
+                    <td class="actions-cell">
                         {% if request.user|has_perm:"brands,editar" %}
                         <a href="{% url 'products:brands_update_admin' brand.id_marca %}" class="btn btn-sm btn-warning" title="Editar marca"><img src="{% static 'img/icons/edit.svg' %}" alt="Editar"></a>
                         {% endif %}
                         {% if request.user|has_perm:"brands,eliminar" %}
-                        <a href="{% url 'products:brands_delete_admin' brand.id_marca %}" class="btn btn-sm btn-danger" title="Eliminar marca"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></a>
+                        <button type="button" class="btn btn-sm btn-danger" title="Eliminar marca"
+                            onclick="confirmarEliminarMarca({{ brand.id_marca }}, '{{ brand.marca|escapejs }}')"><img src="{% static 'img/icons/delete.svg' %}" alt="Eliminar"></button>
                         {% endif %}
                     </td>
                 </tr>
@@ -36,7 +53,27 @@
     </div>
 </div>
 
+<!-- Formulario oculto para eliminación de marca -->
+<form id="delete-marca-form" method="post" style="display: none;">
+    {% csrf_token %}
+</form>
+
 <script>
+async function confirmarEliminarMarca(marcaId, marcaNombre) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Marca',
+        message: `¿Estás seguro de que deseas eliminar la marca "${marcaNombre}"? Esta acción no se puede deshacer.`,
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-marca-form');
+        form.action = `/adminD/brands/delete/${marcaId}/`;
+        form.submit();
+    }
+}
+
 $(document).ready(function() {
     var sel = '#brands-table';
     if (!$(sel).length) return;
@@ -47,10 +84,13 @@ $(document).ready(function() {
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
+        width: '100%',
+        autoWidth: false,
         columnDefs: [
-            { targets: '_all', defaultContent: '' }
+            { targets: '_all', defaultContent: '' },
+            { targets: -1, orderable: false, searchable: false }  // Acciones
         ],
-        responsive: true
+        responsive: { details: { type: 'inline' } }
     });
 });
 </script>

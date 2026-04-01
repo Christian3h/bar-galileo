@@ -1,9 +1,11 @@
+import json
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.db.models import Case, When, Value, IntegerField
+from django.utils.html import strip_tags
 from roles.models import UserProfile, Role
 from roles.forms import UserProfileForm
 from .models_historial import HistorialMensual
@@ -13,6 +15,11 @@ from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
 from tables.models import Pedido
+from core.security.validators import (
+    NameSSTIValidator, EmailSSTIValidator, PhoneSSTIValidator, 
+    GenericSSTIValidator, DescriptionSSTIValidator
+)
+from django.core.exceptions import ValidationError
 
 # Editar información personal
 def get_perfil(user):
@@ -27,14 +34,46 @@ def editar_info(request):
     telefono = request.POST.get('telefono', perfil.telefono)
     direccion = request.POST.get('direccion', perfil.direccion)
     email = request.POST.get('email', request.user.email)
-    if not nombre:
-        errors['nombre'] = 'El nombre es obligatorio.'
+    
+    # Validaciones SSTI
+    try:
+        if nombre:
+            nombre_validator = NameSSTIValidator()
+            nombre_validator(nombre.strip())
+        else:
+            errors['nombre'] = 'El nombre es obligatorio.'
+    except ValidationError as e:
+        errors['nombre'] = str(e.message)
+    
+    try:
+        if email:
+            email_validator = EmailSSTIValidator()
+            email_validator(email.strip())
+        else:
+            errors['email'] = 'El email es obligatorio.'
+    except ValidationError as e:
+        errors['email'] = str(e.message)
+    
+    try:
+        if telefono:
+            telefono_validator = PhoneSSTIValidator()
+            telefono_validator(telefono.strip())
+        else:
+            errors['telefono'] = 'El teléfono es obligatorio.'
+    except ValidationError as e:
+        errors['telefono'] = str(e.message)
+    
+    try:
+        if direccion:
+            direccion_validator = GenericSSTIValidator()
+            direccion_validator(direccion.strip())
+    except ValidationError as e:
+        errors['direccion'] = str(e.message)
+    
+    # Validar cédula (solo números)
     if not cedula or not cedula.isdigit():
         errors['cedula'] = 'La cédula es obligatoria y debe ser numérica.'
-    if not telefono or not telefono.isdigit() or len(telefono) < 10:
-        errors['telefono'] = 'El teléfono es obligatorio, debe ser numérico y tener al menos 10 dígitos.'
-    if not email or '@' not in email:
-        errors['email'] = 'El email debe ser un correo válido.'
+    
     if errors:
         datos = {
             'nombre': nombre,
@@ -45,6 +84,11 @@ def editar_info(request):
             'info_errors': errors,
         }
         return render(request, 'users/panel de usuario.html', {'datos': datos})
+    
+    # Aplicar strip_tags después de validar
+    nombre = strip_tags(nombre)
+    direccion = strip_tags(direccion)
+    
     perfil.nombre = nombre
     perfil.cedula = cedula
     if telefono and not telefono.startswith('+57'):
@@ -84,18 +128,61 @@ def editar_emergencia(request):
     perfil = get_perfil(request.user)
     emergencia, _ = Emergencia.objects.get_or_create(perfil=perfil)
     errors = {}
+    
     nombre = request.POST.get('emergencia_nombre', emergencia.nombre)
     relacion = request.POST.get('emergencia_relacion', emergencia.relacion)
     telefono = request.POST.get('emergencia_telefono', emergencia.telefono)
     telefono_alt = request.POST.get('emergencia_telefono_alt', emergencia.telefono_alt)
     sangre = request.POST.get('emergencia_sangre', emergencia.sangre)
     alergias = request.POST.get('emergencia_alergias', emergencia.alergias)
-    if not nombre:
-        errors['nombre'] = 'El nombre es obligatorio.'
-    if not telefono or not telefono.isdigit():
-        errors['telefono'] = 'El teléfono es obligatorio y debe ser numérico.'
-    if telefono_alt and not telefono_alt.isdigit():
-        errors['telefono_alt'] = 'El teléfono alternativo debe ser numérico.'
+    
+    # Validaciones SSTI
+    try:
+        if nombre:
+            nombre_validator = NameSSTIValidator()
+            nombre_validator(nombre.strip())
+        else:
+            errors['nombre'] = 'El nombre es obligatorio.'
+    except ValidationError as e:
+        errors['nombre'] = str(e.message)
+    
+    try:
+        if relacion:
+            relacion_validator = GenericSSTIValidator()
+            relacion_validator(relacion.strip())
+    except ValidationError as e:
+        errors['relacion'] = str(e.message)
+    
+    try:
+        if telefono:
+            telefono_validator = PhoneSSTIValidator()
+            telefono_validator(telefono.strip())
+        else:
+            errors['telefono'] = 'El teléfono es obligatorio.'
+    except ValidationError as e:
+        errors['telefono'] = str(e.message)
+    
+    try:
+        if telefono_alt:
+            telefono_alt_validator = PhoneSSTIValidator()
+            telefono_alt_validator(telefono_alt.strip())
+    except ValidationError as e:
+        errors['telefono_alt'] = str(e.message)
+    
+    try:
+        if sangre:
+            sangre_validator = GenericSSTIValidator()
+            sangre_validator(sangre.strip())
+    except ValidationError as e:
+        errors['sangre'] = str(e.message)
+    
+    try:
+        if alergias:
+            alergias_validator = DescriptionSSTIValidator()
+            alergias_validator(alergias.strip())
+    except ValidationError as e:
+        errors['alergias'] = str(e.message)
+    
     if errors:
         emergencia.nombre = nombre
         emergencia.relacion = relacion
@@ -115,12 +202,14 @@ def editar_emergencia(request):
             'emergencia_errors': errors
         }
         return render(request, 'users/panel de usuario.html', {'datos': datos})
-    emergencia.nombre = nombre
-    emergencia.relacion = relacion
-    emergencia.telefono = telefono
-    emergencia.telefono_alt = telefono_alt
-    emergencia.sangre = sangre
-    emergencia.alergias = alergias
+    
+    # Aplicar strip_tags después de validar
+    emergencia.nombre = strip_tags(nombre)
+    emergencia.relacion = strip_tags(relacion)
+    emergencia.telefono = strip_tags(telefono)
+    emergencia.telefono_alt = strip_tags(telefono_alt)
+    emergencia.sangre = strip_tags(sangre)
+    emergencia.alergias = strip_tags(alergias)
     emergencia.save()
     notificar_usuario(request.user, '¡Contacto de emergencia actualizado correctamente!')
     return redirect('users:panel_usuario')
@@ -237,23 +326,67 @@ def user_list(request):
         )
     ).order_by('is_user_role', 'username')
     roles = Role.objects.all()
+
     if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        rol_id = request.POST.get('rol_id')
-        user = User.objects.get(id=user_id)
-        profile, _ = UserProfile.objects.get_or_create(user=user)
-        profile.rol_id = rol_id
-        profile.save()
+        action = request.POST.get('action', 'change_role')
 
-        rol = Role.objects.get(id=rol_id)
-        mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.nombre}'."
+        if action == 'change_role':
+            user_id = request.POST.get('user_id')
+            rol_id = request.POST.get('rol_id')
+            user = User.objects.get(id=user_id)
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+            profile.rol_id = rol_id
+            profile.save()
 
-        # Solo notificar si el usuario está autenticado
-        if request.user.is_authenticated:
-            notificar_usuario(request.user, mensaje)
+            rol = Role.objects.get(id=rol_id)
+            mensaje = f"El rol del usuario '{user.username}' ha sido actualizado a '{rol.nombre}'."
 
-        return redirect('users:user_list')
-    return render(request, 'users/user_list.html', {'users': users, 'roles': roles})
+            # Solo notificar si el usuario está autenticado
+            if request.user.is_authenticated:
+                notificar_usuario(request.user, mensaje)
+            return redirect('users:user_list')
+
+    # Construir mapa de perfiles y emergencias para el modal de datos personales
+    def fmt_tel(tel):
+        if tel and tel.startswith('+57'):
+            return '+57 ' + tel[3:]
+        elif tel:
+            return '+57 ' + tel
+        return ''
+
+    perfiles_qs = PerfilUsuario.objects.filter(
+        user__in=users
+    ).select_related('user', 'emergencia')
+
+    perfiles_map = {}
+    for perfil in perfiles_qs:
+        try:
+            emergencia = perfil.emergencia
+        except Exception:
+            emergencia = None
+
+        perfiles_map[str(perfil.user_id)] = {
+            'nombre': perfil.nombre or '',
+            'cedula': perfil.cedula or '',
+            'telefono': fmt_tel(perfil.telefono),
+            'direccion': perfil.direccion or '',
+            'email': perfil.user.email or '',
+            'emergencia_nombre': emergencia.nombre if emergencia else '',
+            'emergencia_relacion': emergencia.relacion if emergencia else '',
+            'emergencia_telefono': fmt_tel(emergencia.telefono) if emergencia else '',
+            'emergencia_telefono_alt': fmt_tel(emergencia.telefono_alt) if emergencia else '',
+            'emergencia_sangre': emergencia.sangre if emergencia else '',
+            'emergencia_alergias': emergencia.alergias if emergencia else '',
+        }
+
+    # Serializar a JSON para el modal JS
+    perfiles_json = json.dumps(perfiles_map)
+
+    return render(request, 'users/user_list.html', {
+        'users': users,
+        'roles': roles,
+        'perfiles_json': perfiles_json,
+    })
 
 from django.http import JsonResponse
 
@@ -261,3 +394,91 @@ def user_list_api(request):
     users = User.objects.all().order_by('username')
     data = [{'id': user.id, 'username': user.username, 'nombre': user.get_full_name() or user.username} for user in users]
     return JsonResponse(data, safe=False)
+
+
+@login_required
+@require_POST
+def cambiar_password(request):
+    """Vista para que el administrador cambie la contraseña de cualquier usuario"""
+    from .models import CambioPasswordAuditoria
+    
+    try:
+        # Obtener datos del formulario
+        user_id = request.POST.get('user_id')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        motivo = request.POST.get('motivo', '')
+        
+        # Validaciones
+        if not user_id or not new_password or not confirm_password:
+            notificar_usuario(request.user, 'Error: Todos los campos obligatorios deben ser completados.')
+            return redirect('users:user_list')
+        
+        if new_password != confirm_password:
+            notificar_usuario(request.user, 'Error: Las contraseñas no coinciden.')
+            return redirect('users:user_list')
+        
+        if len(new_password) < 8:
+            notificar_usuario(request.user, 'Error: La contraseña debe tener al menos 8 caracteres.')
+            return redirect('users:user_list')
+        
+        # Obtener el usuario a modificar
+        try:
+            usuario = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            notificar_usuario(request.user, 'Error: Usuario no encontrado.')
+            return redirect('users:user_list')
+        
+        # No permitir cambiar la contraseña del superusuario por seguridad
+        if usuario.is_superuser and not request.user.is_superuser:
+            notificar_usuario(request.user, 'Error: No tiene permisos para cambiar la contraseña de un superusuario.')
+            return redirect('users:user_list')
+        
+        # Cambiar la contraseña
+        usuario.set_password(new_password)
+        usuario.save()
+        
+        # Obtener la IP del administrador
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip_address = x_forwarded_for.split(',')[0]
+        else:
+            ip_address = request.META.get('REMOTE_ADDR')
+        
+        # Registrar en auditoría
+        CambioPasswordAuditoria.objects.create(
+            usuario_modificado=usuario,
+            administrador=request.user,
+            ip_address=ip_address,
+            motivo=motivo
+        )
+        
+        # Notificar éxito
+        notificar_usuario(request.user, f'La contraseña de "{usuario.username}" ha sido cambiada exitosamente. Este cambio ha sido registrado en el sistema de auditoría.')
+        
+    except Exception as e:
+        notificar_usuario(request.user, f'Error al cambiar la contraseña: {str(e)}')
+    
+    return redirect('users:user_list')
+
+
+@login_required
+def historial_password(request):
+    """Vista para ver el historial de cambios de contraseña"""
+    from .models import CambioPasswordAuditoria
+    from django.core.paginator import Paginator
+    
+    # Obtener todos los cambios ordenados por fecha descendente
+    cambios = CambioPasswordAuditoria.objects.all().select_related(
+        'usuario_modificado', 'administrador'
+    ).order_by('-fecha_cambio')
+    
+    # Paginación
+    paginator = Paginator(cambios, 25)  # 25 registros por página
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, 'users/historial_password.html', {
+        'page_obj': page_obj,
+        'total_cambios': cambios.count()
+    })

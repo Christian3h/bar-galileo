@@ -1,25 +1,72 @@
-/* Colores principales para el e-commerce Vive Natural */
-/* :root {
-  --color-primary: #62733d;
-  --color-secondary: #a68932;
-  --color-dark: #bf452a;
-  --color-light: #262626;
-  --color-accent: #0d0d0d;
-  --color-gray: #a68932;
-  --color-shadow: #62733d;
-} */
+/* Paleta de colores - Tema claro (rediseño)
+ *
+ * Nota:
+ * - El bloque del tema oscuro se mantiene exactamente igual (no tocado).
+ * - El color de marca `#b89a3c` NO se modifica.
+ *
+ * Esta hoja define variables CSS reutilizables (design tokens) pensadas
+ * para garantizar contraste y coherencia visual en el tema claro.
+ * Ajusta valores según sea necesario para casos particulares.
+ */
 
+/* =========================
+   TEMA CLARO - ROOT
+   ========================= */
 :root {
-  --color-primary: #7d9250;   /* verde natural más claro */
-  --color-secondary: #4a4a4a; /* gris oscuro para texto (mejor contraste) */
-  --color-dark: #a6502a;      /* acento rojizo natural */
-  --color-light: #e5e5e5;     /* fondo claro */
-  --color-accent: #ffffff;    /* tarjetas o contenedores */
-  --color-gray: #b1b1b1;      /* texto secundario */
-  --color-shadow: #c3d1a3;    /* sombras suaves */
+  /* Identidad principal */
+  --color-primary: #2f7a52;      /* verde principal (fresco, natural) */
+  --color-secondary: #2b2b2b;    /* texto principal / iconos (alto contraste) */
+  --color-dark: #bb4a31;         /* acento oscuro / acciones importantes */
+  --color-light: #fbfbf8;        /* fondo general muy claro */
+  --color-accent: #ffffff;       /* contenedores / cards */
+  --color-gray: #6e6e6e;         /* texto secundario y metadatos */
+  --color-shadow: #cfe0c1;       /* color para sombras suaves (tonalidad verde tenue) */
+
+  /* Superficies y bordes */
+  --color-surface: #ffffff;          /* tarjetas / inputs */
+  --color-surface-alt: #fbfcf7;      /* superficies alternas */
+  --color-border-muted: rgba(16, 24, 16, 0.06); /* bordes sutiles en claro */
+
+  /* =========================
+     COLOR DE MARCA (NO MODIFICAR)
+     ========================= */
+  --color-brand: #b89a3c;        /* oro natural — mantener exactamente este valor */
+  --color-brand-light: #e9dca0;  /* uso en hover / gradientes suaves */
+  --color-brand-dark: #8b6a1f;   /* uso en textos sobre fondos claros */
+
+  /* =========================
+     Feedback / Estados
+     ========================= */
+  --color-success: #2e8b57;      /* verde de éxito ( legible sobre fondo blanco ) */
+  --color-success-strong: #1f5f3a;
+  --color-warning: #d08900;      /* ámbar/amarillo cálido */
+  --color-warning-strong: #8a640f;
+  --color-info: #2f6fb8;         /* azul informativo */
+  --color-info-strong: #1d4b7a;
+  --color-danger: #c53d2a;       /* rojo para errores importantes */
+  --color-danger-strong: #8a281c;
+
+  /* =========================
+     Fondos y textos de feedback (pares contrastados)
+     ========================= */
+  --feedback-success-bg: #e8f7ef;
+  --feedback-success-foreground: #11402a;
+  --feedback-warning-bg: #fff7e0;
+  --feedback-warning-foreground: #5a3f00;
+  --feedback-info-bg: #eaf1ff;
+  --feedback-info-foreground: #0f2c4d;
+  --feedback-danger-bg: #fff0ee;
+  --feedback-danger-foreground: #5b1a12;
+  --feedback-neutral-bg: #f6f6f6;
+  --feedback-neutral-foreground: #2b2b2b;
+  --feedback-changed-bg: #f3fae9;
+  --feedback-changed-foreground: #254e1a;
+  --feedback-shadow: 0 12px 32px rgba(0, 0, 0, 0.10);
 }
 
-/* === 🌑 Tema Oscuro === */
+/* =========================
+   TEMA OSCURO (SIN CAMBIOS)
+   ========================= */
 [data-theme="dark"] {
   --color-primary: #62733d;
   --color-secondary: #a68932;
@@ -28,4 +75,30 @@
   --color-accent: #0d0d0d;
   --color-gray: #a68932;
   --color-shadow: #62733d;
+  --color-surface: #151515;
+  --color-surface-alt: #1f1f1f;
+  --color-border-muted: rgba(255, 255, 255, 0.1);
+
+  --color-success: #7dd9a4;
+  --color-success-strong: #5ab782;
+  --color-warning: #f5c76a;
+  --color-warning-strong: #d49b33;
+  --color-info: #7db0ff;
+  --color-info-strong: #4f7dcb;
+  --color-danger: #ff8b7b;
+  --color-danger-strong: #e66552;
+
+  --feedback-success-bg: rgba(125, 217, 164, 0.16);
+  --feedback-success-foreground: #e4fff1;
+  --feedback-warning-bg: rgba(245, 199, 106, 0.16);
+  --feedback-warning-foreground: #fff4d9;
+  --feedback-info-bg: rgba(125, 176, 255, 0.16);
+  --feedback-info-foreground: #e6f0ff;
+  --feedback-danger-bg: rgba(255, 139, 123, 0.16);
+  --feedback-danger-foreground: #ffe6e1;
+  --feedback-neutral-bg: rgba(255, 255, 255, 0.05);
+  --feedback-neutral-foreground: #f5f5f5;
+  --feedback-changed-bg: rgba(98, 146, 80, 0.22);
+  --feedback-changed-foreground: #f2ffe3;
+  --feedback-shadow: 0 30px 55px rgba(0, 0, 0, 0.6);
 }

@@ -1,0 +1,50 @@
+{% extends 'base_admin.html' %}
+{% load static %}
+
+{% block title %}
+    {% if object %}Editar{% else %}Nueva{% endif %} Sección - Admin
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/main/admin/image_forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>{% if object %}Editar{% else %}Nueva{% endif %} Sección</h1>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Nombre <span class="required">*</span></label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <ul class="error-list">{% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.section_type.id_for_label }}">Tipo <span class="required">*</span></label>
+            {{ form.section_type }}
+            {% if form.section_type.errors %}
+                <ul class="error-list">{% for error in form.section_type.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Descripción</label>
+            {{ form.description }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {% if object %}Guardar{% else %}➕ Crear{% endif %}
+            </button>
+            <a href="{% url 'site_images:image_management' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

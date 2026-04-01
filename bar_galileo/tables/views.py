@@ -24,8 +24,9 @@ class MesaListView(ListView):
     def get_queryset(self):
         pedidos_en_proceso = Pedido.objects.filter(
             mesa=OuterRef('pk'),
-            estado='en_proceso'
-        )
+            estado='en_proceso',
+            items__isnull=False
+        ).distinct()
         queryset = Mesa.objects.annotate(
             tiene_pedidos_en_proceso=Exists(pedidos_en_proceso)
         ).order_by('nombre')
@@ -115,8 +116,8 @@ class CambiarEstadoMesaView(View):
 
         estados_validos = ['disponible', 'ocupada', 'reservada', 'fuera de servicio']
         if nuevo_estado in estados_validos:
-            if nuevo_estado in ['disponible', 'reservada'] and mesa.pedidos.filter(estado='en_proceso').exists():
-                messages.error(request, f"No se puede cambiar el estado de la mesa '{mesa.nombre}' a '{nuevo_estado}' porque tiene pedidos activos.")
+            if nuevo_estado in ['disponible', 'reservada'] and mesa.pedidos.filter(estado='en_proceso', items__isnull=False).distinct().exists():
+                messages.error(request, f"No se puede cambiar el estado de la mesa '{mesa.nombre}' a '{nuevo_estado}' porque tiene pedidos activos con productos.")
                 return redirect('tables:mesas_lista')
             
             mesa.estado = nuevo_estado

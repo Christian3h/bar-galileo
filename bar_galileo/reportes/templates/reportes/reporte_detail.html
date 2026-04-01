@@ -144,9 +144,9 @@
                     {% endif %}
                     
                     {% if request.user|has_perm:"reportes,eliminar" %}
-                    <a href="{% url 'reportes:reporte_delete' reporte.pk %}" class="btn btn-danger">
+                    <button type="button" class="btn btn-danger" onclick="confirmarEliminarReporteDetail()">
                         <i class="fas fa-trash-alt"></i> Eliminar
-                    </a>
+                    </button>
                     {% endif %}
                 </div>
             </section>
@@ -215,37 +215,63 @@
     </div>
 </div>
 
-<script>
-function generarReporte(reporteId) {
-    if (confirm('¿Desea generar/actualizar los datos de este reporte?')) {
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
-        btn.disabled = true;
+<!-- Formulario oculto para eliminación de reporte -->
+<form id="delete-reporte-detail-form" method="post" action="{% url 'reportes:reporte_delete' reporte.pk %}" style="display: none;">
+    {% csrf_token %}
+</form>
 
-        fetch(`/reportes/generar/${reporteId}/`, {
+<script>
+async function generarReporte(reporteId) {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Generar Reporte',
+        message: '¿Desea generar/actualizar los datos de este reporte?',
+        confirmLabel: 'Generar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (!confirmed) return;
+    
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`/reportes/generar/${reporteId}/`, {
             method: 'GET',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('✅ Reporte generado exitosamente');
-                location.reload();
-            } else {
-                alert('❌ Error al generar reporte: ' + data.message);
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        })
-        .catch(error => {
-            alert('❌ Error al generar reporte');
-            console.error('Error:', error);
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            AppFeedback.success('Reporte generado exitosamente');
+            location.reload();
+        } else {
+            AppFeedback.error('Error al generar reporte: ' + data.message);
             btn.innerHTML = originalText;
             btn.disabled = false;
-        });
+        }
+    } catch (error) {
+        AppFeedback.error('Error al generar reporte');
+        console.error('Error:', error);
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+async function confirmarEliminarReporteDetail() {
+    const confirmed = await AppFeedback.confirm({
+        title: 'Eliminar Reporte',
+        message: '¿Estás seguro de que deseas eliminar este reporte? Esta acción no se puede deshacer.',
+        confirmLabel: 'Eliminar',
+        cancelLabel: 'Cancelar'
+    });
+    
+    if (confirmed) {
+        const form = document.getElementById('delete-reporte-detail-form');
+        form.submit();
     }
 }
 </script>

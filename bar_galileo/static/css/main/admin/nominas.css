@@ -106,8 +106,8 @@
     padding: 0.75rem 1rem;
     border: 2px solid var(--color-secondary);
     border-radius: 6px;
-    background: transparent;
-    color: var(--color-text);
+    background: var(--color-surface-alt);
+    color: var(--color-secondary);
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
@@ -119,13 +119,25 @@
     box-shadow: 0 0 5px var(--color-primary);
 }
 
+/* Flecha select - tema claro (secondary = #4a4a4a) */
 .field-group select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23A68932' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' class='feather feather-chevron-down'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%234a4a4a' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: 1em;
     padding-right: 2.5rem;
+}
+
+/* Flecha select - tema oscuro (secondary = #b89a3c) */
+[data-theme="dark"] .field-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23b89a3c' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3E%3Cpath d='m6 9 6-6H0z'/%3E%3C/svg%3E");
+}
+
+/* Options heredan el fondo del tema */
+.field-group select option {
+    background: var(--color-surface-alt);
+    color: var(--color-secondary);
 }
 
 .buttons-group {
@@ -185,8 +197,6 @@
 .table-responsive {
     border-radius: 8px;
     padding: 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    overflow-x: auto;
     border: none;
 }
 
@@ -487,8 +497,8 @@
         gap: 0.5rem;
     }
 
-    /* Responsive table columns - Ocultar en tablets */
-    .estadoCol, .tipoContratoCol {
+    /* Responsive table columns - En móvil solo mostrar Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
 }
@@ -506,8 +516,8 @@
         font-size: 1.5rem;
     }
 
-    /* Ocultar más columnas en móviles pequeños */
-    .fechaContratacionCol, .usuarioCol {
+    /* En móviles pequeños también solo Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
     }
 
@@ -544,16 +554,19 @@
    RESPONSIVE TABLE COLUMNS
 ======================================= */
 @media (max-width: 992px) {
-    /* Tablets - Ocultar columnas secundarias */
-    .estadoCol, .tipoContratoCol {
+    /* Tablets - Ocultar algunas columnas para dar más espacio */
+    .col-3, .estadoCol, .tipoContratoCol {
         display: none;
     }
 }
 
 @media (max-width: 768px) {
-    /* Móviles - Ocultar más columnas */
-    .fechaContratacionCol {
+    /* Móviles - Solo mostrar Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol {
         display: none;
+    }
+    .accionesCol {
+        display: table-cell !important;
     }
     .empleado-perfil-page .perfil-panel {
       padding: 5px;
@@ -561,13 +574,19 @@
 }
 
 @media (max-width: 576px) {
-    /* Móviles pequeños - Mantener solo lo esencial */
-    .usuarioCol {
+    /* Móviles pequeños - Solo mostrar Nombre y Acciones */
+    .col-2, .col-3, .estadoCol, .tipoContratoCol, .fechaContratacionCol, .usuarioCol, .fechaCol, .tipoCol {
         display: none;
     }
-
+    #tabla-pagos td.fechaCol,
+    #tabla-pagos td.tipoCol {
+        display: none;
+    }
+    .accionesCol {
+        display: table-cell !important;
+    }
     .empleado-perfil-page .perfil-panel {
-      padding: 5px !important;
+        padding: 5px !important;
     }
 }
 
@@ -582,8 +601,19 @@
 
 @media (max-width: 768px) {
     .comprobanteCol {
+        display: table-cell !important;
+    }
+    .fechaCol, .tipoCol {
         display: none;
     }
+    #tabla-pagos td.fechaCol,
+    #tabla-pagos td.tipoCol {
+        display: none;
+    }
+    .fechaCol, .tipoCol, .precioCol, .montoCol {
+        display: none;
+    }
+}
 }
 
 /* =======================================
@@ -707,6 +737,7 @@
     color: var(--color-secondary);
     font-weight: 700;
     font-size: 1.4rem;
+    text-align: center;
 }
 
 /* Responsive */
@@ -756,4 +787,9 @@
         width: 100%;
         text-align: center;
     }
+}
+
+
+.btn-sm{
+    width: auto;
 }

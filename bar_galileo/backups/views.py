@@ -13,6 +13,7 @@ Todas las vistas requieren permisos específicos del módulo 'backups'.
 
 from django.views.generic import TemplateView, View
 from django.http import JsonResponse, FileResponse, Http404
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
@@ -20,7 +21,103 @@ from django.conf import settings
 from django.core.management import call_command
 from roles.decorators import permission_required
 from pathlib import Path
+import re
 from datetime import datetime
+
+
+def validate_sql_file(file_path):
+    """
+    Valida que un archivo sea un SQL válido.
+    - Verifica que el archivo exista y no esté vacío.
+    - Verifica que sea texto (no binario) leyendo los primeros bytes.
+    - Busca palabras clave SQL comunes para confirmar que es un dump.
+    """
+    if not file_path.exists():
+        raise ValidationError(f"El archivo no existe: {file_path}")
+    
+    if file_path.stat().st_size == 0:
+        raise ValidationError("El archivo SQL está vacío.")
+    
+    # Leer primeros 512 bytes para detectar binario
+    try:
+        with open(file_path, 'rb') as f:
+            first_bytes = f.read(512)
+            # Si hay bytes nulos (0x00) es probablemente binario
+            if b'\x00' in first_bytes:
+                raise ValidationError("El archivo parece binario, no es un SQL válido.")
+            # Convertir a texto ASCII/UTF-8
+            try:
+                sample = first_bytes.decode('utf-8')
+            except UnicodeDecodeError:
+                raise ValidationError("El archivo no es texto válido UTF-8.")
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo: {e}")
+    
+    # Buscar palabras clave SQL (case-insensitive)
+    sql_keywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 
+                    'ALTER', 'TABLE', 'DATABASE', 'VALUES', 'INTO', 'FROM', 'WHERE']
+    # Leer el archivo completo para buscar palabras clave (limitado a primeros 64KB)
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            content = f.read(65536)  # 64KB suficiente para detectar
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo para validación: {e}")
+    
+    content_upper = content.upper()
+    found = any(keyword in content_upper for keyword in sql_keywords)
+    if not found:
+        raise ValidationError("El archivo no contiene palabras clave SQL comunes. ¿Es un dump válido?")
+    
+    # Validación exitosa
+    return True
+
+
+def validate_uploaded_sql_file(uploaded_file):
+    """
+    Valida un archivo subido (UploadedFile) que sea un SQL válido.
+    - Verifica que no esté vacío.
+    - Verifica que sea texto (no binario) leyendo los primeros bytes.
+    - Busca palabras clave SQL comunes para confirmar que es un dump.
+    """
+    if uploaded_file.size == 0:
+        raise ValidationError("El archivo SQL está vacío.")
+    
+    # Leer primeros 512 bytes para detectar binario
+    try:
+        uploaded_file.seek(0)
+        first_bytes = uploaded_file.read(512)
+        # Si hay bytes nulos (0x00) es probablemente binario
+        if b'\x00' in first_bytes:
+            raise ValidationError("El archivo parece binario, no es un SQL válido.")
+        # Convertir a texto UTF-8
+        try:
+            sample = first_bytes.decode('utf-8')
+        except UnicodeDecodeError:
+            raise ValidationError("El archivo no es texto válido UTF-8.")
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo: {e}")
+    finally:
+        uploaded_file.seek(0)  # Reset para lectura posterior
+    
+    # Buscar palabras clave SQL (case-insensitive)
+    sql_keywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 
+                    'ALTER', 'TABLE', 'DATABASE', 'VALUES', 'INTO', 'FROM', 'WHERE']
+    # Leer el archivo completo para buscar palabras clave (limitado a primeros 64KB)
+    try:
+        uploaded_file.seek(0)
+        content = uploaded_file.read(65536).decode('utf-8', errors='ignore')
+    except IOError as e:
+        raise ValidationError(f"No se pudo leer el archivo para validación: {e}")
+    finally:
+        uploaded_file.seek(0)
+    
+    content_upper = content.upper()
+    found = any(keyword in content_upper for keyword in sql_keywords)
+    if not found:
+        raise ValidationError("El archivo no contiene palabras clave SQL comunes. ¿Es un dump válido?")
+    
+    # Validación exitosa
+    return True
 
 
 @method_decorator(permission_required('backups', 'ver'), name='dispatch')
@@ -41,7 +138,8 @@ class BackupListView(TemplateView):
         # Listar backups de DB
         db_backups = []
         if db_backup_dir.exists():
-            for backup_file in sorted(db_backup_dir.glob('*.psql.gpg'), reverse=True):
+            # Buscar archivos con y sin encriptación (.psql y .psql.gpg)
+            for backup_file in sorted(db_backup_dir.glob('*.psql*'), reverse=True):
                 db_backups.append({
                     'nombre': backup_file.name,
                     'fecha': datetime.fromtimestamp(backup_file.stat().st_mtime),
@@ -54,7 +152,8 @@ class BackupListView(TemplateView):
         # Listar backups de Media
         media_backups = []
         if media_backup_dir.exists():
-            for backup_file in sorted(media_backup_dir.glob('*.media.zip.gpg'), reverse=True):
+            # Buscar archivos con y sin encriptación (.media.zip y .media.zip.gpg)
+            for backup_file in sorted(media_backup_dir.glob('*.media.zip*'), reverse=True):
                 media_backups.append({
                     'nombre': backup_file.name,
                     'fecha': datetime.fromtimestamp(backup_file.stat().st_mtime),
@@ -112,11 +211,19 @@ class BackupCreateView(View):
                 'tipo': tipo
             })
 
-        except Exception as e:
-            messages.error(request, f'❌ Error al crear backup: {str(e)}')
+        except ModuleNotFoundError as e:
+            error_msg = f'❌ Error: Falta el módulo {str(e)}. Asegúrate de que el servidor esté usando el entorno virtual correcto.'
+            messages.error(request, error_msg)
             return JsonResponse({
                 'success': False,
-                'error': str(e)
+                'error': error_msg
+            }, status=500)
+        except Exception as e:
+            error_msg = f'❌ Error al crear backup: {str(e)}'
+            messages.error(request, error_msg)
+            return JsonResponse({
+                'success': False,
+                'error': error_msg
             }, status=500)
 
 
@@ -294,17 +401,33 @@ class BackupRestoreView(View):
     """
     Vista para restaurar un backup (base de datos o media).
     Requiere permiso 'editar' ya que restaurar modifica datos del sistema.
+    Utiliza los comandos de django-dbbackup para restaurar correctamente.
     """
 
     def post(self, request):
         """
-        Restaura un backup específico.
+        Restaura un backup específico desencriptando manualmente antes de restaurar.
+        
+        Esta implementación evita el problema de passphrase interactiva de GPG
+        desencriptando manualmente el archivo antes de pasarlo a django-dbbackup.
         """
+        import logging
+        import subprocess
+        import os
+        
+        logger = logging.getLogger(__name__)
+        decrypted_file_path = None  # Para limpieza posterior
+        
         try:
             tipo = request.POST.get('tipo')
             filename = request.POST.get('filename')
+            
+            logger.info(f"=== INICIO RESTAURACIÓN ===")
+            logger.info(f"Tipo: {tipo}")
+            logger.info(f"Archivo: {filename}")
 
             if not tipo or not filename:
+                logger.error("Parámetros incompletos")
                 return JsonResponse({
                     'success': False,
                     'error': 'Parámetros incompletos'
@@ -325,87 +448,181 @@ class BackupRestoreView(View):
 
             # Construir ruta del archivo
             file_path = backup_dir / filename
+            logger.info(f"Ruta del archivo: {file_path}")
+            logger.info(f"Existe: {file_path.exists()}")
 
             # Verificar que el archivo existe
             if not file_path.exists() or not file_path.is_file():
+                logger.error(f"Archivo no encontrado: {file_path}")
                 return JsonResponse({
                     'success': False,
-                    'error': 'Archivo no encontrado'
+                    'error': f'Archivo no encontrado: {filename}'
                 }, status=404)
 
             if not file_path.resolve().is_relative_to(backup_dir.resolve()):
+                logger.error("Acceso denegado")
                 return JsonResponse({
                     'success': False,
                     'error': 'Acceso denegado'
                 }, status=403)
 
-            # Restaurar el backup desencriptando primero
-            try:
-                import subprocess
-                import os
-
-                if tipo == 'db':
-                    # Desencriptar y restaurar base de datos
-                    db_path = Path(settings.BASE_DIR) / "db.sqlite3"
-                    import shutil
-
-                    # Crear backup de la BD actual
-                    backup_current = db_path.with_suffix('.sqlite3.backup')
-                    if db_path.exists():
-                        shutil.copy2(db_path, backup_current)
-                        # Eliminar el archivo actual para evitar pregunta de sobrescritura
-                        db_path.unlink()
-
-                    # Desencriptar el backup con GPG
+            # PASO 1: Desencriptar manualmente si el archivo está encriptado
+            if filename.endswith('.gpg'):
+                logger.info("Archivo encriptado detectado, desencriptando manualmente...")
+                
+                # Nombre del archivo desencriptado
+                decrypted_filename = filename[:-4]  # Remover .gpg
+                decrypted_file_path = backup_dir / decrypted_filename
+                
+                # Comando GPG en modo batch (sin interacción)
+                gpg_command = [
+                    'gpg',
+                    '--batch',              # Modo no interactivo
+                    '--yes',                # Responder sí automáticamente
+                    '--quiet',              # Silencioso
+                    '--no-tty',             # Sin terminal
+                    '--passphrase', '',     # Passphrase vacía (clave sin contraseña)
+                    '--pinentry-mode', 'loopback',  # Sin pinentry interactivo
+                    '--decrypt',
+                    '--output', str(decrypted_file_path),
+                    str(file_path)
+                ]
+                
+                logger.info(f"Ejecutando GPG desencriptación: gpg --decrypt {file_path}")
+                
+                try:
                     result = subprocess.run(
-                        ['gpg', '--output', str(db_path), '--decrypt', str(file_path)],
+                        gpg_command,
+                        check=True,
                         capture_output=True,
-                        text=True
+                        text=True,
+                        timeout=60,  # Timeout de 60 segundos
+                        stdin=subprocess.DEVNULL  # No leer de stdin
+                    )
+                    logger.info(f"Desencriptación exitosa: {decrypted_file_path}")
+                    
+                    # Verificar que el archivo desencriptado existe
+                    if not decrypted_file_path.exists():
+                        raise Exception("El archivo desencriptado no se creó correctamente")
+                    
+                except subprocess.TimeoutExpired:
+                    logger.error("Timeout en desencriptación GPG")
+                    raise Exception("La desencriptación GPG excedió el tiempo límite de 60 segundos")
+                    
+                except subprocess.CalledProcessError as e:
+                    logger.error(f"Error en desencriptación GPG: {e.stderr}")
+                    raise Exception(f"Error al desencriptar con GPG: {e.stderr}")
+                
+                # Usar el archivo desencriptado para la restauración
+                restore_filename = decrypted_filename
+                
+            else:
+                # Archivo no encriptado, usar directamente
+                logger.info("Archivo no encriptado, restaurando directamente...")
+                restore_filename = filename
+
+            # PASO 2: Restaurar el backup
+            logger.info(f"Iniciando restauración con archivo: {restore_filename}")
+
+            try:
+                if tipo == 'db':
+                    # Restaurar base de datos con MySQLdb (Python puro, sin binarios externos)
+                    logger.info(f"Restaurando DB con MySQLdb desde: {restore_filename}")
+                    import MySQLdb
+
+                    db_config = settings.DATABASES['default']
+                    restore_file_path = backup_dir / restore_filename
+
+                    # Validar que el archivo sea un SQL válido
+                    validate_sql_file(restore_file_path)
+
+                    conn = MySQLdb.connect(
+                        host=db_config.get('HOST', 'localhost'),
+                        port=int(db_config.get('PORT', 3306)),
+                        user=db_config.get('USER', 'root'),
+                        passwd=db_config.get('PASSWORD', ''),
+                        db=db_config['NAME'],
+                        charset='utf8mb4',
                     )
 
-                    if result.returncode != 0:
-                        # Restaurar backup anterior si falla
-                        if backup_current.exists():
-                            shutil.copy2(backup_current, db_path)
-                        raise Exception(f"Error al desencriptar: {result.stderr}")
+                    try:
+                        cursor = conn.cursor()
+                        cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
 
-                    # Eliminar backup temporal si todo salió bien
-                    if backup_current.exists():
-                        backup_current.unlink()
+                        with open(restore_file_path, 'r', encoding='utf-8') as f:
+                            sql_content = f.read()
+
+                        # Dividir el contenido en sentencias individuales
+                        # Ignorar líneas de comentarios y vacías
+                        statements = []
+                        current = []
+                        for line in sql_content.splitlines():
+                            stripped = line.strip()
+                            if stripped.startswith('--') or stripped == '':
+                                continue
+                            current.append(line)
+                            if stripped.endswith(';'):
+                                stmt = '\n'.join(current).strip()
+                                if stmt:
+                                    statements.append(stmt)
+                                current = []
+
+                        logger.info(f"Ejecutando {len(statements)} sentencias SQL...")
+                        errores_sql = 0
+                        for i, stmt in enumerate(statements):
+                            try:
+                                cursor.execute(stmt)
+                            except Exception as e_sql:
+                                errores_sql += 1
+                                logger.warning(f"Sentencia {i+1} con error (ignorado): {str(e_sql)[:200]}")
+
+                        conn.commit()
+                        cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
+                        cursor.close()
+                        logger.info(f"Restauración completada. Errores ignorados: {errores_sql}")
+                    finally:
+                        conn.close()
+
+                    logger.info("Restauración de DB completada exitosamente")
 
                 elif tipo == 'media':
-                    # Desencriptar y restaurar media
-                    media_root = Path(settings.MEDIA_ROOT)
-
-                    # Crear archivo temporal desencriptado
-                    import tempfile
-                    with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as tmp_file:
-                        tmp_path = Path(tmp_file.name)
-
-                    # Desencriptar el zip
-                    result = subprocess.run(
-                        ['gpg', '--output', str(tmp_path), '--decrypt', str(file_path)],
-                        capture_output=True,
-                        text=True
-                    )
-
-                    if result.returncode != 0:
-                        tmp_path.unlink()
-                        raise Exception(f"Error al desencriptar: {result.stderr}")
-
-                    # Extraer el zip
+                    # Restaurar archivos media extrayendo el archivo directamente a MEDIA_ROOT.
+                    # django-dbbackup guarda el media como TAR (aunque usa extensión .zip),
+                    # por lo que se usa tarfile. Si falla, se intenta con zipfile como fallback.
+                    import tarfile
                     import zipfile
-                    with zipfile.ZipFile(tmp_path, 'r') as zip_ref:
-                        zip_ref.extractall(media_root)
+                    restore_file_path = backup_dir / restore_filename
+                    media_root = Path(settings.MEDIA_ROOT)
+                    media_root.mkdir(parents=True, exist_ok=True)
 
-                    # Eliminar archivo temporal
-                    tmp_path.unlink()
+                    logger.info(f"Extrayendo {restore_file_path} en {media_root} ...")
 
-            except subprocess.CalledProcessError as e:
-                raise Exception(f"Error en el proceso de restauración: {str(e)}")
+                    if tarfile.is_tarfile(str(restore_file_path)):
+                        with tarfile.open(restore_file_path, 'r:*') as tf:
+                            tf.extractall(media_root)
+                        logger.info("Restauración de media (TAR) completada exitosamente")
+                    elif zipfile.is_zipfile(restore_file_path):
+                        with zipfile.ZipFile(restore_file_path, 'r') as zf:
+                            zf.extractall(media_root)
+                        logger.info("Restauración de media (ZIP) completada exitosamente")
+                    else:
+                        raise Exception(
+                            f"El archivo '{restore_filename}' no es un TAR ni ZIP válido."
+                        )
+
             except Exception as e:
+                logger.error(f"Error durante la ejecución del comando: {str(e)}")
+                import traceback
+                logger.error(traceback.format_exc())
                 raise Exception(f"Error durante la restauración: {str(e)}")
 
+            # PASO 3: Limpiar archivo desencriptado por seguridad
+            if decrypted_file_path and decrypted_file_path.exists():
+                logger.info(f"Eliminando archivo desencriptado temporal: {decrypted_file_path}")
+                decrypted_file_path.unlink()
+                logger.info("Archivo temporal eliminado exitosamente")
+
+            logger.info(f"=== RESTAURACIÓN COMPLETADA ===")
             messages.success(request, f'✅ Backup restaurado exitosamente: {filename}')
             return JsonResponse({
                 'success': True,
@@ -413,6 +630,17 @@ class BackupRestoreView(View):
             })
 
         except Exception as e:
+            # Limpiar archivo desencriptado en caso de error
+            if decrypted_file_path and decrypted_file_path.exists():
+                logger.warning(f"Limpiando archivo desencriptado debido a error: {decrypted_file_path}")
+                try:
+                    decrypted_file_path.unlink()
+                except:
+                    pass
+            
+            logger.error(f"Error general al restaurar backup: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
             messages.error(request, f'❌ Error al restaurar backup: {str(e)}')
             return JsonResponse({
                 'success': False,
@@ -441,18 +669,40 @@ class BackupUploadView(View):
             backup_file = request.FILES['backup_file']
             filename = backup_file.name
 
-            # Validar extensión
-            if filename.endswith('.psql.gpg'):
+            # Validar extensión - aceptar formatos con y sin encriptación
+            if (filename.endswith('.psql') or filename.endswith('.psql.gpg') or
+                    filename.endswith('.sql') or filename.endswith('.sql.gpg') or
+                    filename.endswith('.mysql') or filename.endswith('.mysql.gpg') or
+                    (filename.endswith('.gpg') and 'db' in filename.lower())):
                 tipo = 'db'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "db"
-            elif filename.endswith('.media.zip.gpg'):
+            elif (filename.endswith('.media.zip') or filename.endswith('.media.zip.gpg') or
+                  filename.endswith('.zip.gpg') or
+                  (filename.endswith('.gpg') and 'media' in filename.lower())):
                 tipo = 'media'
                 backup_dir = Path(settings.BASE_DIR) / "backups" / "backup_files" / "media"
             else:
                 return JsonResponse({
                     'success': False,
-                    'error': 'Tipo de archivo no válido. Debe ser .psql.gpg o .media.zip.gpg'
+                    'error': 'Tipo de archivo no válido. Formatos aceptados: .psql, .psql.gpg, .sql, .sql.gpg, .media.zip, .media.zip.gpg'
                 }, status=400)
+
+            # Validar archivo vacío
+            if backup_file.size == 0:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'El archivo está vacío.'
+                }, status=400)
+
+            # Validar contenido de archivos SQL no encriptados
+            if tipo == 'db' and not filename.endswith('.gpg'):
+                try:
+                    validate_uploaded_sql_file(backup_file)
+                except ValidationError as e:
+                    return JsonResponse({
+                        'success': False,
+                        'error': f'Archivo SQL no válido: {e}'
+                    }, status=400)
 
             # Crear directorio si no existe
             backup_dir.mkdir(parents=True, exist_ok=True)

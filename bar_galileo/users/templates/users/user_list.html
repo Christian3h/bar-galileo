@@ -1,21 +1,286 @@
 {% extends 'base_admin.html' %}
 {% load static %}
+{% load roles_tags %}
 
 {% block extra_css%}
   <link rel="stylesheet" href="{% static 'css/main/admin/tables.css' %}">
+  <style>
+    /* Ocultar columnas en dispositivos móviles, mostrar solo Nombre de Usuario y Acciones */
+    @media (max-width: 768px) {
+      #users-table .col-2,
+      #users-table .col-3 {
+        display: none;
+      }
+    }
+
+    /* ── Modal compartido ── */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        background-color: var(--color-surface-alt);
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 10px;
+        max-width: 500px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        position: relative;
+    }
+
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(166, 137, 50, 0.3);
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: var(--color-primary);
+        font-size: 1.25rem;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-footer {
+        padding: 15px 20px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        border-top: 1px solid rgba(166, 137, 50, 0.3);
+    }
+
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: var(--color-gray);
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        line-height: 1;
+    }
+
+    .close-modal:hover {
+        color: var(--color-secondary, #A68932);
+    }
+
+    .field-group {
+        margin-bottom: 15px;
+    }
+
+    .field-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--color-secondary);
+        font-weight: 500;
+    }
+
+    .field-group input,
+    .field-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--color-gray);
+        border-radius: 6px;
+        background-color: var(--color-surface);
+        color: var(--color-secondary);
+        font-size: 14px;
+    }
+
+    .field-group textarea {
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    /* ── Modal datos personales – ancho mayor para dos columnas ── */
+    #datosModal .modal-content {
+        max-width: 660px;
+    }
+
+    /* Secciones del modal de datos */
+    .datos-section {
+        margin-bottom: 18px;
+    }
+
+    .datos-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--color-primary);
+        border-bottom: 1px solid var(--color-border-muted);
+        padding-bottom: 6px;
+        margin-bottom: 12px;
+    }
+
+    .datos-section-title svg {
+        flex-shrink: 0;
+        fill: var(--color-primary);
+    }
+
+    /* Grid de campos informativos */
+    .datos-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 16px;
+    }
+
+    .datos-grid.single-col {
+        grid-template-columns: 1fr;
+    }
+
+    .datos-field {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .datos-field label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-gray);
+        margin: 0;
+    }
+
+    .datos-field .datos-value {
+        font-size: 0.92rem;
+        color: var(--color-secondary);
+        background: var(--color-surface);
+        border: 1px solid var(--color-border-muted);
+        border-radius: 5px;
+        padding: 6px 10px;
+        min-height: 32px;
+        word-break: break-word;
+    }
+
+    .datos-value.empty-value {
+        color: var(--color-gray);
+        font-style: italic;
+        opacity: 0.7;
+    }
+
+    /* Badge tipo de sangre */
+    .sangre-badge {
+        display: inline-block;
+        background: var(--color-danger, #c5533f);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.82rem;
+        border-radius: 4px;
+        padding: 2px 10px;
+        letter-spacing: 0.04em;
+    }
+
+    /* Sin datos registrados */
+    .no-data-msg {
+        text-align: center;
+        padding: 12px;
+        color: var(--color-gray);
+        font-style: italic;
+        font-size: 0.88rem;
+        background: var(--color-surface);
+        border-radius: 6px;
+        border: 1px dashed var(--color-border-muted);
+    }
+
+    /* Botón icono (mobile) para datos personales */
+    .btn-datos-icon {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 2px solid var(--color-primary);
+        border-radius: 5px;
+        background: transparent;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        flex-shrink: 0;
+    }
+
+    .btn-datos-icon svg {
+        width: 17px;
+        height: 17px;
+        fill: var(--color-primary);
+        transition: fill 0.2s;
+        pointer-events: none;
+    }
+
+    .btn-datos-icon:hover {
+        background: var(--color-primary);
+    }
+
+    .btn-datos-icon:hover svg {
+        fill: #fff;
+    }
+
+    /* Botón texto (desktop) para datos personales */
+    .btn-datos-text {
+        display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+        .btn-datos-icon { display: flex; }
+        .btn-datos-text { display: none; }
+
+        /* celda de acciones: flex para alinear botones */
+        .actions-cell {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #datosModal .modal-content {
+            margin: 10% auto;
+            width: 96%;
+        }
+
+        .datos-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+  </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h2 class="my-4">Usuarios</h2>
+    <h2 class="my-4">Gestión de Usuarios</h2>
+    
+    <div style="margin-bottom: 20px;">
+        {% if request.user|has_perm:"users,ver" %}
+            <a href="{% url 'users:historial_password' %}" class="btn btn-secondary">
+                Ver Historial de Cambios de Contraseña
+            </a>
+        {% endif %}
+    </div>
+    
     <div class="table-contenedor">
         <div class="table-responsive">
             <table id="users-table" class="table table-striped">
                 <thead>
                     <tr>
-                        <th class="col-1">Username</th>
-                        <th class="col-2">Email</th>
-                        <th>Rol</th>
+                        <th class="col-1">Nombre de Usuario</th>
+                        <th class="col-2">Correo Electrónico</th>
+                        {% if request.user|has_perm:"users,editar" %}<th class="col-3">Rol</th>{% endif %}
+                        <th class="col-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,10 +288,11 @@
                     <tr>
                         <td class="col-1">{{ user.username }}</td>
                         <td class="col-2">{{ user.email }}</td>
-                        <td class="actions-cell">
-                            <form method="post" style="margin:0;">
+                        {% if request.user|has_perm:"users,editar" %}
+                        <td class="col-3">
+                            <form method="post" action="{% url 'users:user_list' %}" style="margin:0; display: inline-block;">
                                 {% csrf_token %}
-                                <select name="rol_id">
+                                <select name="rol_id" style="padding: 5px; border-radius: 4px;">
                                     {% for rol in roles %}
                                         <option value="{{ rol.id }}"
                                             {% if user.userprofile and user.userprofile.rol and user.userprofile.rol.id == rol.id %}
@@ -39,13 +305,44 @@
                                     {% endfor %}
                                 </select>
                                 <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit" class="btn btn-sm btn-primary">Cambiar rol</button>
+                                <input type="hidden" name="action" value="change_role">
+                                <button type="submit" class="btn btn-sm btn-primary">Cambiar</button>
                             </form>
+                        </td>
+                        {% endif %}
+                        <td class="col-4 actions-cell">
+                            {% if request.user|has_perm:"users,editar" %}
+                                <button type="button"
+                                        class="btn btn-sm btn-warning"
+                                        onclick="openPasswordModal('{{ user.id }}', '{{ user.username }}')"
+                                        title="Cambiar contraseña">
+                                    Cambiar Contraseña
+                                </button>
+                            {% endif %}
+                            {% if request.user|has_perm:"users,ver" %}
+                                <!-- Botón texto (desktop) -->
+                                <button type="button"
+                                        class="btn btn-sm btn-secondary btn-datos-text"
+                                        onclick="openDatosModal('{{ user.id }}', '{{ user.username }}')"
+                                        title="Ver datos personales y de emergencia">
+                                    Datos Personales
+                                </button>
+                                <!-- Botón ícono (mobile) -->
+                                <button type="button"
+                                        class="btn-datos-icon"
+                                        onclick="openDatosModal('{{ user.id }}', '{{ user.username }}')"
+                                        title="Ver datos personales y de emergencia">
+                                    <!-- ícono person_search / contact info -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+                                        <path d="M440-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm0-80q33 0 56.5-23.5T520-640q0-33-23.5-56.5T440-720q-33 0-56.5 23.5T360-640q0 33 23.5 56.5T440-560ZM884-20 756-148q-21 12-45 20t-51 8q-75 0-127.5-52.5T480-300q0-75 52.5-127.5T660-480q75 0 127.5 52.5T840-300q0 27-8 51t-20 45L940-76l-56 56ZM660-200q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29ZM120-240v-28q0-34 17.5-62.5T184-375q31-15 65.5-25t71.5-16q-9 20-14.5 41.5T300-332q-27 6-50.5 14T208-300q-8 4-8 12v28h92q5 21 13 40.5T327-180H120v-60Zm320-240Z"/>
+                                    </svg>
+                                </button>
+                            {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="text-center text-muted">No hay usuarios registrados.</td>
+                        <td colspan="4" class="text-center text-muted">No hay usuarios registrados.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -53,7 +350,189 @@
         </div>
     </div>
 </div>
+
+<!-- ════════════════════════════════════════════
+     Modal – Datos Personales y de Emergencia
+════════════════════════════════════════════ -->
+<div id="datosModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="datosModalTitle">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeDatosModal()" aria-label="Cerrar">&times;</span>
+
+        <div class="modal-header">
+            <h3 id="datosModalTitle">
+                Datos de <span id="datosModalUsername"></span>
+            </h3>
+        </div>
+
+        <div class="modal-body">
+
+            <!-- ── Información de Contacto ── -->
+            <div class="datos-section">
+                <div class="datos-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16">
+                        <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 128.5-46.5T480-440q69 0 135.5 15.5T744-378q29 15 46.5 43.5T808-272v112H160Z"/>
+                    </svg>
+                    Información de Contacto
+                </div>
+                <div id="datosContactoContent"></div>
+            </div>
+
+            <!-- ── Contacto de Emergencia ── -->
+            <div class="datos-section">
+                <div class="datos-section-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16">
+                        <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-40-120v-80h80v80h-80Zm0-160v-240h80v240h-80Z"/>
+                    </svg>
+                    Contacto de Emergencia
+                </div>
+                <div id="datosEmergenciaContent"></div>
+            </div>
+
+        </div><!-- /.modal-body -->
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDatosModal()">Cerrar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cambiar contraseña -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closePasswordModal()">&times;</span>
+        <div class="modal-header">
+            <h3>Cambiar Contraseña de Usuario</h3>
+        </div>
+        <div class="modal-body">
+            <p style="color: var(--color-gray); margin-bottom: 20px;">Usuario: <strong id="modalUsername"></strong></p>
+            
+            <form id="changePasswordForm" method="post" action="{% url 'users:cambiar_password' %}">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" id="modalUserId">
+                
+                <div class="field-group">
+                    <label for="new_password">Nueva Contraseña *</label>
+                    <input type="password" 
+                           id="new_password" 
+                           name="new_password" 
+                           required 
+                           minlength="8"
+                           placeholder="Mínimo 8 caracteres">
+                    <div id="passwordStrength" style="margin-top: 8px; font-size: 12px;"></div>
+                </div>
+                
+                <div class="field-group">
+                    <label for="confirm_password">Confirmar Contraseña *</label>
+                    <input type="password" 
+                           id="confirm_password" 
+                           name="confirm_password" 
+                           required 
+                           minlength="8"
+                           placeholder="Repetir contraseña">
+                    <span id="passwordMatch" style="font-size: 12px;"></span>
+                </div>
+                
+                <div class="field-group">
+                    <label for="motivo">Motivo del Cambio (Opcional)</label>
+                    <textarea id="motivo" 
+                              name="motivo" 
+                              placeholder="Ej: Usuario olvidó su contraseña, reseteo solicitado, etc."
+                              style="min-height: 80px; resize: vertical;"></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitPassword" disabled>Cambiar Contraseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
+// ── Datos de perfiles desde Django ──────────────────────────────────────
+const PERFILES_DATA = {{ perfiles_json|escapejs }};
+
+function val(v) {
+    return (v && v.trim()) ? v.trim() : null;
+}
+
+function fieldHtml(labelText, value, fullWidth) {
+    const display = val(value)
+        ? `<div class="datos-value">${val(value)}</div>`
+        : `<div class="datos-value empty-value">Sin registrar</div>`;
+    const colClass = fullWidth ? 'datos-field' : 'datos-field';
+    return `<div class="${colClass}"><label>${labelText}</label>${display}</div>`;
+}
+
+function openDatosModal(userId, username) {
+    const modal = document.getElementById('datosModal');
+    document.getElementById('datosModalUsername').textContent = username;
+
+    const perfil = PERFILES_DATA[userId] || {};
+
+    // ── Bloque contacto ──────────────────────────────────────────────────
+    const tieneContacto = val(perfil.nombre) || val(perfil.cedula) ||
+                          val(perfil.telefono) || val(perfil.email) || val(perfil.direccion);
+
+    let contactoHtml = '';
+    if (tieneContacto) {
+        contactoHtml = `
+            <div class="datos-grid">
+                ${fieldHtml('Nombre completo', perfil.nombre)}
+                ${fieldHtml('Cédula', perfil.cedula)}
+                ${fieldHtml('Teléfono', perfil.telefono)}
+                ${fieldHtml('Correo electrónico', perfil.email)}
+            </div>
+            <div class="datos-grid single-col" style="margin-top:10px;">
+                ${fieldHtml('Dirección', perfil.direccion)}
+            </div>`;
+    } else {
+        contactoHtml = `<div class="no-data-msg">Este usuario no ha registrado información de contacto.</div>`;
+    }
+    document.getElementById('datosContactoContent').innerHTML = contactoHtml;
+
+    // ── Bloque emergencia ────────────────────────────────────────────────
+    const tieneEmergencia = val(perfil.emergencia_nombre) || val(perfil.emergencia_telefono);
+
+    let emergenciaHtml = '';
+    if (tieneEmergencia) {
+        const sangreHtml = val(perfil.emergencia_sangre)
+            ? `<span class="sangre-badge">${val(perfil.emergencia_sangre)}</span>`
+            : `<span class="datos-value empty-value" style="display:inline-block;padding:4px 8px;">Sin registrar</span>`;
+
+        emergenciaHtml = `
+            <div class="datos-grid">
+                ${fieldHtml('Nombre', perfil.emergencia_nombre)}
+                ${fieldHtml('Relación', perfil.emergencia_relacion)}
+                ${fieldHtml('Teléfono', perfil.emergencia_telefono)}
+                ${fieldHtml('Teléfono alternativo', perfil.emergencia_telefono_alt)}
+            </div>
+            <div class="datos-grid" style="margin-top:10px;">
+                <div class="datos-field">
+                    <label>Tipo de Sangre</label>
+                    <div style="padding:4px 0;">${sangreHtml}</div>
+                </div>
+                ${fieldHtml('Alergias', perfil.emergencia_alergias)}
+            </div>`;
+    } else {
+        emergenciaHtml = `<div class="no-data-msg">Este usuario no ha registrado contacto de emergencia.</div>`;
+    }
+    document.getElementById('datosEmergenciaContent').innerHTML = emergenciaHtml;
+
+    modal.style.display = 'block';
+}
+
+function closeDatosModal() {
+    document.getElementById('datosModal').style.display = 'none';
+}
+
+// Cerrar modal de datos al hacer clic fuera
+window.addEventListener('click', function(event) {
+    const datosModal = document.getElementById('datosModal');
+    if (event.target === datosModal) closeDatosModal();
+});
+
 $(document).ready(function() {
     var sel = '#users-table';
     if (!$(sel).length) return;
@@ -61,14 +540,114 @@ $(document).ready(function() {
         $(sel).DataTable().destroy();
     }
     $(sel).DataTable({
+        width: '100%',
+        autoWidth: false,
         columnDefs: [
             { targets: '_all', defaultContent: '' },
-            { targets: -1, orderable: false }
+            { targets: [0, 1], searchable: true },   // Nombre y Correo: buscables
+            { targets: '_all', searchable: false },   // Todo lo demás: no buscable
+            { targets: -1, orderable: false }         // Acciones: no ordenable
         ],
         language: {
             url: "{% static 'js/DataTables/es-ES.json' %}"
         },
-        responsive: true
+        responsive: { details: { type: 'inline' } }
+    });
+});
+
+function openPasswordModal(userId, username) {
+    document.getElementById('passwordModal').style.display = 'block';
+    document.getElementById('modalUserId').value = userId;
+    document.getElementById('modalUsername').textContent = username;
+    document.getElementById('changePasswordForm').reset();
+    document.getElementById('passwordStrength').textContent = '';
+    document.getElementById('passwordMatch').textContent = '';
+    document.getElementById('btnSubmitPassword').disabled = true;
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+}
+
+// Cerrar modal de contraseña al hacer clic fuera
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('passwordModal');
+    if (event.target === modal) closePasswordModal();
+});
+
+// Validación de fortaleza de contraseña
+document.getElementById('new_password').addEventListener('input', function() {
+    const password = this.value;
+    const strengthDiv = document.getElementById('passwordStrength');
+    
+    if (password.length === 0) {
+        strengthDiv.textContent = '';
+        return;
+    }
+    
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.length >= 12) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^a-zA-Z\d]/.test(password)) strength++;
+    
+    if (strength <= 2) {
+        strengthDiv.style.color = '#dc3545';
+        strengthDiv.textContent = 'Contraseña débil';
+    } else if (strength <= 3) {
+        strengthDiv.style.color = '#ffc107';
+        strengthDiv.textContent = 'Contraseña media';
+    } else {
+        strengthDiv.style.color = '#28a745';
+        strengthDiv.textContent = 'Contraseña fuerte';
+    }
+    
+    checkPasswordMatch();
+});
+
+// Validación de coincidencia de contraseñas
+document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+
+function checkPasswordMatch() {
+    const password = document.getElementById('new_password').value;
+    const confirmPassword = document.getElementById('confirm_password').value;
+    const matchSpan = document.getElementById('passwordMatch');
+    const submitBtn = document.getElementById('btnSubmitPassword');
+    
+    if (confirmPassword.length === 0) {
+        matchSpan.textContent = '';
+        submitBtn.disabled = true;
+        return;
+    }
+    
+    if (password === confirmPassword && password.length >= 8) {
+        matchSpan.style.color = '#28a745';
+        matchSpan.textContent = 'Las contraseñas coinciden';
+        submitBtn.disabled = false;
+    } else {
+        matchSpan.style.color = '#dc3545';
+        matchSpan.textContent = 'Las contraseñas no coinciden';
+        submitBtn.disabled = true;
+    }
+}
+
+// Confirmación antes de enviar
+document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const form = this;
+    const username = document.getElementById('modalUsername').textContent;
+    
+    AppFeedback.confirm({
+        title: 'Cambiar Contraseña',
+        message: '¿Estás seguro de que deseas cambiar la contraseña del usuario "' + username + '"?\n\nEsta acción será registrada en el sistema de auditoría.',
+        confirmLabel: 'Cambiar',
+        cancelLabel: 'Cancelar'
+    }).then(function(accepted) {
+        if (accepted) {
+            form.submit();
+        }
     });
 });
 </script>
