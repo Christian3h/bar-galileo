@@ -1,9 +1,12 @@
+# Admin del módulo de reportes: listado, filtros, búsqueda y fieldsets agrupados.
+
 from django.contrib import admin
 from .models import Reporte
 
 
 @admin.register(Reporte)
 class ReporteAdmin(admin.ModelAdmin):
+    # Registra Reporte en el admin. datos_json solo lectura y colapsado para no saturar la UI.
     list_display = ('nombre', 'tipo', 'periodo', 'formato', 'creado_por', 'fecha_creacion', 'generado', 'ultima_generacion')
     list_filter = ('tipo', 'periodo', 'formato', 'generado', 'fecha_creacion')
     search_fields = ('nombre', 'descripcion', 'creado_por__username')

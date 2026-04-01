@@ -1,8 +1,22 @@
 {% extends 'base_admin.html' %}
-{% block content %}
 {% load static %}
 {% load roles_tags %}
 
+{% block extra_css %}
+<style>
+.table .actions-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+.table .actions-cell .btn-group {
+    display: inline-flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
 <h1>Lista de marcas</h1>
 {% if request.user|has_perm:"brands,crear" %}
     <a href="{% url 'products:brands_create_admin' %}" class="btn btn-success mb-3">Crear Marca</a>

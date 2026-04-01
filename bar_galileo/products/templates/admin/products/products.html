@@ -387,13 +387,33 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .top-controls > div,
-            .bottom-controls {
+            .top-controls {
                 flex-direction: column;
-                align-items: flex-start;
+                align-items: stretch;
             }
 
-            .dt-buttons,
+            .top-controls > div:not(.dt-search-builder):not([class*="dtsb"]) {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .dt-buttons {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                width: 100%;
+                gap: 0.5rem;
+            }
+
+            .dt-buttons .dt-button,
+            .dt-button,
+            button.dt-button {
+                flex: 1 1 auto !important;
+                min-width: 100px !important;
+                max-width: 100% !important;
+                font-size: 0.8rem !important;
+                padding: 0.4rem 0.5rem !important;
+            }
+
             .dt-search {
                 width: 100%;
             }
@@ -404,40 +424,54 @@
 
             .dt-paging {
                 width: 100%;
-                flex-wrap: wrap;
+                justify-content: center;
             }
 
-            /* Ocultar columnas en móvil excepto Imagen, Nombre y Acciones */
-            .col-precio-compra,
-            .col-precio-venta,
-            .col-stock,
-            .col-descripcion,
-            .col-categoria,
-            .col-proveedor,
-            .col-marca {
-                display: none !important;
+            .bottom-controls {
+                flex-direction: column;
+                align-items: center;
             }
 
-            /* Ajustar ancho de columnas visibles en móvil */
-            .col-imagen {
-                width: 15% !important;
+            .dt-info {
+                text-align: center;
             }
 
-            .col-nombre {
-                width: 50% !important;
+            /* NO ocultar columnas con display:none - DataTables Responsive lo maneja */
+            /* Permitir scroll horizontal en la tabla */
+            #tabla-productos_wrapper {
+                overflow-x: auto;
             }
 
-            .col-acciones {
-                width: 35% !important;
+            #tabla-productos {
+                width: 100% !important;
+                min-width: 600px; /* Forzar scroll en móvil */
+            }
+
+            /* Columna de control de responsive (child rows) */
+            table.dataTable > tbody > tr.child span.dtr-title {
+                font-weight: 600;
+                min-width: 80px;
+            }
+
+            table.dataTable > tbody > tr.child span.dtr-data {
+                word-break: break-word;
+            }
+
+            /* Botones de acciones más pequeños */
+            .col-acciones .btn-group .btn {
+                padding: 0.25rem 0.4rem !important;
+            }
+
+            .col-acciones .btn-group .btn img {
+                width: 14px !important;
+                height: 14px !important;
             }
 
             /* Ajustar tamaño de imagen en móvil */
             .col-imagen img,
             .col-imagen div {
-                max-width: 50px !important;
-                max-height: 50px !important;
-                width: 50px !important;
-                height: 50px !important;
+                max-width: 40px !important;
+                max-height: 40px !important;
             }
 
             /* Ajustar botones de acción en móvil */
@@ -447,50 +481,70 @@
             }
 
             .col-acciones .btn {
-                padding: 0.4rem !important;
-            }
-
-            /* Asegurar que la tabla use todo el ancho disponible */
-            #tabla-productos {
-                width: 100% !important;
-            }
-
-            /* DataTables Responsive gestiona el comportamiento - no forzar scroll horizontal */
-            .table-responsive {
-                overflow-x: visible;
-            }
-
-            /* Ajustar texto en columna de nombre para que no se desborde */
-            .col-nombre {
-                word-wrap: break-word;
-                word-break: break-word;
-                white-space: normal !important;
-            }
-        }
-
-        /* Media query adicional para pantallas muy pequeñas */
-        @media (max-width: 480px) {
-            .col-imagen {
-                width: 20% !important;
-            }
-
-            .col-nombre {
-                width: 45% !important;
-                font-size: 0.85rem;
-            }
-
-            .col-acciones {
-                width: 35% !important;
-            }
-
-            .col-acciones .btn {
-                padding: 0.3rem !important;
+                padding: 0.3rem 0.4rem !important;
             }
 
             .col-acciones .btn img {
                 width: 14px !important;
                 height: 14px !important;
             }
+
+            /* Ajustar texto en columna de nombre */
+            .col-nombre {
+                word-wrap: break-word;
+                word-break: break-word;
+                white-space: normal !important;
+                min-width: 120px;
+            }
+        }
+
+        /* Media query adicional para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            .dt-buttons .dt-button,
+            .dt-button,
+            button.dt-button {
+                min-width: 80px !important;
+                font-size: 0.75rem !important;
+                padding: 0.3rem 0.4rem !important;
+            }
+
+            .col-imagen img,
+            .col-imagen div {
+                max-width: 35px !important;
+                max-height: 35px !important;
+            }
+        }
+
+        /* Estilos para child rows de DataTables Responsive */
+        table.dataTable.dtr-column > tbody > tr > td.control,
+        table.dataTable.dtr-column > tbody > tr > th.control {
+            width: 40px;
+        }
+
+        table.dataTable > tbody > tr.child {
+            background-color: #f8f9fa;
+        }
+
+        table.dataTable > tbody > tr.child ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0.5rem;
+        }
+
+        table.dataTable > tbody > tr.child li {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.25rem 0;
+        }
+
+        table.dataTable > tbody > tr.child li span.dtr-title {
+            color: var(--color-secondary);
+            font-weight: 600;
+        }
+
+        table.dataTable > tbody > tr.child li span.dtr-data {
+            color: #333;
         }
 
 
@@ -653,8 +707,8 @@
             // Aplicar DataTables simple a la tabla estática
             const staticTable = staticContainer.find('table');
             if (staticTable.length) {
-                staticTable.DataTable({
-                    responsive: { details: { type: 'inline' } },
+            staticTable.DataTable({
+                    responsive: true,
                     autoWidth: false,
                     language: {
                         url: "{% static 'js/DataTables/es-ES.json' %}"
@@ -698,7 +752,7 @@
             const table = $(sel).DataTable({
                 processing: true,
                 serverSide: false,
-                responsive: { details: { type: 'inline' } },
+                responsive: true,
                 autoWidth: false,
                 // Configurar SearchBuilder con tooltips y diseño mejorado
                 searchBuilder: {
@@ -749,7 +803,7 @@
                     { targets: [6], className: 'col-categoria', responsivePriority: 6 },                 // Categoría
                     { targets: [7], className: 'col-proveedor', responsivePriority: 7 },                 // Proveedor
                     { targets: [8], className: 'col-marca', responsivePriority: 10 },                    // Marca — ocultar primero
-                    { targets: [9], orderable: false, className: 'col-acciones', responsivePriority: 2 } // Acciones — siempre visible
+                    { targets: [9], orderable: false, className: 'col-acciones' }                        // Acciones
                 ],
                 ajax: {
                     url: "{% url 'products:productos_json' %}",

@@ -66,6 +66,43 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Modo claro: mismas sensaciones visuales de las cards del dashboard */
+html:not([data-theme='dark']) .stats-container {
+  gap: 1.1rem;
+}
+
+html:not([data-theme='dark']) .stat-card {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(165deg, #fffefd 0%, #f8f4e8 100%);
+  border: 1px solid rgba(212, 203, 186, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 12px 26px rgba(23, 42, 60, 0.08);
+  padding: 1.25rem;
+  text-align: left;
+  min-height: 154px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+html:not([data-theme='dark']) .stat-card::after {
+  content: "";
+  position: absolute;
+  top: -34px;
+  right: -28px;
+  width: 110px;
+  height: 110px;
+  background: radial-gradient(circle, rgba(44, 122, 99, 0.16) 0%, rgba(44, 122, 99, 0) 74%);
+}
+
+html:not([data-theme='dark']) .stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(44, 122, 99, 0.35);
+  box-shadow: 0 22px 38px rgba(23, 42, 60, 0.12);
+}
+
 .stat-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 30px rgba(166, 137, 50, 0.3);
@@ -78,12 +115,33 @@
   font-weight: 700;
 }
 
+html:not([data-theme='dark']) .stat-card h3 {
+  margin: 0 0 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+  color: #6e7788;
+  font-weight: 650;
+}
+
 .stat-card p {
   margin: 0;
-  color: var(--color-text, #fff);
+  color: #111;
   font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 1px;
+}
+
+/* Contraste por tema para el bloque de estadísticas */
+html:not([data-theme='dark']) .stat-card p {
+  color: #1f2430 !important;
+  font-size: clamp(1.25rem, 1.05rem + 0.75vw, 1.65rem);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+[data-theme='dark'] .stat-card p {
+  color: #f4f4f4;
 }
 
 /* Sección de filtros mejorada */

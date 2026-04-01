@@ -87,18 +87,29 @@
 <script src="{% static 'js/echarts.min.js' %}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const colors = ['#62733d', '#a68932', '#bf452a', '#262626', '#0d0d0d'];
+    const colors = ['#2d7f67', '#b79244', '#2b67b8', '#ce5a47', '#2f3b4a'];
+    const axisLineColor = '#d6cfbf';
+    const axisLabelColor = '#5e6673';
+    const splitLineColor = '#ece4d5';
     const tooltipStyle = {
-      borderColor: 'transparent',
-      textStyle: { color: '#a68932' }
+      backgroundColor: 'rgba(255, 253, 248, 0.96)',
+      borderColor: '#d8cebc',
+      borderWidth: 1,
+      textStyle: { color: '#2c2f36' }
+    };
+
+    const axisCommon = {
+      axisLine: { lineStyle: { color: axisLineColor } },
+      axisTick: { lineStyle: { color: axisLineColor } },
+      axisLabel: { color: axisLabelColor }
     };
 
     // Gráfico de estado de mesas
-    var mesasChart = echarts.init(document.getElementById('mesas-chart'), 'dark');
+    var mesasChart = echarts.init(document.getElementById('mesas-chart'));
     var mesasOption = {
       color: colors,
       tooltip: { ...tooltipStyle, trigger: 'item' },
-      legend: { top: '5%', left: 'center' },
+      legend: { top: '5%', left: 'center', textStyle: { color: axisLabelColor } },
       series: [{
         name: 'Estado de Mesas',
         type: 'pie',
@@ -114,40 +125,43 @@
     mesasChart.setOption(mesasOption);
 
     // Gráfico de top 5 productos
-    var topProductosChart = echarts.init(document.getElementById('top-productos-chart'), 'dark');
+    var topProductosChart = echarts.init(document.getElementById('top-productos-chart'));
     var topProductosOption = {
       color: colors,
       tooltip: { ...tooltipStyle, trigger: 'axis' },
-      xAxis: { type: 'category', data: [{% for item in top_5_productos_mas_vendidos %}'{{ item.producto__nombre }}',{% endfor %}] },
-      yAxis: { type: 'value' },
-      series: [{ data: [{% for item in top_5_productos_mas_vendidos %}{{ item.total_vendido }},{% endfor %}], type: 'bar' }]
+      grid: { left: '4%', right: '4%', bottom: '12%', top: '15%', containLabel: true },
+      xAxis: { ...axisCommon, type: 'category', data: [{% for item in top_5_productos_mas_vendidos %}'{{ item.producto__nombre }}',{% endfor %}] },
+      yAxis: { ...axisCommon, type: 'value', splitLine: { lineStyle: { color: splitLineColor } } },
+      series: [{ data: [{% for item in top_5_productos_mas_vendidos %}{{ item.total_vendido }},{% endfor %}], type: 'bar', barMaxWidth: 44 }]
     };
     topProductosChart.setOption(topProductosOption);
 
     // Gráfico de ventas del periodo
-    var ventasMesChart = echarts.init(document.getElementById('ventas-mes-chart'), 'dark');
+    var ventasMesChart = echarts.init(document.getElementById('ventas-mes-chart'));
     var ventasMesOption = {
       color: colors,
       tooltip: { ...tooltipStyle, trigger: 'axis' },
-      xAxis: { type: 'category', data: [{% for venta in ventas_periodo %}'{{ venta.dia|date:"d/m" }}',{% endfor %}] },
-      yAxis: { type: 'value' },
-      series: [{ data: [{% for venta in ventas_periodo %}{{ venta.total_dia }},{% endfor %}], type: 'line', smooth: true }]
+      grid: { left: '4%', right: '4%', bottom: '12%', top: '15%', containLabel: true },
+      xAxis: { ...axisCommon, type: 'category', data: [{% for venta in ventas_periodo %}'{{ venta.dia|date:"d/m" }}',{% endfor %}] },
+      yAxis: { ...axisCommon, type: 'value', splitLine: { lineStyle: { color: splitLineColor } } },
+      series: [{ data: [{% for venta in ventas_periodo %}{{ venta.total_dia }},{% endfor %}], type: 'line', smooth: true, lineStyle: { width: 3 }, areaStyle: { opacity: 0.12 } }]
     };
     ventasMesChart.setOption(ventasMesOption);
 
     // Gráfico de productos con más stock
-    var masStockChart = echarts.init(document.getElementById('mas-stock-chart'), 'dark');
+    var masStockChart = echarts.init(document.getElementById('mas-stock-chart'));
     var masStockOption = {
       color: colors,
       tooltip: { ...tooltipStyle, trigger: 'axis' },
-      xAxis: { type: 'category', data: [{% for producto in productos_mas_stock %}'{{ producto.nombre }}',{% endfor %}] },
-      yAxis: { type: 'value' },
-      series: [{ data: [{% for producto in productos_mas_stock %}{{ producto.stock }},{% endfor %}], type: 'bar' }]
+      grid: { left: '4%', right: '4%', bottom: '12%', top: '15%', containLabel: true },
+      xAxis: { ...axisCommon, type: 'category', data: [{% for producto in productos_mas_stock %}'{{ producto.nombre }}',{% endfor %}] },
+      yAxis: { ...axisCommon, type: 'value', splitLine: { lineStyle: { color: splitLineColor } } },
+      series: [{ data: [{% for producto in productos_mas_stock %}{{ producto.stock }},{% endfor %}], type: 'bar', barMaxWidth: 44 }]
     };
     masStockChart.setOption(masStockOption);
 
     // Gráfico de top pagos a empleados
-    var topPagosChart = echarts.init(document.getElementById('top-pagos-chart'), 'dark');
+    var topPagosChart = echarts.init(document.getElementById('top-pagos-chart'));
     var topPagosOption = {
       color: colors,
       tooltip: {
@@ -157,16 +171,19 @@
           return params[0].name + '<br/>' + params[0].marker + ' ' + params[0].value.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
         }
       },
+      grid: { left: '4%', right: '4%', bottom: '16%', top: '15%', containLabel: true },
       xAxis: {
+        ...axisCommon,
         type: 'category',
         data: [{% for pago in top_pagos_empleados %}'{{ pago.empleado__nombre }}',{% endfor %}],
-        axisLabel: { interval: 0, rotate: 30 }
+        axisLabel: { color: axisLabelColor, interval: 0, rotate: 30 }
       },
-      yAxis: { type: 'value' },
+      yAxis: { ...axisCommon, type: 'value', splitLine: { lineStyle: { color: splitLineColor } } },
       series: [{
         data: [{% for pago in top_pagos_empleados %}{{ pago.total_pagado }},{% endfor %}],
         type: 'bar',
-        itemStyle: { color: '#a68932' }
+        barMaxWidth: 44,
+        itemStyle: { color: '#b4862f' }
       }]
     };
     topPagosChart.setOption(topPagosOption);

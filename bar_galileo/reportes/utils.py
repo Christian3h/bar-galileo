@@ -1,3 +1,7 @@
+# Utilidades del módulo de reportes: exportación (CSV/Excel/PDF) y obtención de datos por tipo.
+# Todas las funciones obtener_datos_* devuelven: {'resumen': {}, 'detalles': [], 'totales': {}}
+# openpyxl requerido para Excel; reportlab requerido para PDF.
+
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.conf import settings
@@ -30,7 +34,8 @@ except ImportError:
 
 
 def generar_csv_reporte(reporte, datos):
-    """Generar reporte en formato CSV con datos detallados"""
+    # Genera HttpResponse con el CSV del reporte. Incluye BOM UTF-8 para compatibilidad con Excel.
+    # Secciones: encabezado del reporte, resumen, detalles (tabla) y totales.
     response = HttpResponse(content_type='text/csv; charset=utf-8')
     filename = f"reporte_{reporte.tipo}_{reporte.fecha_inicio}_{reporte.fecha_fin}.csv"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
@@ -82,7 +87,8 @@ def generar_csv_reporte(reporte, datos):
 
 
 def generar_excel_reporte(reporte, datos):
-    """Generar reporte en formato Excel (XLSX) con formato profesional"""
+    # Genera HttpResponse XLSX con openpyxl. Lanza ImportError si no está instalado.
+    # Hoja única con título dorado, info del reporte, resumen, tabla de detalles y totales.
     if not OPENPYXL_AVAILABLE:
         raise ImportError("openpyxl no está disponible para exportar a Excel")
     
@@ -226,7 +232,8 @@ def generar_excel_reporte(reporte, datos):
 
 
 def generar_pdf_reporte(reporte, datos):
-    """Generar reporte en formato PDF con diseño profesional"""
+    # Genera HttpResponse PDF con reportlab/Platypus. Lanza ImportError si no está instalado.
+    # Diseño A4 con título, info, resumen, tabla de detalles, totales y pie de página.
     if not REPORTLAB_AVAILABLE:
         raise ImportError("reportlab no está disponible para exportar a PDF")
     
@@ -408,10 +415,8 @@ def generar_pdf_reporte(reporte, datos):
 
 
 def obtener_datos_reporte_detallado(reporte):
-    """
-    Obtiene datos completos y detallados del reporte según su tipo
-    Retorna un diccionario con 'resumen', 'detalles' y 'totales'
-    """
+    # Dispatcher: llama a la función de datos correcta según reporte.tipo.
+    # En caso de error lo captura y lo mete en resumen['Error'] para no romper la UI.
     datos = {
         'resumen': {},
         'detalles': [],
@@ -440,7 +445,8 @@ def obtener_datos_reporte_detallado(reporte):
 
 
 def obtener_datos_ventas(reporte):
-    """Obtiene datos detallados de ventas"""
+    # Facturas del periodo: total vendido, cantidad y promedio por factura.
+    # Detalle: una fila por factura con mesa, nº items y total.
     from tables.models import Factura, Pedido, PedidoItem
     
     facturas = Factura.objects.filter(
@@ -487,7 +493,8 @@ def obtener_datos_ventas(reporte):
 
 
 def obtener_datos_gastos(reporte):
-    """Obtiene datos detallados de gastos"""
+    # Gastos del periodo agrupados por categoría. Top 5 categorías en el resumen.
+    # Detalle: una fila por gasto con fecha, categoría, descripción, usuario y monto.
     from expenses.models import Expense, ExpenseCategory
     
     gastos = Expense.objects.filter(
@@ -541,7 +548,8 @@ def obtener_datos_gastos(reporte):
 
 
 def obtener_datos_nominas(reporte):
-    """Obtiene datos detallados de nóminas"""
+    # Empleados activos contratados antes de fecha_fin: masa salarial y desglose por tipo de contrato.
+    # NOTA: no consulta pagos históricos, solo el estado actual de la plantilla.
     from nominas.models import Empleado
     
     # Filtrar empleados activos que fueron contratados antes del fin del periodo
@@ -602,7 +610,8 @@ def obtener_datos_nominas(reporte):
 
 
 def obtener_datos_inventario(reporte):
-    """Obtiene datos detallados del inventario"""
+    # Fotografía actual del inventario (ignora fechas). Hasta 100 productos ordenados por stock asc.
+    # Métricas: total productos, valor inventario, bajo stock (<10) y sin stock.
     from products.models import Producto
     
     productos = Producto.objects.filter(activo=True).select_related(
@@ -653,13 +662,8 @@ def obtener_datos_inventario(reporte):
 
 
 def obtener_datos_productos(reporte):
-    """
-    Obtiene datos detallados de productos con análisis avanzados:
-    - Análisis de rentabilidad (mayor/menor margen, valor potencial)
-    - Alertas de stock (críticos, reorden, exceso)
-    - Estadísticas por proveedor
-    - Estadísticas de precios
-    """
+    # Análisis avanzado del catálogo (ignora fechas): rentabilidad, alertas de stock
+    # (crítico/reorden/exceso), estadísticas por proveedor/categoría y precios. Hasta 200 productos.
     from products.models import Producto, Categoria
     
     productos = Producto.objects.filter(activo=True).select_related(
@@ -852,7 +856,8 @@ def obtener_datos_productos(reporte):
 
 
 def obtener_datos_mesas(reporte):
-    """Obtiene datos detallados de mesas y pedidos"""
+    # Pedidos y facturas del periodo: facturados, cancelados, total cobrado y promedio por pedido.
+    # Detalle: hasta 100 pedidos ordenados por fecha desc.
     from tables.models import Mesa, Pedido, Factura
     
     pedidos = Pedido.objects.filter(
@@ -910,7 +915,8 @@ def obtener_datos_mesas(reporte):
 
 
 def obtener_datos_general(reporte):
-    """Obtiene datos generales del sistema"""
+    # Vista global del negocio: ventas vs gastos, utilidad bruta y margen del periodo.
+    # Detalle: resumen diario (solo días con actividad). OJO: lanza 2 queries por día.
     from tables.models import Factura, Pedido
     from expenses.models import Expense
     from products.models import Producto

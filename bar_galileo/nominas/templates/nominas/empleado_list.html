@@ -124,6 +124,12 @@
     </div>
 </div>
 
+<style>
+    .btn-sm{
+        width: auto;
+    }
+</style>
+
 <!-- Formulario oculto para eliminación de empleado -->
 <form id="delete-empleado-form" method="post" style="display: none;">
     {% csrf_token %}
@@ -138,7 +144,7 @@
             confirmLabel: 'Eliminar',
             cancelLabel: 'Cancelar'
         });
-        
+
         if (confirmed) {
             const form = document.getElementById('delete-empleado-form');
             form.action = `/nominas/eliminar/${empleadoId}/`;

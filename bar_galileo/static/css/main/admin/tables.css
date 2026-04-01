@@ -6,12 +6,12 @@
     width: 100% !important;
     margin: 0 !important;
   }
-  
+
   /* Wrapper de DataTables ancho completo */
   .dataTables_wrapper {
     width: 100% !important;
   }
-  
+
   /* Tablas dentro del wrapper */
   .dataTables_wrapper table.dataTable {
     width: 100% !important;
@@ -72,23 +72,92 @@
 
 /* Estilo para la tabla dentro del contenedor - que se ajuste automáticamente */
 .table-contenedor .table {
-  table-layout: auto; /* Las columnas se ajustan automáticamente al contenido */
-  margin: 0 auto; /* Centrar la tabla */
+  width: 100%;
+  table-layout: auto;
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 /* Ajustar contenido de celdas para que no se desborde */
 .table-contenedor .table th,
 .table-contenedor .table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   padding: 0.5rem 0.3rem;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  word-break: break-word;
 }
 
-/* Permitir que el texto de descripción haga wrap */
+.table-contenedor .table th {
+  letter-spacing: 0.01em;
+}
+
+.table-contenedor .table td {
+  color: var(--color-secondary);
+}
+
+.table-contenedor .table tbody tr:hover {
+  background-color: rgba(21, 69, 84, 0.05);
+}
+
 .table-contenedor .table .col-6 {
   white-space: normal;
-  word-wrap: break-word;
+}
+
+.table-contenedor .actions-cell {
+  white-space: nowrap;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-contenedor .actions-cell,
+.table-contenedor td.actions-cell {
+  display: table-cell;
+}
+
+.table-contenedor .actions-cell .btn-group {
+  display: inline-flex;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.table-contenedor .actions-cell .btn,
+.table-contenedor td .btn {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  width: auto;
+}
+
+/* Ajustes específicos para gestión de usuarios (columna Rol y acciones) */
+#users-table th.col-3,
+#users-table td.col-3 {
+  min-width: 280px;
+  white-space: normal;
+}
+
+#users-table td.col-3 form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+#users-table td.col-3 .form-select,
+#users-table td.col-3 .role-select {
+  min-width: 190px;
+  width: 100%;
+  max-width: 100%;
+}
+
+#users-table td.col-4 {
+  min-width: 220px;
+}
+
+#users-table td.col-3 .btn,
+#users-table td.col-4 .btn {
+  white-space: nowrap;
 }
 
 /* Ajustar tamaño de fuente en pantallas pequeñas */
@@ -101,11 +170,6 @@
 @media (max-width: 1200px) {
   .table-contenedor .table {
     font-size: 0.8rem;
-  }
-
-  .table-contenedor .table th,
-  .table-contenedor .table td {
-    padding: 0.4rem 0.2rem;
   }
 }
 
